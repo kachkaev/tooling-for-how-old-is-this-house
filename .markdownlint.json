@@ -1,0 +1,3 @@
+{
+  "extends": "@kachkaev/markdownlint-config"
+}

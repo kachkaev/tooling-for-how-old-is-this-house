@@ -1,0 +1,16 @@
+## extensions
+*.*
+!*.js
+!*.json
+!*.ts
+!*.tsx
+
+## same as in .gitignore
+/node_modules/
+/var/
+
+/.env
+
+.~lock.*
+.DS_Store
+*.log

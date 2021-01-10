@@ -1,3 +1,9 @@
+## extensions
+*.*
+!*.md
+
+
+## same as in .gitignore
 /node_modules/
 /var/
 

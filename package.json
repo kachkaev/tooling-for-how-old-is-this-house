@@ -1,0 +1,74 @@
+{
+  "private": true,
+  "scripts": {
+    "fix": "npm-run-all --continue-on-error \"fix:*\"",
+    "fix:eslint": "eslint --fix \"**/*\"",
+    "fix:markdownlint": "markdownlint --fix \"**/*\"",
+    "fix:prettier": "prettier --write \"**/*\"",
+    "fix:yarn-deduplicate": "yarn install; yarn-deduplicate --strategy=fewer; yarn install",
+    "lint": "npm-run-all --continue-on-error \"lint:*\"",
+    "lint:eslint": "eslint \"**/*\" --report-unused-disable-directives",
+    "lint:markdownlint": "markdownlint \"**/*\"",
+    "lint:prettier": "prettier --check \"**/*\"",
+    "lint:tsc": "tsc --project .",
+    "lint:yarn-deduplicate": "yarn-deduplicate --fail --list --strategy=fewer"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "post-commit": "run-if-changed",
+      "post-checkout": "run-if-changed",
+      "post-merge": "run-if-changed",
+      "post-rewrite": "run-if-changed"
+    }
+  },
+  "lint-staged": {
+    "**/*": [
+      "eslint --fix",
+      "markdownlint --fix",
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@hkdobrev/run-if-changed": "^0.3.1",
+    "@kachkaev/commands": "^0.1.1",
+    "@kachkaev/eslint-config-base": "^0.2.3",
+    "@kachkaev/markdownlint-config": "^0.2.0",
+    "@kachkaev/prettier-config": "^1.2.0",
+    "@types/command-exists": "^1.2.0",
+    "@types/fs-extra": "^9.0.6",
+    "@types/lru-cache": "^5.1.0",
+    "@types/luxon": "^1.25.0",
+    "@types/node": "^14.14.20",
+    "@types/node-fetch": "^2.5.7",
+    "@types/nprogress": "^0.2.0",
+    "@types/object-hash": "^1.3.4",
+    "chalk": "^4.1.0",
+    "command-exists": "^1.2.9",
+    "envalid": "^6.0.2",
+    "eslint": "^7.17.0",
+    "execa": "^5.0.0",
+    "fs-extra": "^9.0.1",
+    "globby": "^11.0.2",
+    "husky": "^4.3.7",
+    "immer": "^8.0.0",
+    "lint-staged": "^10.5.3",
+    "lodash": "^4.17.20",
+    "luxon": "^1.25.0",
+    "markdownlint-cli": "^0.26.0",
+    "npm-run-all": "^4.1.5",
+    "p-queue": "^6.6.2",
+    "prettier": "^2.2.1",
+    "sleep-promise": "^9.1.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3",
+    "yarn-deduplicate": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=14.15.4",
+    "yarn": ">=1.22.0"
+  },
+  "run-if-changed": {
+    "yarn.lock": "yarn install --prefer-offline --pure-lockfile"
+  }
+}
