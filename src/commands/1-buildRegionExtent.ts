@@ -65,6 +65,7 @@ export const buildRegionExtent: Command = async ({ logger }) => {
     extent.properties = {};
   }
 
+  extent.properties.name = regionConfig.name;
   extent.properties.createdAt = new Date().toUTCString();
 
   await fs.writeJson(getRegionExtentPath(), extent, { spaces: 2 });

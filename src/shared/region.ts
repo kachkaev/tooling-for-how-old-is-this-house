@@ -22,6 +22,7 @@ export interface RegionConfig {
       { type: "osmRelation"; relationId: number } | { type: never }
     >;
   };
+  name?: string;
 }
 
 export const getRegionConfigPath = (): string =>
