@@ -4,7 +4,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import fetch from "node-fetch";
 
-import { getRegionConfig, getRegionExtentPath } from "../shared/region";
+import { getRegionConfig, getRegionExtentFilePath } from "../shared/region";
 
 export const buildRegionExtent: Command = async ({ logger }) => {
   logger.log(chalk.bold("Building region extent"));
@@ -68,9 +68,9 @@ export const buildRegionExtent: Command = async ({ logger }) => {
   extent.properties.name = regionConfig.name;
   extent.properties.createdAt = new Date().toUTCString();
 
-  await fs.writeJson(getRegionExtentPath(), extent, { spaces: 2 });
+  await fs.writeJson(getRegionExtentFilePath(), extent, { spaces: 2 });
 
-  logger.log(` Result saved to ${chalk.magenta(getRegionExtentPath())}`);
+  logger.log(` Result saved to ${chalk.magenta(getRegionExtentFilePath())}`);
 };
 
 autoStartCommandIfNeeded(buildRegionExtent, __filename);

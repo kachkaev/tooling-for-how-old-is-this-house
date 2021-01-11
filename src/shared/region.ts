@@ -6,7 +6,7 @@ import path from "path";
 
 import { customEnvalidReporter } from "./customEnvalidReporter";
 
-export const getRegionDir = (): string => {
+export const getRegionDirPath = (): string => {
   const env = envalid.cleanEnv(
     process.env,
     { REGION_VAR_DIR: envalid.str({}) },
@@ -17,26 +17,39 @@ export const getRegionDir = (): string => {
 };
 
 export interface RegionConfig {
+  name?: string;
+
   extent?: {
     elementsToCombine?: Array<
       { type: "osmRelation"; relationId: number } | { type: never }
     >;
   };
-  name?: string;
+
+  sources?: {
+    mingkh?: {
+      houseLists?: Array<
+        | {
+            regionUrl?: string;
+            cityUrl?: string;
+          }
+        | undefined
+      >;
+    };
+  };
 }
 
-export const getRegionConfigPath = (): string =>
-  path.resolve(getRegionDir(), `regionConfig.yml`);
+export const getRegionConfigFilePath = (): string =>
+  path.resolve(getRegionDirPath(), `regionConfig.yml`);
 
 export const getRegionConfig = async (): Promise<RegionConfig> => {
-  return load(await fs.readFile(getRegionConfigPath(), "utf8")) as any;
+  return load(await fs.readFile(getRegionConfigFilePath(), "utf8")) as any;
 };
 
-export const getRegionExtentPath = (): string =>
-  path.resolve(getRegionDir(), `regionExtent.geojson`);
+export const getRegionExtentFilePath = (): string =>
+  path.resolve(getRegionDirPath(), `regionExtent.geojson`);
 
 export const getRegionExtent = async (): Promise<
   turf.Feature<turf.Polygon | turf.MultiPolygon>
 > => {
-  return fs.readJson(getRegionExtentPath());
+  return fs.readJson(getRegionExtentFilePath());
 };
