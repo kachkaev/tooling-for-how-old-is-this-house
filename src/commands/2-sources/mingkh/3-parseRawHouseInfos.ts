@@ -1,0 +1,120 @@
+import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
+import chalk from "chalk";
+import fs from "fs-extra";
+import sortedObject from "sorted-object";
+
+import {
+  deriveHouseFilePath,
+  HouseInfo,
+  HouseInfoFile,
+  loopThroughHouseLists,
+  loopThroughRowsInHouseList,
+} from "../../../shared/sources/mingkh";
+
+export const fetchRawHouseInfos: Command = async ({ logger }) => {
+  logger.log(chalk.bold("sources/mingkh: Parsing raw house infos"));
+
+  await loopThroughHouseLists(async ({ houseListFilePath }) => {
+    await loopThroughRowsInHouseList(houseListFilePath, async ({ houseId }) => {
+      const rawHouseInfoFilePath = deriveHouseFilePath(houseId, "rawInfo.html");
+
+      const houseInfoFilePath = deriveHouseFilePath(houseId, "info.json");
+
+      if (await fs.pathExists(houseInfoFilePath)) {
+        process.stdout.write(
+          chalk.gray(` Skipped because file exists: ${houseInfoFilePath}\n`),
+        );
+
+        return;
+      }
+
+      process.stdout.write(` Parsing...`);
+
+      const rawInfo = await fs.readFile(rawHouseInfoFilePath, "utf8");
+
+      const info: HouseInfo = {
+        id: houseId,
+      };
+
+      // extract centerPoint
+      const lonMatch = rawInfo.match(
+        /<input type="hidden" id="mapcenterlat" name="mapcenterlat" value="(.*)"\/>/,
+      );
+      const lon = parseFloat(lonMatch?.[1] ?? "");
+      const latMatch = rawInfo.match(
+        /<input type="hidden" id="mapcenterlat" name="mapcenterlat" value="(.*)"\/>/,
+      );
+      const lat = parseFloat(latMatch?.[1] ?? "");
+
+      if (lon && lat) {
+        info.centerPoint = [lon, lat];
+      }
+
+      // extract address
+      const addressMatch = rawInfo.match(
+        /<dt>Адрес<\/dt>\s*<dd>(.*)((&nbsp)+.*)<\/dd>/,
+      );
+      const address = addressMatch?.[1]?.trim();
+      if (address) {
+        info.address = address;
+      }
+
+      // extract year
+      const yearMatch = rawInfo.match(
+        /<dt>Год постройки<\/dt>\s*<dd>(.*)<\/dd>/,
+      );
+      const year = parseInt(yearMatch?.[1] ?? "");
+      if (year) {
+        info.year = year;
+      }
+
+      // extract numberOfFloors
+      const numberOfFloorsMatch = rawInfo.match(
+        /<dt>Количество этажей<\/dt>\s*<dd>(.*)<\/dd>/,
+      );
+      const numberOfFloors = parseInt(numberOfFloorsMatch?.[1] ?? "");
+      if (numberOfFloors) {
+        info.numberOfFloors = numberOfFloors;
+      }
+
+      // extract numberOfLivingQuarters
+      const numberOfLivingQuartersMatch = rawInfo.match(
+        /<dt>Жилых помещений<\/dt>\s*<dd>(.*)<\/dd>/,
+      );
+      const numberOfLivingQuarters = parseInt(
+        numberOfLivingQuartersMatch?.[1] ?? "",
+      );
+      if (numberOfLivingQuarters) {
+        info.numberOfLivingQuarters = numberOfLivingQuarters;
+      }
+
+      // extract cadastralId
+      const cadastralIdMatch = rawInfo.match(
+        /<dt>Кадастровый номер<\/dt>\s*<dd>(.*)<\/dd>/,
+      );
+      const cadastralId = cadastralIdMatch?.[1]?.trim();
+      if (cadastralId) {
+        info.cadastralId = cadastralId;
+      }
+
+      // extract fetchedAt
+      const rawFetchedAtMatch = rawInfo.match(/^<!-- fetchedAt: (.*) -->/);
+
+      const houseInfoFileJson: HouseInfoFile = {
+        fetchedAt: rawFetchedAtMatch?.[1] ?? "unknown",
+        parsedAt: new Date().toUTCString(),
+        data: sortedObject(info) as HouseInfo,
+      };
+
+      await fs.writeJson(houseInfoFilePath, houseInfoFileJson, {
+        spaces: 2,
+      });
+
+      process.stdout.write(
+        ` Result saved to ${chalk.magenta(houseInfoFilePath)}\n`,
+      );
+    });
+  });
+};
+
+autoStartCommandIfNeeded(fetchRawHouseInfos, __filename);

@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import fs from "fs-extra";
 import path from "path";
 
 import { getRegionConfig, getRegionDirPath } from "../region";
@@ -23,18 +24,19 @@ export interface HouseListFile {
 }
 
 export interface HouseInfo {
-  id: number;
   address?: string;
-  centerPoint?: [lon: number, lat: number];
-  year?: number;
-  numberOfFloors?: number;
   cadastralId?: string;
+  centerPoint?: [lon: number, lat: number];
+  id: number;
+  numberOfFloors?: number;
+  numberOfLivingQuarters?: number;
+  year?: number;
 }
 
 export interface HouseInfoFile {
   fetchedAt: string;
   parsedAt: string;
-  response: HouseInfo;
+  data: HouseInfo;
 }
 
 export const getHouseListFilePath = (regionUrl: string, cityUrl: string) => {
@@ -47,8 +49,11 @@ export const getHouseListFilePath = (regionUrl: string, cityUrl: string) => {
   );
 };
 
-export const getHouseFilePath = (houseId: string, fileNameSuffix: string) => {
-  const normalisedHouseId = houseId.padStart(7, "0");
+export const deriveHouseFilePath = (
+  houseId: number,
+  fileNameSuffix: string,
+) => {
+  const normalisedHouseId = `${houseId}`.padStart(7, "0");
 
   return path.resolve(
     getRegionDirPath(),
@@ -94,16 +99,45 @@ export const loopThroughHouseLists = async (
 };
 
 /**
- *
  * @param houseUrl e.g. /penzenskaya-oblast/penza/977878
+ * @returns e.g. 977878
  */
-export const extractHouseIdFromUrl = (houseUrl: string): string => {
+const extractHouseIdFromUrl = (houseUrl: string): number => {
   const result = houseUrl.split("/")[3];
   if (!result) {
     throw new Error(`Cannot extract house id from url ${houseUrl}`);
   }
 
-  return result;
+  return parseInt(result);
+};
+
+export const loopThroughRowsInHouseList = async (
+  houseListFilePath: string,
+  callback: (payload: { houseId: number; houseUrl: string }) => Promise<void>,
+) => {
+  const houseList: HouseListFile = await fs.readJson(houseListFilePath);
+
+  const rows = houseList.response.rows;
+  const numberOfRows = rows.length;
+  const numberOfRowsCharCount = `${numberOfRows}`.length;
+
+  process.stdout.write(
+    ` Found ${rows.length} houses in ${houseListFilePath}\n`,
+  );
+
+  for (const row of rows) {
+    const humanFriendlyIndex = `${rows.indexOf(row) + 1}`.padStart(
+      numberOfRowsCharCount,
+      "0",
+    );
+    process.stdout.write(`    ${humanFriendlyIndex}/${numberOfRows}:`);
+    try {
+      const houseId = extractHouseIdFromUrl(row.url);
+      await callback({ houseId, houseUrl: row.url });
+    } catch (e) {
+      process.stdout.write(chalk.red(` Error: ${e}\n`));
+    }
+  }
 };
 
 export const notFilledIn = "Не заполнено";
