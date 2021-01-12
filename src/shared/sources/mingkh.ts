@@ -39,13 +39,25 @@ export interface HouseInfoFile {
   data: HouseInfo;
 }
 
-export const getHouseListFilePath = (regionUrl: string, cityUrl: string) => {
+export const getHouseListFilePath = (
+  mingkhRegionUrl: string,
+  mingkhCityUrl: string,
+) => {
   return path.resolve(
     getRegionDirPath(),
     "sources",
     "migkh",
     "houseLists",
-    `${regionUrl}--${cityUrl}.json`,
+    `${mingkhRegionUrl}--${mingkhCityUrl}.json`,
+  );
+};
+
+export const getHouseListGeoJsonFilePath = () => {
+  return path.resolve(
+    getRegionDirPath(),
+    "sources",
+    "migkh",
+    "houseList.geojson",
   );
 };
 
@@ -140,4 +152,4 @@ export const loopThroughRowsInHouseList = async (
   }
 };
 
-export const notFilledIn = "Не заполнено";
+export const notFilledIn = ["Не заполнено", "Нет данных"];

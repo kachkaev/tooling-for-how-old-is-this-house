@@ -13,6 +13,8 @@
     
     yarn exe src/commands/2-sources/mingkh/1-fetchHouseLists.ts
     yarn exe src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
+    yarn exe src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
+    yarn exe src/commands/2-sources/mingkh/4-combineHouseInfosIntoGeoJson.ts
     ```
 
 ## Поля выгружаемой таблицы

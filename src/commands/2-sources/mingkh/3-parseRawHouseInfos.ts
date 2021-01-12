@@ -38,7 +38,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
 
       // extract centerPoint
       const lonMatch = rawInfo.match(
-        /<input type="hidden" id="mapcenterlat" name="mapcenterlat" value="(.*)"\/>/,
+        /<input type="hidden" id="mapcenterlng" name="mapcenterlng" value="(.*)"\/>/,
       );
       const lon = parseFloat(lonMatch?.[1] ?? "");
       const latMatch = rawInfo.match(
@@ -52,7 +52,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
 
       // extract address
       const addressMatch = rawInfo.match(
-        /<dt>Адрес<\/dt>\s*<dd>(.*)((&nbsp)+.*)<\/dd>/,
+        /<dt>Адрес<\/dt>\s*<dd>(.*)&nbsp;&nbsp;&nbsp;<a/,
       );
       const address = addressMatch?.[1]?.trim();
       if (address) {
@@ -63,7 +63,11 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
       const yearMatch = rawInfo.match(
         /<dt>Год постройки<\/dt>\s*<dd>(.*)<\/dd>/,
       );
-      const year = parseInt(yearMatch?.[1] ?? "");
+      let year = parseInt(yearMatch?.[1] ?? "");
+      // FIXME: generalise
+      if (year === 1656) {
+        year = 1956;
+      }
       if (year) {
         info.year = year;
       }
