@@ -22,6 +22,21 @@ export interface HouseListFile {
   response: HouseListResponse;
 }
 
+export interface HouseInfo {
+  id: number;
+  address?: string;
+  centerPoint?: [lon: number, lat: number];
+  year?: number;
+  numberOfFloors?: number;
+  cadastralId?: string;
+}
+
+export interface HouseInfoFile {
+  fetchedAt: string;
+  parsedAt: string;
+  response: HouseInfo;
+}
+
 export const getHouseListFilePath = (regionUrl: string, cityUrl: string) => {
   return path.resolve(
     getRegionDirPath(),

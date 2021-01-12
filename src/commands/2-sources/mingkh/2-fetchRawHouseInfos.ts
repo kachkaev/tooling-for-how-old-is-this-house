@@ -11,8 +11,8 @@ import {
   loopThroughHouseLists,
 } from "../../../shared/sources/mingkh";
 
-export const fetchHouseDetails: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/mingkh: Fetching house details"));
+export const fetchHouseInfos: Command = async ({ logger }) => {
+  logger.log(chalk.bold("sources/mingkh: Fetching house infos"));
 
   await loopThroughHouseLists(async ({ houseListFilePath }) => {
     const houseList: HouseListFile = await fs.readJson(houseListFilePath);
@@ -33,14 +33,11 @@ export const fetchHouseDetails: Command = async ({ logger }) => {
       process.stdout.write(`    ${humanFriendlyIndex}/${numberOfRows}:`);
       try {
         const houseId = extractHouseIdFromUrl(row.url);
-        const rawHouseDetailsFilePath = getHouseFilePath(
-          houseId,
-          "rawDetails.html",
-        );
-        if (await fs.pathExists(rawHouseDetailsFilePath)) {
+        const rawHouseInfoFilePath = getHouseFilePath(houseId, "rawInfo.html");
+        if (await fs.pathExists(rawHouseInfoFilePath)) {
           process.stdout.write(
             chalk.gray(
-              ` Skipped because file exists: ${rawHouseDetailsFilePath}\n`,
+              ` Skipped because file exists: ${rawHouseInfoFilePath}\n`,
             ),
           );
           continue;
@@ -52,15 +49,15 @@ export const fetchHouseDetails: Command = async ({ logger }) => {
           await fetch(`https://dom.mingkh.ru/${row.url}`)
         ).text();
 
-        await fs.ensureDir(path.dirname(rawHouseDetailsFilePath));
+        await fs.ensureDir(path.dirname(rawHouseInfoFilePath));
         await fs.writeFile(
-          rawHouseDetailsFilePath,
+          rawHouseInfoFilePath,
           `<!-- fetchedAt: ${new Date().toUTCString()} -->\n${responseBody}`,
           "utf8",
         );
 
         process.stdout.write(
-          ` Result saved to ${chalk.magenta(rawHouseDetailsFilePath)}\n`,
+          ` Result saved to ${chalk.magenta(rawHouseInfoFilePath)}\n`,
         );
       } catch (e) {
         process.stdout.write(chalk.red(` Error: ${e}\n`));
@@ -74,4 +71,4 @@ export const fetchHouseDetails: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchHouseDetails, __filename);
+autoStartCommandIfNeeded(fetchHouseInfos, __filename);

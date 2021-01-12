@@ -1,5 +1,20 @@
 # Инструментарий для подготовки данных [how-old-is-this.house](https://how-old-is-this.house)
 
+## Шаги по сборке данных
+
+1.  Создать и заполнить файл `/path/to/hoith/var/regions/MY_REGION/regionConfig.yml`
+
+1.  Скопировать `.env.dist` в `.env` и заполнить новый файл
+
+1.  Запустить команды
+
+    ```sh
+    yarn exe src/commands/1-buildRegionExtent.ts
+    
+    yarn exe src/commands/2-sources/mingkh/1-fetchHouseLists.ts
+    yarn exe src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
+    ```
+
 ## Поля выгружаемой таблицы
 
 | name            | type   | comment                                                                                                                        |
