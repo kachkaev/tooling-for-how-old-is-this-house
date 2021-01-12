@@ -1,7 +1,7 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
-import sortedObject from "sorted-object";
+import sortKeys from "sort-keys";
 
 import {
   deriveHouseFilePath,
@@ -103,7 +103,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
       const houseInfoFileJson: HouseInfoFile = {
         fetchedAt: rawFetchedAtMatch?.[1] ?? "unknown",
         parsedAt: new Date().toUTCString(),
-        data: sortedObject(info) as HouseInfo,
+        data: sortKeys(info),
       };
 
       await fs.writeJson(houseInfoFilePath, houseInfoFileJson, {
