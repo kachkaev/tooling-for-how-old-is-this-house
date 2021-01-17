@@ -1,7 +1,7 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
+import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
-import fetch from "node-fetch";
 import path from "path";
 
 import {
@@ -33,9 +33,9 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
 
         process.stdout.write(` Fetching...`);
 
-        const responseBody = await (
-          await fetch(`https://dom.mingkh.ru/${houseUrl}`)
-        ).text();
+        const responseBody = (
+          await axios.get<string>(`https://dom.mingkh.ru/${houseUrl}`)
+        ).data;
 
         await fs.ensureDir(path.dirname(rawHouseInfoFilePath));
         await fs.writeFile(

@@ -1,8 +1,8 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
+import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
-import fetch from "node-fetch";
 
 import { getRegionConfig, getRegionExtentFilePath } from "../shared/region";
 
@@ -27,16 +27,16 @@ export const buildRegionExtent: Command = async ({ logger }) => {
       );
 
       // Not visiting this link first may result in an invalid json
-      await fetch(
+      await axios.get(
         `https://polygons.openstreetmap.fr/?id=${elementConfig.relationId}`,
-        { method: "POST" },
       );
 
-      const geoJson = (await (
-        await fetch(
+      const geoJson = (
+        await axios.get<turf.GeometryCollection>(
           `https://polygons.openstreetmap.fr/get_geojson.py?id=${elementConfig.relationId}`,
+          { responseType: "json" },
         )
-      ).json()) as turf.GeometryCollection;
+      ).data;
       elementGeometries.push(...geoJson.geometries);
       process.stdout.write(" Done.\n");
     } else {

@@ -1,11 +1,12 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
+import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
-import fetch from "node-fetch";
 import path from "path";
 
 import {
   HouseListFile,
+  HouseListResponse,
   loopThroughHouseLists,
 } from "../../../shared/sources/mingkh";
 
@@ -16,21 +17,22 @@ export const fetchHouseLists: Command = async ({ logger }) => {
     async ({ regionUrl, cityUrl, houseListFilePath }) => {
       await fs.mkdirp(path.dirname(houseListFilePath));
 
-      const response = await (
-        await fetch(`https://dom.mingkh.ru/api/houses`, {
-          method: "POST",
-          headers: {
-            "content-type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
+      const response = (
+        await axios.post<HouseListResponse>(
+          "https://dom.mingkh.ru/api/houses",
+          {
             current: "1",
             rowCount: "-1",
             searchPhrase: "",
             ["region_url"]: regionUrl,
             ["city_url"]: cityUrl,
-          }),
-        })
-      ).json();
+          },
+          {
+            headers: { "content-type": "application/x-www-form-urlencoded" },
+            responseType: "json",
+          },
+        )
+      ).data;
 
       const json: HouseListFile = {
         fetchedAt: new Date().toUTCString(),
