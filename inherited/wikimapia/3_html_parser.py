@@ -5,7 +5,7 @@ import pandas as pd
 
 
 
-filelist=os.listdir('kazan/results/html')
+filelist=os.listdir('kazan/results/html') #  получаем список файлов в директории
 print(filelist)
 item_n=0
 item_min = 0
@@ -23,7 +23,7 @@ for filename  in filelist:
 
         def read_file(filename):
             with open(filename) as input_file:
-                text = input_file.read()
+                text = input_file.read()  #  читаем файл
             return text
 
         text=read_file(filename)
@@ -57,7 +57,7 @@ for filename  in filelist:
                 photo_uname = ''
 
 
-        result=result.append({"wm_id":str(wm_id),"categories_ids" :categories_ids,"categories_names" :categories_names, "photo_url":photo_url,"photo_uname":photo_uname}, ignore_index=1)
+        result=result.append({"wm_id":str(wm_id),"categories_ids" :categories_ids,"categories_names" :categories_names, "photo_url":photo_url,"photo_uname":photo_uname}, ignore_index=1) #  дописыывваем в результат вм ади категории обьекта ссылку на фото и имя автора фото
         print(result)
         if item_n % 100000 == 0:
 
@@ -65,4 +65,4 @@ for filename  in filelist:
             result=pd.DataFrame()
             print(str(item_n)+'saved')
 
-result.to_csv('kazan/wm_result_all.csv')
+result.to_csv('kazan/wm_result_all.csv')  #  записывваем результат 

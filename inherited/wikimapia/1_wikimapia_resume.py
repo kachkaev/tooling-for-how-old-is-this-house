@@ -4,27 +4,27 @@ import xml.etree.ElementTree as ET
 import time
 
 
-squares=pd.read_csv("kazan/k_squares.csv")
-kml=pd.read_csv("kazan/result_wkt_kml.csv", index_col='ID')
+squares=pd.read_csv("kazan/k_squares.csv") # считываем координаты углов квадратов
+#kml=pd.read_csv("kazan/result_wkt_kml.csv", index_col='ID') # эта строка нужна если не первая попытка - открывает файл результат на дозапись
 
 
-i_min=18500
+i_min=0 # номер строки с которой начинаем
 
 for row_ind in squares.index:
     if row_ind>=i_min:
 
         lat_min = str(squares["lat_min"][row_ind])
-
         lat_max = str(squares["lat_max"][row_ind])
         lon_min = str(squares["lon_min"][row_ind])
         lon_max =str( squares["lon_max"][row_ind])
-        payload = {"BBOX":lon_min+','+lat_min+','+lon_max+','+lat_max}
+        
+        payload = {"BBOX":lon_min+','+lat_min+','+lon_max+','+lat_max} # формируем строку запроса к викимапии
         url = 'http://wikimapia.org/d'
-        r = requests.get(url,params=payload)
+        r = requests.get(url,params=payload) # запрос
 
         print('request'+str(row_ind))
 
-        time.sleep(1)
+        time.sleep(1) # таймаутом надо играть на практике - сервак может обрубать если слишком часто
 
         result = ET.XML(r.text)
         for placemark in result[0][3]:
@@ -44,14 +44,15 @@ for row_ind in squares.index:
 
             print(wkt)
 
-            kml=kml.append({'wm_id':wm_id,'wm_name':wm_name,"wm_x":wm_x,'wm_y':wm_y,'wkt':wkt}, ignore_index=1)
+            kml=kml.append({'wm_id':wm_id,'wm_name':wm_name,"wm_x":wm_x,'wm_y':wm_y,'wkt':wkt}, ignore_index=1)   # парсинг ответа - записываем айди обьекта википамии его название , центр точку и геометрию вкт
             print(kml)
         print(r.status_code)
+        kml=kml.drop_duplicates() # а еще часто мы получаем один и тот же обьект дважды - убиваем дубликаты
         if row_ind%500==0:
             kml=kml.drop_duplicates()
-            kml.to_csv('kazan/result_wkt_kml.csv')
-kml=kml.drop_duplicates()
-kml.to_csv('kazan/result_wkt_kml.csv')
+            kml.to_csv('kazan/result_wkt_kml.csv') # от греха подальше автосейв раз в 500
+
+kml.to_csv('kazan/result_wkt_kml.csv') #  если вдруг дошли до конца - сохраняем результат
 
         # ids=[]
         # final=pd.DataFrame()
