@@ -2,7 +2,7 @@
 
 ## Шаги по сборке данных
 
-1.  Создать и заполнить файл `/path/to/hoith/var/regions/MY_REGION/regionConfig.yml`
+1.  Создать и заполнить файл `/path/to/hoith/var/regions/${MY_REGION}/region-config.yml`
 
 1.  Скопировать `.env.dist` в `.env` и заполнить новый файл
 

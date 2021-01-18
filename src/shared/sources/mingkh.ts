@@ -47,7 +47,7 @@ export const getHouseListFilePath = (
     getRegionDirPath(),
     "sources",
     "migkh",
-    "houseLists",
+    "house-lists",
     `${mingkhRegionUrl}--${mingkhCityUrl}.json`,
   );
 };
@@ -57,7 +57,7 @@ export const getHouseListGeoJsonFilePath = () => {
     getRegionDirPath(),
     "sources",
     "migkh",
-    "houseList.geojson",
+    "house-list.geojson",
   );
 };
 

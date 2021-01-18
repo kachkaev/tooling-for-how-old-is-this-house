@@ -16,7 +16,10 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
 
   await loopThroughHouseLists(async ({ houseListFilePath }) => {
     await loopThroughRowsInHouseList(houseListFilePath, async ({ houseId }) => {
-      const rawHouseInfoFilePath = deriveHouseFilePath(houseId, "rawInfo.html");
+      const rawHouseInfoFilePath = deriveHouseFilePath(
+        houseId,
+        "raw-info.html",
+      );
 
       const houseInfoFilePath = deriveHouseFilePath(houseId, "info.json");
 

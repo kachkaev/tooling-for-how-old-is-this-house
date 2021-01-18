@@ -39,14 +39,14 @@ export interface RegionConfig {
 }
 
 export const getRegionConfigFilePath = (): string =>
-  path.resolve(getRegionDirPath(), `regionConfig.yml`);
+  path.resolve(getRegionDirPath(), `region-config.yml`);
 
 export const getRegionConfig = async (): Promise<RegionConfig> => {
   return load(await fs.readFile(getRegionConfigFilePath(), "utf8")) as any;
 };
 
 export const getRegionExtentFilePath = (): string =>
-  path.resolve(getRegionDirPath(), `regionExtent.geojson`);
+  path.resolve(getRegionDirPath(), `region-extent.geojson`);
 
 export const getRegionExtent = async (): Promise<
   turf.Feature<turf.Polygon | turf.MultiPolygon>

@@ -19,7 +19,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
       async ({ houseUrl, houseId }) => {
         const rawHouseInfoFilePath = deriveHouseFilePath(
           houseId,
-          "rawInfo.html",
+          "raw-info.html",
         );
         if (await fs.pathExists(rawHouseInfoFilePath)) {
           process.stdout.write(
