@@ -3,6 +3,10 @@ import path from "path";
 import { getRegionDirPath } from "../region";
 import { ProcessTile, Tile } from "../tiles";
 
+/**
+ * CCO: capital construction object (ru: ОКС)
+ * lot: land lot (ru: Земельный участок)
+ */
 export type FeatureType = "cco" | "lot";
 
 const getTileDataFilePath = (tile: Tile, featureType: FeatureType) => {
@@ -19,19 +23,14 @@ const getTileDataFilePath = (tile: Tile, featureType: FeatureType) => {
   );
 };
 
-/*
-rosreestr
-  lots
-    by-tiles
-  ccos
-    by-code
-    by-tiles
- */
-
 export const generateProcessTile = (
   featureType: FeatureType,
-): ProcessTile => async (tile) => ({
-  cacheState: Math.random() > 0.5 ? "notUsed" : "used",
-  tileStatus: Math.random() > 0.2 ? "complete" : "needsSplitting",
-  comment: getTileDataFilePath(tile, featureType),
-});
+): ProcessTile => async (tile) => {
+  const tileDataFilePath = getTileDataFilePath(tile, featureType);
+
+  return {
+    cacheState: Math.random() > 0.5 ? "notUsed" : "used",
+    tileStatus: Math.random() > 0.2 ? "complete" : "needsSplitting",
+    comment: tileDataFilePath,
+  };
+};
