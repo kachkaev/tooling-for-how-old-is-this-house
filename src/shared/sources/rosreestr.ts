@@ -63,17 +63,25 @@ const deriveTileDataStatus = (tileData: TileData): TileStatus => {
     : "complete";
 };
 
-const getTileDataFilePath = (tile: Tile, featureType: FeatureType) => {
+const getTilesDirPath = (featureType: FeatureType) => {
   return path.resolve(
     getRegionDirPath(),
     "sources",
     "rosreestr",
     `${featureType}s`,
     "by-tiles",
+  );
+};
+
+const getTileDataFileName = () => "data.json";
+
+const getTileDataFilePath = (tile: Tile, featureType: FeatureType) => {
+  return path.resolve(
+    getTilesDirPath(featureType),
     `${tile[2]}`,
     `${tile[0]}`,
     `${tile[1]}`,
-    `data.json`,
+    getTileDataFileName(),
   );
 };
 
@@ -125,9 +133,10 @@ export const generateProcessTile = (
         },
         responseType: "json",
         "axios-retry": {
-          retries: 10,
-          retryDelay: (retryCount) => retryCount * 1000,
-          retryCondition: (error) => error.response?.status !== 200,
+          retries: 30,
+          retryDelay: (retryCount) => (retryCount - 1) * 500,
+          retryCondition: (error) =>
+            error.response?.status === 403 || error.code === "ETIMEDOUT",
         },
       },
     )
