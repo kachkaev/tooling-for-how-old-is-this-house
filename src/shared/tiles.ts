@@ -1,6 +1,7 @@
 import * as tilebelt from "@mapbox/tilebelt";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
+import _ from "lodash";
 
 export type Tile = [x: number, y: number, zoom: number];
 
@@ -70,7 +71,7 @@ export const processTiles = async ({
         (cacheStatus === "used" ? chalk.gray : chalk.magenta)(
           `  [${tile.join(", ")}]:${
             comment ? ` ${comment}` : ""
-          } ${tileStatus}`,
+          } - ${_.lowerCase(tileStatus)}`,
         ),
       );
     }

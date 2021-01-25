@@ -20,7 +20,7 @@ const tileBufferInMeters = 10;
 
 const featureNumericIdLookup: Record<FeatureType, number> = {
   cco: 5,
-  lot: 4,
+  lot: 1,
 };
 
 export interface TileFeature {

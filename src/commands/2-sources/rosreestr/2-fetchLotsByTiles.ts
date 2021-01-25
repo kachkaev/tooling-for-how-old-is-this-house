@@ -10,7 +10,7 @@ export const fetchLotsByTiles: Command = async ({ logger }) => {
 
   await processTiles({
     initialZoom: 13,
-    maxAllowedZoom: 20,
+    maxAllowedZoom: 24,
     regionExtent: await getRegionExtent(),
     processTile: generateProcessTile("lot"),
     logger,
