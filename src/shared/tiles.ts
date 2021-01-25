@@ -5,12 +5,12 @@ import chalk from "chalk";
 export type Tile = [x: number, y: number, zoom: number];
 
 export type TileStatus = "complete" | "needsSplitting";
-export type CacheState = "used" | "notUsed";
+export type CacheStatus = "used" | "notUsed";
 
 export type ProcessTile = (
   tile: Tile,
 ) => Promise<{
-  cacheState: CacheState;
+  cacheStatus: CacheStatus;
   tileStatus: TileStatus;
   comment?: string;
 }>;
@@ -62,12 +62,12 @@ export const processTiles = async ({
         continue;
       }
 
-      const { cacheState, tileStatus, comment } = await processTile(tile);
+      const { cacheStatus, tileStatus, comment } = await processTile(tile);
       if (tileStatus === "needsSplitting") {
         nextZoomTiles.push(...(tilebelt.getChildren(tile) as Tile[]));
       }
       logger.log(
-        (cacheState === "used" ? chalk.gray : chalk.magenta)(
+        (cacheStatus === "used" ? chalk.gray : chalk.magenta)(
           `  [${tile.join(", ")}]:${
             comment ? ` ${comment}` : ""
           } ${tileStatus}`,
@@ -89,3 +89,14 @@ export const processTiles = async ({
     );
   }
 };
+
+export const addBufferToBbox = (
+  bbox: turf.BBox,
+  bufferInMeters: number,
+): turf.BBox =>
+  turf.bbox(
+    turf.buffer(turf.bboxPolygon(bbox), bufferInMeters / 1000, {
+      units: "kilometers",
+      steps: 1,
+    }),
+  );
