@@ -149,3 +149,13 @@ export const generateProcessTile = (
     comment: generateTileComment(tileDataFilePath, tileData),
   };
 };
+
+export const summarizeTiles = async ({
+  featureType,
+  logger,
+}: {
+  featureType: FeatureType;
+  logger: Console;
+}) => {
+  logger.log(featureType);
+};

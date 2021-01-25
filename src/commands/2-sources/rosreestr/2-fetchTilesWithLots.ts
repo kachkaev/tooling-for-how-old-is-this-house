@@ -5,16 +5,16 @@ import { getRegionExtent } from "../../../shared/region";
 import { generateProcessTile } from "../../../shared/sources/rosreestr";
 import { processTiles } from "../../../shared/tiles";
 
-export const fetchLotsByTiles: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/rosreestr: Fetching CCOs by tiles"));
+export const fetchTilesWithLots: Command = async ({ logger }) => {
+  logger.log(chalk.bold("sources/rosreestr: Fetching tiles with lots"));
 
   await processTiles({
     initialZoom: 13,
     maxAllowedZoom: 24,
     regionExtent: await getRegionExtent(),
-    processTile: generateProcessTile("cco"),
+    processTile: generateProcessTile("lot"),
     logger,
   });
 };
 
-autoStartCommandIfNeeded(fetchLotsByTiles, __filename);
+autoStartCommandIfNeeded(fetchTilesWithLots, __filename);
