@@ -1,4 +1,23 @@
-import { ProcessTile } from "../tiles";
+import path from "path";
+
+import { getRegionDirPath } from "../region";
+import { ProcessTile, Tile } from "../tiles";
+
+export type FeatureType = "cco" | "lot";
+
+const getTileDataFilePath = (tile: Tile, featureType: FeatureType) => {
+  return path.resolve(
+    getRegionDirPath(),
+    "sources",
+    "rosreestr",
+    `${featureType}s`,
+    "by-tiles",
+    `${tile[2]}`,
+    `${tile[0]}`,
+    `${tile[1]}`,
+    `data.json`,
+  );
+};
 
 /*
 rosreestr
@@ -7,23 +26,12 @@ rosreestr
   ccos
     by-code
     by-tiles
-
-  rayon--58-29/
-    kvartal-list--combined.json
-    kvartal-list--page-000.json
-    kvartal-list--page-001.json
-    kvartal-list--page-002.json
-  kvartal--58-29-0381302/
-    oks-list--combined.json
-    oks-list--page-000.json
-    oks-list--page-001.json
-    oks-list--page-002.json
  */
 
 export const generateProcessTile = (
-  objectType: "cco" | "lot",
-): ProcessTile => async () => ({
+  featureType: FeatureType,
+): ProcessTile => async (tile) => ({
   cacheState: Math.random() > 0.5 ? "notUsed" : "used",
   tileStatus: Math.random() > 0.2 ? "complete" : "needsSplitting",
-  comment: objectType,
+  comment: getTileDataFilePath(tile, featureType),
 });

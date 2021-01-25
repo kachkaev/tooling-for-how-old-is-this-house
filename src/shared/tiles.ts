@@ -68,9 +68,9 @@ export const processTiles = async ({
       }
       logger.log(
         (cacheState === "used" ? chalk.gray : chalk.magenta)(
-          `  [${tile.join(", ")}]: ${tileStatus}${
+          `  [${tile.join(", ")}]:${
             comment ? ` ${comment}` : ""
-          }`,
+          } ${tileStatus}`,
         ),
       );
     }
