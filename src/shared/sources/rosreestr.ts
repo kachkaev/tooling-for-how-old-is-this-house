@@ -1,6 +1,7 @@
 import * as tilebelt from "@mapbox/tilebelt";
 import * as turf from "@turf/turf";
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import fs from "fs-extra";
 import path from "path";
 import sortKeys from "sort-keys";
@@ -111,6 +112,8 @@ export const generateProcessTile = (
     throw new Error("Unexpected empty geometry");
   }
 
+  axiosRetry(axios);
+
   const tileResponse = (
     await axios.get<TileResponse>(
       `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[featureType]}`,
@@ -121,6 +124,11 @@ export const generateProcessTile = (
           limit: maxSupportedFeaturesPerTileRequest,
         },
         responseType: "json",
+        "axios-retry": {
+          retries: 10,
+          retryDelay: (retryCount) => retryCount * 1000,
+          retryCondition: (error) => error.response?.status !== 200,
+        },
       },
     )
   ).data;
