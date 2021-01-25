@@ -16,8 +16,12 @@
     yarn exe src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/4-combineHouseInfosIntoGeoJson.ts
     
+    ## incomplete
     yarn exe src/commands/2-sources/rosreestr/1-fetchCcosByTiles.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchLotsByTiles.ts
+    
+    ## incomplete
+    yarn exe src/commands/2-sources/wikidata/1-executeQuery.ts
     ```
 
 ## Поля выгружаемой таблицы
