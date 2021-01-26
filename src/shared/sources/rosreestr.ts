@@ -179,7 +179,7 @@ export const generateProcessTile = (
   };
 };
 
-export const summarizeTiles = async ({
+export const combineTiles = async ({
   featureType,
   logger,
 }: {
