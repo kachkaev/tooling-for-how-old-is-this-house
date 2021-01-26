@@ -17,7 +17,6 @@ import { ProcessTile, Tile, TileStatus } from "../tiles";
 export type FeatureType = "cco" | "lot";
 
 const maxSupportedFeaturesPerTileRequest = 40;
-const tileBufferInMeters = 10;
 
 const featureNumericIdLookup: Record<FeatureType, number> = {
   cco: 5,
@@ -96,6 +95,23 @@ const generateTileComment = (
   return `${tileDataFilePath} ${numberOfFeaturesAsString.padStart(2)}`;
 };
 
+const getTileBufferInMeters = (zoom: number): number => {
+  if (zoom < 19) {
+    return 10;
+  }
+  if (zoom === 19) {
+    return 5;
+  }
+  if (zoom === 20) {
+    return 2;
+  }
+  if (zoom === 21) {
+    return 1;
+  }
+
+  return 0;
+};
+
 export const generateProcessTile = (
   featureType: FeatureType,
 ): ProcessTile => async (tile) => {
@@ -114,7 +130,10 @@ export const generateProcessTile = (
   }
 
   const tileExtentGeometry = turf.bboxPolygon(
-    addBufferToBbox(tilebelt.tileToBBOX(tile) as turf.BBox, tileBufferInMeters),
+    addBufferToBbox(
+      tilebelt.tileToBBOX(tile) as turf.BBox,
+      getTileBufferInMeters(tile[2]),
+    ),
   ).geometry;
 
   if (!tileExtentGeometry) {
@@ -137,7 +156,7 @@ export const generateProcessTile = (
           retries: 30,
           retryDelay: (retryCount) => (retryCount - 1) * 500,
           retryCondition: (error) =>
-            error.response?.status === 403 || error.code === "ETIMEDOUT",
+            ![200, 404].includes(error.response?.status ?? 0),
         },
       },
     )
