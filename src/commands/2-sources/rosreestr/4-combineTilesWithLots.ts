@@ -6,7 +6,7 @@ import { combineTiles } from "../../../shared/sources/rosreestr";
 export const combineTilesWithLots: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Combining tiles with lots"));
 
-  await combineTiles({ featureType: "cco", logger });
+  await combineTiles({ featureType: "lot", logger });
 };
 
 autoStartCommandIfNeeded(combineTilesWithLots, __filename);

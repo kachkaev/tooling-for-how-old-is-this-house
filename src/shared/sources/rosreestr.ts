@@ -3,12 +3,14 @@ import * as turf from "@turf/turf";
 import axios from "axios";
 import axiosRetry from "axios-retry";
 import fs from "fs-extra";
+import globby from "globby";
+import _ from "lodash";
 import path from "path";
 import sortKeys from "sort-keys";
 
 import { addBufferToBbox } from "../geoHelpers";
 import { getRegionDirPath } from "../region";
-import { ProcessTile, Tile, TileStatus } from "../tiles";
+import { ProcessTile, stringifyTile, Tile, TileStatus } from "../tiles";
 
 /**
  * CCO: capital construction object (ru: ОКС)
@@ -63,25 +65,42 @@ const deriveTileDataStatus = (tileData: TileData): TileStatus => {
     : "complete";
 };
 
-const getTilesDirPath = (featureType: FeatureType) => {
+const getFeatureTypeDirPath = (featureType: FeatureType) => {
   return path.resolve(
     getRegionDirPath(),
     "sources",
     "rosreestr",
     `${featureType}s`,
-    "by-tiles",
   );
+};
+
+const getTilesDirPath = (featureType: FeatureType) => {
+  return path.resolve(getFeatureTypeDirPath(featureType), "by-tiles");
 };
 
 const getTileDataFileName = () => "data.json";
 
-const getTileDataFilePath = (tile: Tile, featureType: FeatureType) => {
+const getTileDataFilePath = (featureType: FeatureType, tile: Tile) => {
   return path.resolve(
     getTilesDirPath(featureType),
     `${tile[2]}`,
     `${tile[0]}`,
     `${tile[1]}`,
     getTileDataFileName(),
+  );
+};
+
+const getCombinedTileFeaturesFilePath = (featureType: FeatureType) => {
+  return path.resolve(
+    getFeatureTypeDirPath(featureType),
+    "combined-tile-features.geojson",
+  );
+};
+
+const getCombinedTileExtentsFilePath = (featureType: FeatureType) => {
+  return path.resolve(
+    getFeatureTypeDirPath(featureType),
+    "combined-tile-extents.geojson",
   );
 };
 
@@ -115,7 +134,7 @@ const getTileBufferInMeters = (zoom: number): number => {
 export const generateProcessTile = (
   featureType: FeatureType,
 ): ProcessTile => async (tile) => {
-  const tileDataFilePath = getTileDataFilePath(tile, featureType);
+  const tileDataFilePath = getTileDataFilePath(featureType, tile);
 
   try {
     const cachedTileData = (await fs.readJson(tileDataFilePath)) as TileData;
@@ -186,5 +205,52 @@ export const combineTiles = async ({
   featureType: FeatureType;
   logger: Console;
 }) => {
-  logger.log(featureType);
+  const rawGlobbyResults = await globby(`**/${getTileDataFileName()}`, {
+    cwd: getTilesDirPath(featureType),
+    absolute: true,
+  });
+  const globbyResults = _.sortBy(rawGlobbyResults);
+
+  const features: turf.Feature[] = [];
+  const tiles: turf.Feature[] = [];
+
+  const numberOfTileFiles = globbyResults.length;
+  const numberOfTileFilesLength = `${numberOfTileFiles}`.length;
+  for (let index = 0; index < numberOfTileFiles; index += 1) {
+    if (
+      index !== 0 &&
+      ((index + 1) % 500 === 0 || index === numberOfTileFiles - 1)
+    ) {
+      logger.log(
+        `${`${index + 1}`.padStart(
+          numberOfTileFilesLength,
+        )} / ${numberOfTileFiles}`,
+      );
+    }
+
+    const tileData = (await fs.readJson(globbyResults[index]!)) as TileData;
+
+    const tileId = stringifyTile(tileData.tile);
+    tiles.push(
+      turf.feature(tileData.fetchedExtent, {
+        tileId,
+        fetchedAt: tileData.fetchedAt,
+        fetchedFeatureCount: tileData.response.features.length,
+      }),
+    );
+  }
+
+  await fs.writeJson(
+    getCombinedTileFeaturesFilePath(featureType),
+    turf.featureCollection(features),
+    { spaces: 2 },
+  );
+
+  await fs.writeJson(
+    getCombinedTileExtentsFilePath(featureType),
+    turf.featureCollection(tiles),
+    { spaces: 2 },
+  );
+
+  logger.log(globbyResults[0], globbyResults.length);
 };

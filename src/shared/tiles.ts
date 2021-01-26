@@ -5,6 +5,9 @@ import _ from "lodash";
 
 export type Tile = [x: number, y: number, zoom: number];
 
+export const stringifyTile = (tile: Tile): string =>
+  `${tile[2]}/${tile[0]}/${tile[1]}`;
+
 export type TileStatus = "complete" | "needsSplitting";
 export type CacheStatus = "used" | "notUsed";
 
