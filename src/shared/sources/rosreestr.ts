@@ -6,8 +6,9 @@ import fs from "fs-extra";
 import path from "path";
 import sortKeys from "sort-keys";
 
+import { addBufferToBbox } from "../geoHelpers";
 import { getRegionDirPath } from "../region";
-import { addBufferToBbox, ProcessTile, Tile, TileStatus } from "../tiles";
+import { ProcessTile, Tile, TileStatus } from "../tiles";
 
 /**
  * CCO: capital construction object (ru: ОКС)

@@ -90,14 +90,3 @@ export const processTiles = async ({
     );
   }
 };
-
-export const addBufferToBbox = (
-  bbox: turf.BBox,
-  bufferInMeters: number,
-): turf.BBox =>
-  turf.bbox(
-    turf.buffer(turf.bboxPolygon(bbox), bufferInMeters / 1000, {
-      units: "kilometers",
-      steps: 1,
-    }),
-  );
