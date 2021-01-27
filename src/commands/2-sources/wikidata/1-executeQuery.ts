@@ -2,7 +2,7 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 
-import { roughenBbox } from "../../../shared/geoHelpers";
+import { roughenBbox } from "../../../shared/helpersForGeometry";
 import { getRegionExtent } from "../../../shared/region";
 
 export const fetchHouseLists: Command = async ({ logger }) => {

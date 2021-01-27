@@ -4,6 +4,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 
+import { getSerialisedNow } from "../../../shared/helpersForJson";
 import {
   HouseListFile,
   HouseListResponse,
@@ -35,7 +36,7 @@ export const fetchHouseLists: Command = async ({ logger }) => {
       ).data;
 
       const json: HouseListFile = {
-        fetchedAt: new Date().toUTCString(),
+        fetchedAt: getSerialisedNow(),
         response,
       };
 

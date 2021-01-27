@@ -9,7 +9,8 @@ import _ from "lodash";
 import path from "path";
 import sortKeys from "sort-keys";
 
-import { addBufferToBbox } from "../geoHelpers";
+import { addBufferToBbox } from "../helpersForGeometry";
+import { getSerialisedNow } from "../helpersForJson";
 import { getRegionDirPath } from "../region";
 import { ProcessTile, stringifyTile, Tile, TileStatus } from "../tiles";
 
@@ -189,7 +190,7 @@ export const generateProcessTile = (
 
   const tileData: TileData = {
     tile,
-    fetchedAt: new Date().toUTCString(),
+    fetchedAt: getSerialisedNow(),
     fetchedExtent: tileExtentGeometry,
     response: sortKeys(tileResponse, { deep: true }),
   };

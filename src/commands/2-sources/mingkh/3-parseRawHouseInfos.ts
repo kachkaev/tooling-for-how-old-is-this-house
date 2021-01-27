@@ -3,6 +3,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
+import { getSerialisedNow } from "../../../shared/helpersForJson";
 import {
   deriveHouseFilePath,
   HouseInfo,
@@ -109,7 +110,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
 
       const houseInfoFileJson: HouseInfoFile = {
         fetchedAt: rawFetchedAtMatch?.[1] ?? "unknown",
-        parsedAt: new Date().toUTCString(),
+        parsedAt: getSerialisedNow(),
         data: sortKeys(info),
       };
 

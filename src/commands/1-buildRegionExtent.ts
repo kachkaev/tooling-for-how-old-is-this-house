@@ -4,6 +4,7 @@ import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
 
+import { getSerialisedNow } from "../shared/helpersForJson";
 import { getRegionConfig, getRegionExtentFilePath } from "../shared/region";
 
 export const buildRegionExtent: Command = async ({ logger }) => {
@@ -66,7 +67,7 @@ export const buildRegionExtent: Command = async ({ logger }) => {
   }
 
   extent.properties.name = regionConfig.name;
-  extent.properties.createdAt = new Date().toUTCString();
+  extent.properties.createdAt = getSerialisedNow();
 
   await fs.writeJson(getRegionExtentFilePath(), extent, { spaces: 2 });
 
