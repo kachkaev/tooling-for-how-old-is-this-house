@@ -19,7 +19,11 @@ import { ProcessTile, stringifyTile, Tile, TileStatus } from "../tiles";
  */
 export type FeatureType = "cco" | "lot";
 
+// The API may return fewer items than requested even if not all of them fit the first page.
+// This might be due to item deduplication that happens when the result is prepared.
+// Judging tile completion with some tolerance helps to not miss the data.
 const maxSupportedFeaturesPerTileRequest = 40;
+const tileCompletionTolerance = 2;
 
 const featureNumericIdLookup: Record<FeatureType, number> = {
   cco: 5,
@@ -61,7 +65,8 @@ const deriveTileDataStatus = (tileData: TileData): TileStatus => {
     throw new Error(`Unexpected number of features ${numberOfFeatures}`);
   }
 
-  return numberOfFeatures === maxSupportedFeaturesPerTileRequest
+  return numberOfFeatures >=
+    maxSupportedFeaturesPerTileRequest - tileCompletionTolerance
     ? "needsSplitting"
     : "complete";
 };
