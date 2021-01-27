@@ -2,6 +2,7 @@ import * as tilebelt from "@mapbox/tilebelt";
 import * as turf from "@turf/turf";
 import axios from "axios";
 import axiosRetry from "axios-retry";
+import chalk from "chalk";
 import fs from "fs-extra";
 import globby from "globby";
 import _ from "lodash";
@@ -205,13 +206,16 @@ export const combineTiles = async ({
   featureType: FeatureType;
   logger: Console;
 }) => {
+  process.stdout.write(chalk.green("Combining obtained elements..."));
   const rawGlobbyResults = await globby(`**/${getTileDataFileName()}`, {
     cwd: getTilesDirPath(featureType),
     absolute: true,
   });
   const globbyResults = _.sortBy(rawGlobbyResults);
+  process.stdout.write(" Done.\n");
 
-  const features: turf.Feature[] = [];
+  process.stdout.write(chalk.green("Combining obtained elements...\n"));
+  const featuresWithDuplicates: turf.Feature[] = [];
   const tiles: turf.Feature[] = [];
 
   const numberOfTileFiles = globbyResults.length;
@@ -231,6 +235,7 @@ export const combineTiles = async ({
     const tileData = (await fs.readJson(globbyResults[index]!)) as TileData;
 
     const tileId = stringifyTile(tileData.tile);
+
     tiles.push(
       turf.feature(tileData.fetchedExtent, {
         tileId,
@@ -238,7 +243,51 @@ export const combineTiles = async ({
         fetchedFeatureCount: tileData.response.features.length,
       }),
     );
+
+    tileData.response.features.forEach((responseFeature) => {
+      // const centroid = turf.toWgs84(
+      //   turf.point([responseFeature.center.x, responseFeature.center.y]),
+      // ).geometry!;
+
+      const extentGeometry = turf.toWgs84(
+        turf.bboxPolygon([
+          responseFeature.extent.xmin,
+          responseFeature.extent.ymin,
+          responseFeature.extent.xmax,
+          responseFeature.extent.ymax,
+        ]),
+      ).geometry!;
+
+      // featuresWithDuplicates.push(
+      //   turf.geometryCollection([centroid, extent], {
+      //     tileId,
+      //     ...responseFeature.attrs,
+      //   }),
+      // );
+
+      const featureProperties = {
+        tileId,
+        ...responseFeature.attrs,
+      };
+
+      featuresWithDuplicates.push(
+        turf.feature(extentGeometry, featureProperties),
+      );
+    });
   }
+
+  process.stdout.write(chalk.green("Deduplicating features..."));
+
+  const features = _.uniqBy(
+    featuresWithDuplicates,
+    (feature) => feature.properties?.cn,
+  );
+
+  process.stdout.write(
+    ` Count reduced from ${featuresWithDuplicates.length} to ${features.length}.\n`,
+  );
+
+  logger.log(chalk.green("Saving..."));
 
   await fs.writeJson(
     getCombinedTileFeaturesFilePath(featureType),
@@ -246,11 +295,20 @@ export const combineTiles = async ({
     { spaces: 2 },
   );
 
+  logger.log(
+    `Features saved to ${chalk.magenta(
+      getCombinedTileFeaturesFilePath(featureType),
+    )}`,
+  );
+
   await fs.writeJson(
     getCombinedTileExtentsFilePath(featureType),
     turf.featureCollection(tiles),
     { spaces: 2 },
   );
-
-  logger.log(globbyResults[0], globbyResults.length);
+  logger.log(
+    `Tile extents saved to ${chalk.magenta(
+      getCombinedTileExtentsFilePath(featureType),
+    )}`,
+  );
 };
