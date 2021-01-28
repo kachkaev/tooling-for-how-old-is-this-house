@@ -4,7 +4,10 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 
-import { getSerialisedNow } from "../../../shared/helpersForJson";
+import {
+  getSerialisedNow,
+  writeFormattedJson,
+} from "../../../shared/helpersForJson";
 import {
   HouseListFile,
   HouseListResponse,
@@ -40,7 +43,7 @@ export const fetchHouseLists: Command = async ({ logger }) => {
         response,
       };
 
-      await fs.writeJson(houseListFilePath, json, { spaces: 2 });
+      await writeFormattedJson(houseListFilePath, json);
 
       process.stdout.write(
         ` Result saved to ${chalk.magenta(houseListFilePath)}\n`,

@@ -3,7 +3,10 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
-import { getSerialisedNow } from "../../../shared/helpersForJson";
+import {
+  getSerialisedNow,
+  writeFormattedJson,
+} from "../../../shared/helpersForJson";
 import {
   deriveHouseFilePath,
   HouseInfo,
@@ -114,9 +117,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
         data: sortKeys(info),
       };
 
-      await fs.writeJson(houseInfoFilePath, houseInfoFileJson, {
-        spaces: 2,
-      });
+      await writeFormattedJson(houseInfoFilePath, houseInfoFileJson);
 
       process.stdout.write(
         ` Result saved to ${chalk.magenta(houseInfoFilePath)}\n`,

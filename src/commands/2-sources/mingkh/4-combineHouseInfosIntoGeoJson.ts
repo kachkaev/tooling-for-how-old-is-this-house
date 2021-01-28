@@ -5,6 +5,7 @@ import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
 
+import { writeFormattedJson } from "../../../shared/helpersForJson";
 import {
   deriveHouseFilePath,
   getHouseListGeoJsonFilePath,
@@ -58,9 +59,7 @@ export const combineHouseInfosIntoGeoJson: Command = async ({ logger }) => {
   );
 
   const houseListGeoJsonFilePath = getHouseListGeoJsonFilePath();
-  await fs.writeJson(houseListGeoJsonFilePath, featureCollection, {
-    spaces: 2,
-  });
+  await writeFormattedJson(houseListGeoJsonFilePath, featureCollection);
 
   process.stdout.write(
     ` Result saved to ${chalk.magenta(houseListGeoJsonFilePath)}\n`,

@@ -196,7 +196,7 @@ export const generateProcessTile = (
   };
 
   await fs.mkdirp(path.dirname(tileDataFilePath));
-  await fs.writeJson(tileDataFilePath, tileData, { spaces: 2 });
+  await writeFormattedJson(tileDataFilePath, tileData);
 
   return {
     cacheStatus: "notUsed",
