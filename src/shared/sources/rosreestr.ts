@@ -4,13 +4,13 @@ import axios from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import fs from "fs-extra";
-import globby from "globby";
 import _ from "lodash";
 import path from "path";
 import sortKeys from "sort-keys";
 
 import { addBufferToBbox } from "../helpersForGeometry";
 import { getSerialisedNow, writeFormattedJson } from "../helpersForJson";
+import { processFiles } from "../processFiles";
 import { getRegionDirPath } from "../region";
 import { ProcessTile, stringifyTile, Tile, TileStatus } from "../tiles";
 
@@ -212,75 +212,58 @@ export const combineTiles = async ({
   featureType: FeatureType;
   logger: Console;
 }) => {
-  process.stdout.write(chalk.green("Listing files..."));
-  const rawGlobbyResults = await globby(`**/${getTileDataFileName()}`, {
-    cwd: getTilesDirPath(featureType),
-    absolute: true,
-  });
-  const globbyResults = _.sortBy(rawGlobbyResults);
-  process.stdout.write(" Done.\n");
-
-  process.stdout.write(chalk.green("Combining file contents...\n"));
   const featuresWithDuplicates: turf.Feature[] = [];
   const tiles: turf.Feature[] = [];
 
-  const numberOfTileFiles = globbyResults.length;
-  const numberOfTileFilesLength = `${numberOfTileFiles}`.length;
-  for (let index = 0; index < numberOfTileFiles; index += 1) {
-    if (
-      index !== 0 &&
-      ((index + 1) % 500 === 0 || index === numberOfTileFiles - 1)
-    ) {
-      logger.log(
-        `${`${index + 1}`.padStart(
-          numberOfTileFilesLength,
-        )} / ${numberOfTileFiles}`,
+  await processFiles({
+    logger,
+    fileSearchPattern: `**/${getTileDataFileName()}`,
+    fileSearchCwd: getTilesDirPath(featureType),
+    processFile: async (filePath) => {
+      const tileData = (await fs.readJson(filePath)) as TileData;
+
+      const tileId = stringifyTile(tileData.tile);
+
+      tiles.push(
+        turf.feature(tileData.fetchedExtent, {
+          tileId,
+          fetchedAt: tileData.fetchedAt,
+          fetchedFeatureCount: tileData.response.features.length,
+        }),
       );
-    }
 
-    const tileData = (await fs.readJson(globbyResults[index]!)) as TileData;
+      tileData.response.features.forEach((responseFeature) => {
+        // const centroid = turf.toWgs84(
+        //   turf.point([responseFeature.center.x, responseFeature.center.y]),
+        // ).geometry!;
 
-    const tileId = stringifyTile(tileData.tile);
+        const extentGeometry = turf.toWgs84(
+          turf.bboxPolygon([
+            responseFeature.extent.xmin,
+            responseFeature.extent.ymin,
+            responseFeature.extent.xmax,
+            responseFeature.extent.ymax,
+          ]),
+        ).geometry!;
 
-    tiles.push(
-      turf.feature(tileData.fetchedExtent, {
-        tileId,
-        fetchedAt: tileData.fetchedAt,
-        fetchedFeatureCount: tileData.response.features.length,
-      }),
-    );
+        // featuresWithDuplicates.push(
+        //   turf.geometryCollection([centroid, extent], {
+        //     tileId,
+        //     ...responseFeature.attrs,
+        //   }),
+        // );
 
-    tileData.response.features.forEach((responseFeature) => {
-      // const centroid = turf.toWgs84(
-      //   turf.point([responseFeature.center.x, responseFeature.center.y]),
-      // ).geometry!;
+        const featureProperties = {
+          tileId,
+          ...responseFeature.attrs,
+        };
 
-      const extentGeometry = turf.toWgs84(
-        turf.bboxPolygon([
-          responseFeature.extent.xmin,
-          responseFeature.extent.ymin,
-          responseFeature.extent.xmax,
-          responseFeature.extent.ymax,
-        ]),
-      ).geometry!;
-
-      // featuresWithDuplicates.push(
-      //   turf.geometryCollection([centroid, extent], {
-      //     tileId,
-      //     ...responseFeature.attrs,
-      //   }),
-      // );
-
-      const featureProperties = {
-        tileId,
-        ...responseFeature.attrs,
-      };
-
-      featuresWithDuplicates.push(
-        turf.feature(extentGeometry, featureProperties),
-      );
-    });
-  }
+        featuresWithDuplicates.push(
+          turf.feature(extentGeometry, featureProperties),
+        );
+      });
+    },
+  });
 
   process.stdout.write(chalk.green("Deduplicating features..."));
 
