@@ -10,7 +10,7 @@ import path from "path";
 import sortKeys from "sort-keys";
 
 import { addBufferToBbox } from "../helpersForGeometry";
-import { getSerialisedNow } from "../helpersForJson";
+import { getSerialisedNow, writeFormattedJson } from "../helpersForJson";
 import { getRegionDirPath } from "../region";
 import { ProcessTile, stringifyTile, Tile, TileStatus } from "../tiles";
 
@@ -212,7 +212,7 @@ export const combineTiles = async ({
   featureType: FeatureType;
   logger: Console;
 }) => {
-  process.stdout.write(chalk.green("Combining obtained elements..."));
+  process.stdout.write(chalk.green("Listing files..."));
   const rawGlobbyResults = await globby(`**/${getTileDataFileName()}`, {
     cwd: getTilesDirPath(featureType),
     absolute: true,
@@ -220,7 +220,7 @@ export const combineTiles = async ({
   const globbyResults = _.sortBy(rawGlobbyResults);
   process.stdout.write(" Done.\n");
 
-  process.stdout.write(chalk.green("Combining obtained elements...\n"));
+  process.stdout.write(chalk.green("Combining file contents...\n"));
   const featuresWithDuplicates: turf.Feature[] = [];
   const tiles: turf.Feature[] = [];
 
@@ -295,22 +295,19 @@ export const combineTiles = async ({
 
   logger.log(chalk.green("Saving..."));
 
-  await fs.writeJson(
+  await writeFormattedJson(
     getCombinedTileFeaturesFilePath(featureType),
     turf.featureCollection(features),
-    { spaces: 2 },
   );
-
   logger.log(
     `Features saved to ${chalk.magenta(
       getCombinedTileFeaturesFilePath(featureType),
     )}`,
   );
 
-  await fs.writeJson(
+  await writeFormattedJson(
     getCombinedTileExtentsFilePath(featureType),
     turf.featureCollection(tiles),
-    { spaces: 2 },
   );
   logger.log(
     `Tile extents saved to ${chalk.magenta(
