@@ -218,7 +218,7 @@ export const combineTiles = async ({
   await processFiles({
     logger,
     fileSearchPattern: `**/${getTileDataFileName()}`,
-    fileSearchCwd: getTilesDirPath(featureType),
+    fileSearchDirPath: getTilesDirPath(featureType),
     processFile: async (filePath) => {
       const tileData = (await fs.readJson(filePath)) as TileData;
 

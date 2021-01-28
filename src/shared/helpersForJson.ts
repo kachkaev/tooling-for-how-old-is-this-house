@@ -1,27 +1,47 @@
 import fs from "fs-extra";
+import _ from "lodash";
 
 export const getSerialisedNow = (): string => new Date().toUTCString();
 
-const formatJson = (object: unknown): string => {
-  let result = JSON.stringify(object, null, 2);
+interface FormatJsonOptions {
+  checkIntegrity?: boolean;
+}
+
+const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
+  let result = JSON.stringify(object, null, "\t");
 
   // Below transformations makes sense at scale for multiline
   // JSON files with tends of thousands of lines
 
   /*
     == before ==
-    "tile": [
+    "something": [
+      x,
+      y
+    ]
+    
+    == after ==
+    "something": [x, y]
+   */
+  result = result.replace(
+    /": \[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+\]/g,
+    '": [$1, $2]',
+  );
+
+  /*
+    == before ==
+    "something": [
       x,
       y,
       z
     ]
     
     == after ==
-    "tile": [x, y, z]
+    "something": [x, y, z]
    */
   result = result.replace(
-    /"tile": \[\n +(\d+),\n +(\d+),\n +(\d+)\n +\]/g,
-    '"tile": [$1, $2, $3]',
+    /": \[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+\]/g,
+    '": [$1, $2, $3]',
   );
 
   /*
@@ -35,7 +55,7 @@ const formatJson = (object: unknown): string => {
     [lon, lat]
    */
   result = result.replace(
-    /(\n +)\[\n +(-?\d+\.?\d*),\n +(-?\d+\.?\d*)\n +\]/g,
+    /(\n\t+)\[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+\]/g,
     "$1[$2, $3]",
   );
 
@@ -56,20 +76,29 @@ const formatJson = (object: unknown): string => {
       [lon, lat]
     ]]
    */
-  for (let whitespace = ""; whitespace.length <= 20; whitespace += "  ") {
+  for (let whitespace = ""; whitespace.length <= 10; whitespace += "\t") {
     result = result.replace(
       new RegExp(
-        `\\[\\n${whitespace}  \\[\\n((${whitespace}    [^\\n]+\\n)+)${whitespace}  \\]\\n +\\]`,
+        `\\[\\n${whitespace}\t\\[(\\n(${whitespace}\t[^\\n]+\\n)+)${whitespace}\t\\]\\n\t+\\]`,
         "g",
       ),
-      (match, p1) =>
-        `[[\n${p1.replace(/\n {2}/g, "\n").substr(2)}${whitespace}]]`,
+      (match, p1) => `[[${p1.replace(/\n\t/g, "\n")}${whitespace}]]`,
     );
+  }
+
+  if (options?.checkIntegrity) {
+    if (!_.isEqual(object, JSON.parse(result))) {
+      throw new Error(`Integrity check failed`);
+    }
   }
 
   return result;
 };
 
-export const writeFormattedJson = async (filePath: string, object: unknown) => {
-  await fs.writeFile(filePath, formatJson(object), "utf8");
+export const writeFormattedJson = async (
+  filePath: string,
+  object: unknown,
+  options?: FormatJsonOptions,
+) => {
+  await fs.writeFile(filePath, formatJson(object, options), "utf8");
 };

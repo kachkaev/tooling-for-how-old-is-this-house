@@ -5,19 +5,19 @@ import _ from "lodash";
 export const processFiles = async ({
   logger,
   fileSearchPattern,
-  fileSearchCwd,
+  fileSearchDirPath,
   processFile,
   statusReportFrequency = 500,
 }: {
   logger: Console;
   fileSearchPattern: string;
-  fileSearchCwd: string;
+  fileSearchDirPath: string;
   processFile: (filePath: string) => Promise<void>;
   statusReportFrequency?: number;
 }) => {
   process.stdout.write(chalk.green("Listing files..."));
   const rawGlobbyResults = await globby(fileSearchPattern, {
-    cwd: fileSearchCwd,
+    cwd: fileSearchDirPath,
     absolute: true,
   });
   const globbyResults = _.sortBy(rawGlobbyResults);
