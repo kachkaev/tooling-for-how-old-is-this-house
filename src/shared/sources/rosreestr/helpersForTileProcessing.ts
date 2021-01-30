@@ -23,7 +23,7 @@ const featureNumericIdLookup: Record<FeatureType, number> = {
   lot: 1,
 };
 
-const deriveTileDataStatus = (tileData: TileData): TileStatus => {
+export const deriveTileDataStatus = (tileData: TileData): TileStatus => {
   const numberOfFeatures = tileData.response.features.length;
   if (numberOfFeatures > maxSupportedFeaturesPerTileRequest) {
     throw new Error(`Unexpected number of features ${numberOfFeatures}`);

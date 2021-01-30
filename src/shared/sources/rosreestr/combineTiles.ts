@@ -8,6 +8,7 @@ import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
 import { convertCnToId } from "./helpersForCn";
 import { getTileDataFileName, getTilesDirPath } from "./helpersForPaths";
+import { deriveTileDataStatus } from "./helpersForTileProcessing";
 import {
   CenterInCombinedTileFeaturesData,
   ExtentInCombinedTileFeaturesData,
@@ -37,6 +38,9 @@ export const combineTiles = async ({
     fileSearchDirPath: getTilesDirPath(featureType),
     processFile: async (filePath) => {
       const tileData = (await fs.readJson(filePath)) as TileData;
+      if (deriveTileDataStatus(tileData) !== "complete") {
+        return;
+      }
 
       const tileId = stringifyTile(tileData.tile);
 

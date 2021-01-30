@@ -1,5 +1,5 @@
 export * from "./combineTiles";
 export * from "./combineTilesAndSavePreviews";
-export * from "./generateProcessTile";
+export * from "./helpersForTileProcessing";
 export * from "./helpersForPaths";
 export * from "./types";
