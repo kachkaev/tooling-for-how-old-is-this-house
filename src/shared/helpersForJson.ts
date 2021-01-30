@@ -62,6 +62,19 @@ const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
 
   /*
     == before ==
+    "something": {
+      "key", value
+    }
+    
+    == after ==
+    "something": { "key": value }
+   */
+  for (let whitespace = ""; whitespace.length <= 10; whitespace += "\t") {
+    result = result.replace(/\n(\t+".*": ){\n\t+(.*)\n\t+}/g, "\n$1{ $2 }");
+  }
+
+  /*
+    == before ==
     "coordinates": [
       [
         [lon, lat],

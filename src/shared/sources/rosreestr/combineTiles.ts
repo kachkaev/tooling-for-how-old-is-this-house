@@ -47,31 +47,6 @@ export const combineTiles = async ({
       );
 
       tileData.response.features.forEach((responseFeature) => {
-        // const centroidGeometry = turf.toWgs84(
-        //   turf.point([responseFeature.center.x, responseFeature.center.y]),
-        // ).geometry!;
-
-        const extentGeometry = turf.toWgs84(
-          turf.bboxPolygon([
-            responseFeature.extent.xmin,
-            responseFeature.extent.ymin,
-            responseFeature.extent.xmax,
-            responseFeature.extent.ymax,
-          ]),
-        ).geometry!;
-
-        // featuresWithDuplicates.push(
-        //   turf.geometryCollection([centroid, extent], {
-        //     tileId,
-        //     ...responseFeature.attrs,
-        //   }),
-        // );
-
-        const featureProperties = {
-          tileId,
-          ...responseFeature.attrs,
-        };
-
         const { cn, id } = responseFeature.attrs;
         const derivedId = convertCnToId(cn);
         if (derivedId !== id) {
@@ -82,9 +57,26 @@ export const combineTiles = async ({
           );
         }
 
-        featuresWithDuplicates.push(
-          turf.feature(extentGeometry, featureProperties),
+        const center = turf.toWgs84(
+          turf.point([responseFeature.center.x, responseFeature.center.y], {
+            tileId,
+            ...responseFeature.attrs,
+          }),
         );
+
+        const extent = turf.toWgs84(
+          turf.bboxPolygon([
+            responseFeature.extent.xmin,
+            responseFeature.extent.ymin,
+            responseFeature.extent.xmax,
+            responseFeature.extent.ymax,
+          ]),
+        );
+        extent.properties = { cn };
+
+        // Creating two separate features because QGIS cannot render GeometryCollection
+        // https://github.com/qgis/QGIS/issues/32747#issuecomment-770267561
+        featuresWithDuplicates.push(center, extent);
       });
     },
   });
@@ -93,7 +85,7 @@ export const combineTiles = async ({
 
   const features = _.uniqBy(
     featuresWithDuplicates,
-    (feature) => feature.properties?.cn,
+    (feature) => `${feature.geometry?.type}=${feature.properties?.cn}`,
   );
 
   process.stdout.write(
