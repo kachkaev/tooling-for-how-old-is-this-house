@@ -33,6 +33,37 @@ export interface TileResponse {
 export interface TileData {
   tile: Tile;
   fetchedAt: string;
-  fetchedExtent: turf.Geometry;
+  fetchedExtent: turf.Polygon;
   response: TileResponse;
 }
+
+export type FeatureInCombinedTileExtentsData = turf.Feature<
+  turf.Polygon,
+  {
+    tileId: string;
+    fetchedAt: string;
+    fetchedFeatureCount: number;
+  }
+>;
+
+export type CenterInCombinedTileFeaturesData = turf.Feature<
+  turf.Point,
+  {
+    address: string;
+    cn: string;
+    id: string;
+    tileId: string;
+  }
+>;
+
+export type ExtentInCombinedTileFeaturesData = turf.Feature<
+  turf.Polygon,
+  {
+    cn: string;
+  }
+>;
+
+export type CombinedTileExtentsData = turf.FeatureCollection<FeatureInCombinedTileExtentsData>;
+export type CombinedTileFeaturesData = turf.FeatureCollection<
+  CenterInCombinedTileFeaturesData | ExtentInCombinedTileFeaturesData
+>;

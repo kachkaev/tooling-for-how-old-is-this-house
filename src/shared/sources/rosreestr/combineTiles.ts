@@ -13,7 +13,13 @@ import {
   getTileDataFileName,
   getTilesDirPath,
 } from "./helpersForPaths";
-import { FeatureType, TileData } from "./types";
+import {
+  CenterInCombinedTileFeaturesData,
+  ExtentInCombinedTileFeaturesData,
+  FeatureInCombinedTileExtentsData,
+  FeatureType,
+  TileData,
+} from "./types";
 
 export * from "./generateProcessTile";
 export * from "./helpersForPaths";
@@ -26,8 +32,10 @@ export const combineTiles = async ({
   featureType: FeatureType;
   logger: Console;
 }) => {
-  const featuresWithDuplicates: turf.Feature[] = [];
-  const tiles: turf.Feature[] = [];
+  const featuresWithDuplicates: Array<
+    CenterInCombinedTileFeaturesData | ExtentInCombinedTileFeaturesData
+  > = [];
+  const tiles: FeatureInCombinedTileExtentsData[] = [];
 
   await processFiles({
     logger,
@@ -57,14 +65,14 @@ export const combineTiles = async ({
           );
         }
 
-        const center = turf.toWgs84(
+        const center: CenterInCombinedTileFeaturesData = turf.toWgs84(
           turf.point([responseFeature.center.x, responseFeature.center.y], {
             tileId,
             ...responseFeature.attrs,
           }),
         );
 
-        const extent = turf.toWgs84(
+        const plainExtent = turf.toWgs84(
           turf.bboxPolygon([
             responseFeature.extent.xmin,
             responseFeature.extent.ymin,
@@ -72,7 +80,10 @@ export const combineTiles = async ({
             responseFeature.extent.ymax,
           ]),
         );
-        extent.properties = { cn };
+        const extent: ExtentInCombinedTileFeaturesData = turf.feature(
+          plainExtent.geometry!,
+          { cn },
+        );
 
         // Creating two separate features because QGIS cannot render GeometryCollection
         // https://github.com/qgis/QGIS/issues/32747#issuecomment-770267561
