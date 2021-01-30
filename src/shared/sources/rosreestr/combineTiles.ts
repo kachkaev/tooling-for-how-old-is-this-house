@@ -2,17 +2,12 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
+import sortKeys from "sort-keys";
 
-import { writeFormattedJson } from "../../helpersForJson";
 import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
 import { convertCnToId } from "./helpersForCn";
-import {
-  getCombinedTileExtentsFilePath,
-  getCombinedTileFeaturesFilePath,
-  getTileDataFileName,
-  getTilesDirPath,
-} from "./helpersForPaths";
+import { getTileDataFileName, getTilesDirPath } from "./helpersForPaths";
 import {
   CenterInCombinedTileFeaturesData,
   ExtentInCombinedTileFeaturesData,
@@ -21,21 +16,20 @@ import {
   TileData,
 } from "./types";
 
-export * from "./generateProcessTile";
-export * from "./helpersForPaths";
-export * from "./types";
-
 export const combineTiles = async ({
   featureType,
   logger,
 }: {
   featureType: FeatureType;
   logger: Console;
-}) => {
-  const featuresWithDuplicates: Array<
-    CenterInCombinedTileFeaturesData | ExtentInCombinedTileFeaturesData
-  > = [];
-  const tiles: FeatureInCombinedTileExtentsData[] = [];
+}): Promise<{
+  featureCenters: CenterInCombinedTileFeaturesData[];
+  featureExtents: ExtentInCombinedTileFeaturesData[];
+  tileExtents: FeatureInCombinedTileExtentsData[];
+}> => {
+  const featureExtentsWithDuplicates: ExtentInCombinedTileFeaturesData[] = [];
+  const featureCentersWithDuplicates: CenterInCombinedTileFeaturesData[] = [];
+  const tileExtents: FeatureInCombinedTileExtentsData[] = [];
 
   await processFiles({
     logger,
@@ -46,7 +40,7 @@ export const combineTiles = async ({
 
       const tileId = stringifyTile(tileData.tile);
 
-      tiles.push(
+      tileExtents.push(
         turf.feature(tileData.fetchedExtent, {
           tileId,
           fetchedAt: tileData.fetchedAt,
@@ -66,10 +60,13 @@ export const combineTiles = async ({
         }
 
         const center: CenterInCombinedTileFeaturesData = turf.toWgs84(
-          turf.point([responseFeature.center.x, responseFeature.center.y], {
-            tileId,
-            ...responseFeature.attrs,
-          }),
+          turf.point(
+            [responseFeature.center.x, responseFeature.center.y],
+            sortKeys({
+              tileId,
+              ...responseFeature.attrs,
+            }),
+          ),
         );
 
         const plainExtent = turf.toWgs84(
@@ -87,41 +84,52 @@ export const combineTiles = async ({
 
         // Creating two separate features because QGIS cannot render GeometryCollection
         // https://github.com/qgis/QGIS/issues/32747#issuecomment-770267561
-        featuresWithDuplicates.push(center, extent);
+        featureCentersWithDuplicates.push(center);
+        featureExtentsWithDuplicates.push(extent);
       });
     },
   });
 
   process.stdout.write(chalk.green("Deduplicating features..."));
 
-  const features = _.uniqBy(
-    featuresWithDuplicates,
-    (feature) => `${feature.geometry?.type}=${feature.properties?.cn}`,
+  const featureCenters = _.uniqBy(
+    featureCentersWithDuplicates,
+    (feature) => feature.properties?.cn,
+  );
+
+  const featureExtents = _.uniqBy(
+    featureExtentsWithDuplicates,
+    (feature) => feature.properties?.cn,
   );
 
   process.stdout.write(
-    ` Count reduced from ${featuresWithDuplicates.length} to ${features.length}.\n`,
+    ` Count reduced from ${featureExtentsWithDuplicates.length} to ${featureExtents.length}.\n`,
   );
 
-  logger.log(chalk.green("Saving..."));
+  return {
+    featureCenters,
+    featureExtents,
+    tileExtents,
+  };
+  // logger.log(chalk.green("Saving..."));
 
-  await writeFormattedJson(
-    getCombinedTileFeaturesFilePath(featureType),
-    turf.featureCollection(features),
-  );
-  logger.log(
-    `Features saved to ${chalk.magenta(
-      getCombinedTileFeaturesFilePath(featureType),
-    )}`,
-  );
+  // await writeFormattedJson(
+  //   getCombinedTileFeaturesFilePath(featureType),
+  //   turf.featureCollection(features),
+  // );
+  // logger.log(
+  //   `Features saved to ${chalk.magenta(
+  //     getCombinedTileFeaturesFilePath(featureType),
+  //   )}`,
+  // );
 
-  await writeFormattedJson(
-    getCombinedTileExtentsFilePath(featureType),
-    turf.featureCollection(tiles),
-  );
-  logger.log(
-    `Tile extents saved to ${chalk.magenta(
-      getCombinedTileExtentsFilePath(featureType),
-    )}`,
-  );
+  // await writeFormattedJson(
+  //   getCombinedTileExtentsFilePath(featureType),
+  //   turf.featureCollection(tileExtents),
+  // );
+  // logger.log(
+  //   `Tile extents saved to ${chalk.magenta(
+  //     getCombinedTileExtentsFilePath(featureType),
+  //   )}`,
+  // );
 };

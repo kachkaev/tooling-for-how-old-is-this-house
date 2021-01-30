@@ -4,7 +4,7 @@ import { getRegionDirPath } from "../../region";
 import { Tile } from "../../tiles";
 import { FeatureType } from "./types";
 
-const getFeatureTypeDirPath = (featureType: FeatureType) => {
+export const getFeatureTypeDirPath = (featureType: FeatureType) => {
   return path.resolve(
     getRegionDirPath(),
     "sources",
@@ -26,19 +26,5 @@ export const getTileDataFilePath = (featureType: FeatureType, tile: Tile) => {
     `${tile[0]}`,
     `${tile[1]}`,
     getTileDataFileName(),
-  );
-};
-
-export const getCombinedTileFeaturesFilePath = (featureType: FeatureType) => {
-  return path.resolve(
-    getFeatureTypeDirPath(featureType),
-    "combined-tile-features.geojson",
-  );
-};
-
-export const getCombinedTileExtentsFilePath = (featureType: FeatureType) => {
-  return path.resolve(
-    getFeatureTypeDirPath(featureType),
-    "combined-tile-extents.geojson",
   );
 };
