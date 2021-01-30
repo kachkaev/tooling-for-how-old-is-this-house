@@ -97,14 +97,14 @@ const getTileDataFilePath = (featureType: FeatureType, tile: Tile) => {
   );
 };
 
-const getCombinedTileFeaturesFilePath = (featureType: FeatureType) => {
+export const getCombinedTileFeaturesFilePath = (featureType: FeatureType) => {
   return path.resolve(
     getFeatureTypeDirPath(featureType),
     "combined-tile-features.geojson",
   );
 };
 
-const getCombinedTileExtentsFilePath = (featureType: FeatureType) => {
+export const getCombinedTileExtentsFilePath = (featureType: FeatureType) => {
   return path.resolve(
     getFeatureTypeDirPath(featureType),
     "combined-tile-extents.geojson",
