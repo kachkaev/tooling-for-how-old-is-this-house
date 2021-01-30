@@ -6,6 +6,7 @@ import _ from "lodash";
 import { writeFormattedJson } from "../../helpersForJson";
 import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
+import { convertCnToId } from "./helpersForCn";
 import {
   getCombinedTileExtentsFilePath,
   getCombinedTileFeaturesFilePath,
@@ -46,7 +47,7 @@ export const combineTiles = async ({
       );
 
       tileData.response.features.forEach((responseFeature) => {
-        // const centroid = turf.toWgs84(
+        // const centroidGeometry = turf.toWgs84(
         //   turf.point([responseFeature.center.x, responseFeature.center.y]),
         // ).geometry!;
 
@@ -70,6 +71,16 @@ export const combineTiles = async ({
           tileId,
           ...responseFeature.attrs,
         };
+
+        const { cn, id } = responseFeature.attrs;
+        const derivedId = convertCnToId(cn);
+        if (derivedId !== id) {
+          logger.log(
+            chalk.red(
+              `Id mismatch detected for object with cn ${responseFeature.attrs.cn}: Derived id is ${derivedId}, while real id is ${id}. Downstream scripts may fail.`,
+            ),
+          );
+        }
 
         featuresWithDuplicates.push(
           turf.feature(extentGeometry, featureProperties),

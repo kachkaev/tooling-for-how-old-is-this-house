@@ -8,6 +8,7 @@ import {
   FeatureType,
   getCombinedTileFeaturesFilePath,
 } from "../../../shared/sources/rosreestr";
+import { getCnChunk } from "../../../shared/sources/rosreestr/helpersForCn";
 
 const districtPartLengthInCn = "00:00:0000000".length;
 
@@ -53,7 +54,7 @@ export const combineTilesWithLots: Command = async ({ logger }) => {
 
   const featureTuples = Object.entries(featureTypeByCn);
   const featureTuplesByDistrict = _.groupBy(featureTuples, (featureTuple) =>
-    featureTuple[0].substring(0, districtPartLengthInCn - 1),
+    getCnChunk(featureTuple[0], 0, 3),
   );
 
   const districtTuples = _.orderBy(
