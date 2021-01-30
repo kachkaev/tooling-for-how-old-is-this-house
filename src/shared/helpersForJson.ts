@@ -1,5 +1,6 @@
 import fs from "fs-extra";
 import _ from "lodash";
+import path from "path";
 
 export const getSerialisedNow = (): string => new Date().toUTCString();
 
@@ -100,5 +101,6 @@ export const writeFormattedJson = async (
   object: unknown,
   options?: FormatJsonOptions,
 ) => {
+  await fs.mkdirp(path.dirname(filePath));
   await fs.writeFile(filePath, formatJson(object, options), "utf8");
 };

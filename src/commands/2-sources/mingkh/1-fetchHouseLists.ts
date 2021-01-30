@@ -1,8 +1,6 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import axios from "axios";
 import chalk from "chalk";
-import fs from "fs-extra";
-import path from "path";
 
 import {
   getSerialisedNow,
@@ -19,8 +17,6 @@ export const fetchHouseLists: Command = async ({ logger }) => {
 
   await loopThroughHouseLists(
     async ({ regionUrl, cityUrl, houseListFilePath }) => {
-      await fs.mkdirp(path.dirname(houseListFilePath));
-
       const response = (
         await axios.post<HouseListResponse>(
           "https://dom.mingkh.ru/api/houses",
