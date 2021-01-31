@@ -8,37 +8,37 @@ import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
 import { convertCnToId } from "./helpersForCn";
 import { getTileDataFileName, getTilesDirPath } from "./helpersForPaths";
-import { deriveTileDataStatus } from "./helpersForTileProcessing";
+import { deriveRosreestrTileDataStatus } from "./helpersForTileProcessing";
 import {
   ObjectCenterFeature,
   ObjectExtentFeature,
-  ObjectType,
-  TileData,
-  TileExtentFeature,
+  RosreestrObjectType,
+  RosreestrTileData,
+  RosreestrTileExtentFeature,
 } from "./types";
 
-export const combineTiles = async ({
+export const combineRosreestrTiles = async ({
   objectType,
   logger,
 }: {
-  objectType: ObjectType;
+  objectType: RosreestrObjectType;
   logger: Console;
 }): Promise<{
   objectCenterFeatures: ObjectCenterFeature[];
   objectExtentFeatures: ObjectExtentFeature[];
-  tileExtentFeatures: TileExtentFeature[];
+  tileExtentFeatures: RosreestrTileExtentFeature[];
 }> => {
   const rawObjectExtentFeatures: ObjectExtentFeature[] = [];
   const rawObjectCenterFeatures: ObjectCenterFeature[] = [];
-  const tileExtentFeatures: TileExtentFeature[] = [];
+  const tileExtentFeatures: RosreestrTileExtentFeature[] = [];
 
   await processFiles({
     logger,
     fileSearchPattern: `**/${getTileDataFileName()}`,
     fileSearchDirPath: getTilesDirPath(objectType),
     processFile: async (filePath) => {
-      const tileData = (await fs.readJson(filePath)) as TileData;
-      if (deriveTileDataStatus(tileData) !== "complete") {
+      const tileData = (await fs.readJson(filePath)) as RosreestrTileData;
+      if (deriveRosreestrTileDataStatus(tileData) !== "complete") {
         return;
       }
 

@@ -63,7 +63,7 @@ const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
   for (let whitespace = ""; whitespace.length <= 10; whitespace += "\t") {
     result = result.replace(
       new RegExp(`\\n${whitespace}\\},\\n${whitespace}\\{`, "g"),
-      "\n}, {",
+      `\n${whitespace}}, {`,
     );
   }
 
@@ -77,33 +77,33 @@ const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
 
   /*
     == before ==
-    "something": [
+    [
       x,
       y
     ]
     
     == after ==
-    "something": [x, y]
+    [x, y]
    */
   result = result.replace(
-    /": \[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+\]/g,
-    '": [$1, $2]',
+    /\[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+\]/g,
+    "[$1, $2]",
   );
 
   /*
     == before ==
-    "something": [
+    [
       x,
       y,
       z
     ]
     
     == after ==
-    "something": [x, y, z]
+    [x, y, z]
    */
   result = result.replace(
-    /": \[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+\]/g,
-    '": [$1, $2, $3]',
+    /\[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+\]/g,
+    "[$1, $2, $3]",
   );
 
   /*

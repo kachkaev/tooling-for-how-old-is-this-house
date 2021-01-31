@@ -6,12 +6,12 @@ import _ from "lodash";
 import { writeFormattedJson } from "../../../shared/helpersForJson";
 import { getRegionExtent } from "../../../shared/region";
 import {
-  combineTiles,
+  combineRosreestrTiles,
   getObjectInfoPageFilePath,
   InfoPageData,
   InitialObjectInInfoPage,
   ObjectCenterFeature,
-  ObjectType,
+  RosreestrObjectType,
 } from "../../../shared/sources/rosreestr";
 import { getCnChunk } from "../../../shared/sources/rosreestr/helpersForCn";
 
@@ -24,13 +24,17 @@ export const generateInfoPages: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Generating object info pages"));
 
   logger.log(chalk.green("Loading CCOs from tiles..."));
-  const { objectCenterFeatures: ccoCentersInTiles } = await combineTiles({
+  const {
+    objectCenterFeatures: ccoCentersInTiles,
+  } = await combineRosreestrTiles({
     objectType: "cco",
     logger,
   });
 
   logger.log(chalk.green("Loading lots from tiles..."));
-  const { objectCenterFeatures: lotCentersInTiles } = await combineTiles({
+  const {
+    objectCenterFeatures: lotCentersInTiles,
+  } = await combineRosreestrTiles({
     objectType: "lot",
     logger,
   });
@@ -41,7 +45,7 @@ export const generateInfoPages: Command = async ({ logger }) => {
   const objectByCn: Record<
     string,
     {
-      objectType: ObjectType;
+      objectType: RosreestrObjectType;
       center: ObjectCenterFeature;
     }
   > = {};

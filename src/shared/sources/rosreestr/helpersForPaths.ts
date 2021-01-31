@@ -2,23 +2,26 @@ import path from "path";
 
 import { getRegionDirPath } from "../../region";
 import { Tile } from "../../tiles";
-import { ObjectType } from "./types";
+import { RosreestrObjectType } from "./types";
 
 export const getRosreestrDirPath = () => {
   return path.resolve(getRegionDirPath(), "sources", "rosreestr");
 };
 
-export const getObjectDirPath = (objectType: ObjectType) => {
+export const getObjectDirPath = (objectType: RosreestrObjectType) => {
   return path.resolve(getRosreestrDirPath(), `${objectType}s`);
 };
 
-export const getTilesDirPath = (objectType: ObjectType) => {
+export const getTilesDirPath = (objectType: RosreestrObjectType) => {
   return path.resolve(getObjectDirPath(objectType), "by-tiles");
 };
 
 export const getTileDataFileName = () => "data.json";
 
-export const getTileDataFilePath = (objectType: ObjectType, tile: Tile) => {
+export const getTileDataFilePath = (
+  objectType: RosreestrObjectType,
+  tile: Tile,
+) => {
   return path.resolve(
     getTilesDirPath(objectType),
     `${tile[2]}`,

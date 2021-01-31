@@ -8,7 +8,11 @@ import { getSerialisedNow, writeFormattedJson } from "../../helpersForJson";
 import { ProcessTile, TileStatus } from "../../tiles";
 import { fetchJsonFromRosreestr } from "./fetchJsonFromRosreestr";
 import { getTileDataFilePath } from "./helpersForPaths";
-import { ObjectType, TileData, TileResponse } from "./types";
+import {
+  RosreestrObjectType,
+  RosreestrTileData,
+  RosreestrTileResponse,
+} from "./types";
 
 // The API may return fewer items than requested even if not all of them fit the first page.
 // This might be due to item deduplication that happens when the result is prepared.
@@ -17,12 +21,14 @@ import { ObjectType, TileData, TileResponse } from "./types";
 const maxSupportedFeaturesPerTileRequest = 40;
 const tileCompletionTolerance = 2;
 
-const featureNumericIdLookup: Record<ObjectType, number> = {
+const featureNumericIdLookup: Record<RosreestrObjectType, number> = {
   cco: 5,
   lot: 1,
 };
 
-export const deriveTileDataStatus = (tileData: TileData): TileStatus => {
+export const deriveRosreestrTileDataStatus = (
+  tileData: RosreestrTileData,
+): TileStatus => {
   const numberOfFeatures = tileData.response.features.length;
   if (numberOfFeatures > maxSupportedFeaturesPerTileRequest) {
     throw new Error(`Unexpected number of features ${numberOfFeatures}`);
@@ -34,9 +40,9 @@ export const deriveTileDataStatus = (tileData: TileData): TileStatus => {
     : "complete";
 };
 
-const generateTileComment = (
+const generateRosreestrTileComment = (
   tileDataFilePath: string,
-  tileData: TileData,
+  tileData: RosreestrTileData,
 ): string => {
   const numberOfFeatures = tileData?.response?.features?.length;
   const numberOfFeaturesAsString = `${numberOfFeatures ?? "?"}`;
@@ -62,17 +68,19 @@ const getTileBufferInMeters = (zoom: number): number => {
 };
 
 export const generateProcessTile = (
-  objectType: ObjectType,
+  objectType: RosreestrObjectType,
 ): ProcessTile => async (tile) => {
   const tileDataFilePath = getTileDataFilePath(objectType, tile);
 
   try {
-    const cachedTileData = (await fs.readJson(tileDataFilePath)) as TileData;
+    const cachedTileData = (await fs.readJson(
+      tileDataFilePath,
+    )) as RosreestrTileData;
 
     return {
       cacheStatus: "used",
-      tileStatus: deriveTileDataStatus(cachedTileData),
-      comment: generateTileComment(tileDataFilePath, cachedTileData),
+      tileStatus: deriveRosreestrTileDataStatus(cachedTileData),
+      comment: generateRosreestrTileComment(tileDataFilePath, cachedTileData),
     };
   } catch {
     // noop – proceeding with actual fetching
@@ -90,7 +98,7 @@ export const generateProcessTile = (
   }
 
   const tileResponse = (
-    await fetchJsonFromRosreestr<TileResponse>(
+    await fetchJsonFromRosreestr<RosreestrTileResponse>(
       `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[objectType]}`,
       {
         sq: JSON.stringify(tileExtentGeometry),
@@ -100,7 +108,7 @@ export const generateProcessTile = (
     )
   ).data;
 
-  const tileData: TileData = {
+  const tileData: RosreestrTileData = {
     tile,
     fetchedAt: getSerialisedNow(),
     fetchedExtent: tileExtentGeometry,
@@ -111,7 +119,7 @@ export const generateProcessTile = (
 
   return {
     cacheStatus: "notUsed",
-    tileStatus: deriveTileDataStatus(tileData),
-    comment: generateTileComment(tileDataFilePath, tileData),
+    tileStatus: deriveRosreestrTileDataStatus(tileData),
+    comment: generateRosreestrTileComment(tileDataFilePath, tileData),
   };
 };

@@ -4,22 +4,22 @@ import _ from "lodash";
 import path from "path";
 
 import { writeFormattedJson } from "../../helpersForJson";
-import { combineTiles } from "./combineTiles";
+import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import { getObjectDirPath } from "./helpersForPaths";
-import { ObjectType } from "./types";
+import { RosreestrObjectType } from "./types";
 
-export const combineTilesAndSavePreviews = async ({
+export const combineRosreestrTilesAndSavePreviews = async ({
   objectType,
   logger,
 }: {
-  objectType: ObjectType;
+  objectType: RosreestrObjectType;
   logger: Console;
 }): Promise<void> => {
   const {
     objectCenterFeatures: featureCenters,
     objectExtentFeatures: featureExtents,
     tileExtentFeatures: tileExtents,
-  } = await combineTiles({
+  } = await combineRosreestrTiles({
     objectType,
     logger,
   });

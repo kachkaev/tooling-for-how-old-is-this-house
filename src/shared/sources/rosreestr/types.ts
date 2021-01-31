@@ -6,9 +6,9 @@ import { Tile } from "../../tiles";
  * CCO: capital construction object (ru: ОКС)
  * lot: land lot (ru: Земельный участок)
  */
-export type ObjectType = "cco" | "lot";
+export type RosreestrObjectType = "cco" | "lot";
 
-export interface TileFeatureObject {
+export interface RosreestrTileFeatureObject {
   center: { x: number; y: number };
   attrs: {
     address: string;
@@ -25,19 +25,19 @@ export interface TileFeatureObject {
   type: number;
 }
 
-export interface TileResponse {
+export interface RosreestrTileResponse {
   total: number;
-  features: TileFeatureObject[];
+  features: RosreestrTileFeatureObject[];
 }
 
-export interface TileData {
+export interface RosreestrTileData {
   tile: Tile;
   fetchedAt: string;
   fetchedExtent: turf.Polygon;
-  response: TileResponse;
+  response: RosreestrTileResponse;
 }
 
-export type TileExtentFeature = turf.Feature<
+export type RosreestrTileExtentFeature = turf.Feature<
   turf.Polygon,
   {
     tileId: string;
