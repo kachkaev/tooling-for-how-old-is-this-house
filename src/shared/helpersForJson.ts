@@ -16,6 +16,67 @@ const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
 
   /*
     == before ==
+    [
+      {
+        "key1": "value1",
+        "key2": "value2",
+      }
+    ]
+    
+    == after ==
+    [{
+      "key1": "value1",
+      "key2": "value2",
+    }]
+   */
+  if (result.startsWith("[") && result.endsWith("]")) {
+    result = result
+      .replace(/\n\t/g, "\n")
+      .replace("[\n{", "[{")
+      .replace("}\n]", "}]");
+  }
+
+  /*
+    == before ==
+    ...
+    {
+      "key1": "value1",
+      "key2": "value2",
+    },
+    {
+      "key1": "value1",
+      "key2": "value2",
+    }
+    ...
+    
+    == after ==
+    ...
+    {
+      "key1": "value1",
+      "key2": "value2",
+    }, {
+      "key1": "value1",
+      "key2": "value2",
+    }
+    ...
+   */
+  for (let whitespace = ""; whitespace.length <= 10; whitespace += "\t") {
+    result = result.replace(
+      new RegExp(`\\n${whitespace}\\},\\n${whitespace}\\{`, "g"),
+      "\n}, {",
+    );
+  }
+
+  if (result.startsWith("[") && result.endsWith("]\n")) {
+    result = result
+      .replace(/\n\t/g, "\n")
+      .replace("[\n{", "[{")
+      .replace("}\n]", "}]")
+      .replace(/\},\n\{/g, "}, {");
+  }
+
+  /*
+    == before ==
     "something": [
       x,
       y
@@ -69,9 +130,7 @@ const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
     == after ==
     "something": { "key": value }
    */
-  for (let whitespace = ""; whitespace.length <= 10; whitespace += "\t") {
-    result = result.replace(/\n(\t+".*": ){\n\t+(.*)\n\t+}/g, "\n$1{ $2 }");
-  }
+  result = result.replace(/\n(\t+".*": ){\n\t+(.*)\n\t+}/g, "\n$1{ $2 }");
 
   /*
     == before ==

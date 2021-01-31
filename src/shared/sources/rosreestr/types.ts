@@ -68,21 +68,21 @@ export type CombinedTileFeaturesData = turf.FeatureCollection<
   CenterInCombinedTileFeaturesData | ExtentInCombinedTileFeaturesData
 >;
 
-export type DetailsPageItemCreationReason = "ccoInTile" | "lotInTile" | "gap";
+export type InfoPageItemCreationReason = "ccoInTile" | "lotInTile" | "gap";
 
-export interface InitialItemInDetailsPage {
+export interface InitialItemInInfoPage {
   cn: string;
-  creationReason: DetailsPageItemCreationReason;
-  fetchedAt: never;
-  response: never;
+  creationReason: InfoPageItemCreationReason;
+  fetchedAt?: never;
+  response?: never;
 }
 
-export type FailedItemDetailsResponse = number;
+export type FailedItemInfoResponse = number;
 
 /**
  * @example https://rosreestr.gov.ru/api/online/fir_object/58:29:4003005:1437
  */
-export interface SuccessfulItemDetailsResponse {
+export interface SuccessfulItemInfoResponse {
   objectId: string;
   type: string;
   regionKey: number;
@@ -96,13 +96,11 @@ export interface SuccessfulItemDetailsResponse {
   };
 }
 
-export interface FetchedItemInDetailsPage {
+export interface FetchedItemInInfoPage {
   cn: string;
-  creationReason: DetailsPageItemCreationReason;
+  creationReason: InfoPageItemCreationReason;
   fetchedAt: string;
-  response: FailedItemDetailsResponse | SuccessfulItemDetailsResponse;
+  response: FailedItemInfoResponse | SuccessfulItemInfoResponse;
 }
 
-export type DetailsPage = Array<
-  Array<InitialItemInDetailsPage | FetchedItemInDetailsPage>
->;
+export type InfoPageData = Array<InitialItemInInfoPage | FetchedItemInInfoPage>;

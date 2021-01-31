@@ -6,7 +6,7 @@
 export const getCnChunk = (
   cn: string,
   firstIndex: number,
-  lastIndex: number = firstIndex,
+  lastIndex: number = firstIndex + 1,
   separator: string = ":",
 ): string => {
   return cn.split(":").slice(firstIndex, lastIndex).join(separator);

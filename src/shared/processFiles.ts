@@ -22,6 +22,7 @@ export const processFiles = async ({
   });
   const globbyResults = _.sortBy(rawGlobbyResults);
 
+  // const numberOfFiles = Math.min(globbyResults.length, 60);
   const numberOfFiles = globbyResults.length;
   const numberOfFilesStringLength = `${numberOfFiles}`.length;
 
