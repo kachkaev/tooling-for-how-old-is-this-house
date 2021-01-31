@@ -6,9 +6,9 @@ import { Tile } from "../../tiles";
  * CCO: capital construction object (ru: ОКС)
  * lot: land lot (ru: Земельный участок)
  */
-export type FeatureType = "cco" | "lot";
+export type ObjectType = "cco" | "lot";
 
-export interface TileFeature {
+export interface TileFeatureObject {
   center: { x: number; y: number };
   attrs: {
     address: string;
@@ -27,7 +27,7 @@ export interface TileFeature {
 
 export interface TileResponse {
   total: number;
-  features: TileFeature[];
+  features: TileFeatureObject[];
 }
 
 export interface TileData {
@@ -37,7 +37,7 @@ export interface TileData {
   response: TileResponse;
 }
 
-export type FeatureInCombinedTileExtentsData = turf.Feature<
+export type TileExtentFeature = turf.Feature<
   turf.Polygon,
   {
     tileId: string;
@@ -46,7 +46,7 @@ export type FeatureInCombinedTileExtentsData = turf.Feature<
   }
 >;
 
-export type CenterInCombinedTileFeaturesData = turf.Feature<
+export type ObjectCenterFeature = turf.Feature<
   turf.Point,
   {
     address: string;
@@ -56,33 +56,31 @@ export type CenterInCombinedTileFeaturesData = turf.Feature<
   }
 >;
 
-export type ExtentInCombinedTileFeaturesData = turf.Feature<
+export type ObjectExtentFeature = turf.Feature<
   turf.Polygon,
   {
     cn: string;
   }
 >;
 
-export type CombinedTileExtentsData = turf.FeatureCollection<FeatureInCombinedTileExtentsData>;
-export type CombinedTileFeaturesData = turf.FeatureCollection<
-  CenterInCombinedTileFeaturesData | ExtentInCombinedTileFeaturesData
->;
+export type CreationReasonForObjectInInfoPage =
+  | "ccoInTile"
+  | "lotInTile"
+  | "gap";
 
-export type InfoPageItemCreationReason = "ccoInTile" | "lotInTile" | "gap";
-
-export interface InitialItemInInfoPage {
+export interface InitialObjectInInfoPage {
   cn: string;
-  creationReason: InfoPageItemCreationReason;
+  creationReason: CreationReasonForObjectInInfoPage;
   fetchedAt?: never;
   response?: never;
 }
 
-export type FailedItemInfoResponse = number;
+export type FailedResponseInInfoPage = number;
 
 /**
  * @example https://rosreestr.gov.ru/api/online/fir_object/58:29:4003005:1437
  */
-export interface SuccessfulItemInfoResponse {
+export interface SuccessfulResponseInInfoPage {
   objectId: string;
   type: string;
   regionKey: number;
@@ -96,11 +94,13 @@ export interface SuccessfulItemInfoResponse {
   };
 }
 
-export interface FetchedItemInInfoPage {
+export interface FetchedObjectInInfoPage {
   cn: string;
-  creationReason: InfoPageItemCreationReason;
+  creationReason: CreationReasonForObjectInInfoPage;
   fetchedAt: string;
-  response: FailedItemInfoResponse | SuccessfulItemInfoResponse;
+  response: FailedResponseInInfoPage | SuccessfulResponseInInfoPage;
 }
 
-export type InfoPageData = Array<InitialItemInInfoPage | FetchedItemInInfoPage>;
+export type InfoPageData = Array<
+  InitialObjectInInfoPage | FetchedObjectInInfoPage
+>;

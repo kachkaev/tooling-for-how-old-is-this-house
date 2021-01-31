@@ -19,7 +19,8 @@
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
     yarn exe src/commands/2-sources/rosreestr/3-previewTileData.ts ## optional
-    yarn exe src/commands/2-sources/rosreestr/4-generateInfoPages.ts
+    yarn exe src/commands/2-sources/rosreestr/4-generateObjectInfoPages.ts
+    yarn exe src/commands/2-sources/rosreestr/4-fetchObjectInfos.ts
     
     yarn exe src/commands/2-sources/wikidata/1-executeQuery.ts ## incomplete
     ```

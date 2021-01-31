@@ -5,18 +5,22 @@ import path from "path";
 
 import { writeFormattedJson } from "../../helpersForJson";
 import { combineTiles } from "./combineTiles";
-import { getFeatureTypeDirPath } from "./helpersForPaths";
-import { FeatureType } from "./types";
+import { getObjectDirPath } from "./helpersForPaths";
+import { ObjectType } from "./types";
 
 export const combineTilesAndSavePreviews = async ({
-  featureType,
+  objectType,
   logger,
 }: {
-  featureType: FeatureType;
+  objectType: ObjectType;
   logger: Console;
 }): Promise<void> => {
-  const { featureCenters, featureExtents, tileExtents } = await combineTiles({
-    featureType,
+  const {
+    objectCenterFeatures: featureCenters,
+    objectExtentFeatures: featureExtents,
+    tileExtentFeatures: tileExtents,
+  } = await combineTiles({
+    objectType,
     logger,
   });
 
@@ -28,7 +32,7 @@ export const combineTilesAndSavePreviews = async ({
     [tileExtents, "Tile extents"],
   ] as const) {
     const filePath = path.resolve(
-      getFeatureTypeDirPath(featureType),
+      getObjectDirPath(objectType),
       `preview--${_.kebabCase(name)}.geojson`,
     );
 

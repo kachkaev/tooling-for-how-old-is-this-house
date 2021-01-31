@@ -6,123 +6,121 @@ import _ from "lodash";
 import { writeFormattedJson } from "../../../shared/helpersForJson";
 import { getRegionExtent } from "../../../shared/region";
 import {
-  CenterInCombinedTileFeaturesData,
   combineTiles,
-  FeatureType,
-  getInfoPageDataFilePath,
+  getObjectInfoPageFilePath,
   InfoPageData,
-  InitialItemInInfoPage,
+  InitialObjectInInfoPage,
+  ObjectCenterFeature,
+  ObjectType,
 } from "../../../shared/sources/rosreestr";
 import { getCnChunk } from "../../../shared/sources/rosreestr/helpersForCn";
 
-const minNumberOfFeaturesPerBlock = 5;
+const minNumberOfObjectsPerBlock = 5;
 const minPercentageOutsideRegionExtent = 25;
 const pageSize = 100;
 const tailLength = 50;
 
 export const generateInfoPages: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/rosreestr: Generating info pages"));
+  logger.log(chalk.bold("sources/rosreestr: Generating object info pages"));
 
   logger.log(chalk.green("Loading CCOs from tiles..."));
-  const { featureCenters: ccoCentersInTiles } = await combineTiles({
-    featureType: "cco",
+  const { objectCenterFeatures: ccoCentersInTiles } = await combineTiles({
+    objectType: "cco",
     logger,
   });
 
   logger.log(chalk.green("Loading lots from tiles..."));
-  const { featureCenters: lotCentersInTiles } = await combineTiles({
-    featureType: "lot",
+  const { objectCenterFeatures: lotCentersInTiles } = await combineTiles({
+    objectType: "lot",
     logger,
   });
 
   process.stdout.write(chalk.green("Indexing by cadastral number..."));
 
   const regionExtent = await getRegionExtent();
-  const wrappedFeatureByCn: Record<
+  const objectByCn: Record<
     string,
     {
-      featureType: FeatureType;
-      center: CenterInCombinedTileFeaturesData;
+      objectType: ObjectType;
+      center: ObjectCenterFeature;
     }
   > = {};
-  for (const [featureType, features] of [
+  for (const [objectType, objectFeatures] of [
     ["cco", ccoCentersInTiles],
     ["lot", lotCentersInTiles],
   ] as const) {
-    for (const centerFeature of features) {
-      if (!centerFeature.properties?.cn) {
+    for (const objectFeature of objectFeatures) {
+      if (!objectFeature.properties?.cn) {
         throw new Error(
-          `Found feature ${featureType} without cn (cadastral number): ${JSON.stringify(
-            centerFeature,
+          `Found object ${objectType} without cn (cadastral number): ${JSON.stringify(
+            objectFeature,
           )}`,
         );
       }
-      if (wrappedFeatureByCn[centerFeature.properties.cn]) {
+      if (objectByCn[objectFeature.properties.cn]) {
         throw new Error(
-          `Found feature ${featureType} with an already used cn (cadastral number): ${JSON.stringify(
-            centerFeature,
+          `Found object ${objectType} with an already used cn (cadastral number): ${JSON.stringify(
+            objectFeature,
           )}`,
         );
       }
-      wrappedFeatureByCn[centerFeature.properties.cn] = {
-        featureType,
-        center: centerFeature,
+      objectByCn[objectFeature.properties.cn] = {
+        objectType,
+        center: objectFeature,
       };
     }
   }
 
-  const wrappedFeatures = Object.values(wrappedFeatureByCn);
-  const wrappedFeaturesByBlock = _.groupBy(wrappedFeatures, (wrappedFeature) =>
+  const objects = Object.values(objectByCn);
+  const objectsByBlock = _.groupBy(objects, (wrappedFeature) =>
     getCnChunk(wrappedFeature.center.properties?.cn ?? "", 0, 3),
   );
 
   const blockTuples = _.orderBy(
-    Object.entries(wrappedFeaturesByBlock),
+    Object.entries(objectsByBlock),
     (tuple) => tuple[0],
   );
   // .slice(0, 30);
 
   logger.log(
-    ` Found ${wrappedFeatures.length} features (${ccoCentersInTiles.length} CCOs and ${lotCentersInTiles.length} lots) in ${blockTuples.length} blocks.`,
+    ` Found ${objects.length} objects (${ccoCentersInTiles.length} CCOs and ${lotCentersInTiles.length} lots) in ${blockTuples.length} blocks.`,
   );
 
   let totalEstimatedRequestCount = 0;
   let totalPageCount = 0;
   let totalBlockCount = 0;
-  for (const [block, wrappedFeaturesInCurrentBlock] of blockTuples) {
+  for (const [block, objectsInCurrentBlock] of blockTuples) {
     const maxFoundId = Math.max(
-      ...wrappedFeaturesInCurrentBlock.map((wrappedFeature) =>
+      ...objectsInCurrentBlock.map((wrappedFeature) =>
         parseInt(getCnChunk(wrappedFeature.center.properties?.cn ?? "0", 3)),
       ),
     );
 
     logger.log(
       `${chalk.green(`Block ${block}`)} – features: ${
-        wrappedFeaturesInCurrentBlock.length
+        objectsInCurrentBlock.length
       }, max found id: ${maxFoundId}`,
     );
-    if (wrappedFeaturesInCurrentBlock.length < minNumberOfFeaturesPerBlock) {
+    if (objectsInCurrentBlock.length < minNumberOfObjectsPerBlock) {
       logger.log(
         chalk.yellow(
-          `Block skipped because feature count is ${wrappedFeaturesInCurrentBlock.length} (< ${minNumberOfFeaturesPerBlock})`,
+          `Block skipped because feature count is ${objectsInCurrentBlock.length} (< ${minNumberOfObjectsPerBlock})`,
         ),
       );
       continue;
     }
 
-    const featuresOutsideRegionExtent = wrappedFeaturesInCurrentBlock.filter(
+    const objectsOutsideRegionExtent = objectsInCurrentBlock.filter(
       ({ center }) => !turf.booleanPointInPolygon(center, regionExtent),
     );
 
     const percentageOutsideRegionExtent = Math.round(
-      (featuresOutsideRegionExtent.length /
-        wrappedFeaturesInCurrentBlock.length) *
-        100,
+      (objectsOutsideRegionExtent.length / objectsInCurrentBlock.length) * 100,
     );
     if (percentageOutsideRegionExtent > minPercentageOutsideRegionExtent) {
       logger.log(
         chalk.yellow(
-          `Does not qualify because ${percentageOutsideRegionExtent}% of features are outside region extent (> ${minPercentageOutsideRegionExtent})`,
+          `Does not qualify because ${percentageOutsideRegionExtent}% of objects are outside region extent (> ${minPercentageOutsideRegionExtent})`,
         ),
       );
       continue;
@@ -133,9 +131,8 @@ export const generateInfoPages: Command = async ({ logger }) => {
 
     totalEstimatedRequestCount +=
       maxPageNumber * pageSize -
-      wrappedFeaturesInCurrentBlock.filter(
-        ({ featureType }) => featureType === "lot",
-      ).length;
+      objectsInCurrentBlock.filter(({ objectType }) => objectType === "lot")
+        .length;
 
     totalBlockCount += 1;
 
@@ -146,26 +143,26 @@ export const generateInfoPages: Command = async ({ logger }) => {
           continue;
         }
         const cn = `${block}:${pageNumber * pageSize + index}`;
-        const featureType = wrappedFeatureByCn[cn]?.featureType;
-        const item: InitialItemInInfoPage = {
+        const objectType = objectByCn[cn]?.objectType;
+        const item: InitialObjectInInfoPage = {
           cn,
           creationReason:
-            featureType === "cco"
+            objectType === "cco"
               ? "ccoInTile"
-              : featureType === "lot"
+              : objectType === "lot"
               ? "lotInTile"
               : "gap",
         };
         infoPageData.push(item);
       }
 
-      const infoPageFilePath = getInfoPageDataFilePath(block, pageNumber);
+      const infoPageFilePath = getObjectInfoPageFilePath(block, pageNumber);
       await writeFormattedJson(infoPageFilePath, infoPageData);
     }
     logger.log(chalk.magenta(`Pages total: ${maxPageNumber + 1}`));
   }
   logger.log(
-    `Requests: ${totalEstimatedRequestCount}/${wrappedFeatures.length}, block count: ${totalBlockCount}/${blockTuples.length}, page count: ${totalPageCount}`,
+    `Requests: ${totalEstimatedRequestCount}/${objects.length}, block count: ${totalBlockCount}/${blockTuples.length}, page count: ${totalPageCount}`,
   );
 };
 

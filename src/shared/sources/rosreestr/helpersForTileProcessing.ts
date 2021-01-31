@@ -9,7 +9,7 @@ import { addBufferToBbox } from "../../helpersForGeometry";
 import { getSerialisedNow, writeFormattedJson } from "../../helpersForJson";
 import { ProcessTile, TileStatus } from "../../tiles";
 import { getTileDataFilePath } from "./helpersForPaths";
-import { FeatureType, TileData, TileResponse } from "./types";
+import { ObjectType, TileData, TileResponse } from "./types";
 
 // The API may return fewer items than requested even if not all of them fit the first page.
 // This might be due to item deduplication that happens when the result is prepared.
@@ -18,7 +18,7 @@ import { FeatureType, TileData, TileResponse } from "./types";
 const maxSupportedFeaturesPerTileRequest = 40;
 const tileCompletionTolerance = 2;
 
-const featureNumericIdLookup: Record<FeatureType, number> = {
+const featureNumericIdLookup: Record<ObjectType, number> = {
   cco: 5,
   lot: 1,
 };
@@ -63,9 +63,9 @@ const getTileBufferInMeters = (zoom: number): number => {
 };
 
 export const generateProcessTile = (
-  featureType: FeatureType,
+  objectType: ObjectType,
 ): ProcessTile => async (tile) => {
-  const tileDataFilePath = getTileDataFilePath(featureType, tile);
+  const tileDataFilePath = getTileDataFilePath(objectType, tile);
 
   try {
     const cachedTileData = (await fs.readJson(tileDataFilePath)) as TileData;
@@ -94,7 +94,7 @@ export const generateProcessTile = (
 
   const tileResponse = (
     await axios.get<TileResponse>(
-      `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[featureType]}`,
+      `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[objectType]}`,
       {
         params: {
           sq: JSON.stringify(tileExtentGeometry),

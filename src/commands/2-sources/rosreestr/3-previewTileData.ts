@@ -5,10 +5,10 @@ import { combineTilesAndSavePreviews } from "../../../shared/sources/rosreestr";
 
 export const combineTilesWithCcos: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Previewing tile data / CCOs"));
-  await combineTilesAndSavePreviews({ featureType: "cco", logger });
+  await combineTilesAndSavePreviews({ objectType: "cco", logger });
 
   logger.log(chalk.bold("sources/rosreestr: Previewing tile data / lots"));
-  await combineTilesAndSavePreviews({ featureType: "lot", logger });
+  await combineTilesAndSavePreviews({ objectType: "lot", logger });
 };
 
 autoStartCommandIfNeeded(combineTilesWithCcos, __filename);

@@ -2,25 +2,25 @@ import path from "path";
 
 import { getRegionDirPath } from "../../region";
 import { Tile } from "../../tiles";
-import { FeatureType } from "./types";
+import { ObjectType } from "./types";
 
 export const getRosreestrDirPath = () => {
   return path.resolve(getRegionDirPath(), "sources", "rosreestr");
 };
 
-export const getFeatureTypeDirPath = (featureType: FeatureType) => {
-  return path.resolve(getRosreestrDirPath(), `${featureType}s`);
+export const getObjectDirPath = (objectType: ObjectType) => {
+  return path.resolve(getRosreestrDirPath(), `${objectType}s`);
 };
 
-export const getTilesDirPath = (featureType: FeatureType) => {
-  return path.resolve(getFeatureTypeDirPath(featureType), "by-tiles");
+export const getTilesDirPath = (objectType: ObjectType) => {
+  return path.resolve(getObjectDirPath(objectType), "by-tiles");
 };
 
 export const getTileDataFileName = () => "data.json";
 
-export const getTileDataFilePath = (featureType: FeatureType, tile: Tile) => {
+export const getTileDataFilePath = (objectType: ObjectType, tile: Tile) => {
   return path.resolve(
-    getTilesDirPath(featureType),
+    getTilesDirPath(objectType),
     `${tile[2]}`,
     `${tile[0]}`,
     `${tile[1]}`,
@@ -28,13 +28,16 @@ export const getTileDataFilePath = (featureType: FeatureType, tile: Tile) => {
   );
 };
 
-export const getInfoPagesDirPath = () => {
-  return path.resolve(getRosreestrDirPath(), "info-pages");
+export const getObjectInfoPagesDirPath = () => {
+  return path.resolve(getRosreestrDirPath(), "object-info-pages");
 };
 
-export const getInfoPageDataFilePath = (block: string, pageNumber: number) => {
+export const getObjectInfoPageFilePath = (
+  block: string,
+  pageNumber: number,
+) => {
   return path.resolve(
-    getInfoPagesDirPath(),
+    getObjectInfoPagesDirPath(),
     block.replace(/:/g, "/"),
     `${`${pageNumber}`.padStart(3, "0")}.json`,
   );
