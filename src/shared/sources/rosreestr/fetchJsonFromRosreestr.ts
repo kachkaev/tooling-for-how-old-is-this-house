@@ -13,6 +13,7 @@ axiosRetry(axiosInstance, {
   retryDelay: (retryCount) => (retryCount - 1) * 500,
   retryCondition: (error) =>
     ![200, 204, 404].includes(error.response?.status ?? 0),
+  shouldResetTimeout: true,
 });
 
 export const fetchJsonFromRosreestr = async <T>(
