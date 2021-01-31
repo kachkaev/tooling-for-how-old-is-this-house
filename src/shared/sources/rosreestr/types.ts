@@ -80,7 +80,7 @@ export type FailedResponseInInfoPage = number;
 /**
  * @example https://rosreestr.gov.ru/api/online/fir_object/58:29:4003005:1437
  */
-export interface SuccessfulResponseInInfoPage {
+export interface SuccessfulFirObjectResponse {
   objectId: string;
   type: string;
   regionKey: number;
@@ -89,6 +89,7 @@ export interface SuccessfulResponseInInfoPage {
     // TODO: add fields
   };
   parcelData: {
+    oksFlag: 0 | 1;
     oksYearBuilt: string;
     // TODO: add fields
   };

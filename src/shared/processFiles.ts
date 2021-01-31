@@ -7,12 +7,14 @@ export const processFiles = async ({
   fileSearchPattern,
   fileSearchDirPath,
   processFile,
+  showFilePath = false,
   statusReportFrequency = 500,
 }: {
   logger: Console;
   fileSearchPattern: string;
   fileSearchDirPath: string;
   processFile: (filePath: string) => Promise<void>;
+  showFilePath?: boolean;
   statusReportFrequency?: number;
 }) => {
   process.stdout.write(chalk.green("Listing files..."));
@@ -30,17 +32,20 @@ export const processFiles = async ({
   process.stdout.write(chalk.green("Processing files...\n"));
 
   for (let index = 0; index < numberOfFiles; index += 1) {
+    const filePath = globbyResults[index]!;
     if (
-      index !== 0 &&
+      (statusReportFrequency === 1 || index !== 0) &&
       ((index + 1) % statusReportFrequency === 0 || index === numberOfFiles - 1)
     ) {
       logger.log(
         `${`${index + 1}`.padStart(
           numberOfFilesStringLength,
-        )} / ${numberOfFiles}`,
+        )} / ${numberOfFiles}${
+          showFilePath ? ` ${chalk.green(filePath)}` : ""
+        }`,
       );
     }
 
-    await processFile(globbyResults[index]!);
+    await processFile(filePath);
   }
 };

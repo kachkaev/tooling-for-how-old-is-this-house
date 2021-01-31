@@ -39,6 +39,6 @@ export const getObjectInfoPageFilePath = (
   return path.resolve(
     getObjectInfoPagesDirPath(),
     block.replace(/:/g, "/"),
-    `${`${pageNumber}`.padStart(3, "0")}.json`,
+    `page-${`${pageNumber}`.padStart(3, "0")}.json`,
   );
 };
