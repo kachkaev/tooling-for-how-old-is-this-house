@@ -22,7 +22,7 @@ import {
 } from "../../../shared/sources/wikimapia";
 import { processTiles } from "../../../shared/tiles";
 
-const propertiesToExclude = [
+const featurePropertiesToExclude = [
   "icon",
   "icon-scale",
   "label-scale",
@@ -63,7 +63,7 @@ const processWikimapiaTileResponse = (
 
     const cleanedProperties = Object.fromEntries(
       Object.entries(feature.properties!)
-        .filter(([key]) => !propertiesToExclude.includes(key))
+        .filter(([key]) => !featurePropertiesToExclude.includes(key))
         .map(([key, value]) => {
           if (key === "description") {
             return [key, `${value}`.trim()];
@@ -75,10 +75,8 @@ const processWikimapiaTileResponse = (
 
     return turf.feature(
       turf.geometryCollection(cleanedGeometries).geometry!,
-      cleanedProperties,
-      {
-        id: feature.id,
-      },
+      sortKeys(cleanedProperties),
+      { id: feature.id },
     );
   });
 
@@ -133,7 +131,7 @@ export const fetchTiles: Command = async ({ logger }) => {
       const tileData: WikimapiaTileData = {
         tile,
         fetchedAt: getSerialisedNow(),
-        response: sortKeys(processedTileResponse, { deep: true }),
+        response: processedTileResponse,
       };
 
       await writeFormattedJson(tileDataFilePath, tileData);

@@ -115,25 +115,4 @@ export const combineRosreestrTiles = async ({
     objectExtentFeatures,
     tileExtentFeatures,
   };
-  // logger.log(chalk.green("Saving..."));
-
-  // await writeFormattedJson(
-  //   getCombinedTileFeaturesFilePath(objectType),
-  //   turf.featureCollection(features),
-  // );
-  // logger.log(
-  //   `Features saved to ${chalk.magenta(
-  //     getCombinedTileFeaturesFilePath(objectType),
-  //   )}`,
-  // );
-
-  // await writeFormattedJson(
-  //   getCombinedTileExtentsFilePath(objectType),
-  //   turf.featureCollection(tileExtents),
-  // );
-  // logger.log(
-  //   `Tile extents saved to ${chalk.magenta(
-  //     getCombinedTileExtentsFilePath(objectType),
-  //   )}`,
-  // );
 };

@@ -16,9 +16,9 @@ export const combineRosreestrTilesAndSavePreviews = async ({
   logger: Console;
 }): Promise<void> => {
   const {
-    objectCenterFeatures: featureCenters,
-    objectExtentFeatures: featureExtents,
-    tileExtentFeatures: tileExtents,
+    objectCenterFeatures,
+    objectExtentFeatures,
+    tileExtentFeatures,
   } = await combineRosreestrTiles({
     objectType,
     logger,
@@ -27,9 +27,9 @@ export const combineRosreestrTilesAndSavePreviews = async ({
   logger.log(chalk.green("Saving..."));
 
   for (const [features, name] of [
-    [featureCenters, "Feature centers"],
-    [featureExtents, "Feature extents"],
-    [tileExtents, "Tile extents"],
+    [objectCenterFeatures, "Object centers"],
+    [objectExtentFeatures, "Object extents"],
+    [tileExtentFeatures, "Tile extents"],
   ] as const) {
     const filePath = path.resolve(
       getObjectDirPath(objectType),
