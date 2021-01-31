@@ -7,6 +7,7 @@ const axiosInstance = axios.create({
     rejectUnauthorized: false,
   }),
 });
+
 axiosRetry(axiosInstance, {
   retries: 30,
   retryDelay: (retryCount) => (retryCount - 1) * 500,
@@ -21,5 +22,6 @@ export const fetchJsonFromRosreestr = async <T>(
   return await axiosInstance.get<T>(url, {
     params,
     responseType: "json",
+    timeout: 5000,
   });
 };

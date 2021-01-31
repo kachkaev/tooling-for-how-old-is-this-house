@@ -13,7 +13,7 @@ export const processFiles = async ({
   logger: Console;
   fileSearchPattern: string;
   fileSearchDirPath: string;
-  processFile: (filePath: string) => Promise<void>;
+  processFile: (filePath: string, prefixLength: number) => Promise<void>;
   showFilePath?: boolean;
   statusReportFrequency?: number;
 }) => {
@@ -33,19 +33,17 @@ export const processFiles = async ({
 
   for (let index = 0; index < numberOfFiles; index += 1) {
     const filePath = globbyResults[index]!;
+    const prefix = `${`${index + 1}`.padStart(
+      numberOfFilesStringLength,
+    )} / ${numberOfFiles} `;
+
     if (
       (statusReportFrequency === 1 || index !== 0) &&
       ((index + 1) % statusReportFrequency === 0 || index === numberOfFiles - 1)
     ) {
-      logger.log(
-        `${`${index + 1}`.padStart(
-          numberOfFilesStringLength,
-        )} / ${numberOfFiles}${
-          showFilePath ? ` ${chalk.green(filePath)}` : ""
-        }`,
-      );
+      logger.log(`${prefix}${showFilePath ? chalk.green(filePath) : ""}`);
     }
 
-    await processFile(filePath);
+    await processFile(filePath, prefix.length);
   }
 };

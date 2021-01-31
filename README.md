@@ -25,6 +25,29 @@
     yarn exe src/commands/2-sources/wikidata/1-executeQuery.ts ## incomplete
     ```
 
+```sh
+yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+
+cd ../data/regions/penza && git add -A && cd -
+
+RANGE=5 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+RANGE=5 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+RANGE=10 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+RANGE=10 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+RANGE=20 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+
+RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+```
+
 ## Поля выгружаемой таблицы
 
 | name            | type   | comment                                                                                                                        |

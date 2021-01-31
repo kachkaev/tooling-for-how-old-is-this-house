@@ -31,15 +31,32 @@ const deepClean = <T>(obj: T): T =>
 export const generateInfoPages: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Fetching object infos"));
 
+  const scriptStartTime = new Date();
   await processFiles({
     logger,
     fileSearchPattern: `**/page-*.json`,
     fileSearchDirPath: getObjectInfoPagesDirPath(),
     showFilePath: true,
     statusReportFrequency: 1,
-    processFile: async (filePath) => {
+    processFile: async (filePath, prefixLength) => {
+      const fileStat = await fs.stat(filePath);
+      if (fileStat.mtime > scriptStartTime) {
+        logger.log(
+          chalk.yellow(
+            `${" ".repeat(
+              prefixLength,
+            )}Skipping – this file is being handled by another instance of the script`,
+          ),
+        );
+
+        return;
+      }
+
+      // Lock the page by updating mtime to prevent concurrent processing
+      await fs.utimes(filePath, fileStat.atime, new Date());
+
       const infoPageData = (await fs.readJson(filePath)) as InfoPageData;
-      process.stdout.write(" ".repeat(12));
+      process.stdout.write(" ".repeat(prefixLength));
 
       const indexesInRange = new Set<number>();
       const range = parseInt(process.env.RANGE ?? "") || 0;
@@ -69,15 +86,6 @@ export const generateInfoPages: Command = async ({ logger }) => {
       for (let index = 0; index < infoPageData.length; index += 1) {
         const originalObject = infoPageData[index]!;
 
-        let progressSymbol = "•";
-        let progressColor = !originalObject.fetchedAt ? chalk.gray : chalk.cyan;
-
-        if (originalObject.creationReason === "lotInTile") {
-          progressSymbol = "l";
-        } else if (originalObject.creationReason === "ccoInTile") {
-          progressSymbol = "c";
-        }
-
         if (indexesInRange.has(index) && !originalObject.fetchedAt) {
           const apiResponse = await fetchJsonFromRosreestr(
             `https://rosreestr.gov.ru/api/online/fir_object/${convertCnToId(
@@ -101,16 +109,34 @@ export const generateInfoPages: Command = async ({ logger }) => {
             };
           }
 
-          progressColor = chalk.magenta;
           await writeFormattedJson(filePath, infoPageData);
         }
 
-        const progressBackground =
+        const object = infoPageData[index]!;
+
+        let progressSymbol = "•";
+
+        if (object.creationReason === "lotInTile") {
+          progressSymbol = "L";
+        } else if (object.creationReason === "ccoInTile") {
+          progressSymbol = "C";
+        } else if (typeof object.response === "object") {
+          progressSymbol = object.response.parcelData?.oksFlag ? "c" : "l";
+        }
+
+        const progressColor =
+          object !== originalObject
+            ? chalk.magenta
+            : !originalObject.fetchedAt
+            ? chalk.gray
+            : chalk.cyan;
+
+        const progressDecoration =
           typeof infoPageData[index]?.response === "number"
-            ? chalk.strikethrough
+            ? chalk.inverse
             : chalk.reset;
 
-        process.stdout.write(progressBackground(progressColor(progressSymbol)));
+        process.stdout.write(progressDecoration(progressColor(progressSymbol)));
       }
       logger.log("");
     },
