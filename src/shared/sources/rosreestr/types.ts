@@ -71,7 +71,7 @@ export type CreationReasonForObjectInInfoPage =
 export interface InitialObjectInInfoPage {
   cn: string;
   creationReason: CreationReasonForObjectInInfoPage;
-  fetchedAt?: never;
+  fetchedAt: null;
   response?: never;
 }
 
@@ -99,7 +99,7 @@ export interface FetchedObjectInInfoPage {
   cn: string;
   creationReason: CreationReasonForObjectInInfoPage;
   fetchedAt: string;
-  response: FailedResponseInInfoPage | SuccessfulResponseInInfoPage;
+  response: FailedResponseInInfoPage | SuccessfulFirObjectResponse;
 }
 
 export type InfoPageData = Array<

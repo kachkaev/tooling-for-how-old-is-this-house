@@ -152,6 +152,7 @@ export const generateInfoPages: Command = async ({ logger }) => {
               : objectType === "lot"
               ? "lotInTile"
               : "gap",
+          fetchedAt: null, // This line reduces git diffs data files
         };
         infoPageData.push(item);
       }

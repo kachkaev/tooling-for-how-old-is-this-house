@@ -1,13 +1,12 @@
 import * as tilebelt from "@mapbox/tilebelt";
 import turf from "@turf/turf";
-import axios from "axios";
-import axiosRetry from "axios-retry";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
 import { addBufferToBbox } from "../../helpersForGeometry";
 import { getSerialisedNow, writeFormattedJson } from "../../helpersForJson";
 import { ProcessTile, TileStatus } from "../../tiles";
+import { fetchJsonFromRosreestr } from "./fetchJsonFromRosreestr";
 import { getTileDataFilePath } from "./helpersForPaths";
 import { ObjectType, TileData, TileResponse } from "./types";
 
@@ -90,24 +89,13 @@ export const generateProcessTile = (
     throw new Error("Unexpected empty geometry");
   }
 
-  axiosRetry(axios);
-
   const tileResponse = (
-    await axios.get<TileResponse>(
+    await fetchJsonFromRosreestr<TileResponse>(
       `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[objectType]}`,
       {
-        params: {
-          sq: JSON.stringify(tileExtentGeometry),
-          tolerance: 100,
-          limit: maxSupportedFeaturesPerTileRequest,
-        },
-        responseType: "json",
-        "axios-retry": {
-          retries: 30,
-          retryDelay: (retryCount) => (retryCount - 1) * 500,
-          retryCondition: (error) =>
-            ![200, 404].includes(error.response?.status ?? 0),
-        },
+        sq: JSON.stringify(tileExtentGeometry),
+        tolerance: 100,
+        limit: maxSupportedFeaturesPerTileRequest,
       },
     )
   ).data;
