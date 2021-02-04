@@ -20,7 +20,7 @@ const minPercentageOutsideRegionExtent = 25;
 const pageSize = 100;
 const tailLength = 50;
 
-export const generateInfoPages: Command = async ({ logger }) => {
+export const generateObjectInfoPages: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Generating object info pages"));
 
   logger.log(chalk.green("Loading CCOs from tiles..."));
@@ -171,4 +171,4 @@ export const generateInfoPages: Command = async ({ logger }) => {
   );
 };
 
-autoStartCommandIfNeeded(generateInfoPages, __filename);
+autoStartCommandIfNeeded(generateObjectInfoPages, __filename);

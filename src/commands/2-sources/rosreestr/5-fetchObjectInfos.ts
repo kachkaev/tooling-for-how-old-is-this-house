@@ -1,4 +1,5 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
+import { AxiosResponse } from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
@@ -11,7 +12,9 @@ import { processFiles } from "../../../shared/processFiles";
 import {
   getObjectInfoPagesDirPath,
   InfoPageData,
+  ResponseInInfoPageResponse,
   SuccessfulFirObjectResponse,
+  SuccessfulResponseInInfoPage,
 } from "../../../shared/sources/rosreestr";
 import { fetchJsonFromRosreestr } from "../../../shared/sources/rosreestr/fetchJsonFromRosreestr";
 import { convertCnToId } from "../../../shared/sources/rosreestr/helpersForCn";
@@ -28,7 +31,42 @@ const deepClean = <T>(obj: T): T =>
     ),
   );
 
-export const generateInfoPages: Command = async ({ logger }) => {
+const assertNoUsefulData = (responseData: SuccessfulResponseInInfoPage) => {
+  if (responseData.parcelData?.oksYearBuilt) {
+    throw new Error(
+      `Did not expect to see oksYearBuilt in the flat ${responseData.objectId}. Maybe the script should be tweaked to harvest more data?`,
+    );
+  }
+};
+
+const processRawApiResponse = (
+  rawApiResponse: AxiosResponse<unknown>,
+): ResponseInInfoPageResponse => {
+  if (rawApiResponse.status === 204) {
+    return "not-found";
+  } else if (rawApiResponse.status !== 200) {
+    throw new Error(`Unexpected response status ${rawApiResponse.status}`);
+  }
+
+  const rawResponseData = rawApiResponse.data as SuccessfulFirObjectResponse;
+  const responseData = Object.fromEntries(
+    Object.entries(rawResponseData).filter(([key]) => key !== "oldNumbers"),
+  ) as SuccessfulResponseInInfoPage;
+
+  if (responseData.parcelData.oksType === "flat") {
+    assertNoUsefulData(responseData);
+
+    return "flat";
+  } else if (!responseData.parcelData?.oksFlag) {
+    assertNoUsefulData(responseData);
+
+    return "lot";
+  }
+
+  return sortKeys(deepClean(responseData), { deep: true });
+};
+
+export const fetchObjectInfos: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Fetching object infos"));
 
   const scriptStartTime = new Date();
@@ -59,7 +97,7 @@ export const generateInfoPages: Command = async ({ logger }) => {
       process.stdout.write(" ".repeat(prefixLength));
 
       const indexesInRange = new Set<number>();
-      const range = parseInt(process.env.RANGE ?? "") || 0;
+      const gapFetchRange = 100; // Set to 0 to not fetch gaps around known CNs
       for (let index = -1; index <= infoPageData.length; index += 1) {
         const shouldTreatAsAnchor =
           index === -1 ||
@@ -71,8 +109,8 @@ export const generateInfoPages: Command = async ({ logger }) => {
         }
 
         for (
-          let index2 = Math.max(0, index - range);
-          index2 <= Math.min(infoPageData.length - 1, index + range);
+          let index2 = Math.max(0, index - gapFetchRange);
+          index2 <= Math.min(infoPageData.length - 1, index + gapFetchRange);
           index2 += 1
         ) {
           const canInclude =
@@ -87,41 +125,40 @@ export const generateInfoPages: Command = async ({ logger }) => {
         const originalObject = infoPageData[index]!;
 
         if (indexesInRange.has(index) && !originalObject.fetchedAt) {
-          const apiResponse = await fetchJsonFromRosreestr(
+          const rawApiResponse = await fetchJsonFromRosreestr(
             `https://rosreestr.gov.ru/api/online/fir_object/${convertCnToId(
               originalObject.cn,
             )}`,
           );
 
-          if (apiResponse.status !== 200) {
-            infoPageData[index] = {
-              ...originalObject,
-              fetchedAt: getSerialisedNow(),
-              response: apiResponse.status,
-            };
-          } else {
-            const responseData = apiResponse.data as SuccessfulFirObjectResponse;
-            delete responseData["oldNumbers"];
-            infoPageData[index] = {
-              ...originalObject,
-              fetchedAt: getSerialisedNow(),
-              response: sortKeys(deepClean(responseData), { deep: true }),
-            };
-          }
+          infoPageData[index] = {
+            ...originalObject,
+            fetchedAt: getSerialisedNow(),
+            response: processRawApiResponse(rawApiResponse),
+          };
 
           await writeFormattedJson(filePath, infoPageData);
         }
 
         const object = infoPageData[index]!;
 
-        let progressSymbol = "•";
+        let progressSymbol = "?";
 
-        if (object.creationReason === "lotInTile") {
-          progressSymbol = "L";
-        } else if (object.creationReason === "ccoInTile") {
-          progressSymbol = "C";
+        if (
+          object.creationReason === "lotInTile" ||
+          object.response === "lot"
+        ) {
+          progressSymbol = "l";
+        } else if (object.response === "flat") {
+          progressSymbol = "f";
+        } else if (object.response === "not-found") {
+          progressSymbol = "•";
         } else if (typeof object.response === "object") {
-          progressSymbol = object.response.parcelData?.oksFlag ? "c" : "l";
+          progressSymbol = object.response.parcelData?.oksType?.[0] ?? "?";
+        }
+
+        if (object.creationReason !== "gap") {
+          progressSymbol = progressSymbol.toUpperCase();
         }
 
         const progressColor =
@@ -132,15 +169,16 @@ export const generateInfoPages: Command = async ({ logger }) => {
             : chalk.cyan;
 
         const progressDecoration =
-          typeof infoPageData[index]?.response === "number"
+          infoPageData[index]?.response === "not-found"
             ? chalk.inverse
             : chalk.reset;
 
         process.stdout.write(progressDecoration(progressColor(progressSymbol)));
       }
+      await writeFormattedJson(filePath, infoPageData);
       logger.log("");
     },
   });
 };
 
-autoStartCommandIfNeeded(generateInfoPages, __filename);
+autoStartCommandIfNeeded(fetchObjectInfos, __filename);

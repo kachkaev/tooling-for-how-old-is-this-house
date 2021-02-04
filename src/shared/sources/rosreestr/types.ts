@@ -75,7 +75,7 @@ export interface InitialObjectInInfoPage {
   response?: never;
 }
 
-export type FailedResponseInInfoPage = number;
+export type EdgeCaseResponseInInfoPage = "not-found" | "lot" | "flat";
 
 /**
  * @example https://rosreestr.gov.ru/api/online/fir_object/58:29:4003005:1437
@@ -86,20 +86,33 @@ export interface SuccessfulFirObjectResponse {
   regionKey: number;
   objectData: {
     id: string;
-    // TODO: add fields
+    // TODO: add more fields if they are needed
   };
   parcelData: {
     oksFlag: 0 | 1;
+    oksType?: "building" | "construction" | "flat";
     oksYearBuilt: string;
-    // TODO: add fields
+    // TODO: add more fields if they are needed
+  };
+  oldNumbers: {
+    // TODO: add more fields if they are needed
   };
 }
+
+export type SuccessfulResponseInInfoPage = Omit<
+  SuccessfulFirObjectResponse,
+  "oldNumbers"
+>;
+
+export type ResponseInInfoPageResponse =
+  | EdgeCaseResponseInInfoPage
+  | SuccessfulResponseInInfoPage;
 
 export interface FetchedObjectInInfoPage {
   cn: string;
   creationReason: CreationReasonForObjectInInfoPage;
   fetchedAt: string;
-  response: FailedResponseInInfoPage | SuccessfulFirObjectResponse;
+  response: ResponseInInfoPageResponse;
 }
 
 export type InfoPageData = Array<
