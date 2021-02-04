@@ -8,8 +8,11 @@ interface FormatJsonOptions {
   checkIntegrity?: boolean;
 }
 
-const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
-  let result = JSON.stringify(object, null, "\t");
+export const formatJson = (
+  object: unknown,
+  options?: FormatJsonOptions,
+): string => {
+  let result = `${JSON.stringify(object, null, "\t")}\n`;
 
   // Below transformations makes sense at scale for multiline
   // JSON files with tends of thousands of lines
@@ -29,7 +32,7 @@ const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
       "key2": "value2",
     }]
    */
-  if (result.startsWith("[") && result.endsWith("]")) {
+  if (result.startsWith("[") && result.endsWith("]\n")) {
     result = result
       .replace(/\n\t/g, "\n")
       .replace("[\n{", "[{")
@@ -65,14 +68,6 @@ const formatJson = (object: unknown, options?: FormatJsonOptions): string => {
       new RegExp(`\\n${whitespace}\\},\\n${whitespace}\\{`, "g"),
       `\n${whitespace}}, {`,
     );
-  }
-
-  if (result.startsWith("[") && result.endsWith("]\n")) {
-    result = result
-      .replace(/\n\t/g, "\n")
-      .replace("[\n{", "[{")
-      .replace("}\n]", "}]")
-      .replace(/\},\n\{/g, "}, {");
   }
 
   /*
