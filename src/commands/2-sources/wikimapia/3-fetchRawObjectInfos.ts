@@ -17,7 +17,7 @@ axiosRetry(axios);
 
 const desiredPageLanguage = "ru";
 
-export const fetchRawHouseInfos: Command = async ({ logger }) => {
+export const fetchRawObjectInfos: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Fetching raw object infos"));
 
   const { objectExtentFeatures } = await combineWikimapiaTiles({ logger });
@@ -51,7 +51,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
         timeout: 10000,
         "axios-retry": {
           retries: 30,
-          retryDelay: (retryCount) => (retryCount - 1) * 500,
+          retryDelay: (retryCount) => retryCount * 5000,
           retryCondition: (error) =>
             ![200, 404].includes(error.response?.status ?? 0),
           shouldResetTimeout: true,
@@ -84,4 +84,4 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
   }
 };
 
-autoStartCommandIfNeeded(fetchRawHouseInfos, __filename);
+autoStartCommandIfNeeded(fetchRawObjectInfos, __filename);
