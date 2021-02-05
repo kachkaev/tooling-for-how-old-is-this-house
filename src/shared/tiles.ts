@@ -8,6 +8,17 @@ export type Tile = [x: number, y: number, zoom: number];
 export const stringifyTile = (tile: Tile): string =>
   `${tile[2]}/${tile[0]}/${tile[1]}`;
 
+export const parseTile = (stringifiedTile: string): Tile => {
+  const result = stringifiedTile.split("/").map((v) => parseInt(v) ?? 0);
+  if (result.length !== 3) {
+    throw new Error(
+      `Expected 3 parts in stringified tile, got ${result.length}`,
+    );
+  }
+
+  return result as Tile;
+};
+
 export type TileStatus = "complete" | "needsSplitting";
 export type CacheStatus = "used" | "notUsed";
 
@@ -45,8 +56,8 @@ export const processTiles = async ({
   ) as Tile;
 
   const initialTiles: Tile[] = [];
-  for (let x = bottomLeftTile[0]; x <= topRightTile[0]; x += 1) {
-    for (let y = topRightTile[1]; y <= bottomLeftTile[1]; y += 1) {
+  for (let y = topRightTile[1]; y <= bottomLeftTile[1]; y += 1) {
+    for (let x = bottomLeftTile[0]; x <= topRightTile[0]; x += 1) {
       initialTiles.push([x, y, initialZoom]);
     }
   }

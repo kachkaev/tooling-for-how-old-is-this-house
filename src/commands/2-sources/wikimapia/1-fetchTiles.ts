@@ -14,8 +14,8 @@ import {
 } from "../../../shared/helpersForJson";
 import { getRegionExtent } from "../../../shared/region";
 import {
-  deriveWikimapiaTileDataStatus,
   generateWikimapiaTileComment,
+  getRecommendedWikimapiaTileZoom,
   getWikimapiaTileDataFilePath,
   ProcessedWikimapiaTileResponse,
   WikimapiaTileData,
@@ -86,9 +86,10 @@ const processWikimapiaTileResponse = (
 export const fetchTiles: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikimapia: Fetching tiles"));
 
+  const recommendedTileZoom = await getRecommendedWikimapiaTileZoom();
   await processTiles({
-    initialZoom: 13,
-    maxAllowedZoom: 20,
+    initialZoom: recommendedTileZoom,
+    maxAllowedZoom: recommendedTileZoom,
     regionExtent: await getRegionExtent(),
     processTile: async (tile) => {
       const tileDataFilePath = getWikimapiaTileDataFilePath(tile);
@@ -100,7 +101,7 @@ export const fetchTiles: Command = async ({ logger }) => {
 
         return {
           cacheStatus: "used",
-          tileStatus: deriveWikimapiaTileDataStatus(cachedTileData),
+          tileStatus: "complete",
           comment: generateWikimapiaTileComment(
             tileDataFilePath,
             cachedTileData,
@@ -121,6 +122,10 @@ export const fetchTiles: Command = async ({ logger }) => {
           headers: {
             "Accept-Encoding": "gzip, deflate",
           },
+          "axios-retry": {
+            retries: 3,
+            shouldResetTimeout: true,
+          },
         })
       ).data;
 
@@ -138,7 +143,7 @@ export const fetchTiles: Command = async ({ logger }) => {
 
       return {
         cacheStatus: "notUsed",
-        tileStatus: deriveWikimapiaTileDataStatus(tileData),
+        tileStatus: "complete",
         comment: generateWikimapiaTileComment(tileDataFilePath, tileData),
       };
     },

@@ -13,7 +13,7 @@ export const previewTileData: Command = async ({ logger }) => {
 
   const {
     objectPointFeatures,
-    objectShapeFeatures,
+    objectExtentFeatures,
     tileExtentFeatures,
   } = await combineWikimapiaTiles({ logger });
 
@@ -21,7 +21,7 @@ export const previewTileData: Command = async ({ logger }) => {
 
   for (const [features, name] of [
     [objectPointFeatures, "Object points"],
-    [objectShapeFeatures, "Object shapes"],
+    [objectExtentFeatures, "Object extents"],
     [tileExtentFeatures, "Tile extents"],
   ] as const) {
     const filePath = path.resolve(

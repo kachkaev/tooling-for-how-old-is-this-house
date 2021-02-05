@@ -20,7 +20,7 @@ export type WikimapiaObjectPointFeature = turf.Feature<
   }
 >;
 
-export type WikimapiaObjectShapeFeature = turf.Feature<
+export type WikimapiaObjectExtentFeature = turf.Feature<
   turf.Polygon,
   {
     description?: string;

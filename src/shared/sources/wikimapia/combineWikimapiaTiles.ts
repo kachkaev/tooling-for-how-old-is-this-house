@@ -11,13 +11,19 @@ import {
   getWikimapiaTileDataFileName,
   getWikimapiaTilesDirPath,
 } from "./helpersForPaths";
-import { deriveWikimapiaTileDataStatus } from "./helpersForTiles";
 import {
   WikimaiaTileExtentFeature,
+  WikimapiaObjectExtentFeature,
   WikimapiaObjectPointFeature,
-  WikimapiaObjectShapeFeature,
   WikimapiaTileData,
 } from "./types";
+
+// Commented lines can be used to determine the right zoom level
+// type StatEntry = [value: number, id: string, zoom: number];
+// const extentAreas: StatEntry[] = [];
+// const extentBboxAreas: StatEntry[] = [];
+// const tileAreaToExtentAreaRatios: StatEntry[] = [];
+// const tileAreaToExtentBboxAreaRatios: StatEntry[] = [];
 
 export const combineWikimapiaTiles = async ({
   logger,
@@ -25,11 +31,11 @@ export const combineWikimapiaTiles = async ({
   logger: Console;
 }): Promise<{
   objectPointFeatures: WikimapiaObjectPointFeature[];
-  objectShapeFeatures: WikimapiaObjectShapeFeature[];
+  objectExtentFeatures: WikimapiaObjectExtentFeature[];
   tileExtentFeatures: WikimaiaTileExtentFeature[];
 }> => {
   const rawObjectPointFeatures: WikimapiaObjectPointFeature[] = [];
-  const rawObjectShapeFeatures: WikimapiaObjectShapeFeature[] = [];
+  const rawObjectExtentFeatures: WikimapiaObjectExtentFeature[] = [];
   const tileExtentFeatures: WikimaiaTileExtentFeature[] = [];
 
   await processFiles({
@@ -38,25 +44,24 @@ export const combineWikimapiaTiles = async ({
     fileSearchDirPath: getWikimapiaTilesDirPath(),
     processFile: async (filePath) => {
       const tileData = (await fs.readJson(filePath)) as WikimapiaTileData;
-      if (deriveWikimapiaTileDataStatus(tileData) !== "complete") {
-        return;
-      }
 
       const tileId = stringifyTile(tileData.tile);
+      // const [, , currentTileZoom] = tileData.tile;
 
-      tileExtentFeatures.push(
-        turf.feature(
-          turf.bboxPolygon(tilebelt.tileToBBOX(tileData.tile) as turf.BBox)
-            .geometry!,
-          {
-            tileId,
-            fetchedAt: tileData.fetchedAt,
-            fetchedFeatureCount: tileData.response.length,
-          },
-        ),
+      const tileFeature = turf.feature(
+        turf.bboxPolygon(tilebelt.tileToBBOX(tileData.tile) as turf.BBox)
+          .geometry!,
+        {
+          tileId,
+          fetchedAt: tileData.fetchedAt,
+          fetchedFeatureCount: tileData.response.length,
+        },
       );
+      // const tileArea = turf.area(tileFeature);
+      tileExtentFeatures.push(tileFeature);
 
       tileData.response.forEach((responseFeature) => {
+        const responseFeatureId = `${responseFeature.id}`;
         const pointGeometry = responseFeature.geometry?.geometries.find(
           (geometry): geometry is turf.Point => geometry.type === "Point",
         );
@@ -70,23 +75,44 @@ export const combineWikimapiaTiles = async ({
           responseFeature.geometry?.geometries.length !== 2
         ) {
           throw new Error(
-            `Unexpected contents of geometry fro feature ${responseFeature.id}. Expected on Point and one LineString`,
+            `Unexpected contents of geometry fro feature ${responseFeatureId}. Expected on Point and one LineString`,
           );
         }
 
         const properties = sortKeys({
-          id: `${responseFeature.id}`,
+          id: responseFeatureId,
           ...responseFeature.properties,
         });
 
         const point = turf.point(pointGeometry.coordinates, properties);
-        const shape = turf.polygon(
+        const extent = turf.polygon(
           [lineStringGeometry.coordinates],
           properties,
         );
 
         rawObjectPointFeatures.push(point);
-        rawObjectShapeFeatures.push(shape);
+        rawObjectExtentFeatures.push(extent);
+
+        // const extentArea = turf.area(extent);
+        // const extentBboxArea = turf.area(turf.bboxPolygon(turf.bbox(extent)));
+
+        // extentAreas.push([extentArea, responseFeatureId, currentTileZoom]);
+        // extentBboxAreas.push([
+        //   extentBboxArea,
+        //   responseFeatureId,
+        //   currentTileZoom,
+        // ]);
+
+        // tileAreaToExtentAreaRatios.push([
+        //   tileArea / extentArea,
+        //   responseFeatureId,
+        //   currentTileZoom,
+        // ]);
+        // tileAreaToExtentBboxAreaRatios.push([
+        //   tileArea / extentBboxArea,
+        //   responseFeatureId,
+        //   currentTileZoom,
+        // ]);
       });
     },
   });
@@ -98,18 +124,31 @@ export const combineWikimapiaTiles = async ({
     (feature) => feature.properties?.id,
   );
 
-  const objectShapeFeatures = _.uniqBy(
-    rawObjectShapeFeatures,
+  const objectExtentFeatures = _.uniqBy(
+    rawObjectExtentFeatures,
     (feature) => feature.properties?.id,
   );
 
   process.stdout.write(
-    ` Count reduced from ${rawObjectShapeFeatures.length} to ${objectShapeFeatures.length}.\n`,
+    ` Count reduced from ${rawObjectExtentFeatures.length} to ${objectExtentFeatures.length}.\n`,
   );
+
+  // logger.log({
+  //   minExtentArea: _.orderBy(extentAreas, (t) => t[0]).slice(0, 10),
+  //   minExtentBboxArea: _.orderBy(extentBboxAreas, (t) => t[0]).slice(0, 10),
+  //   maxTileAreaToExtentAreaRatios: _.orderBy(extentAreas, (t) => -t[0]).slice(
+  //     0,
+  //     10,
+  //   ),
+  //   maxTileAreaToExtentBboxAreaRatios: _.orderBy(
+  //     extentBboxAreas,
+  //     (t) => -t[0],
+  //   ).slice(0, 10),
+  // });
 
   return {
     objectPointFeatures,
-    objectShapeFeatures,
+    objectExtentFeatures,
     tileExtentFeatures,
   };
 };

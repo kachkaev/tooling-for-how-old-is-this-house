@@ -1,16 +1,18 @@
-import { TileStatus } from "../../tiles";
 import { WikimapiaTileData } from "./types";
 
-const maxFeaturesPerTileRequestForSplitting = 100;
+/*
+ * Is has been empirically established that the zoom level affects the sizes of objects
+ * that are being returned. The lower the zoom, the larger the returned objects.
+ * Zoom level 16 is enough to fetch objects with area of even 1–3 m², which includes even
+ * small statues and water pumps. If data fetching is done significantly far from 50° north,
+ * this level may need to be reconsidered.
+ *
+ * Recommended tile edge length is approximately 300-500 meters.
+ */
+export const getRecommendedWikimapiaTileZoom = async (): Promise<number> => {
+  // TODO: getRegionExtent, map lat to zoom level
 
-export const deriveWikimapiaTileDataStatus = (
-  tileData: WikimapiaTileData,
-): TileStatus => {
-  const numberOfFeatures = tileData.response.length;
-
-  return numberOfFeatures >= maxFeaturesPerTileRequestForSplitting
-    ? "needsSplitting"
-    : "complete";
+  return 16;
 };
 
 export const generateWikimapiaTileComment = (
