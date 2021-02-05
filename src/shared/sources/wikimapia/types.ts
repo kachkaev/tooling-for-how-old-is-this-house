@@ -16,7 +16,7 @@ export type WikimapiaObjectPointFeature = turf.Feature<
   turf.Point,
   {
     description?: string;
-    id: string;
+    wikimapiaId: number;
   }
 >;
 
@@ -24,7 +24,7 @@ export type WikimapiaObjectExtentFeature = turf.Feature<
   turf.Polygon,
   {
     description?: string;
-    id: string;
+    wikimapiaId: number;
   }
 >;
 
