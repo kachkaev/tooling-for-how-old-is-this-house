@@ -6,7 +6,7 @@ import path from "path";
 
 import { getSerialisedNow } from "../../../shared/helpersForJson";
 import {
-  deriveHouseFilePath,
+  getHouseFilePath,
   loopThroughHouseLists,
   loopThroughRowsInHouseList,
 } from "../../../shared/sources/mingkh";
@@ -18,10 +18,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
     await loopThroughRowsInHouseList(
       houseListFilePath,
       async ({ houseUrl, houseId }) => {
-        const rawHouseInfoFilePath = deriveHouseFilePath(
-          houseId,
-          "raw-info.html",
-        );
+        const rawHouseInfoFilePath = getHouseFilePath(houseId, "raw-info.html");
         if (await fs.pathExists(rawHouseInfoFilePath)) {
           process.stdout.write(
             chalk.gray(

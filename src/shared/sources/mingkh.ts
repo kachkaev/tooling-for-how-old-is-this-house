@@ -61,10 +61,7 @@ export const getHouseListGeoJsonFilePath = () => {
   );
 };
 
-export const deriveHouseFilePath = (
-  houseId: number,
-  fileNameSuffix: string,
-) => {
+export const getHouseFilePath = (houseId: number, fileNameSuffix: string) => {
   const normalisedHouseId = `${houseId}`.padStart(7, "0");
 
   return path.resolve(

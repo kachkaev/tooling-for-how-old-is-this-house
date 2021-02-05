@@ -8,7 +8,7 @@ import {
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import {
-  deriveHouseFilePath,
+  getHouseFilePath,
   HouseInfo,
   HouseInfoFile,
   loopThroughHouseLists,
@@ -20,12 +20,9 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
 
   await loopThroughHouseLists(async ({ houseListFilePath }) => {
     await loopThroughRowsInHouseList(houseListFilePath, async ({ houseId }) => {
-      const rawHouseInfoFilePath = deriveHouseFilePath(
-        houseId,
-        "raw-info.html",
-      );
+      const rawHouseInfoFilePath = getHouseFilePath(houseId, "raw-info.html");
 
-      const houseInfoFilePath = deriveHouseFilePath(houseId, "info.json");
+      const houseInfoFilePath = getHouseFilePath(houseId, "info.json");
 
       if (await fs.pathExists(houseInfoFilePath)) {
         process.stdout.write(

@@ -7,7 +7,7 @@ import sortKeys from "sort-keys";
 
 import { writeFormattedJson } from "../../../shared/helpersForJson";
 import {
-  deriveHouseFilePath,
+  getHouseFilePath,
   getHouseListGeoJsonFilePath,
   HouseInfoFile,
   loopThroughHouseLists,
@@ -21,7 +21,7 @@ export const combineHouseInfosIntoGeoJson: Command = async ({ logger }) => {
 
   await loopThroughHouseLists(async ({ houseListFilePath }) => {
     await loopThroughRowsInHouseList(houseListFilePath, async ({ houseId }) => {
-      const houseInfoFilePath = deriveHouseFilePath(houseId, "info.json");
+      const houseInfoFilePath = getHouseFilePath(houseId, "info.json");
 
       process.stdout.write(` Reading...`);
 

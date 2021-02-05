@@ -25,6 +25,8 @@
     yarn exe src/commands/2-sources/wikidata/1-executeQuery.ts ## incomplete
     
     yarn exe src/commands/2-sources/wikimapia/1-fetchTiles.ts
+    yarn exe src/commands/2-sources/wikimapia/2-previewTileData.ts ## optional
+    yarn exe src/commands/2-sources/wikimapia/3-fetchRawObjectInfos.ts
     ```
 
 ## Поля выгружаемой таблицы

@@ -26,3 +26,19 @@ export const getWikimapiaTileDataFilePath = (tile: Tile) => {
 export const getWikimapiaObjectDetailsDir = () => {
   return path.resolve(getWikimapiaDirPath(), "object-details");
 };
+
+export const deriveWikimapiaObjectFilePath = (
+  wikimapiaId: number,
+  fileNameSuffix: string,
+) => {
+  const normalisedWikimapiaId = `${wikimapiaId}`.padStart(9, "0");
+
+  return path.resolve(
+    getRegionDirPath(),
+    "sources",
+    "wikimapia",
+    "objects",
+    `${normalisedWikimapiaId.substring(0, 3)}xxxxxx`,
+    `${normalisedWikimapiaId}--${fileNameSuffix}`,
+  );
+};

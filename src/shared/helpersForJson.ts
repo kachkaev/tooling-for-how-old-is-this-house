@@ -8,14 +8,16 @@ interface FormatJsonOptions {
   checkIntegrity?: boolean;
 }
 
+/**
+ * Produces a multi-line JSON string with some added compactness.
+ * This custom formatting makes sense at scale for large JSON files
+ * stored in a git repo.
+ */
 export const formatJson = (
   object: unknown,
   options?: FormatJsonOptions,
 ): string => {
   let result = `${JSON.stringify(object, null, "\t")}\n`;
-
-  // Below transformations makes sense at scale for multiline
-  // JSON files with tends of thousands of lines
 
   /*
     == before ==

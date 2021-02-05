@@ -2,6 +2,8 @@ import chalk from "chalk";
 import globby from "globby";
 import _ from "lodash";
 
+import { generateProgress } from "./helpersForCommands";
+
 export const processFiles = async ({
   logger,
   fileSearchPattern,
@@ -26,24 +28,21 @@ export const processFiles = async ({
 
   // const numberOfFiles = Math.min(globbyResults.length, 60);
   const numberOfFiles = globbyResults.length;
-  const numberOfFilesStringLength = `${numberOfFiles}`.length;
 
   process.stdout.write(` Files found: ${numberOfFiles}.\n`);
   process.stdout.write(chalk.green("Processing files...\n"));
 
   for (let index = 0; index < numberOfFiles; index += 1) {
     const filePath = globbyResults[index]!;
-    const prefix = `${`${index + 1}`.padStart(
-      numberOfFilesStringLength,
-    )} / ${numberOfFiles} `;
+    const progress = generateProgress(index, numberOfFiles);
 
     if (
       (statusReportFrequency === 1 || index !== 0) &&
       ((index + 1) % statusReportFrequency === 0 || index === numberOfFiles - 1)
     ) {
-      logger.log(`${prefix}${showFilePath ? chalk.green(filePath) : ""}`);
+      logger.log(`${progress}${showFilePath ? chalk.green(filePath) : ""}`);
     }
 
-    await processFile(filePath, prefix.length);
+    await processFile(filePath, progress.length);
   }
 };

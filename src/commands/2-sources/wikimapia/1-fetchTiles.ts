@@ -3,6 +3,7 @@ import * as tilebelt from "@mapbox/tilebelt";
 import * as tj from "@tmcw/togeojson";
 import * as turf from "@turf/turf";
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
@@ -21,6 +22,8 @@ import {
   WikimapiaTileData,
 } from "../../../shared/sources/wikimapia";
 import { processTiles } from "../../../shared/tiles";
+
+axiosRetry(axios);
 
 const featurePropertiesToExclude = [
   "icon",
