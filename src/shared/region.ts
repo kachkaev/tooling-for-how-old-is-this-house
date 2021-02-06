@@ -35,6 +35,9 @@ export interface RegionConfig {
         | undefined
       >;
     };
+    mkrf?: {
+      fallbackAddressSelectorsForObjectsWithoutGeometry?: string[] | string[][];
+    };
   };
 }
 

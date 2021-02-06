@@ -67,7 +67,7 @@ export const formatJson = (
       try {
         result = result.replace(
           new RegExp(
-            `\\[\\n${whitespace}\t\\{(\\n(${whitespace}[^\\n]+\\n)+)${whitespace}\t\\}\\n\t*\\]`,
+            `\\[\\n${whitespace}\t\\{(\\n(${whitespace}[\\}\\{\\t][^\\n]+\\n)+)${whitespace}\t\\}\\n\t*\\]`,
             "g",
           ),
           (match, p1) => `[{${p1.replace(/\n\t/g, "\n")}${whitespace}}]`,
@@ -94,7 +94,7 @@ export const formatJson = (
       "key2": "value2"
     }
     ...
-    
+
     == after ==
     ...
     {
@@ -150,7 +150,7 @@ export const formatJson = (
       lon,
       lat
     ]
-    
+
     == after ==
     [lon, lat]
    */
@@ -164,7 +164,7 @@ export const formatJson = (
     "something": {
       "key", value
     }
-    
+
     == after ==
     "something": { "key": value }
    */
@@ -179,7 +179,7 @@ export const formatJson = (
         [lon, lat]
       ]
     ]
-    
+
     == after ==
     "coordinates": [[
       [lon, lat],

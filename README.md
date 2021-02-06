@@ -2,11 +2,15 @@
 
 ## Шаги по сборке данных
 
-1.  Создать и заполнить файл `/path/to/hoith/var/regions/${MY_REGION}/region-config.yml`
+1.  Создать и заполнить файл `/path/to/data/regions/${MY_REGION}/region-config.yml` (по аналогии с таким файлом для уже обработанного города).
 
-1.  Скопировать `.env.dist` в `.env` и заполнить новый файл
+1.  Скачать список объектов [с сайта Минкультуры](https://opendata.mkrf.ru/opendata/7705851331-egrkn).
+    Файл должен быть в формате `jsons` (с `s` на конце) и разарахивирован.
+    Рекомендованная папка: `/path/to/data/sources/mkrf` (название файла лучше оставить, как есть).
 
-1.  Запустить команды
+1.  Скопировать `.env.dist` в `.env` и заполнить новый файл.
+
+1.  Запустить команды:
 
     ```sh
     yarn exe src/commands/1-buildRegionExtent.ts
@@ -15,6 +19,8 @@
     yarn exe src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/4-combineHouseInfosIntoGeoJson.ts
+    
+    yarn exe src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
     
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
