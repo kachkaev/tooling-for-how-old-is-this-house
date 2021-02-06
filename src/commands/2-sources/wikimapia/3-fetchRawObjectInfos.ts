@@ -11,6 +11,7 @@ import { getSerialisedNowForHtml } from "../../../shared/helpersForHtml";
 import {
   combineWikimapiaTiles,
   deriveWikimapiaObjectFilePath,
+  getWikimapiaRawObjectInfoFileSuffix,
 } from "../../../shared/sources/wikimapia";
 
 axiosRetry(axios);
@@ -18,7 +19,7 @@ axiosRetry(axios);
 const desiredPageLanguage = "ru";
 
 export const fetchRawObjectInfos: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/mingkh: Fetching raw object infos"));
+  logger.log(chalk.bold("sources/wikimapia: Fetching raw object infos"));
 
   const { objectExtentFeatures } = await combineWikimapiaTiles({ logger });
 
@@ -32,7 +33,7 @@ export const fetchRawObjectInfos: Command = async ({ logger }) => {
 
     const rawObjectInfoFilePath = deriveWikimapiaObjectFilePath(
       wikimapiaId,
-      "raw-info.html",
+      getWikimapiaRawObjectInfoFileSuffix(),
     );
 
     if (await fs.pathExists(rawObjectInfoFilePath)) {

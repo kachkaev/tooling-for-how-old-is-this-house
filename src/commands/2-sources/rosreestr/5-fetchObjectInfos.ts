@@ -75,7 +75,6 @@ export const fetchObjectInfos: Command = async ({ logger }) => {
     fileSearchPattern: `**/page-*.json`,
     fileSearchDirPath: getObjectInfoPagesDirPath(),
     showFilePath: true,
-    statusReportFrequency: 1,
     processFile: async (filePath, prefixLength) => {
       const fileStat = await fs.stat(filePath);
       if (fileStat.mtime > scriptStartTime) {

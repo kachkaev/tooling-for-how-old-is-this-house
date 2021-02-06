@@ -36,3 +36,20 @@ export type WikimaiaTileExtentFeature = turf.Feature<
     fetchedFeatureCount: number;
   }
 >;
+
+export interface WikimapiaObjectPhotoInfo {
+  url: string;
+  userId: number;
+  userName: string;
+}
+
+export interface WikimapiaObjectInfo {
+  wikimapiaId: number;
+  photos?: WikimapiaObjectPhotoInfo[];
+}
+
+export interface WikimapiaObjectInfoFile {
+  fetchedAt: string;
+  parsedAt: string;
+  data: WikimapiaObjectInfo;
+}

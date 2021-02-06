@@ -3,6 +3,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
+import { extractFetchedAt } from "../../../shared/helpersForHtml";
 import {
   getSerialisedNow,
   writeFormattedJson,
@@ -15,7 +16,7 @@ import {
   loopThroughRowsInHouseList,
 } from "../../../shared/sources/mingkh";
 
-export const fetchRawHouseInfos: Command = async ({ logger }) => {
+export const parseRawHouseInfos: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Parsing raw house infos"));
 
   await loopThroughHouseLists(async ({ houseListFilePath }) => {
@@ -105,11 +106,8 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
         info.cadastralId = cadastralId;
       }
 
-      // extract fetchedAt
-      const rawFetchedAtMatch = rawInfo.match(/^<!-- fetchedAt: (.*) -->/);
-
       const houseInfoFileJson: HouseInfoFile = {
-        fetchedAt: rawFetchedAtMatch?.[1] ?? "unknown",
+        fetchedAt: extractFetchedAt(rawInfo),
         parsedAt: getSerialisedNow(),
         data: sortKeys(info),
       };
@@ -123,4 +121,4 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchRawHouseInfos, __filename);
+autoStartCommandIfNeeded(parseRawHouseInfos, __filename);

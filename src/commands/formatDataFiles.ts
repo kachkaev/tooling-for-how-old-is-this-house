@@ -2,7 +2,7 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 
-import { formatJson } from "../shared/helpersForJson";
+import { formatJson, getJsonFormattingStyle } from "../shared/helpersForJson";
 import { processFiles } from "../shared/processFiles";
 import { getRegionDirPath } from "../shared/region";
 
@@ -13,11 +13,13 @@ export const formatDataFiles: Command = async ({ logger }) => {
     logger,
     fileSearchPattern: "**/*.(json|geojson)",
     fileSearchDirPath: getRegionDirPath(),
+    statusReportFrequency: 500,
     processFile: async (filePath) => {
       const originalJson = await fs.readFile(filePath, "utf8");
       const jsonData = JSON.parse(originalJson);
       const formattedJson = formatJson(jsonData, {
         checkIntegrity: true,
+        formattingStyle: getJsonFormattingStyle(filePath),
       });
       if (originalJson !== formattedJson) {
         await fs.writeFile(filePath, formattedJson, "utf8");

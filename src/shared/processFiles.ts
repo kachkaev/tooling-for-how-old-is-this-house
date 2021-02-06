@@ -10,7 +10,7 @@ export const processFiles = async ({
   fileSearchDirPath,
   processFile,
   showFilePath = false,
-  statusReportFrequency = 500,
+  statusReportFrequency = 1,
 }: {
   logger: Console;
   fileSearchPattern: string;
@@ -23,6 +23,7 @@ export const processFiles = async ({
   const rawGlobbyResults = await globby(fileSearchPattern, {
     cwd: fileSearchDirPath,
     absolute: true,
+    onlyFiles: true,
   });
   const globbyResults = _.sortBy(rawGlobbyResults);
 
@@ -40,9 +41,18 @@ export const processFiles = async ({
       (statusReportFrequency === 1 || index !== 0) &&
       ((index + 1) % statusReportFrequency === 0 || index === numberOfFiles - 1)
     ) {
-      logger.log(`${progress}${showFilePath ? chalk.green(filePath) : ""}`);
+      logger.log(
+        `${progress}${showFilePath ? ` ${chalk.green(filePath)}` : ""}`,
+      );
     }
 
-    await processFile(filePath, progress.length);
+    try {
+      await processFile(filePath, progress.length);
+    } catch (e) {
+      logger.error(
+        chalk.red(`Unexpected error while processing file ${filePath}`),
+      );
+      throw e;
+    }
   }
 };

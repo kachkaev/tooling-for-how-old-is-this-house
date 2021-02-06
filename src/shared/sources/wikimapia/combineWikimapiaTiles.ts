@@ -42,6 +42,7 @@ export const combineWikimapiaTiles = async ({
     logger,
     fileSearchPattern: `**/${getWikimapiaTileDataFileName()}`,
     fileSearchDirPath: getWikimapiaTilesDirPath(),
+    statusReportFrequency: 500,
     processFile: async (filePath) => {
       const tileData = (await fs.readJson(filePath)) as WikimapiaTileData;
 

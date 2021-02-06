@@ -23,9 +23,12 @@ export const getWikimapiaTileDataFilePath = (tile: Tile) => {
   );
 };
 
-export const getWikimapiaObjectDetailsDir = () => {
-  return path.resolve(getWikimapiaDirPath(), "object-details");
+export const getWikimapiaObjectsDir = () => {
+  return path.resolve(getWikimapiaDirPath(), "objects");
 };
+
+export const getWikimapiaRawObjectInfoFileSuffix = () => "raw-info.html";
+export const getWikimapiaObjectInfoFileSuffix = () => "info.json";
 
 export const deriveWikimapiaObjectFilePath = (
   wikimapiaId: number,
@@ -34,10 +37,7 @@ export const deriveWikimapiaObjectFilePath = (
   const normalisedWikimapiaId = `${wikimapiaId}`.padStart(9, "0");
 
   return path.resolve(
-    getRegionDirPath(),
-    "sources",
-    "wikimapia",
-    "objects",
+    getWikimapiaObjectsDir(),
     `${normalisedWikimapiaId.substring(0, 3)}xxxxxx`,
     `${normalisedWikimapiaId}--${fileNameSuffix}`,
   );
