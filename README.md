@@ -19,34 +19,46 @@
     yarn exe src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/4-combineHouseInfosIntoGeoJson.ts
-    yarn exe src/commands/2-sources/mingkh/9-extractOutputLayer.ts ## todo
+    yarn exe src/commands/2-sources/mingkh/5-reportToGeocoder.ts ## todo
     
     yarn exe src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
-    yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts ## todo
+    yarn exe src/commands/2-sources/mkrf/2-reportToGeocoder.ts ## todo
     
-    yarn exe src/commands/2-sources/osm/1-fetchRawBuildings.ts  ## todo
-    yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts ## todo
+    yarn exe src/commands/2-sources/osm/1-fetchRawBuildings.ts ## todo
+    yarn exe src/commands/2-sources/osm/2-reportToGeocoder.ts  ## todo
     
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
     yarn exe src/commands/2-sources/rosreestr/3-previewTileData.ts ## optional
     yarn exe src/commands/2-sources/rosreestr/4-generateObjectInfoPages.ts
-    yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
-    yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts ## todo
+    yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts ## supports concurrent launches
+    yarn exe src/commands/2-sources/rosreestr/6-reportToGeocoder.ts ## todo
     
     yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
+    ## wikidata flow is incomplete
     
     yarn exe src/commands/2-sources/wikimapia/1-fetchTiles.ts
     yarn exe src/commands/2-sources/wikimapia/2-previewTileData.ts ## optional
     yarn exe src/commands/2-sources/wikimapia/3-fetchRawObjectInfos.ts
     yarn exe src/commands/2-sources/wikimapia/4-parseRawObjectInfos.ts
+    yarn exe src/commands/2-sources/wikimapia/5-reportToGeocoder.ts ## todo
+    ```
+
+    ```sh
+    yarn exe src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts ## todo
+    ```
+
+    ```sh
+    yarn exe src/commands/2-sources/mingkh/9-extractOutputLayer.ts    ## todo
+    yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts      ## todo
+    yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts       ## todo
+    yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts ## todo
     yarn exe src/commands/2-sources/wikimapia/9-extractOutputLayer.ts ## todo
     ```
 
     ```sh
-    yarn exe src/commands/3-geocodeAddresses.ts            ## todo
-    yarn exe src/commands/4-combineOutputLayers.ts         ## todo
-    yarn exe src/commands/5-distillCombinedOutputLayers.ts ## todo
+    yarn exe src/commands/3-combineOutputLayers.ts         ## todo
+    yarn exe src/commands/4-distillCombinedOutputLayers.ts ## todo
     ```
 
 ## Поля выгружаемой таблицы
