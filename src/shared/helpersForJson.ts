@@ -197,6 +197,28 @@ export const formatJson = (
     );
   }
 
+  /*
+    == before ==
+    ...
+    [
+      ...
+    ],
+    [
+      ...
+    ]
+    ...
+
+    == after ==
+    ...
+    [
+      ...
+    ], [
+      ...
+    ]
+    ...
+   */
+  result = result.replace(/\n(\t+)\],\n\t+\[\n/g, "\n$1], [\n");
+
   if (options?.checkIntegrity) {
     if (!_.isEqual(object, JSON.parse(result))) {
       throw new Error(`Integrity check failed`);

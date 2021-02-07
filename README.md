@@ -6,7 +6,7 @@
 
 1.  Скачать список объектов [с сайта Минкультуры](https://opendata.mkrf.ru/opendata/7705851331-egrkn).
     Файл должен быть в формате `jsons` (с `s` на конце) и разарахивирован.
-    Рекомендованная папка: `/path/to/data/sources/mkrf` (название файла лучше оставить, как есть).
+    Рекомендованная папка: `/path/to/data/sources/mkrf` (название файла желательно не менять).
 
 1.  Скопировать `.env.dist` в `.env` и заполнить новый файл.
 
@@ -19,21 +19,35 @@
     yarn exe src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/4-combineHouseInfosIntoGeoJson.ts
+    yarn exe src/commands/2-sources/mingkh/9-extractOutputLayer.ts ## todo
     
     yarn exe src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
+    yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts ## todo
+    
+    yarn exe src/commands/2-sources/osm/1-fetchRawBuildings.ts  ## todo
+    yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts ## todo
     
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
     yarn exe src/commands/2-sources/rosreestr/3-previewTileData.ts ## optional
     yarn exe src/commands/2-sources/rosreestr/4-generateObjectInfoPages.ts
     yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
+    yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts ## todo
     
-    yarn exe src/commands/2-sources/wikidata/1-executeQuery.ts ## incomplete
+    yarn exe src/commands/2-sources/wikidata/1-executeQuery.ts       ## todo
+    yarn exe src/commands/2-sources/wikidata/9-extractOutputLayer.ts ## todo
     
     yarn exe src/commands/2-sources/wikimapia/1-fetchTiles.ts
     yarn exe src/commands/2-sources/wikimapia/2-previewTileData.ts ## optional
     yarn exe src/commands/2-sources/wikimapia/3-fetchRawObjectInfos.ts
     yarn exe src/commands/2-sources/wikimapia/4-parseRawObjectInfos.ts
+    yarn exe src/commands/2-sources/wikimapia/9-extractOutputLayer.ts ## todo
+    ```
+
+    ```sh
+    yarn exe src/commands/3-geocodeAddresses.ts            ## todo
+    yarn exe src/commands/4-combineOutputLayers.ts         ## todo
+    yarn exe src/commands/5-distillCombinedOutputLayers.ts ## todo
     ```
 
 ## Поля выгружаемой таблицы
