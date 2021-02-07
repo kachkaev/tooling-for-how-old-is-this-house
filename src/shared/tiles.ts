@@ -70,7 +70,7 @@ export const processTiles = async ({
     for (const tile of tiles) {
       if (
         !turf.intersect(
-          tilebelt.tileToGeoJSON(tile),
+          tilebelt.tileToGeoJSON(tile) as turf.Polygon,
           regionExtent.geometry as turf.Polygon,
         )
       ) {

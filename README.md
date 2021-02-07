@@ -34,8 +34,7 @@
     yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts
     yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts ## todo
     
-    yarn exe src/commands/2-sources/wikidata/1-executeQuery.ts       ## todo
-    yarn exe src/commands/2-sources/wikidata/9-extractOutputLayer.ts ## todo
+    yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
     
     yarn exe src/commands/2-sources/wikimapia/1-fetchTiles.ts
     yarn exe src/commands/2-sources/wikimapia/2-previewTileData.ts ## optional
