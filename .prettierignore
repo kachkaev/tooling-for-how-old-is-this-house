@@ -12,7 +12,6 @@
 
 ## same as in .gitignore
 /node_modules/
-/var/
 
 /.env
 
