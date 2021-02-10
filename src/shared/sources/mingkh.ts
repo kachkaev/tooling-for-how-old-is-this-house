@@ -2,6 +2,13 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 
+import {
+  combineAddressParts,
+  normalizeAddressPart,
+  normalizeBuilding,
+  normalizeStreet,
+  splitAddress,
+} from "../addresses";
 import { getRegionConfig, getRegionDirPath } from "../region";
 
 export interface HouseListResponse {
@@ -145,3 +152,23 @@ export const loopThroughRowsInHouseList = async (
 };
 
 export const notFilledIn = ["Не заполнено", "Нет данных"];
+
+// ул. Попова, д. 2, Пенза, Пензенская область
+// ул. Механизаторов, д. 13, к. 0, стр. 0, лит. 0, Засечное, Пензенская область
+export const normalizeMingkhAddress = (address: string): string => {
+  const addressParts = splitAddress(address);
+  if (addressParts.length < 4 || addressParts.length > 7) {
+    throw new Error(`Too many or too few address parts in "${address}"`);
+  }
+  const street = normalizeStreet(addressParts[0]!);
+  const region = addressParts[addressParts.length - 1]!;
+  const city = addressParts[addressParts.length - 2]!;
+  const building = normalizeBuilding(
+    addressParts[1]!,
+    ...addressParts.slice(2, addressParts.length - 2),
+  );
+
+  return combineAddressParts(
+    [region, city, street, building].map(normalizeAddressPart),
+  );
+};

@@ -2,12 +2,12 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 
-import { splitNormalisedAddress } from "./addressing";
+import { splitAddress } from "./addresses";
 import { writeFormattedJson } from "./helpersForJson";
 import { processFiles } from "./processFiles";
 import { getRegionDirPath } from "./region";
 
-export type Position = [lot: number, lat: number];
+export type Coordinates = [lot: number, lat: number];
 
 export interface ReportedUnresolvedGeocode {
   normalizedAddress: string;
@@ -15,8 +15,8 @@ export interface ReportedUnresolvedGeocode {
 
 export interface ReportedResolvedGeocode {
   normalizedAddress: string;
-  position: Position;
-  fetchedAt: string;
+  coordinates: Coordinates;
+  knownAt: string;
 }
 
 export type ReportedGeocode = ReportedResolvedGeocode | ReportedResolvedGeocode;
@@ -48,13 +48,13 @@ const getGeocodeDictionaryFileName = () => "dictionary.json";
 const getDictionaryFilePath = (sliceId: string) => {
   return path.resolve(
     getGeocodeDictionariesDirPath(),
-    ...sliceId,
+    sliceId,
     getGeocodeDictionaryFileName(),
   );
 };
 
 const deriveNormalizedAddressSliceId = (normalizedAddress: string): string => {
-  return splitNormalisedAddress(normalizedAddress).slice(0, 3).join("/");
+  return splitAddress(normalizedAddress).slice(0, 3).join("/");
 };
 
 const loadGeocodeDictionaryLookup = async (
@@ -78,7 +78,7 @@ const loadGeocodeDictionaryLookup = async (
         filePath,
       );
       const relativeFileDir = path.dirname(relativeFilePath);
-      const sliceId = relativeFileDir.replaceAll(path.sep, "/");
+      const sliceId = relativeFileDir.split(path.sep).join("/");
       result[sliceId] = dictionary;
     },
   });
@@ -98,18 +98,24 @@ export const loadCombinedGeocodeDictionary = async (
   return Object.assign({}, ...Object.values(geocodeDictionaryLookup));
 };
 
-export const reportGeocodes = async (
-  source: string,
-  reportedGeocodes: ReportedGeocode[],
-): Promise<void> => {
+export const reportGeocodes = async ({
+  source,
+  // cleanupExisting, // TODO
+  reportedGeocodes,
+}: {
+  logger: Console;
+  source: string;
+  reportedGeocodes: ReportedGeocode[];
+  cleanupExisting?: boolean;
+}): Promise<void> => {
   const recordLookup: Record<string, GeocodeSourceRecord | null> = {};
 
   for (const reportedGeocode of reportedGeocodes) {
     const { normalizedAddress } = reportedGeocode;
-    if ("position" in reportedGeocode) {
+    if ("coordinates" in reportedGeocode) {
       recordLookup[normalizedAddress] = [
-        ...reportedGeocode.position,
-        reportedGeocode.fetchedAt,
+        ...reportedGeocode.coordinates,
+        reportedGeocode.knownAt,
       ];
     } else {
       recordLookup[normalizedAddress] = null;
@@ -137,11 +143,11 @@ export const reportGeocodes = async (
     try {
       dictionary = await fs.readJson(dictionaryFilePath);
     } catch {
-      // noop: it's fine if the file does not exist
+      // noop: it's fine if the file does not exist at this point
     }
     for (const normalizedAddress in recordLookupInSlice) {
       const record = recordLookupInSlice[normalizedAddress];
-      if (dictionary[normalizedAddress]) {
+      if (!dictionary[normalizedAddress]) {
         dictionary[normalizedAddress] = {};
       }
       if (record) {
@@ -156,7 +162,7 @@ export const resolvePosition = async (
   combinedGeocodeDictionary: GeocodeDictionary,
   normalizedAddress: string,
   sourcesInPriorityOrder: string[],
-): Promise<Position | undefined> => {
+): Promise<Coordinates | undefined> => {
   const addressRecord = combinedGeocodeDictionary[normalizedAddress];
   if (!addressRecord) {
     return undefined;
