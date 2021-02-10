@@ -39,35 +39,30 @@ export interface HouseInfoFile {
   data: HouseInfo;
 }
 
+export const getMingkhDirPath = () => {
+  return path.resolve(getRegionDirPath(), "sources", "mingkh");
+};
+
 export const getHouseListFilePath = (
   mingkhRegionUrl: string,
   mingkhCityUrl: string,
 ) => {
   return path.resolve(
-    getRegionDirPath(),
-    "sources",
-    "migkh",
+    getMingkhDirPath(),
     "house-lists",
     `${mingkhRegionUrl}--${mingkhCityUrl}.json`,
   );
 };
 
 export const getHouseListGeoJsonFilePath = () => {
-  return path.resolve(
-    getRegionDirPath(),
-    "sources",
-    "migkh",
-    "house-list.geojson",
-  );
+  return path.resolve(getMingkhDirPath(), "house-list.geojson");
 };
 
 export const getHouseFilePath = (houseId: number, fileNameSuffix: string) => {
   const normalisedHouseId = `${houseId}`.padStart(7, "0");
 
   return path.resolve(
-    getRegionDirPath(),
-    "sources",
-    "migkh",
+    getMingkhDirPath(),
     "houses",
     `${normalisedHouseId.substring(0, 4)}xxx`,
     `${normalisedHouseId}--${fileNameSuffix}`,
