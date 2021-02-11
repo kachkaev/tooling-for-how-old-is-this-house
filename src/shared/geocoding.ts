@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
+import sortKeys from "sort-keys";
 
 import { splitAddress } from "./addresses";
 import { writeFormattedJson } from "./helpersForJson";
@@ -22,7 +23,11 @@ export interface ReportedResolvedGeocode {
 export type ReportedGeocode = ReportedResolvedGeocode | ReportedResolvedGeocode;
 
 export type GeocodeSourceRecord = [lon: number, lat: number, fetchedAt: string];
-export type GeocodeAddressRecord = Record<string, GeocodeSourceRecord>;
+export type GeocodeSourceTrailingCommaRecord = [];
+export type GeocodeAddressRecord = Record<
+  string,
+  GeocodeSourceRecord | GeocodeSourceTrailingCommaRecord
+>;
 export type GeocodeDictionary = Record<string, GeocodeAddressRecord>;
 export type GeocodeDictionaryLookup = Record<string, GeocodeDictionary>;
 
@@ -100,9 +105,9 @@ export const loadCombinedGeocodeDictionary = async (
 
 export const reportGeocodes = async ({
   source,
-  // cleanupExisting, // TODO
   reportedGeocodes,
-}: {
+}: // cleanupExisting,
+{
   logger: Console;
   source: string;
   reportedGeocodes: ReportedGeocode[];
@@ -148,13 +153,16 @@ export const reportGeocodes = async ({
     for (const normalizedAddress in recordLookupInSlice) {
       const record = recordLookupInSlice[normalizedAddress];
       if (!dictionary[normalizedAddress]) {
-        dictionary[normalizedAddress] = {};
+        dictionary[normalizedAddress] = { "↳": [] };
       }
       if (record) {
         dictionary[normalizedAddress]![source] = record;
       }
     }
-    await writeFormattedJson(dictionaryFilePath, dictionary);
+    await writeFormattedJson(
+      dictionaryFilePath,
+      sortKeys(dictionary, { deep: true }),
+    );
   }
 };
 
@@ -170,7 +178,7 @@ export const resolvePosition = async (
 
   for (const source of sourcesInPriorityOrder) {
     const sourceRecord = addressRecord[source];
-    if (sourceRecord) {
+    if (sourceRecord && sourceRecord.length) {
       return [sourceRecord[0], sourceRecord[1]];
     }
   }

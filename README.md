@@ -30,14 +30,14 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/mingkh/1-fetchHouseLists.ts
     yarn exe src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
-    yarn exe src/commands/2-sources/mingkh/4-combineHouseInfosIntoGeoJson.ts
-    yarn exe src/commands/2-sources/mingkh/5-reportGeocodes.ts ## todo
+    yarn exe src/commands/2-sources/mingkh/4-previewHouseInfos.ts ## optional
+    yarn exe src/commands/2-sources/mingkh/5-reportGeocodes.ts
     
     yarn exe src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
     yarn exe src/commands/2-sources/mkrf/2-reportGeocodes.ts ## todo
     
-    yarn exe src/commands/2-sources/osm/1-fetchRawBuildings.ts ## todo
-    yarn exe src/commands/2-sources/osm/2-reportGeocodes.ts    ## todo
+    yarn exe src/commands/2-sources/osm/1-fetchRawBuildings.ts
+    yarn exe src/commands/2-sources/osm/2-reportGeocodes.ts ## todo
     
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
@@ -47,7 +47,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/rosreestr/6-reportGeocodes.ts   ## todo
     
     yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
-    ## wikidata flow is incomplete due to lack of harvest
+    ## wikidata flow is incomplete due to lack of good harvest for Penza
     
     yarn exe src/commands/2-sources/wikimapia/1-fetchTiles.ts
     yarn exe src/commands/2-sources/wikimapia/2-previewTileData.ts ## optional

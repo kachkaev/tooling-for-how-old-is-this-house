@@ -7,7 +7,7 @@ export const combineAddressParts = (addressParts: string[]): string => {
 };
 
 export const normalizeAddressPart = (addressPart: string): string => {
-  return addressPart.toLowerCase().replace(/ё/g, "е");
+  return addressPart.toLowerCase().replace(/ё/g, "е").replace(/\s+/g, " ");
 };
 
 export const normalizeStreet = (street: string): string => {
@@ -28,16 +28,21 @@ export const normalizeBuilding = (
   building: string,
   ...rest: string[]
 ): string => {
-  const normalizedBuilding = building.toLowerCase().replace(/д\.\s?/, "");
+  const normalizedBuilding = building
+    .toLowerCase()
+    .replace(/д\.\s?/, "")
+    .replace(/№/g, ""); // c
   if (!rest?.length) {
     return normalizedBuilding;
   }
   const combinedRest = ` ${rest.map(normalizeAddressPart).join(" ")}`;
   const normalizedRest = combinedRest
+    .replace(/№/g, "")
     .replace(/стр\.\s?/, "строение ")
     .replace(/ строение ([^\d]) /, "$1 ")
     .replace(/лит\.\s?/, "литера ")
-    .replace(/к(орп)?\.\s?/, "корпус ");
+    .replace(/к(орп)?\.\s?/, "корпус ")
+    .replace(/(корпус|строение|литера) (0|-)/g, "");
 
-  return `${normalizedBuilding}${normalizedRest}`;
+  return `${normalizedBuilding}${normalizeAddressPart(normalizedRest)}`;
 };

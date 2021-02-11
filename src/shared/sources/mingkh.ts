@@ -61,10 +61,6 @@ export const getHouseListFilePath = (
   );
 };
 
-export const getHouseListGeoJsonFilePath = () => {
-  return path.resolve(getMingkhDirPath(), "house-list.geojson");
-};
-
 export const getHouseFilePath = (houseId: number, fileNameSuffix: string) => {
   const normalisedHouseId = `${houseId}`.padStart(7, "0");
 

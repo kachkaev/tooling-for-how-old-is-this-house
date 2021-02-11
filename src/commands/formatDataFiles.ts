@@ -13,6 +13,7 @@ export const formatDataFiles: Command = async ({ logger }) => {
     logger,
     fileSearchPattern: "**/*.(json|geojson)",
     fileSearchDirPath: getRegionDirPath(),
+    showFilePath: true,
     statusReportFrequency: 500,
     processFile: async (filePath) => {
       const originalJson = await fs.readFile(filePath, "utf8");

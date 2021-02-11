@@ -3,19 +3,20 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
+import path from "path";
 import sortKeys from "sort-keys";
 
 import { writeFormattedJson } from "../../../shared/helpersForJson";
 import {
   getHouseFilePath,
-  getHouseListGeoJsonFilePath,
+  getMingkhDirPath,
   HouseInfoFile,
   loopThroughHouseLists,
   loopThroughRowsInHouseList,
 } from "../../../shared/sources/mingkh";
 
-export const combineHouseInfosIntoGeoJson: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/mingkh: Combining house infos into GeoJson"));
+export const previewHouseInfos: Command = async ({ logger }) => {
+  logger.log(chalk.bold("sources/mingkh: Previewing house infos as geojson"));
 
   const features: turf.Feature[] = [];
 
@@ -58,12 +59,15 @@ export const combineHouseInfosIntoGeoJson: Command = async ({ logger }) => {
     _.orderBy(features, (feature) => feature.id),
   );
 
-  const houseListGeoJsonFilePath = getHouseListGeoJsonFilePath();
-  await writeFormattedJson(houseListGeoJsonFilePath, featureCollection);
+  const previewHouseInfosFilePath = path.resolve(
+    getMingkhDirPath(),
+    "preview--house-infos.geojson",
+  );
+  await writeFormattedJson(previewHouseInfosFilePath, featureCollection);
 
   process.stdout.write(
-    ` Result saved to ${chalk.magenta(houseListGeoJsonFilePath)}\n`,
+    ` Result saved to ${chalk.magenta(previewHouseInfosFilePath)}\n`,
   );
 };
 
-autoStartCommandIfNeeded(combineHouseInfosIntoGeoJson, __filename);
+autoStartCommandIfNeeded(previewHouseInfos, __filename);
