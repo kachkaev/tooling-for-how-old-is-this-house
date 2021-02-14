@@ -4,14 +4,18 @@ import chalk from "chalk";
 import _ from "lodash";
 import osmToGeojson from "osmtogeojson";
 
+import { filterFeaturesByGeometryType } from "../../helpersForGeometry";
 import { getSerialisedNow } from "../../helpersForJson";
 import { getRegionExtent } from "../../region";
 
 const regionExtentPlaceholder = "{{region_extent}}";
 
 export const fetchGeojsonFromOverpassApi = async ({
+  acceptedGeometryTypes,
+  logger,
   query,
 }: {
+  acceptedGeometryTypes?: turf.GeometryTypes[];
   logger?: Console;
   query: string;
 }): Promise<turf.FeatureCollection<turf.GeometryObject>> => {
@@ -63,9 +67,19 @@ export const fetchGeojsonFromOverpassApi = async ({
   process.stdout.write(" Done.\n");
   process.stdout.write(chalk.green("Converting OSM data to geojson..."));
 
-  const geojsonData = osmToGeojson(osmData);
+  const geojsonData = osmToGeojson(
+    osmData,
+  ) as turf.FeatureCollection<turf.GeometryObject>;
 
   process.stdout.write(" Done.\n");
+
+  if (acceptedGeometryTypes) {
+    geojsonData.features = filterFeaturesByGeometryType({
+      features: geojsonData.features,
+      acceptedGeometryTypes,
+      logger,
+    });
+  }
 
   process.stdout.write(chalk.green("Post-processing..."));
 
@@ -96,5 +110,5 @@ export const fetchGeojsonFromOverpassApi = async ({
 
   process.stdout.write(" Done.\n");
 
-  return geojsonData as turf.FeatureCollection<turf.GeometryObject>;
+  return geojsonData;
 };
