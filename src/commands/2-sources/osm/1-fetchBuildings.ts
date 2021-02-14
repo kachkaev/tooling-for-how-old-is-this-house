@@ -9,7 +9,7 @@ import {
 } from "../../../shared/sources/osm";
 
 export const fetchBuildings: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikidata: fetch buildings"));
+  logger.log(chalk.bold("sources/osm: fetch buildings"));
 
   const geojsonData = await fetchGeojsonFromOverpassApi({
     logger,

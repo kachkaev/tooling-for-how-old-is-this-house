@@ -44,12 +44,12 @@ const removeEmptyItems = (dictionary: GeocodeDictionary): GeocodeDictionary => {
 
 export const reportGeocodes = async ({
   logger,
-  source,
   reportedGeocodes,
+  source,
 }: {
   logger: Console;
-  source: string;
   reportedGeocodes: ReportedGeocode[];
+  source: string;
 }): Promise<void> => {
   const sourceDictionary: GeocodeDictionary = {};
 

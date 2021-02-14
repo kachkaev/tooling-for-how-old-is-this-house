@@ -9,7 +9,7 @@ import {
 } from "../../../shared/sources/osm";
 
 export const fetchBoundaries: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikidata: fetch boundaries"));
+  logger.log(chalk.bold("sources/osm: fetch boundaries"));
 
   const geojsonData = await fetchGeojsonFromOverpassApi({
     logger,
