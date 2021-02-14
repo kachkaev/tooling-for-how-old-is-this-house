@@ -2,23 +2,12 @@ import * as turf from "@turf/turf";
 import axios from "axios";
 import chalk from "chalk";
 import _ from "lodash";
-import osmtogeojson from "osmtogeojson";
-import path from "path";
+import osmToGeojson from "osmtogeojson";
 
-import { getSerialisedNow } from "../helpersForJson";
-import { getRegionDirPath, getRegionExtent } from "../region";
+import { getSerialisedNow } from "../../helpersForJson";
+import { getRegionExtent } from "../../region";
 
-export const getOsmDirPath = () => {
-  return path.resolve(getRegionDirPath(), "sources", "osm");
-};
-
-export const getFetchedOsmBuildingsFilePath = (): string => {
-  return path.resolve(getOsmDirPath(), "fetched-buildings.geojson");
-};
-
-export const getFetchedOsmBoundariesFilePath = (): string => {
-  return path.resolve(getOsmDirPath(), "fetched-boundaries.geojson");
-};
+const regionExtentPlaceholder = "{{region_extent}}";
 
 export const fetchGeojsonFromOverpassApi = async ({
   query,
@@ -28,26 +17,34 @@ export const fetchGeojsonFromOverpassApi = async ({
 }): Promise<turf.FeatureCollection<turf.GeometryObject>> => {
   process.stdout.write(chalk.green("Preparing to make Overpass API query..."));
 
-  const regionExtent = await getRegionExtent();
-  if (!regionExtent.geometry) {
-    throw new Error("Unexpected empty geometry in regionExtent");
-  }
-  if (regionExtent.geometry?.type === "MultiPolygon") {
-    throw new Error(
-      "Fetching OSM for multipolygons is not yet supported. Please amend the script.",
+  let processedQuery = query;
+  if (processedQuery.includes(regionExtentPlaceholder)) {
+    const regionExtent = await getRegionExtent();
+    if (!regionExtent.geometry) {
+      throw new Error("Unexpected empty geometry in regionExtent");
+    }
+    if (regionExtent.geometry?.type === "MultiPolygon") {
+      throw new Error(
+        "Fetching OSM for multipolygons is not yet supported. Please amend the script.",
+      );
+    }
+
+    const pointsInOuterRing = (regionExtent.geometry as turf.Polygon)
+      .coordinates[0];
+
+    if (!pointsInOuterRing) {
+      throw new Error("Unexpected undefined outer ring in the polygon");
+    }
+
+    const serializedPolygonForOverpassApi = `poly:"${pointsInOuterRing
+      .flatMap((point) => [point[1], point[0]])
+      .join(" ")}"`;
+
+    processedQuery = processedQuery.replace(
+      new RegExp(regionExtentPlaceholder, "g"),
+      serializedPolygonForOverpassApi,
     );
   }
-
-  const pointsInOuterRing = (regionExtent.geometry as turf.Polygon)
-    .coordinates[0];
-
-  if (!pointsInOuterRing) {
-    throw new Error("Unexpected undefined outer ring in the polygon");
-  }
-
-  const serializedPolygonForOverpassApi = `poly:"${pointsInOuterRing
-    .flatMap((point) => [point[1], point[0]])
-    .join(" ")}"`;
 
   process.stdout.write(" Done.\n");
 
@@ -56,7 +53,7 @@ export const fetchGeojsonFromOverpassApi = async ({
   const osmData = (
     await axios.post(
       "https://overpass-api.de/api/interpreter",
-      query.replace(/\{\{region_extent\}\}/g, serializedPolygonForOverpassApi),
+      processedQuery,
       {
         responseType: "json",
       },
@@ -66,7 +63,7 @@ export const fetchGeojsonFromOverpassApi = async ({
   process.stdout.write(" Done.\n");
   process.stdout.write(chalk.green("Converting OSM data to geojson..."));
 
-  const geojsonData = osmtogeojson(osmData);
+  const geojsonData = osmToGeojson(osmData);
 
   process.stdout.write(" Done.\n");
 
