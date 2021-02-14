@@ -2,6 +2,7 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import axios from "axios";
 import chalk from "chalk";
+import sortKeys from "sort-keys";
 
 import { multiUnion } from "../shared/helpersForGeometry";
 import { getSerialisedNow, writeFormattedJson } from "../shared/helpersForJson";
@@ -67,7 +68,7 @@ export const buildRegionExtent: Command = async ({ logger }) => {
   extent.properties.name = regionConfig.name;
   extent.properties.createdAt = getSerialisedNow();
 
-  await writeFormattedJson(getRegionExtentFilePath(), extent);
+  await writeFormattedJson(getRegionExtentFilePath(), sortKeys(extent));
 
   logger.log(` Result saved to ${chalk.magenta(getRegionExtentFilePath())}`);
 };
