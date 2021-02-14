@@ -36,8 +36,9 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
     yarn exe src/commands/2-sources/mkrf/2-reportGeocodes.ts ## todo
     
-    yarn exe src/commands/2-sources/osm/1-fetchRawBuildings.ts
-    yarn exe src/commands/2-sources/osm/2-reportGeocodes.ts ## todo
+    yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
+    yarn exe src/commands/2-sources/osm/2-fetchBoundaries.ts
+    yarn exe src/commands/2-sources/osm/3-reportGeocodes.ts ## todo
     
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts

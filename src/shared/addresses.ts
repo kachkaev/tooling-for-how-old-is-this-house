@@ -59,9 +59,8 @@ export const normalizeBuilding = (
     normalizedRest,
   )}`;
 
-  // 42 б → 42б
   return combinedResult
-    .replace(/\(?кв\.\s?[\d\s]+\)?/, "")
-    .replace(/(\d+) ([\D\S])$/, "$1$2")
+    .replace(/\(?кв\.\s?[\d\s]+\)?/, "") // кв. 42 → ×
+    .replace(/(\d+) ([\D\S])$/, "$1$2") // 42 б → 42б
     .trim();
 };
