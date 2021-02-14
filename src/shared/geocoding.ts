@@ -10,23 +10,29 @@ import { getRegionDirPath } from "./region";
 
 export type Coordinates = [lot: number, lat: number];
 
-export interface ReportedUnresolvedGeocode {
-  normalizedAddress: string;
-}
-
 export interface ReportedResolvedGeocode {
   normalizedAddress: string;
   coordinates: Coordinates;
   knownAt: string;
 }
 
-export type ReportedGeocode = ReportedResolvedGeocode | ReportedResolvedGeocode;
+export interface ReportedUnresolvedGeocode {
+  normalizedAddress: string;
+}
 
-export type GeocodeSourceRecord = [lon: number, lat: number, fetchedAt: string];
-export type GeocodeSourceTrailingCommaRecord = [];
+export type ReportedGeocode =
+  | ReportedUnresolvedGeocode
+  | ReportedResolvedGeocode;
+
+export type ResolvedGeocodeInDictionary = [
+  lon: number,
+  lat: number,
+  fetchedAt: string,
+];
+export type EmptyGeocodeInDictionary = [];
 export type GeocodeAddressRecord = Record<
   string,
-  GeocodeSourceRecord | GeocodeSourceTrailingCommaRecord
+  ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary
 >;
 export type GeocodeDictionary = Record<string, GeocodeAddressRecord>;
 export type GeocodeDictionaryLookup = Record<string, GeocodeDictionary>;
@@ -103,17 +109,41 @@ export const loadCombinedGeocodeDictionary = async (
   return Object.assign({}, ...Object.values(geocodeDictionaryLookup));
 };
 
+const trailingCommaItemKey = "↳";
+
+const addOrRemoveTrailingCommaItem = (
+  dictionary: GeocodeDictionary,
+): GeocodeDictionary => {
+  return Object.fromEntries(
+    Object.entries(dictionary).map(([key, value]) => {
+      const { [trailingCommaItemKey]: trailingCommaItem, ...rest } = value;
+
+      if (Object.keys(rest).length === 0) {
+        return [key, {}];
+      }
+
+      return [key, { ...rest, [trailingCommaItemKey]: [] }];
+    }),
+  );
+};
+
+const removeEmptyItems = (dictionary: GeocodeDictionary): GeocodeDictionary => {
+  return Object.fromEntries(
+    Object.entries(dictionary).filter(
+      ([, value]) => Object.keys(value).length !== 0,
+    ),
+  );
+};
+
 export const reportGeocodes = async ({
   source,
   reportedGeocodes,
-}: // cleanupExisting,
-{
+}: {
   logger: Console;
   source: string;
   reportedGeocodes: ReportedGeocode[];
-  cleanupExisting?: boolean;
 }): Promise<void> => {
-  const recordLookup: Record<string, GeocodeSourceRecord | null> = {};
+  const recordLookup: Record<string, ResolvedGeocodeInDictionary | null> = {};
 
   for (const reportedGeocode of reportedGeocodes) {
     const { normalizedAddress } = reportedGeocode;
@@ -129,7 +159,7 @@ export const reportGeocodes = async ({
 
   const recordLookupGroupedBySliceId: Record<
     string,
-    Record<string, GeocodeSourceRecord | null>
+    Record<string, ResolvedGeocodeInDictionary | null>
   > = {};
 
   for (const normalizedAddress in recordLookup) {
@@ -153,12 +183,16 @@ export const reportGeocodes = async ({
     for (const normalizedAddress in recordLookupInSlice) {
       const record = recordLookupInSlice[normalizedAddress];
       if (!dictionary[normalizedAddress]) {
-        dictionary[normalizedAddress] = { "↳": [] };
+        dictionary[normalizedAddress] = {};
       }
       if (record) {
         dictionary[normalizedAddress]![source] = record;
       }
     }
+
+    dictionary = addOrRemoveTrailingCommaItem(dictionary);
+    dictionary = removeEmptyItems(dictionary);
+
     await writeFormattedJson(
       dictionaryFilePath,
       sortKeys(dictionary, { deep: true }),
