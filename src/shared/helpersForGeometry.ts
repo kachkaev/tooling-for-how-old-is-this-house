@@ -20,3 +20,25 @@ export const roughenBbox = (bbox: turf.BBox, precision: number): turf.BBox => {
     _.ceil(bbox[3], precision),
   ];
 };
+
+export const multiUnion = (
+  thingsToUnion: Array<
+    | turf.Feature<turf.Polygon | turf.MultiPolygon>
+    | turf.Polygon
+    | turf.MultiPolygon
+  >,
+): turf.Feature<turf.Polygon | turf.MultiPolygon> => {
+  const [firstThing, ...remainingThings] = thingsToUnion;
+  if (!firstThing) {
+    throw new Error("Expected at least one feature or geometry, got none");
+  }
+
+  let result =
+    firstThing.type === "Feature" ? firstThing : turf.feature(firstThing);
+
+  for (const remainingThing of remainingThings) {
+    result = turf.union(result, remainingThing);
+  }
+
+  return result;
+};

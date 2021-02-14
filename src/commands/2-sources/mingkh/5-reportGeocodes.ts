@@ -17,7 +17,7 @@ import {
 export const combineHouseInfosIntoGeoJson: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Combining house infos into GeoJson"));
 
-  const features: turf.Feature[] = [];
+  const features: Array<turf.Feature<turf.Point>> = [];
 
   await loopThroughHouseLists(async ({ houseListFilePath }) => {
     await loopThroughRowsInHouseList(houseListFilePath, async ({ houseId }) => {
@@ -65,7 +65,7 @@ export const combineHouseInfosIntoGeoJson: Command = async ({ logger }) => {
 
   const reportedGeocodes: ReportedGeocode[] = [];
   for (const feature of featureCollection.features) {
-    const coordinates = feature.geometry.coordinates;
+    const coordinates = feature.geometry.coordinates as [number, number];
     const { normalizedAddress, fetchedAt } = feature.properties ?? {};
     if (normalizedAddress) {
       reportedGeocodes.push({

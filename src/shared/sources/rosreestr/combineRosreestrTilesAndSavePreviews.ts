@@ -36,7 +36,10 @@ export const combineRosreestrTilesAndSavePreviews = async ({
       `preview--${_.kebabCase(name)}.geojson`,
     );
 
-    await writeFormattedJson(filePath, turf.featureCollection(features));
+    await writeFormattedJson(
+      filePath,
+      turf.featureCollection<turf.Polygon | turf.Point>(features),
+    );
     logger.log(`${name} saved to ${chalk.magenta(filePath)}`);
   }
 };

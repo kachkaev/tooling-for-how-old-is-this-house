@@ -3,6 +3,7 @@ import * as turf from "@turf/turf";
 import axios from "axios";
 import chalk from "chalk";
 
+import { multiUnion } from "../shared/helpersForGeometry";
 import { getSerialisedNow, writeFormattedJson } from "../shared/helpersForJson";
 import { getRegionConfig, getRegionExtentFilePath } from "../shared/region";
 
@@ -48,14 +49,12 @@ export const buildRegionExtent: Command = async ({ logger }) => {
 
   const featuresToUnion = elementGeometries
     .filter(
-      (geometry) =>
+      (geometry): geometry is turf.Polygon | turf.MultiPolygon =>
         geometry.type === "Polygon" || geometry.type === "MultiPolygon",
     )
     .map((geometry) => turf.feature(geometry));
 
-  const extent = turf.union(
-    ...(featuresToUnion as Array<turf.Feature<turf.Polygon>>),
-  );
+  const extent = multiUnion(featuresToUnion);
 
   process.stdout.write(" Done.\n");
 
