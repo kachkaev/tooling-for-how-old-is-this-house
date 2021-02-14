@@ -3206,6 +3206,11 @@ jsonparse@0.0.5:
   resolved "https://registry.yarnpkg.com/jsonparse/-/jsonparse-0.0.5.tgz#330542ad3f0a654665b778f3eb2d9a9fa507ac64"
   integrity sha1-MwVCrT8KZUZlt3jz6y2an6UHrGQ=
 
+junk@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/junk/-/junk-3.1.0.tgz#31499098d902b7e98c5d9b9c80f43457a88abfa1"
+  integrity sha512-pBxcB3LFc8QVgdggvZWyeys+hnrNWg4OcZIU/1X59k5jQdLBlCsYGRQaz234SqoRLTCgMH00fY0xRJH+F9METQ==
+
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.2.2.tgz#31ea21a734bab9bbb0f32466d893aea51e4a3c64"
@@ -4190,6 +4195,13 @@ rimraf@^3.0.2:
   integrity sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
   dependencies:
     glob "^7.1.3"
+
+rm-up@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/rm-up/-/rm-up-1.0.4.tgz#a3fd645af5153dfd26a9d9eb143030683cc9c1b3"
+  integrity sha512-ksp43pttCu+wKei+f2P7BLb+e/KlaZVqcdYhoz5ir5xZ769Vtu2NQ5S1t/ZJ0HdYl+rnQBtPOt8ANxO7zcongw==
+  dependencies:
+    junk "^3.1.0"
 
 robust-predicates@^2.0.4:
   version "2.0.4"

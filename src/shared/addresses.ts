@@ -22,7 +22,18 @@ export const normalizeStreet = (street: string): string => {
     .replace("пр-кт. ", "проспект ")
     .replace("проезд. ", "проезд ")
     .replace("тер. ", "территория ")
-    .replace("ул. ", "улица ");
+    .replace("ул. ", "улица ")
+    .replace(/^(набережная|площадь|территория|улица) (.*) м.$/, "$1 малая $2")
+    .replace(/^(набережная|площадь|территория|улица) (.*) б.$/, "$1 большая $2")
+    .replace(
+      /^(городок|километр|поселок|переулок|проспект|проезд) (.*) м.$/,
+      "$1 малый $2",
+    )
+    .replace(
+      /^(городок|километр|поселок|переулок|проспект|проезд) (.*) б.$/,
+      "$1 большой $2",
+    )
+    .trim();
 };
 export const normalizeBuilding = (
   building: string,
@@ -35,14 +46,22 @@ export const normalizeBuilding = (
   if (!rest?.length) {
     return normalizedBuilding;
   }
-  const combinedRest = ` ${rest.map(normalizeAddressPart).join(" ")}`;
+  const combinedRest = ` ${rest.map(normalizeAddressPart).join(" ")} `;
   const normalizedRest = combinedRest
     .replace(/№/g, "")
     .replace(/стр\.\s?/, "строение ")
-    .replace(/ строение ([^\d]) /, "$1 ")
+    .replace(/ (строение|литера) ([^\d-]) /, "$2 ")
     .replace(/лит\.\s?/, "литера ")
     .replace(/к(орп)?\.\s?/, "корпус ")
     .replace(/(корпус|строение|литера) (0|-)/g, "");
 
-  return `${normalizedBuilding}${normalizeAddressPart(normalizedRest)}`;
+  const combinedResult = `${normalizedBuilding}${normalizeAddressPart(
+    normalizedRest,
+  )}`;
+
+  // 42 б → 42б
+  return combinedResult
+    .replace(/\(?кв\.\s?[\d\s]+\)?/, "")
+    .replace(/(\d+) ([\D\S])$/, "$1$2")
+    .trim();
 };

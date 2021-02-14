@@ -1,4 +1,5 @@
-import fs from "fs-extra";
+import _ from "lodash";
+import rmUp from "rm-up";
 import sortKeys from "sort-keys";
 
 import { writeFormattedJson } from "../helpersForJson";
@@ -6,8 +7,11 @@ import {
   deriveNormalizedAddressSliceId,
   getDictionaryFilePath,
 } from "./helpersForPaths";
+import { loadGeocodeDictionaryLookup } from "./loadGeocodeDictionaryLookup";
 import {
+  EmptyGeocodeInDictionary,
   GeocodeDictionary,
+  GeocodeDictionaryLookup,
   ReportedGeocode,
   ResolvedGeocodeInDictionary,
 } from "./types";
@@ -39,6 +43,7 @@ const removeEmptyItems = (dictionary: GeocodeDictionary): GeocodeDictionary => {
 };
 
 export const reportGeocodes = async ({
+  logger,
   source,
   reportedGeocodes,
 }: {
@@ -46,55 +51,67 @@ export const reportGeocodes = async ({
   source: string;
   reportedGeocodes: ReportedGeocode[];
 }): Promise<void> => {
-  const recordLookup: Record<string, ResolvedGeocodeInDictionary | null> = {};
+  const sourceDictionary: GeocodeDictionary = {};
 
   for (const reportedGeocode of reportedGeocodes) {
     const { normalizedAddress } = reportedGeocode;
-    if ("coordinates" in reportedGeocode) {
-      recordLookup[normalizedAddress] = [
-        ...reportedGeocode.coordinates,
-        reportedGeocode.knownAt,
-      ];
-    } else {
-      recordLookup[normalizedAddress] = null;
-    }
+    const geocode: ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary =
+      "coordinates" in reportedGeocode
+        ? [...reportedGeocode.coordinates, reportedGeocode.knownAt]
+        : [];
+    sourceDictionary[normalizedAddress] = { [source]: geocode };
   }
 
-  const recordLookupGroupedBySliceId: Record<
-    string,
-    Record<string, ResolvedGeocodeInDictionary | null>
-  > = {};
+  const sourceDictionaryLookup: GeocodeDictionaryLookup = {};
 
-  for (const normalizedAddress in recordLookup) {
-    const record = recordLookup[normalizedAddress];
+  for (const normalizedAddress in sourceDictionary) {
+    const addressRecord = sourceDictionary[normalizedAddress]!;
     const sliceId = deriveNormalizedAddressSliceId(normalizedAddress);
-    if (!recordLookupGroupedBySliceId[sliceId]) {
-      recordLookupGroupedBySliceId[sliceId] = {};
+    if (!sourceDictionaryLookup[sliceId]) {
+      sourceDictionaryLookup[sliceId] = {};
     }
-    recordLookupGroupedBySliceId[sliceId]![normalizedAddress] = record ?? null;
+    sourceDictionaryLookup[sliceId]![normalizedAddress] = addressRecord;
   }
 
-  for (const sliceId in recordLookupGroupedBySliceId) {
-    const recordLookupInSlice = recordLookupGroupedBySliceId[sliceId]!;
-    const dictionaryFilePath = getDictionaryFilePath(sliceId);
-    let dictionary: GeocodeDictionary = {};
-    try {
-      dictionary = await fs.readJson(dictionaryFilePath);
-    } catch {
-      // noop: it's fine if the file does not exist at this point
-    }
-    for (const normalizedAddress in recordLookupInSlice) {
-      const record = recordLookupInSlice[normalizedAddress];
-      if (!dictionary[normalizedAddress]) {
-        dictionary[normalizedAddress] = {};
-      }
-      if (record) {
-        dictionary[normalizedAddress]![source] = record;
-      }
-    }
+  const existingDictionaryLookup = await loadGeocodeDictionaryLookup(logger);
+  const allSliceIds = _.orderBy(
+    _.uniq([
+      ..._.keys(existingDictionaryLookup),
+      ..._.keys(sourceDictionaryLookup),
+    ]),
+  );
 
+  for (const sliceId of allSliceIds) {
+    let dictionary = existingDictionaryLookup[sliceId] ?? {};
+
+    // Remove previous values
+    dictionary = _.mapValues(dictionary, (addressRecord) => {
+      const { [source]: sourceRecord, ...rest } = addressRecord;
+
+      return rest;
+    });
+
+    // Add new values
+    dictionary = _.defaultsDeep(
+      {},
+      dictionary,
+      sourceDictionaryLookup[sliceId],
+    );
+
+    // Clean
     dictionary = addOrRemoveTrailingCommaItem(dictionary);
     dictionary = removeEmptyItems(dictionary);
+
+    // Create, update or delete dictionary
+    const dictionaryFilePath = getDictionaryFilePath(sliceId);
+    if (_.isEmpty(dictionary)) {
+      await rmUp(dictionaryFilePath, { deleteInitial: true });
+      continue;
+    }
+
+    if (_.isEqual(existingDictionaryLookup[sliceId], dictionary)) {
+      continue;
+    }
 
     await writeFormattedJson(
       dictionaryFilePath,

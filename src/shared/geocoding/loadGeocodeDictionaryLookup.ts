@@ -36,7 +36,7 @@ export const loadGeocodeDictionaryLookup = async (
   });
 
   if (logger) {
-    process.stdout.write(`Done (${result.length} loaded).\n`);
+    process.stdout.write(`Done (${Object.keys(result).length} loaded).\n`);
   }
 
   return result;
