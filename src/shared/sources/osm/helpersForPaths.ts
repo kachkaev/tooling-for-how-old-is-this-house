@@ -1,5 +1,6 @@
 import path from "path";
 
+import { getOutputLayerFileName } from "../../output";
 import { getRegionDirPath } from "../../region";
 
 export const getOsmDirPath = () => {
@@ -12,4 +13,8 @@ export const getFetchedOsmBuildingsFilePath = (): string => {
 
 export const getFetchedOsmBoundariesFilePath = (): string => {
   return path.resolve(getOsmDirPath(), "fetched-boundaries.geojson");
+};
+
+export const getOsmOutputLayerFilePath = (): string => {
+  return path.resolve(getOsmDirPath(), getOutputLayerFileName());
 };
