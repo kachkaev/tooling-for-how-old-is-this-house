@@ -10,7 +10,7 @@ import {
 export const reportGeocodes: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/osm: extract output layer"));
 
-  const outputLayer = await generateOsmOutputLayer();
+  const outputLayer = await generateOsmOutputLayer({ logger });
 
   await writeFormattedJson(getOsmOutputLayerFilePath(), outputLayer);
 };

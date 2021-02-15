@@ -7,7 +7,7 @@ import { generateOsmOutputLayer } from "../../../shared/sources/osm";
 export const reportGeocodes: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/osm: report geocodes"));
 
-  const outputLayer = await generateOsmOutputLayer();
+  const outputLayer = await generateOsmOutputLayer({ logger });
 
   await reportGeocodesInOutputLayer({ source: "osm", outputLayer, logger });
 };
