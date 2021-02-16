@@ -7,11 +7,15 @@ export const combineAddressParts = (addressParts: string[]): string => {
 };
 
 export const normalizeAddressPart = (addressPart: string): string => {
-  return addressPart.toLowerCase().replace(/ё/g, "е").replace(/\s+/g, " ");
+  return addressPart
+    .toLowerCase()
+    .replace(/ё/g, "е")
+    .replace(/\s+/g, " ")
+    .trim();
 };
 
 export const normalizeStreet = (street: string): string => {
-  return street
+  return normalizeAddressPart(street)
     .toLowerCase()
     .replace("городок. ", "городок ")
     .replace("км. ", "километр ")

@@ -7,7 +7,7 @@ import {
   getOsmOutputLayerFilePath,
 } from "../../../shared/sources/osm";
 
-export const reportGeocodes: Command = async ({ logger }) => {
+export const extractOutputLayer: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/osm: extract output layer"));
 
   const outputLayer = await generateOsmOutputLayer({ logger });
@@ -15,4 +15,4 @@ export const reportGeocodes: Command = async ({ logger }) => {
   await writeFormattedJson(getOsmOutputLayerFilePath(), outputLayer);
 };
 
-autoStartCommandIfNeeded(reportGeocodes, __filename);
+autoStartCommandIfNeeded(extractOutputLayer, __filename);

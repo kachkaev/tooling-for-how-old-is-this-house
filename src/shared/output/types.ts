@@ -1,6 +1,6 @@
 import * as turf from "@turf/turf";
 
-export interface OutputLayerParameters {
+export interface OutputLayerProperties {
   completionDates?: string;
   completionYear?: number;
   id: string;
@@ -17,5 +17,5 @@ export type OutputLayerGeometry = turf.Polygon | turf.MultiPolygon | turf.Point;
 
 export type OutputLayer = turf.FeatureCollection<
   OutputLayerGeometry | undefined,
-  OutputLayerParameters
+  OutputLayerProperties
 >;

@@ -4,6 +4,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
+import { deepClean } from "../../../shared/deepClean";
 import {
   getSerialisedNow,
   writeFormattedJson,
@@ -18,18 +19,6 @@ import {
 } from "../../../shared/sources/rosreestr";
 import { fetchJsonFromRosreestr } from "../../../shared/sources/rosreestr/fetchJsonFromRosreestr";
 import { convertCnToId } from "../../../shared/sources/rosreestr/helpersForCn";
-
-/**
- * Recursively removes null and undefined values from an object
- * https://stackoverflow.com/a/54707141/1818285
- * TODO: consider refactoring
- */
-const deepClean = <T>(obj: T): T =>
-  JSON.parse(
-    JSON.stringify(obj, (k, v) =>
-      v === null || v === undefined ? undefined : v,
-    ),
-  );
 
 const assertNoUsefulData = (responseData: SuccessfulResponseInInfoPage) => {
   if (responseData.parcelData?.oksYearBuilt) {

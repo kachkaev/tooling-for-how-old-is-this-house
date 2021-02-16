@@ -1,35 +1,57 @@
 import * as turf from "@turf/turf";
+import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 
-import { OutputLayer } from "../../output";
+import {
+  combineAddressParts,
+  normalizeAddressPart,
+  normalizeBuilding,
+  normalizeStreet,
+} from "../../addresses";
+import { deepClean } from "../../deepClean";
+import { OutputLayer, OutputLayerProperties } from "../../output";
+import { extractYearFromDates } from "../../output/parseYear";
 import { getRegionExtent } from "../../region";
-import { getFetchedOsmBuildingsFilePath } from "./helpersForPaths";
+import {
+  getFetchedOsmBoundariesFilePath,
+  getFetchedOsmBuildingsFilePath,
+} from "./helpersForPaths";
+import { OsmFeature, OsmFeatureCollection } from "./types";
 
-type IntersectorFunction = (feature: turf.Feature) => string;
-const generateIntersector = ({
+type IntersectorFunction = (feature: turf.Feature) => string | undefined;
+const generateGetIntersectedBoundaryName = ({
   boundaryFeatures,
   boundaryFeatureFilter,
   expectedBoundaryOfAllCheckedFeatures,
 }: {
-  boundaryFeatures: Array<turf.Feature<turf.Polygon | turf.MultiPolygon>>;
+  boundaryFeatures: OsmFeature[];
   boundaryFeatureFilter: (feature: turf.Feature) => boolean;
   expectedBoundaryOfAllCheckedFeatures: turf.Feature<
     turf.Polygon | turf.MultiPolygon
   >;
 }): IntersectorFunction => {
   const filteredBoundaryFeatures = boundaryFeatures.filter((feature) => {
-    return boundaryFeatureFilter(feature) && feature?.properties?.name;
+    return boundaryFeatureFilter(feature) && feature?.properties.name;
   });
 
-  if (
-    filteredBoundaryFeatures.length === 1 &&
-    turf.booleanContains(
-      filteredBoundaryFeatures[0]!.geometry,
-      expectedBoundaryOfAllCheckedFeatures,
-    )
-  ) {
-    return () => filteredBoundaryFeatures[0]?.properties?.name;
+  if (filteredBoundaryFeatures.length === 1) {
+    const boundaryFeature = filteredBoundaryFeatures[0]!;
+    const polygonsToCheck =
+      boundaryFeature.geometry.type === "MultiPolygon"
+        ? boundaryFeature.geometry.coordinates.map((part) => turf.polygon(part))
+        : [boundaryFeature as turf.Feature<turf.Polygon>];
+
+    for (const polygonToCheck of polygonsToCheck) {
+      if (
+        turf.booleanContains(
+          polygonToCheck,
+          expectedBoundaryOfAllCheckedFeatures,
+        )
+      ) {
+        return () => filteredBoundaryFeatures[0]?.properties.name;
+      }
+    }
   }
 
   const orderedBoundaryFeatures = _.orderBy(
@@ -39,8 +61,8 @@ const generateIntersector = ({
   );
 
   return (feature: turf.Feature) =>
-    orderedBoundaryFeatures.find((boundaryFeature) =>
-      turf.booleanOverlap(boundaryFeature, feature),
+    orderedBoundaryFeatures.find(
+      (boundaryFeature) => !turf.booleanDisjoint(boundaryFeature, feature), // https://github.com/Turfjs/turf/issues/2034
     )?.properties?.name;
 };
 
@@ -53,26 +75,75 @@ export const generateOsmOutputLayer = async ({
 
   const buildingCollection = (await fs.readJson(
     getFetchedOsmBuildingsFilePath(),
-  )) as turf.FeatureCollection<turf.Polygon | turf.MultiPolygon>;
+  )) as OsmFeatureCollection;
 
   const boundaryCollection = (await fs.readJson(
-    getFetchedOsmBuildingsFilePath(),
-  )) as turf.FeatureCollection<turf.Polygon | turf.MultiPolygon>;
+    getFetchedOsmBoundariesFilePath(),
+  )) as OsmFeatureCollection;
 
-  const getFederalSubjectName = generateIntersector({
+  const getFederalSubjectName = generateGetIntersectedBoundaryName({
     boundaryFeatures: boundaryCollection.features,
     boundaryFeatureFilter: (feature) =>
       feature.properties?.["admin_level"] === "4",
     expectedBoundaryOfAllCheckedFeatures: regionExtent,
   });
 
-  const getPlaceName = generateIntersector({
+  const getPlaceName = generateGetIntersectedBoundaryName({
     boundaryFeatures: boundaryCollection.features,
     boundaryFeatureFilter: (feature) => feature.properties?.["place"],
     expectedBoundaryOfAllCheckedFeatures: regionExtent,
   });
 
-  logger?.log({ buildingCollection, getFederalSubjectName, getPlaceName });
+  const generateNormalizedAddress = (
+    building: OsmFeature,
+  ): string | undefined => {
+    const streetName = building.properties["addr:street"];
+    const houseNumber = building.properties["addr:housenumber"];
+    if (!streetName || !houseNumber) {
+      return undefined;
+    }
+    const federalSubjectName = getFederalSubjectName(building);
+    if (!federalSubjectName) {
+      logger?.log(
+        chalk.yellow(
+          `Unable to find federal subject for ${building.properties.id}`,
+        ),
+      );
 
-  return turf.featureCollection([]);
+      return undefined;
+    }
+    const placeName = getPlaceName(building);
+    if (!placeName) {
+      logger?.log(
+        chalk.yellow(
+          `Unable to find place (city / town / village) for ${building.properties.id}`,
+        ),
+      );
+
+      return undefined;
+    }
+
+    return combineAddressParts([
+      normalizeAddressPart(federalSubjectName),
+      normalizeAddressPart(placeName),
+      normalizeStreet(streetName),
+      normalizeBuilding(houseNumber),
+    ]);
+  };
+
+  const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(
+    (building) => {
+      const outputLayerProperties: OutputLayerProperties = {
+        id: building.properties.id,
+        completionDates: building.properties["start_date"],
+        completionYear: extractYearFromDates(building.properties["start_date"]),
+        normalizedAddress: generateNormalizedAddress(building),
+      };
+
+      return turf.feature(building.geometry, deepClean(outputLayerProperties));
+    },
+  );
+  // logger?.log({ buildingCollection, getFederalSubjectName, getPlaceName });
+
+  return turf.featureCollection(outputFeatures);
 };
