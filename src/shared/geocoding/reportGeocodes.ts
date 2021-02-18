@@ -1,8 +1,6 @@
 import _ from "lodash";
 import rmUp from "rm-up";
-import sortKeys from "sort-keys";
 
-import { writeFormattedJson } from "../helpersForJson";
 import {
   deriveNormalizedAddressSliceId,
   getDictionaryFilePath,
@@ -15,6 +13,7 @@ import {
   ReportedGeocode,
   ResolvedGeocodeInDictionary,
 } from "./types";
+import { writeGeocodeDictionary } from "./writeGeocodeDictionary";
 
 const trailingCommaItemKey = "↳";
 
@@ -113,9 +112,6 @@ export const reportGeocodes = async ({
       continue;
     }
 
-    await writeFormattedJson(
-      dictionaryFilePath,
-      sortKeys(dictionary, { deep: true }),
-    );
+    await writeGeocodeDictionary(dictionaryFilePath, dictionary);
   }
 };

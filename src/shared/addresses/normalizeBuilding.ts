@@ -4,9 +4,10 @@ export const normalizeBuilding = (
   building: string,
   ...rest: string[]
 ): string => {
-  const normalizedBuilding = building
-    .toLowerCase()
+  const normalizedBuilding = normalizeAddressPart(building)
+    .replace(/(\d+[^\s]*)\s*\/\s*\d+[^\s]*/g, "$1") // 42а/10 → 42а
     .replace(/д\.\s?/, "")
+    .replace(/^(\d+)\s+([^\s]*)$/, "$1$2")
     .replace(/№/g, ""); // c
   if (!rest?.length) {
     return normalizedBuilding;
@@ -20,9 +21,7 @@ export const normalizeBuilding = (
     .replace(/к(орп)?\.\s?/, "корпус ")
     .replace(/(корпус|строение|литера) (0|-)/g, "");
 
-  const combinedResult = `${normalizedBuilding}${normalizeAddressPart(
-    normalizedRest,
-  )}`;
+  const combinedResult = `${normalizedBuilding}${normalizedRest}`;
 
   return combinedResult
     .replace(/\(?кв\.\s?[\d\s]+\)?/, "") // кв. 42 → ×

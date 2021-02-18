@@ -38,5 +38,21 @@ export const normalizeStreet = (street: string): string => {
     ];
   }
 
+  // улица 1-я тестовая → улица тестовая 1-я
+  const numericPartIndex = slices.findIndex((slice) =>
+    slice.match(/^(\d+)-?(ы|а)?(й|я)$/),
+  );
+  if (numericPartIndex !== -1) {
+    const normalizedNumericPart = slices[numericPartIndex]!.replace(
+      /^(\d+)-?(ы|а)?(й|я)$/,
+      "$1-$3",
+    );
+    slices = [
+      ...slices.slice(0, numericPartIndex),
+      ...slices.slice(numericPartIndex + 1),
+      normalizedNumericPart,
+    ];
+  }
+
   return slices.join(" ");
 };

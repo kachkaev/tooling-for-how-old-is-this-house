@@ -4,6 +4,7 @@ export interface OutputLayerProperties {
   completionDates?: string;
   completionYear?: number;
   id: string;
+  knownAt: string;
   name?: string;
   normalizedAddress?: string;
   photoAuthorName?: string;

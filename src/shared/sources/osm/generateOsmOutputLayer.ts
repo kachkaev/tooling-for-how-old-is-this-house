@@ -138,6 +138,7 @@ export const generateOsmOutputLayer = async ({
         completionDates: building.properties["start_date"],
         completionYear: extractYearFromDates(building.properties["start_date"]),
         normalizedAddress: generateNormalizedAddress(building),
+        knownAt: buildingCollection.properties.fetchedAt,
       };
 
       return turf.feature(building.geometry, deepClean(outputLayerProperties));
