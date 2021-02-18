@@ -1,6 +1,6 @@
-import { GenericDesignationConfig } from "./types";
+import { DesignationAdjectiveConfig, DesignationConfig } from "./types";
 
-export const genericDesignationConfigs: GenericDesignationConfig[] = [
+export const designationConfigs: DesignationConfig[] = [
   { normalizedName: "городок", aliases: ["городок."], gender: "m" },
   { normalizedName: "километр", aliases: ["км."], gender: "m" },
   { normalizedName: "набережная", aliases: ["наб."], gender: "f" },
@@ -13,20 +13,17 @@ export const genericDesignationConfigs: GenericDesignationConfig[] = [
   { normalizedName: "улица", aliases: ["ул."], gender: "f" },
 ];
 
-const genericDesignationConfigByWord: Record<
-  string,
-  GenericDesignationConfig
-> = {};
-genericDesignationConfigs.forEach((config) => {
-  genericDesignationConfigByWord[config.normalizedName] = config;
+const designationConfigByWord: Record<string, DesignationConfig> = {};
+designationConfigs.forEach((config) => {
+  designationConfigByWord[config.normalizedName] = config;
   for (const alias of config.aliases) {
-    genericDesignationConfigByWord[alias] = config;
+    designationConfigByWord[alias] = config;
   }
 });
 
-export { genericDesignationConfigByWord };
+export { designationConfigByWord };
 
-export const genericAdjectiveConfigs = [
+export const designationAdjectiveConfigs: DesignationAdjectiveConfig[] = [
   {
     aliases: ["м."],
     normalizedNameByGender: {
@@ -43,18 +40,18 @@ export const genericAdjectiveConfigs = [
   },
 ];
 
-const genericAdjectiveConfigByWord: Record<
+const designationAdjectiveConfigByWord: Record<
   string,
-  typeof genericAdjectiveConfigs[0]
+  DesignationAdjectiveConfig
 > = {};
 
-genericAdjectiveConfigs.forEach((config) => {
+designationAdjectiveConfigs.forEach((config) => {
   for (const alias of config.aliases) {
-    genericAdjectiveConfigByWord[alias] = config;
+    designationAdjectiveConfigByWord[alias] = config;
   }
   for (const normalizedName of Object.values(config.normalizedNameByGender)) {
-    genericAdjectiveConfigByWord[normalizedName] = config;
+    designationAdjectiveConfigByWord[normalizedName] = config;
   }
 });
 
-export { genericAdjectiveConfigByWord };
+export { designationAdjectiveConfigByWord };
