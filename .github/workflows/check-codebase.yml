@@ -9,9 +9,9 @@ on:
       - main
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
+  lint_and_test:
+    name: Lint and test
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -26,3 +26,6 @@ jobs:
 
       - name: Lint
         run: yarn lint
+
+      - name: Test
+        run: yarn test
