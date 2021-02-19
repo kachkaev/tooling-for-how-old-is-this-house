@@ -31,21 +31,17 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/4-previewHouseInfos.ts ## optional
-    yarn exe src/commands/2-sources/mingkh/5-reportGeocodes.ts
     
     yarn exe src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
-    yarn exe src/commands/2-sources/mkrf/2-reportGeocodes.ts
     
     yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
     yarn exe src/commands/2-sources/osm/2-fetchBoundaries.ts
-    yarn exe src/commands/2-sources/osm/3-reportGeocodes.ts
     
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
     yarn exe src/commands/2-sources/rosreestr/3-previewTileData.ts ## optional
     yarn exe src/commands/2-sources/rosreestr/4-generateObjectInfoPages.ts
     yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts ## supports concurrent launches
-    yarn exe src/commands/2-sources/rosreestr/6-reportGeocodes.ts   ## todo
     
     yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
     ## wikidata flow is incomplete due to lack of good harvest for Penza
@@ -54,7 +50,14 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/wikimapia/2-previewTileData.ts ## optional
     yarn exe src/commands/2-sources/wikimapia/3-fetchRawObjectInfos.ts
     yarn exe src/commands/2-sources/wikimapia/4-parseRawObjectInfos.ts
-    yarn exe src/commands/2-sources/wikimapia/5-reportGeocodes.ts ## todo
+    ```
+
+    ```sh
+    yarn exe src/commands/2-sources/mingkh/8-reportGeocodes.ts
+    yarn exe src/commands/2-sources/mkrf/8-reportGeocodes.ts ## todo
+    yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
+    yarn exe src/commands/2-sources/rosreestr/8-reportGeocodes.ts ## todo
+    yarn exe src/commands/2-sources/wikimapia/8-reportGeocodes.ts ## todo
     ```
 
     ```sh

@@ -14,7 +14,7 @@ import {
   normalizeMingkhAddress,
 } from "../../../shared/sources/mingkh";
 
-export const combineHouseInfosIntoGeoJson: Command = async ({ logger }) => {
+export const minghkReportGeocodes: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Combining house infos into GeoJson"));
 
   const features: Array<turf.Feature<turf.Point>> = [];
@@ -86,4 +86,4 @@ export const combineHouseInfosIntoGeoJson: Command = async ({ logger }) => {
   // );
 };
 
-autoStartCommandIfNeeded(combineHouseInfosIntoGeoJson, __filename);
+autoStartCommandIfNeeded(minghkReportGeocodes, __filename);
