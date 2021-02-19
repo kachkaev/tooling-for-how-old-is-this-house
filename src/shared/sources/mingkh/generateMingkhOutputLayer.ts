@@ -1,4 +1,5 @@
 import * as turf from "@turf/turf";
+import chalk from "chalk";
 
 import {
   combineAddressParts,
@@ -7,7 +8,14 @@ import {
   normalizeStreet,
   splitAddress,
 } from "../../addresses";
-import { GenerateOutputLayer, OutputLayer } from "../../output";
+import { deepClean } from "../../deepClean";
+import {
+  GenerateOutputLayer,
+  OutputLayer,
+  OutputLayerProperties,
+} from "../../output";
+import { extractYearFromDates } from "../../output/parseYear";
+import { generateMingkhHouseInfoCollection } from "./generateMingkhHouseInfoCollection";
 
 export const notFilledIn = ["Не заполнено", "Нет данных"];
 
@@ -31,84 +39,35 @@ export const normalizeMingkhAddress = (address: string): string => {
   );
 };
 
-export const generateMingkhOutputLayer: GenerateOutputLayer = async () =>
-  // {
-  // logger,
-  // },
-  {
-    // const buildingCollection = (await fs.readJson(
-    //   getFetchedOsmBuildingsFilePath(),
-    // )) as OsmFeatureCollection;
+export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
+  logger,
+}) => {
+  const houseInfoCollection = await generateMingkhHouseInfoCollection();
 
-    // const boundaryCollection = (await fs.readJson(
-    //   getFetchedOsmBoundariesFilePath(),
-    // )) as OsmFeatureCollection;
+  const outputFeatures: OutputLayer["features"] = houseInfoCollection.features.map(
+    (houseInfo) => {
+      let normalizedAddress: string | undefined = undefined;
+      try {
+        normalizedAddress = houseInfo.properties.address
+          ? normalizeMingkhAddress(houseInfo.properties.address)
+          : undefined;
+      } catch (e) {
+        logger?.log(chalk.yellow(e.message ?? e));
+      }
 
-    // const getFederalSubjectName = generateGetIntersectedBoundaryName({
-    //   boundaryFeatures: boundaryCollection.features,
-    //   boundaryFeatureFilter: (feature) =>
-    //     feature.properties?.["admin_level"] === "4",
-    //   expectedBoundaryOfAllCheckedFeatures: regionExtent,
-    // });
+      const outputLayerProperties: OutputLayerProperties = {
+        id: `${houseInfo.properties.id}`,
+        completionDates: houseInfo.properties["start_date"],
+        completionYear: extractYearFromDates(
+          houseInfo.properties["start_date"],
+        ),
+        normalizedAddress,
+        knownAt: houseInfo.properties.fetchedAt,
+      };
 
-    // const getPlaceName = generateGetIntersectedBoundaryName({
-    //   boundaryFeatures: boundaryCollection.features,
-    //   boundaryFeatureFilter: (feature) => feature.properties?.["place"],
-    //   expectedBoundaryOfAllCheckedFeatures: regionExtent,
-    // });
+      return turf.feature(houseInfo.geometry, deepClean(outputLayerProperties));
+    },
+  );
 
-    // const generateNormalizedAddress = (
-    //   building: OsmFeature,
-    // ): string | undefined => {
-    //   const streetName = building.properties["addr:street"];
-    //   const houseNumber = building.properties["addr:housenumber"];
-    //   if (!streetName || !houseNumber) {
-    //     return undefined;
-    //   }
-    //   const federalSubjectName = getFederalSubjectName(building);
-    //   if (!federalSubjectName) {
-    //     logger?.log(
-    //       chalk.yellow(
-    //         `Unable to find federal subject for ${building.properties.id}`,
-    //       ),
-    //     );
-
-    //     return undefined;
-    //   }
-    //   const placeName = getPlaceName(building);
-    //   if (!placeName) {
-    //     logger?.log(
-    //       chalk.yellow(
-    //         `Unable to find place (city / town / village) for ${building.properties.id}`,
-    //       ),
-    //     );
-
-    //     return undefined;
-    //   }
-
-    //   return combineAddressParts([
-    //     normalizeAddressPart(federalSubjectName),
-    //     normalizeAddressPart(placeName),
-    //     normalizeStreet(streetName),
-    //     normalizeBuilding(houseNumber),
-    //   ]);
-    // };
-
-    const outputFeatures: OutputLayer["features"] = [];
-    // const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(
-    //   (building) => {
-    //     const outputLayerProperties: OutputLayerProperties = {
-    //       id: building.properties.id,
-    //       completionDates: building.properties["start_date"],
-    //       completionYear: extractYearFromDates(building.properties["start_date"]),
-    //       normalizedAddress: generateNormalizedAddress(building),
-    //       knownAt: buildingCollection.properties.fetchedAt,
-    //     };
-
-    //     return turf.feature(building.geometry, deepClean(outputLayerProperties));
-    //   },
-    // );
-    // // logger?.log({ buildingCollection, getFederalSubjectName, getPlaceName });
-
-    return turf.featureCollection(outputFeatures);
-  };
+  return turf.featureCollection(outputFeatures);
+};
