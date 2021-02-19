@@ -1,4 +1,4 @@
-export type Gender = "m" | "f";
+export type Gender = "m" | "f" | "n";
 
 export interface DesignationConfig {
   normalizedName: string;

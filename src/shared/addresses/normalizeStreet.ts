@@ -1,8 +1,8 @@
+import { normalizeAddressPart } from "./helpersForNormalizing";
 import {
   designationAdjectiveConfigByWord,
   designationConfigByWord,
-} from "./helpersForGenerics";
-import { normalizeAddressPart } from "./helpersForNormalizing";
+} from "./helpersForToponyms";
 
 export const normalizeStreet = (street: string): string => {
   let slices = normalizeAddressPart(street).split(" ");
@@ -54,5 +54,11 @@ export const normalizeStreet = (street: string): string => {
     ];
   }
 
-  return slices.join(" ");
+  let joinedSlices = slices.join(" ");
+
+  // улица и.и.тестова → улица тестова
+  // улица и.тестова → улица тестова
+  joinedSlices = joinedSlices.replace(/\p{L}\.\s?(\p{L}\.\s?)?(\p{L}+)/u, "$2");
+
+  return joinedSlices;
 };
