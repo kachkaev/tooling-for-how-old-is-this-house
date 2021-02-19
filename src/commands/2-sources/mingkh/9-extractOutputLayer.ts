@@ -1,11 +1,11 @@
 import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { generateReportGeocodes } from "../../../shared/helpersForCommands";
+import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
 import { generateMingkhOutputLayer } from "../../../shared/sources/mingkh";
 
-export const reportGeocodes = generateReportGeocodes({
+export const extractOutputLayer = generateExtractOutputLayer({
   source: "mingkh",
   generateOutputLayer: generateMingkhOutputLayer,
 });
 
-autoStartCommandIfNeeded(reportGeocodes, __filename);
+autoStartCommandIfNeeded(extractOutputLayer, __filename);

@@ -1,18 +1,11 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
-import chalk from "chalk";
+import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { writeFormattedJson } from "../../../shared/helpersForJson";
-import {
-  generateOsmOutputLayer,
-  getOsmOutputLayerFilePath,
-} from "../../../shared/sources/osm";
+import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
+import { generateOsmOutputLayer } from "../../../shared/sources/osm";
 
-export const extractOutputLayer: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/osm: extract output layer"));
-
-  const outputLayer = await generateOsmOutputLayer({ logger });
-
-  await writeFormattedJson(getOsmOutputLayerFilePath(), outputLayer);
-};
+export const extractOutputLayer = generateExtractOutputLayer({
+  source: "osm",
+  generateOutputLayer: generateOsmOutputLayer,
+});
 
 autoStartCommandIfNeeded(extractOutputLayer, __filename);

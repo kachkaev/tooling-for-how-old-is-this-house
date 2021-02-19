@@ -1,15 +1,11 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
-import chalk from "chalk";
+import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { reportGeocodesInOutputLayer } from "../../../shared/output/reportGeocodesInOutputLayer";
+import { generateReportGeocodes } from "../../../shared/helpersForCommands";
 import { generateOsmOutputLayer } from "../../../shared/sources/osm";
 
-export const reportGeocodes: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/osm: report geocodes"));
-
-  const outputLayer = await generateOsmOutputLayer({ logger });
-
-  await reportGeocodesInOutputLayer({ source: "osm", outputLayer, logger });
-};
+export const reportGeocodes = generateReportGeocodes({
+  source: "osm",
+  generateOutputLayer: generateOsmOutputLayer,
+});
 
 autoStartCommandIfNeeded(reportGeocodes, __filename);

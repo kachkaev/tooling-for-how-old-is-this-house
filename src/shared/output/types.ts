@@ -20,3 +20,7 @@ export type OutputLayer = turf.FeatureCollection<
   OutputLayerGeometry | undefined,
   OutputLayerProperties
 >;
+
+export type GenerateOutputLayer = (payload: {
+  logger?: Console;
+}) => Promise<OutputLayer>;
