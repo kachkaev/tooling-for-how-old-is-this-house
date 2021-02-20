@@ -8,10 +8,12 @@ export const reportGeocodesInOutputLayer = async ({
   source,
   logger,
   outputLayer,
+  reportKnownAt,
 }: {
   logger: Console;
   source: string;
   outputLayer: OutputLayer;
+  reportKnownAt: boolean;
 }) => {
   const reportedGeocodes: ReportedGeocode[] = [];
 
@@ -30,7 +32,7 @@ export const reportGeocodesInOutputLayer = async ({
         coordinates: point.geometry.coordinates.map((coordinate) =>
           _.round(coordinate, 6),
         ) as [number, number],
-        knownAt: feature.properties.knownAt,
+        knownAt: reportKnownAt ? feature.properties.knownAt : undefined,
       });
     } else {
       reportedGeocodes.push({ normalizedAddress });

@@ -56,7 +56,9 @@ export const reportGeocodes = async ({
     const { normalizedAddress } = reportedGeocode;
     const geocode: ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary =
       "coordinates" in reportedGeocode
-        ? [...reportedGeocode.coordinates, reportedGeocode.knownAt]
+        ? reportedGeocode.knownAt
+          ? [...reportedGeocode.coordinates, reportedGeocode.knownAt]
+          : reportedGeocode.coordinates
         : [];
     sourceDictionary[normalizedAddress] = { [source]: geocode };
   }
