@@ -1,5 +1,4 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
-// import * as turf from "@turf/turf";
 import axios from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
@@ -10,7 +9,6 @@ import https from "https";
 import path from "path";
 
 import { customEnvalidReporter } from "../../../../shared/customEnvalidReporter";
-// import { roughenBbox } from "../../../shared/helpersForGeometry";
 import { getRegionExtent } from "../../../../shared/region";
 import { getOsmTileImageFilePath } from "../../../../shared/sources/osm";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
@@ -57,19 +55,17 @@ export const getOsmTileVersion = (): string => {
   return env.OSM_TILE_VERSION;
 };
 
+const initialZoom = 0;
 const maxAllowedZoom = 17;
 
 export const fetchImages: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/osm: Fetching OSM tile images"));
 
   const originalRegionExtent = await getRegionExtent();
-  // const bboxAroundRegionExtent = turf.bboxPolygon(
-  //   roughenBbox(turf.bbox(originalRegionExtent), 3),
-  // );
   const regionExtent = originalRegionExtent;
 
   await processTiles({
-    initialZoom: 13,
+    initialZoom,
     maxAllowedZoom,
     regionExtent,
     processTile: async (tile) => {
