@@ -3,6 +3,7 @@ import envalid from "envalid";
 import path from "path";
 
 import { customEnvalidReporter } from "../customEnvalidReporter";
+import { GenerateOutputLayer } from "../output";
 import { getRegionDirPath } from "../region";
 
 export interface MkrfObjectData {
@@ -51,4 +52,8 @@ export const getMkrfObjectFilePath = (nativeId: string): string => {
     "objects",
     `${noramlizedId}--info.json`,
   );
+};
+
+export const generateMkrfOutputLayer: GenerateOutputLayer = () => {
+  return turf.featureCollection([]);
 };
