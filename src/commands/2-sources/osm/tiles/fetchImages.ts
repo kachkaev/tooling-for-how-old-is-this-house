@@ -1,35 +1,24 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
-import axios from "axios";
-import axiosRetry from "axios-retry";
+import { AxiosInstance } from "axios";
 import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
-import http from "http";
-import https from "https";
 import path from "path";
 
 import { customEnvalidReporter } from "../../../../shared/customEnvalidReporter";
 import { getRegionExtent } from "../../../../shared/region";
-import { getOsmTileImageFilePath } from "../../../../shared/sources/osm";
+import {
+  createAxiosInstanceForOsmTiles,
+  getOsmTileImageFilePath,
+} from "../../../../shared/sources/osm";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 
-// Inspired by https://github.com/axios/axios/issues/1846#issuecomment-434208900
-const httpAgent = new http.Agent({ keepAlive: true });
-const httpsAgent = new https.Agent({ keepAlive: true });
-const axiosInstance = axios.create({
-  httpAgent,
-  httpsAgent,
-  timeout: 5000,
-});
-
-axiosRetry(axiosInstance, {
-  retries: 3,
-  retryDelay: () => 1000,
-  shouldResetTimeout: true,
-});
-
 // Inspired by https://www.kindacode.com/article/using-axios-to-download-images-and-videos-in-node-js/
-const downloadFile = async (fileUrl: string, downloadFilePath: string) => {
+const downloadFile = async (
+  axiosInstance: AxiosInstance,
+  fileUrl: string,
+  downloadFilePath: string,
+) => {
   try {
     const response = await axiosInstance.get(fileUrl, {
       responseType: "stream",
@@ -64,6 +53,8 @@ export const fetchImages: Command = async ({ logger }) => {
   const originalRegionExtent = await getRegionExtent();
   const regionExtent = originalRegionExtent;
 
+  const axiosInstance = createAxiosInstanceForOsmTiles();
+
   await processTiles({
     initialZoom,
     maxAllowedZoom,
@@ -87,6 +78,7 @@ export const fetchImages: Command = async ({ logger }) => {
 
       await fs.ensureDir(path.dirname(tileImageFileName));
       await downloadFile(
+        axiosInstance,
         `https://tile.openstreetmap.org/${tileZoom}/${tileX}/${tileY}.png`,
         tileImageFileName,
       );
