@@ -54,6 +54,6 @@ export const getMkrfObjectFilePath = (nativeId: string): string => {
   );
 };
 
-export const generateMkrfOutputLayer: GenerateOutputLayer = () => {
+export const generateMkrfOutputLayer: GenerateOutputLayer = async () => {
   return turf.featureCollection([]);
 };

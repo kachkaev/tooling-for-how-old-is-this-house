@@ -13,7 +13,7 @@ export const reportGeocodesInOutputLayer = async ({
   logger: Console;
   source: string;
   outputLayer: OutputLayer;
-  reportKnownAt: boolean;
+  reportKnownAt?: boolean;
 }) => {
   const reportedGeocodes: ReportedGeocode[] = [];
 
