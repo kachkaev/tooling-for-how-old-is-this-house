@@ -41,7 +41,7 @@ export const MarkAsDirty: Command = async ({ logger }) => {
       const tileStatus: TileStatus =
         tileZoom === maxAllowedZoom ? "complete" : "needsSplitting";
 
-      const canBeSkipped = tileZoom >= 14 && (tileX + tileY) % 3 > 0;
+      const canBeSkipped = tileZoom >= 14 && (tileX + tileY) % 2 > 0;
 
       if (canBeSkipped) {
         return { cacheStatus: "used", tileStatus };
