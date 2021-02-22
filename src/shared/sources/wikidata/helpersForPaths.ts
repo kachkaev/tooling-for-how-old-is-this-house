@@ -1,8 +1,6 @@
 import path from "path";
 
-import { getRegionDirPath } from "../region";
-
-export type WikidataApiResponse = unknown; // TODO: Add type definition when using wikidata for real
+import { getRegionDirPath } from "../../region";
 
 export const getWikidataDirPath = () => {
   return path.resolve(getRegionDirPath(), "sources", "wikidata");
