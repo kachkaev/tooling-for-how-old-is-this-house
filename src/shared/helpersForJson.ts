@@ -2,7 +2,18 @@ import fs from "fs-extra";
 import _ from "lodash";
 import path from "path";
 
-export const getSerialisedNow = (): string => new Date().toUTCString();
+// TODO: refactor
+export const getSerialisedNow = (time?: string): string => {
+  if (time) {
+    // TODO: parse and reformat
+    return time;
+  }
+
+  // TODO: format as 2020-12-01T21:56:03.847Z
+  return new Date().toUTCString();
+};
+
+export const serializeTime = getSerialisedNow;
 
 /**
  * The ability to pick formatting style is needed for backwards-compatibility.

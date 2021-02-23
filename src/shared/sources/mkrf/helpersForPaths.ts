@@ -18,12 +18,12 @@ export const getMkrfDirPath = () => {
   return path.resolve(getRegionDirPath(), "sources", "mkrf");
 };
 
+export const getMkrfObjectDirPath = (): string => {
+  return path.resolve(getMkrfDirPath(), "objects");
+};
+
 export const getMkrfObjectFilePath = (nativeId: string): string => {
   const noramlizedId = nativeId.padStart(6, "0");
 
-  return path.resolve(
-    getMkrfDirPath(),
-    "objects",
-    `${noramlizedId}--info.json`,
-  );
+  return path.resolve(getMkrfObjectDirPath(), `${noramlizedId}--info.json`);
 };

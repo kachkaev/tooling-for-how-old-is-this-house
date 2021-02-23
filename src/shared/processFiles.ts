@@ -34,7 +34,10 @@ export const processFiles = async ({
 
   if (logger) {
     process.stdout.write(` Files found: ${numberOfFiles}.\n`);
-    process.stdout.write(chalk.green("Processing files...\n"));
+    process.stdout.write(chalk.green("Processing files..."));
+    if (statusReportFrequency) {
+      process.stdout.write("\n");
+    }
   }
 
   for (let index = 0; index < numberOfFiles; index += 1) {
@@ -59,5 +62,9 @@ export const processFiles = async ({
       );
       throw e;
     }
+  }
+
+  if (logger && !statusReportFrequency) {
+    process.stdout.write(" Done.\n");
   }
 };

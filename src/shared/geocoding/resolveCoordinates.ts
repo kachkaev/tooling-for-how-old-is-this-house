@@ -1,10 +1,10 @@
 import { Coordinates, GeocodeDictionary } from "./types";
 
-export const resolvePosition = async (
+export const resolveCoordinates = (
   combinedGeocodeDictionary: GeocodeDictionary,
   normalizedAddress: string,
   sourcesInPriorityOrder: string[],
-): Promise<Coordinates | undefined> => {
+): Coordinates | undefined => {
   const addressRecord = combinedGeocodeDictionary[normalizedAddress];
   if (!addressRecord) {
     return undefined;

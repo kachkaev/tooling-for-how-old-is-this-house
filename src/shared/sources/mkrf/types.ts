@@ -2,6 +2,7 @@ import * as turf from "@turf/turf";
 
 export interface MkrfObjectData {
   nativeId: string;
+  modified: string;
   data: {
     general: {
       photo?: {
@@ -14,6 +15,9 @@ export interface MkrfObjectData {
         mapPosition: turf.Point;
       };
       additionalCoordinates?: turf.MultiPoint[];
+      createDate?: string;
+      typologies?: Array<{ type: string; value: string }>;
+      isActual: boolean;
     };
     nativeName: string;
   };

@@ -1,10 +1,13 @@
 import { Command } from "@kachkaev/commands";
+import * as turf from "@turf/turf";
 import chalk from "chalk";
 import path from "path";
 
+import { loadCombinedGeocodeDictionary, resolveCoordinates } from "./geocoding";
 import { getSourceDirPath } from "./getSourceDirPath";
 import { writeFormattedJson } from "./helpersForJson";
 import {
+  FindPointForNormalizedAddress,
   GenerateOutputLayer,
   getOutputLayerFileName,
   reportGeocodesInOutputLayer,
@@ -39,14 +42,38 @@ export const generateReportGeocodes = ({
 export const generateExtractOutputLayer = ({
   source,
   generateOutputLayer,
+  canUseCollectedGeocodes,
 }: {
   source: string;
   generateOutputLayer: GenerateOutputLayer;
+  canUseCollectedGeocodes?: boolean;
 }): Command => {
   return async ({ logger }) => {
     logger.log(chalk.bold(`sources/${source}: extract output layer`));
 
-    const outputLayer = await generateOutputLayer({ logger });
+    let findPointForNormalizedAddress:
+      | FindPointForNormalizedAddress
+      | undefined = undefined;
+
+    if (canUseCollectedGeocodes) {
+      const combinedGeocodeDictionary = await loadCombinedGeocodeDictionary();
+
+      findPointForNormalizedAddress = (normalizedAddress) => {
+        const coordinates = resolveCoordinates(
+          combinedGeocodeDictionary,
+          normalizedAddress,
+          ["osm"],
+        );
+        if (coordinates) {
+          return turf.point(coordinates).geometry;
+        }
+      };
+    }
+
+    const outputLayer = await generateOutputLayer({
+      logger,
+      findPointForNormalizedAddress,
+    });
 
     const outputLayerFilePath = path.resolve(
       getSourceDirPath(source),

@@ -97,7 +97,8 @@ export const generateOsmOutputLayer = async ({
   const generateNormalizedAddress = (
     building: OsmFeature,
   ): string | undefined => {
-    const streetName = building.properties["addr:street"];
+    const streetName =
+      building.properties["addr:street"] ?? building.properties["addr:place"];
     const houseNumber = building.properties["addr:housenumber"];
     if (!streetName || !houseNumber) {
       return undefined;

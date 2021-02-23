@@ -8,6 +8,7 @@ export const normalizeBuilding = (
     .replace(/(\d+[^\s]*)\s*\/\s*\d+[^\s]*/g, "$1") // 42а/10 → 42а
     .replace(/д\.\s?/, "")
     .replace(/^(\d+)\s+([^\s]*)$/, "$1$2")
+    .replace(/^(\d+)-(\p{L})$/u, "$1$2") // 42-а → 42а
     .replace(/№/g, ""); // c
   if (!rest?.length) {
     return normalizedBuilding;

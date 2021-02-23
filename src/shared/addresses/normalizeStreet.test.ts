@@ -2,7 +2,12 @@ import { normalizeStreet } from "./normalizeStreet";
 
 const testCases = [
   {
-    inputs: ["ул. Тестовая", " Тестовая    ул.  ", "  улица Тестовая "],
+    inputs: [
+      "ул. Тестовая",
+      "ул.Тестовая",
+      " Тестовая    ул.  ",
+      "  улица Тестовая ",
+    ],
     output: "улица тестовая",
   },
   {

@@ -5,7 +5,8 @@ import {
 } from "./helpersForToponyms";
 
 export const normalizeStreet = (street: string): string => {
-  let slices = normalizeAddressPart(street).split(" ");
+  // ул.в.в.тестова → ул. в. в. тестова
+  let slices = normalizeAddressPart(street.replace(/\./g, ". ")).split(" ");
 
   // ул. → улица
   // тестовая улица → улица тестовая
@@ -56,9 +57,9 @@ export const normalizeStreet = (street: string): string => {
 
   let joinedSlices = slices.join(" ");
 
-  // улица и.и.тестова → улица тестова
-  // улица и.тестова → улица тестова
-  joinedSlices = joinedSlices.replace(/\p{L}\.\s?(\p{L}\.\s?)?(\p{L}+)/u, "$2");
+  // улица и. и. тестова → улица тестова
+  // улица и. тестова → улица тестова
+  joinedSlices = joinedSlices.replace(/\p{L}\.\s(\p{L}\.\s)?(\p{L}+)/u, "$2");
 
   return joinedSlices;
 };

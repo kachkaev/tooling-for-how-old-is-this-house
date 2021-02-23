@@ -20,5 +20,8 @@ export const getDictionaryFilePath = (sliceId: string) => {
 export const deriveNormalizedAddressSliceId = (
   normalizedAddress: string,
 ): string => {
-  return splitAddress(normalizedAddress).slice(0, 3).join("/");
+  return splitAddress(normalizedAddress)
+    .slice(0, 3)
+    .map((slice) => slice.replace(/\//g, ""))
+    .join("/");
 };

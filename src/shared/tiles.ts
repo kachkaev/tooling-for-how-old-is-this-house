@@ -67,7 +67,11 @@ export const processTiles = async ({
   for (let zoom = initialZoom; zoom <= maxAllowedZoom; zoom += 1) {
     logger.log(chalk.green(`Zoom level: ${zoom}`));
     nextZoomTiles = [];
-    for (const tile of tiles) {
+    const orderedTiles = _.orderBy(tiles, [
+      (tile) => tile[1], // y
+      (tile) => tile[0], // x
+    ]);
+    for (const tile of orderedTiles) {
       if (
         !turf.intersect(
           tilebelt.tileToGeoJSON(tile) as turf.Polygon,

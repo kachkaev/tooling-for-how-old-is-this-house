@@ -21,6 +21,11 @@ export type OutputLayer = turf.FeatureCollection<
   OutputLayerProperties
 >;
 
+export type FindPointForNormalizedAddress = (
+  normalizedAddress: string,
+) => turf.Point | undefined;
+
 export type GenerateOutputLayer = (payload: {
   logger?: Console;
+  findPointForNormalizedAddress?: FindPointForNormalizedAddress;
 }) => Promise<OutputLayer>;
