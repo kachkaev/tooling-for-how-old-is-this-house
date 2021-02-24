@@ -22,8 +22,6 @@ import { processFiles } from "../../processFiles";
 import { getMkrfObjectDirPath } from "./helpersForPaths";
 import { MkrfObjectFile } from "./types";
 
-// ул. Попова, д. 2, Пенза, Пензенская область
-// ул. Механизаторов, д. 13, к. 0, стр. 0, лит. 0, Засечное, Пензенская область
 export const normalizeMkrfAddress = (address: string): string => {
   const addressParts = splitAddress(address);
   if (addressParts.length !== 4) {
@@ -88,14 +86,6 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
 
         return;
       }
-
-      // Filter by isActual
-      // if (!objectFile.data.general.isActual) {
-      //   logger?.log(chalk.gray(`${shouldNotProceedPrefix}isActual !== true`));
-      //   logger?.log("");
-
-      //   return;
-      // }
 
       // Address
       let normalizedAddress: string | undefined;

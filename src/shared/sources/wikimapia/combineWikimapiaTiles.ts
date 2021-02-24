@@ -28,7 +28,7 @@ import {
 export const combineWikimapiaTiles = async ({
   logger,
 }: {
-  logger: Console;
+  logger?: Console;
 }): Promise<{
   objectPointFeatures: WikimapiaObjectPointFeature[];
   objectExtentFeatures: WikimapiaObjectExtentFeature[];
