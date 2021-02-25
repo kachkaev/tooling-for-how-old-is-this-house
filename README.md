@@ -28,9 +28,9 @@ Although some of the data sources are country-specific, parts of the repo can st
 | :- | :-: | :-: | :-: | :-: | :-: | :-: |
 | **[МинЖКХ](https://mingkh.ru)** | 🥈 | ⏳ 📍 | 🥈
 | **[Минкульт](https://opendata.mkrf.ru)** | 🥈 | ⏳ 📍 | 🥈 | 🥈 | | 🥇
-| **[OpenSteetMap](https://www.openstreetmap.org)** | 🥇 | 🥇 🛑 | 🥈 | 🥇 | 🥇
+| **[ОСМ](https://www.openstreetmap.org)** | 🥇 | 🥇 🛑 | 🥈 | 🥇 | 🥇
 | **[Росреестр](https://rosreestr.gov.ru)** | 🥈 | ⏳ 🟥 | 🥇
-| **[Wikimapia](https://wikimapia.org)** | | ⏳ 🛑 | | | | 🥈
+| **[Викимапия](https://wikimapia.org)** | | ⏳ 🛑 | | | | 🥈
 
 <!-- prettier-ignore-end -->
 
