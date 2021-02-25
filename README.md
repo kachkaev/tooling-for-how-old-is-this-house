@@ -8,6 +8,8 @@ The commands collect data from various publicly available sources, process it an
 Because [how-old-is-this.house](https://how-old-is-this.house/en/) focuses on cities in Russia, the instructions below are in Russian.
 Although some of the data sources are country-specific, parts of the repo can still be recycled for a global re-use.
 
+👀 [English version on Google Translate](https://translate.google.com/translate?sl=ru&tl=en&u=https://github.com/kachkaev/tooling-for-how-old-is-this-house/blob/main/README.md)
+
 ---
 
 ## Источники данных
