@@ -12,11 +12,28 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 ## Шаги по сборке данных
 
+В названиях папок и файлов часть `/path/to` условно обозначает любую папку, выделенную для проекта.
+
+1.  Убедиться, что на машине установлены [git](https://git-scm.com/), [Node.js](https://nodejs.org) и [Yarn](https://yarnpkg.com):
+
+    ```sh
+    git --version
+    ## ≥ 2.30
+    
+    node --version
+    ## ≥ 14.16
+    
+    yarn --version
+    ## ≥ 1.22
+    ```
+
 1.  Создать и заполнить файл `/path/to/data/regions/${MY_REGION}/region-config.yml` (по аналогии с таким файлом для уже обработанного города).
 
 1.  Скачать список объектов [с сайта Минкультуры](https://opendata.mkrf.ru/opendata/7705851331-egrkn).
     Файл должен быть в формате `jsons` (с `s` на конце) и разарахивирован.
     Рекомендованная папка: `/path/to/data/sources/mkrf` (название файла желательно не менять).
+
+1.  [Клонировать](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) этот репозиторий в папку `path/to/tooling`.
 
 1.  Скопировать `.env.dist` в `.env` и заполнить новый файл.
 
@@ -43,7 +60,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/rosreestr/4-generateObjectInfoPages.ts
     yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts ## supports concurrent launches
     
-    yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
+    # yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
     ## wikidata flow is incomplete due to lack of good harvest for Penza
     
     yarn exe src/commands/2-sources/wikimapia/1-fetchTiles.ts
