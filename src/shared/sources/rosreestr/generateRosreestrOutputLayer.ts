@@ -10,10 +10,6 @@ import {
 } from "../../output";
 // import { processFiles } from "../../processFiles";
 
-/**
- * Wikimapia data is only useful for adding photos to buildings in other layers.
- * Thus, only objects with photos are included in the result.
- */
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   logger,
 }) => {
