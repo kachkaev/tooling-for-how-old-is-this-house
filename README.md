@@ -136,19 +136,3 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/3-combineOutputLayers.ts         ## todo
     yarn exe src/commands/4-distillCombinedOutputLayers.ts ## todo
     ```
-
-## Поля выгружаемой таблицы
-
-| name            | type   | comment                                                                                                                        |
-| --------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| fid             | int    | уникальный id                                                                                                                  |
-| r_years_string  | string | текстовая строка для года, превращается в int по запросу api, используещего регулярное выражение                               |
-| r_year_int      | int    | можно не заполнять, см выше                                                                                                    |
-| r_name          | string | название объекта                                                                                                               |
-| r_adress        | string | адрес                                                                                                                          |
-| r_architect     | string | архитектор,пока пустое                                                                                                         |
-| r_style         | string | стиль, пока пустое                                                                                                             |
-| r_photo_url     | string | ссылка на фото                                                                                                                 |
-| r_wikipedia_url | string | ссылка на страницу в википедии                                                                                                 |
-| r_url           | string | ссылка на другие внешние источники                                                                                             |
-| r_copyrights    | string | "копирайты относящиеся к обьекту, сейчас даем блок ""фото: открытые данные Министерства культуры""/""фото:name_user wikimapia" |
