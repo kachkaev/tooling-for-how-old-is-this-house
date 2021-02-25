@@ -10,6 +10,49 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 ---
 
+## Источники данных
+
+🥇 основной источник  
+🥈 дополнительный источник  
+⏳ временно используемые вспомогательные данные
+
+📍 точка (point)  
+🛑 контур (polygon / multipolygon)  
+🟥 рамка (bounding box)
+
+- **МинЖКХ** — [mingkh.ru](https://mingkh.ru)
+
+  - ⏳ адрес
+  - ⏳ геометрия 📍
+  - 🥈 год постройки
+
+- **Министерство культуры РФ** (Минкульт) — [opendata.mkrf.ru](https://opendata.mkrf.ru)
+
+  - 🥈 адрес
+  - ⏳ геометрия 📍
+  - 🥈 год постройки
+  - 🥈 название
+  - 🥇 фотография
+
+- **Опен-стрит-мап** (OpenSteetMap, OSM) — [www.openstreetmap.org](https://www.openstreetmap.org)
+
+  - 🥇 адрес
+  - 🥇 геометрия 🛑
+  - 🥈 год постройки
+  - 🥇 название объекта
+  - 🥇 ссылка на страницу в Википедии
+
+- **Росреестр** (Публичная кадастровая карта, ПКК) – [rosreestr.gov.ru](https://rosreestr.gov.ru)
+
+  - 🥈 адрес
+  - ⏳ геометрия 🟥
+  - 🥇 год постройки
+
+- **Викимапия** – [wikimapia.org](https://wikimapia.org)
+
+  - ⏳ геометрия 🛑
+  - 🥈 фотография
+
 ## Шаги по сборке данных
 
 В названиях папок и файлов часть `/path/to` условно обозначает любую папку, выделенную для проекта.
@@ -73,7 +116,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/mingkh/8-reportGeocodes.ts
     yarn exe src/commands/2-sources/mkrf/8-reportGeocodes.ts
     yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
-    yarn exe src/commands/2-sources/rosreestr/8-reportGeocodes.ts ## todo
+    yarn exe src/commands/2-sources/rosreestr/8-reportGeocodes.ts
     yarn exe src/commands/2-sources/wikimapia/8-reportGeocodes.ts ## practically noop
     ```
 
@@ -85,7 +128,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/mingkh/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
-    yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts ## todo
+    yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/wikimapia/9-extractOutputLayer.ts
     ```
 
@@ -101,7 +144,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 | fid             | int    | уникальный id                                                                                                                  |
 | r_years_string  | string | текстовая строка для года, превращается в int по запросу api, используещего регулярное выражение                               |
 | r_year_int      | int    | можно не заполнять, см выше                                                                                                    |
-| r_name          | string | название обьекта                                                                                                               |
+| r_name          | string | название объекта                                                                                                               |
 | r_adress        | string | адрес                                                                                                                          |
 | r_architect     | string | архитектор,пока пустое                                                                                                         |
 | r_style         | string | стиль, пока пустое                                                                                                             |
