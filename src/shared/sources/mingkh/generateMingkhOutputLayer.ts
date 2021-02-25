@@ -14,7 +14,6 @@ import {
   OutputLayer,
   OutputLayerProperties,
 } from "../../output";
-import { extractYearFromDates } from "../../output/parseYear";
 import { generateMingkhHouseInfoCollection } from "./generateMingkhHouseInfoCollection";
 
 export const notFilledIn = ["Не заполнено", "Нет данных"];
@@ -57,10 +56,10 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
 
       const outputLayerProperties: OutputLayerProperties = {
         id: `${houseInfo.properties.id}`,
-        completionDates: houseInfo.properties["start_date"],
-        completionYear: extractYearFromDates(
-          houseInfo.properties["start_date"],
-        ),
+        completionDates: houseInfo.properties.year
+          ? `${houseInfo.properties.year}`
+          : undefined,
+        completionYear: houseInfo.properties.year,
         normalizedAddress,
         knownAt: houseInfo.properties.fetchedAt,
       };

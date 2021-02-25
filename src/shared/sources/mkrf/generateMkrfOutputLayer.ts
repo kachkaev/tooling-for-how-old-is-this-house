@@ -142,9 +142,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         id: objectFile.nativeId,
         name: objectFile?.data?.nativeName,
         completionDates,
-        completionYear: completionDates
-          ? extractYearFromDates(completionDates)
-          : undefined,
+        completionYear: extractYearFromDates(completionDates),
         knownAt: serializeTime(objectFile.modified),
         normalizedAddress,
         photoUrl: objectFile.data?.general?.photo?.url,
