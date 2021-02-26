@@ -20,8 +20,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 🗑 данные игнорируются из-за редкости или низкого качества
 
 📍 точка (point)  
-🛑 контур (polygon / multipolygon)  
-🟥 рамка (bounding box)
+🟥 контур (polygon / multipolygon)
 
 <!-- prettier-ignore-start -->
 
@@ -29,9 +28,9 @@ Although some of the data sources are country-specific, parts of the repo can st
 | :- | :-: | :-: | :-: | :-: | :-: | :-: |
 | **[МинЖКХ](https://mingkh.ru)**           | 🥈 | ⏳ 📍 | 🥈 |
 | **[Минкульт](https://opendata.mkrf.ru)**  | 🥈 | ⏳ 📍 | 🥇 | 🥇 |   | 🥇 |
-| **[ОСМ](https://www.openstreetmap.org)**  | 🥇 | 🥇 🛑 | 🥈 | 🥈 | 🥇 |
-| **[Росреестр](https://rosreestr.gov.ru)** | 🥈 | ⏳ 🟥 |
-| **[Викимапия](https://wikimapia.org)**    | 🗑 | ⏳ 🛑 |   |   | 🗑 | 🥈 |
+| **[ОСМ](https://www.openstreetmap.org)**  | 🥇 | 🥇 🟥 | 🥈 | 🥈 | 🥇 |
+| **[Росреестр](https://rosreestr.gov.ru)** | 🥈 | ⏳ 📍 |
+| **[Викимапия](https://wikimapia.org)**    | 🗑 | ⏳ 🟥 |   |   | 🗑 | 🥈 |
 
 <!-- prettier-ignore-end -->
 
