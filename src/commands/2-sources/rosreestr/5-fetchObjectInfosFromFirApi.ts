@@ -6,13 +6,13 @@ import sortKeys from "sort-keys";
 import { deepClean } from "../../../shared/deepClean";
 import { getSerialisedNow } from "../../../shared/helpersForJson";
 import {
+  convertCnToId,
+  fetchJsonFromRosreestr,
   FirResponseInInfoPageResponse,
   processRosreestrPages,
   SuccessfulFirObjectResponse,
   SuccessfulFirObjectResponseInInfoPage,
 } from "../../../shared/sources/rosreestr";
-import { fetchJsonFromRosreestr } from "../../../shared/sources/rosreestr/fetchJsonFromRosreestr";
-import { convertCnToId } from "../../../shared/sources/rosreestr/helpersForCn";
 
 const assertNoUsefulData = (
   responseData: SuccessfulFirObjectResponseInInfoPage,
@@ -51,7 +51,7 @@ const processRawFirApiResponse = (
   return sortKeys(deepClean(responseData), { deep: true });
 };
 
-export const fetchObjectInfos: Command = async ({ logger }) => {
+export const fetchObjectInfosFromFirApi: Command = async ({ logger }) => {
   logger.log(
     chalk.bold(
       "sources/rosreestr: Fetching object infos from FIR API (https://rosreestr.gov.ru/api/online/fir_object/...)",
@@ -112,4 +112,4 @@ export const fetchObjectInfos: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchObjectInfos, __filename);
+autoStartCommandIfNeeded(fetchObjectInfosFromFirApi, __filename);

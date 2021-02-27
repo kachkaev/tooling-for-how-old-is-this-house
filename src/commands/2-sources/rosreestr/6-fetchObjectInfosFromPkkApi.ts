@@ -1,17 +1,18 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import { AxiosResponse } from "axios";
 import chalk from "chalk";
+import sleep from "sleep-promise";
 import sortKeys from "sort-keys";
 
 import { deepClean } from "../../../shared/deepClean";
-import { getSerialisedNow } from "../../../shared/helpersForJson";
+import { serializeTime } from "../../../shared/helpersForJson";
 import {
+  convertCnToId,
+  fetchJsonFromRosreestr,
   PkkFeatureResponse,
   PkkResponseInInfoPageResponse,
   processRosreestrPages,
 } from "../../../shared/sources/rosreestr";
-import { fetchJsonFromRosreestr } from "../../../shared/sources/rosreestr/fetchJsonFromRosreestr";
-import { convertCnToId } from "../../../shared/sources/rosreestr/helpersForCn";
 
 const processRawPkkFeatureResponse = (
   rawApiResponse: AxiosResponse<unknown>,
@@ -67,7 +68,7 @@ const processRawPkkFeatureResponse = (
   );
 };
 
-export const fetchObjectInfos: Command = async ({ logger }) => {
+export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
   logger.log(
     chalk.bold(
       "sources/rosreestr: Fetching object infos from FIR API (https://pkk.rosreestr.ru/api/features/...)",
@@ -82,7 +83,8 @@ export const fetchObjectInfos: Command = async ({ logger }) => {
       return allInfoPageObjects.filter(
         (infoPageObject) =>
           infoPageObject.creationReason === "ccoInTile" &&
-          infoPageObject.firResponse === "not-found",
+          infoPageObject.firResponse === "not-found" &&
+          !infoPageObject.pkkResponse,
       );
     },
     processObject: async (infoPageObject) => {
@@ -94,13 +96,15 @@ export const fetchObjectInfos: Command = async ({ logger }) => {
         ),
       );
 
+      await sleep(500); // Protection against 403
+
       return {
         ...infoPageObject,
-        pkkFetchedAt: getSerialisedNow(),
+        pkkFetchedAt: serializeTime(),
         pkkResponse,
       };
     },
   });
 };
 
-autoStartCommandIfNeeded(fetchObjectInfos, __filename);
+autoStartCommandIfNeeded(fetchObjectInfosFromPkkApi, __filename);

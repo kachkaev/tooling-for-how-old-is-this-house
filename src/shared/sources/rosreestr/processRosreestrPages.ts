@@ -23,13 +23,15 @@ export const processRosreestrPages = async ({
     infoPageObject: Readonly<InfoPageObject>,
   ) => Promise<InfoPageObject>;
 }) => {
-  const scriptStartTime = new DateTime().toMillis();
+  const scriptStartTime = DateTime.utc().toMillis();
   await processFiles({
     logger,
-    fileSearchPattern: `**/page-*.json`,
+    fileSearchPattern: "**/page-*.json",
     fileSearchDirPath: getObjectInfoPagesDirPath(),
     showFilePath: true,
     processFile: async (filePath, prefixLength) => {
+      const prefix = " ".repeat(prefixLength + 1);
+
       const fileStat = await fs.stat(filePath);
       if (fileStat.mtimeMs > scriptStartTime) {
         if (concurrencyDisabledReason) {
@@ -39,9 +41,7 @@ export const processRosreestrPages = async ({
         }
         logger?.log(
           chalk.yellow(
-            `${" ".repeat(
-              prefixLength,
-            )}Skipping – this file is being handled by another instance of the script`,
+            `${prefix}Skipping – this file is being handled by another process`,
           ),
         );
 
@@ -52,37 +52,48 @@ export const processRosreestrPages = async ({
       await fs.utimes(filePath, fileStat.atime, new Date());
 
       const infoPageData = (await fs.readJson(filePath)) as InfoPageData;
-      process.stdout.write(" ".repeat(prefixLength));
+      process.stdout.write(prefix);
 
       const pickedObjectsSet = new Set(pickObjectsToProcess(infoPageData));
 
-      for (const originalObject of infoPageData) {
+      for (let index = 0; index < infoPageData.length; index += 1) {
+        const originalObject = infoPageData[index]!;
         const picked = pickedObjectsSet.has(originalObject);
         const processedObject = picked
           ? await processObject(originalObject)
           : originalObject;
 
         if (processedObject !== originalObject) {
+          infoPageData[index] = processedObject;
           await writeFormattedJson(filePath, infoPageData);
         }
 
         let progressSymbol = "?";
 
+        const latestResponse =
+          (processedObject.pkkFetchedAt ?? "") >
+            (processedObject.firFetchedAt ?? "") ||
+          !processedObject.firFetchedAt
+            ? processedObject.pkkResponse
+            : processedObject.firResponse;
+
         if (
           processedObject.creationReason === "lotInTile" ||
-          processedObject.firResponse === "lot"
+          latestResponse === "lot"
         ) {
           progressSymbol = "l";
-        } else if (processedObject.firResponse === "flat") {
+        } else if (!latestResponse) {
+          progressSymbol = "·";
+        } else if (latestResponse === "flat") {
           progressSymbol = "f";
-        } else if (processedObject.firResponse === "not-found") {
+        } else if (latestResponse === "not-found") {
           progressSymbol = "•";
-        } else if (typeof processedObject.firResponse === "object") {
-          progressSymbol =
-            processedObject.firResponse.parcelData?.oksType?.[0] ?? "?";
-        } else if (typeof processedObject.pkkResponse === "object") {
-          progressSymbol =
-            processedObject.pkkResponse.attrs.oks_type?.[0] ?? "?";
+        } else if (typeof latestResponse === "object") {
+          if ("parcelData" in latestResponse) {
+            progressSymbol = latestResponse.parcelData?.oksType?.[0] ?? "?";
+          } else if ("attrs" in latestResponse) {
+            progressSymbol = latestResponse.attrs.oks_type?.[0] ?? "?";
+          }
         }
 
         if (processedObject.creationReason !== "gap") {
@@ -96,7 +107,7 @@ export const processRosreestrPages = async ({
             ? chalk.gray
             : chalk.cyan;
 
-        const progressDecoration = picked ? chalk.reset : chalk.inverse;
+        const progressDecoration = picked ? chalk.inverse : chalk.reset;
 
         process.stdout.write(progressDecoration(progressColor(progressSymbol)));
       }

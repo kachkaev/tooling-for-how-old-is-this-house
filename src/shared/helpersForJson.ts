@@ -1,19 +1,33 @@
 import fs from "fs-extra";
 import _ from "lodash";
+import { DateTime } from "luxon";
 import path from "path";
 
-// TODO: refactor
+// TODO: remove
+/**
+ * @deprecated use serializeTime() instead
+ */
 export const getSerialisedNow = (time?: string): string => {
   if (time) {
-    // TODO: parse and reformat
     return time;
   }
 
-  // TODO: format as 2020-12-01T21:56:03.847Z
   return new Date().toUTCString();
 };
 
-export const serializeTime = getSerialisedNow;
+export const serializeTime = (time?: string): string => {
+  let t: DateTime | undefined = undefined;
+  if (time) {
+    t = DateTime.fromRFC2822(time).setZone("utc");
+    if (!t.isValid) {
+      t = DateTime.fromISO(time).setZone("utc");
+    }
+  }
+
+  return (t ?? DateTime.utc())
+    .set({ millisecond: 0 })
+    .toISO({ suppressMilliseconds: true });
+};
 
 /**
  * The ability to pick formatting style is needed for backwards-compatibility.
