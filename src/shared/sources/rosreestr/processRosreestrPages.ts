@@ -1,13 +1,13 @@
 import { CommandError } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
+import _ from "lodash";
 import { DateTime } from "luxon";
 
 import { writeFormattedJson } from "../../helpersForJson";
 import { processFiles } from "../../processFiles";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject } from "./types";
-
 /**
  * @example
  *   ---⚓️-----⚓️-⚓️---⚓️-⚓️
@@ -64,6 +64,7 @@ export const processRosreestrPages = async ({
   logger,
   pageSaveFrequency = 1,
   processObject,
+  revisit = true,
 }: {
   concurrencyDisabledReason?: string;
   logger?: Console;
@@ -76,6 +77,7 @@ export const processRosreestrPages = async ({
   processObject: (
     infoPageObject: Readonly<InfoPageObject>,
   ) => Promise<InfoPageObject>;
+  revisit: boolean;
 }) => {
   const scriptStartTime = DateTime.utc().toMillis();
   await processFiles({
@@ -106,92 +108,108 @@ export const processRosreestrPages = async ({
       await fs.utimes(filePath, fileStat.atime, new Date());
 
       const infoPageData = (await fs.readJson(filePath)) as InfoPageData;
-      process.stdout.write(prefix);
 
-      const anchorObjects = findAnchorObjects
-        ? findAnchorObjects(infoPageData)
-        : infoPageData;
-      const objectsAroundAnchors = findItemsAroundAnchors(
-        infoPageData,
-        anchorObjects,
-        includeObjectsAroundAnchors,
-      );
-      const objectsAroundEnds = findItemsAroundEnds(
-        infoPageData,
-        includeObjectsAroundEnds,
-      );
+      let pickedCns: string[] = [];
+      let previouslyPickedCns: string[] = [];
 
-      const pickedObjectsSet = new Set([
-        ...anchorObjects,
-        ...objectsAroundAnchors,
-        ...objectsAroundEnds,
-      ]);
+      do {
+        const anchorObjects = findAnchorObjects
+          ? findAnchorObjects(infoPageData)
+          : infoPageData;
+        const objectsAroundAnchors = findItemsAroundAnchors(
+          infoPageData,
+          anchorObjects,
+          includeObjectsAroundAnchors,
+        );
+        const objectsAroundEnds = findItemsAroundEnds(
+          infoPageData,
+          includeObjectsAroundEnds,
+        );
 
-      let unsavedObjectCount = 0;
-      for (let index = 0; index < infoPageData.length; index += 1) {
-        const originalObject = infoPageData[index]!;
-        const picked = pickedObjectsSet.has(originalObject);
-        const processedObject = picked
-          ? await processObject(originalObject)
-          : originalObject;
+        const pickedObjectsSet = new Set([
+          ...anchorObjects,
+          ...objectsAroundAnchors,
+          ...objectsAroundEnds,
+        ]);
 
-        if (processedObject !== originalObject) {
-          infoPageData[index] = processedObject;
-          unsavedObjectCount += 1;
-          if (pageSaveFrequency && unsavedObjectCount === pageSaveFrequency) {
-            await writeFormattedJson(filePath, infoPageData);
-            unsavedObjectCount = 0;
+        pickedCns = [...pickedObjectsSet]
+          .map((pickedObject) => pickedObject.cn)
+          .sort();
+
+        if (_.isEqual(pickedCns, previouslyPickedCns)) {
+          break;
+        }
+
+        process.stdout.write(prefix);
+        let unsavedObjectCount = 0;
+        for (let index = 0; index < infoPageData.length; index += 1) {
+          const originalObject = infoPageData[index]!;
+          const picked = pickedObjectsSet.has(originalObject);
+          const processedObject = picked
+            ? await processObject(originalObject)
+            : originalObject;
+
+          if (processedObject !== originalObject) {
+            infoPageData[index] = processedObject;
+            unsavedObjectCount += 1;
+            if (pageSaveFrequency && unsavedObjectCount === pageSaveFrequency) {
+              await writeFormattedJson(filePath, infoPageData);
+              unsavedObjectCount = 0;
+            }
           }
-        }
 
-        let progressSymbol = "?";
+          let progressSymbol = "?";
 
-        const latestResponse =
-          (processedObject.pkkFetchedAt ?? "") >=
-            (processedObject.firFetchedAt ?? "") ||
-          !processedObject.firFetchedAt
-            ? processedObject.pkkResponse
-            : processedObject.firResponse;
+          const latestResponse =
+            (processedObject.pkkFetchedAt ?? "") >=
+              (processedObject.firFetchedAt ?? "") ||
+            !processedObject.firFetchedAt
+              ? processedObject.pkkResponse
+              : processedObject.firResponse;
 
-        if (
-          processedObject.creationReason === "lotInTile" ||
-          latestResponse === "lot"
-        ) {
-          progressSymbol = "l";
-        } else if (!latestResponse) {
-          progressSymbol = "·";
-        } else if (latestResponse === "flat") {
-          progressSymbol = "f";
-        } else if (latestResponse === "void") {
-          progressSymbol = "•";
-        } else if (typeof latestResponse === "object") {
-          if ("parcelData" in latestResponse) {
-            progressSymbol = latestResponse.parcelData?.oksType?.[0] ?? "?";
-          } else if ("attrs" in latestResponse) {
-            progressSymbol = latestResponse.attrs.oks_type?.[0] ?? "?";
+          if (
+            processedObject.creationReason === "lotInTile" ||
+            latestResponse === "lot"
+          ) {
+            progressSymbol = "l";
+          } else if (!latestResponse) {
+            progressSymbol = "·";
+          } else if (latestResponse === "flat") {
+            progressSymbol = "f";
+          } else if (latestResponse === "void") {
+            progressSymbol = "•";
+          } else if (typeof latestResponse === "object") {
+            if ("parcelData" in latestResponse) {
+              progressSymbol = latestResponse.parcelData?.oksType?.[0] ?? "?";
+            } else if ("attrs" in latestResponse) {
+              progressSymbol = latestResponse.attrs.oks_type?.[0] ?? "?";
+            }
           }
+
+          if (processedObject.creationReason !== "gap") {
+            progressSymbol = progressSymbol.toUpperCase();
+          }
+
+          const progressColor =
+            processedObject !== originalObject
+              ? chalk.magenta
+              : !originalObject.firFetchedAt
+              ? chalk.gray
+              : chalk.cyan;
+
+          const progressDecoration = picked ? chalk.inverse : chalk.reset;
+
+          process.stdout.write(
+            progressDecoration(progressColor(progressSymbol)),
+          );
         }
 
-        if (processedObject.creationReason !== "gap") {
-          progressSymbol = progressSymbol.toUpperCase();
+        if (unsavedObjectCount) {
+          await writeFormattedJson(filePath, infoPageData);
         }
-
-        const progressColor =
-          processedObject !== originalObject
-            ? chalk.magenta
-            : !originalObject.firFetchedAt
-            ? chalk.gray
-            : chalk.cyan;
-
-        const progressDecoration = picked ? chalk.inverse : chalk.reset;
-
-        process.stdout.write(progressDecoration(progressColor(progressSymbol)));
-      }
-
-      if (unsavedObjectCount) {
-        await writeFormattedJson(filePath, infoPageData);
-      }
-      logger?.log("");
+        logger?.log("");
+        previouslyPickedCns = pickedCns;
+      } while (revisit);
     },
   });
 };
