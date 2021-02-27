@@ -3,9 +3,9 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
-import { extractFetchedAt } from "../../../shared/helpersForHtml";
+import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
-  getSerialisedNow,
+  serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import {
@@ -107,8 +107,8 @@ export const parseRawHouseInfos: Command = async ({ logger }) => {
       }
 
       const houseInfoFileJson: HouseInfoFile = {
-        fetchedAt: extractFetchedAt(rawInfo),
-        parsedAt: getSerialisedNow(),
+        fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),
+        parsedAt: serializeTime(),
         data: sortKeys(info),
       };
 

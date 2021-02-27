@@ -7,7 +7,7 @@ import path from "path";
 import sleep from "sleep-promise";
 
 import { generateProgress } from "../../../shared/helpersForCommands";
-import { getSerialisedNowForHtml } from "../../../shared/helpersForHtml";
+import { prependCommentWithTimeToHtml } from "../../../shared/helpersForHtml";
 import {
   combineWikimapiaTiles,
   deriveWikimapiaObjectFilePath,
@@ -70,7 +70,7 @@ export const fetchRawObjectInfos: Command = async ({ logger }) => {
     await fs.ensureDir(path.dirname(rawObjectInfoFilePath));
     await fs.writeFile(
       rawObjectInfoFilePath,
-      `${getSerialisedNowForHtml()}${response.data}`,
+      prependCommentWithTimeToHtml(response.data),
       "utf8",
     );
 

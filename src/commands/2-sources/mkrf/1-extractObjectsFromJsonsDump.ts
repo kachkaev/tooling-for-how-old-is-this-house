@@ -8,7 +8,7 @@ import sortKeys from "sort-keys";
 
 import { generateProgress } from "../../../shared/helpersForCommands";
 import {
-  getSerialisedNow,
+  serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import {
@@ -81,7 +81,7 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
   process.stdout.write(` Done. Total records: ${recordCount}\n`);
 
   const dataDumpFileName = path.basename(jsonsDumpFilePath);
-  const dataDumpProcessedAt = getSerialisedNow();
+  const dataDumpProcessedAt = serializeTime();
 
   logger.log(
     chalk.green(

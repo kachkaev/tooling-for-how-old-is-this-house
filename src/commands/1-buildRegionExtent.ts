@@ -5,7 +5,7 @@ import chalk from "chalk";
 import sortKeys from "sort-keys";
 
 import { multiUnion } from "../shared/helpersForGeometry";
-import { getSerialisedNow, writeFormattedJson } from "../shared/helpersForJson";
+import { serializeTime, writeFormattedJson } from "../shared/helpersForJson";
 import { getRegionConfig, getRegionExtentFilePath } from "../shared/region";
 
 export const buildRegionExtent: Command = async ({ logger }) => {
@@ -66,7 +66,7 @@ export const buildRegionExtent: Command = async ({ logger }) => {
   }
 
   extent.properties.name = regionConfig.name;
-  extent.properties.createdAt = getSerialisedNow();
+  extent.properties.createdAt = serializeTime();
 
   await writeFormattedJson(getRegionExtentFilePath(), sortKeys(extent));
 

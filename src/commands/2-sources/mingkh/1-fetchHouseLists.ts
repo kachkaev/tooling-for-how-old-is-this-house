@@ -3,7 +3,7 @@ import axios from "axios";
 import chalk from "chalk";
 
 import {
-  getSerialisedNow,
+  serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import {
@@ -35,7 +35,7 @@ export const fetchHouseLists: Command = async ({ logger }) => {
       ).data;
 
       const json: HouseListFile = {
-        fetchedAt: getSerialisedNow(),
+        fetchedAt: serializeTime(),
         response,
       };
 

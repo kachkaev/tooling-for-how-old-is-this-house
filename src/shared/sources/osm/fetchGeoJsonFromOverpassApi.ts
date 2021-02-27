@@ -5,7 +5,7 @@ import _ from "lodash";
 import osmToGeojson from "osmtogeojson";
 
 import { filterFeaturesByGeometryType } from "../../helpersForGeometry";
-import { getSerialisedNow } from "../../helpersForJson";
+import { serializeTime } from "../../helpersForJson";
 import { getRegionExtent } from "../../region";
 
 const regionExtentPlaceholder = "{{region_extent}}";
@@ -84,7 +84,7 @@ export const fetchGeojsonFromOverpassApi = async ({
   // Add metadata
   (geojsonData as any).properties = {
     copyright: "OpenStreetMap contributors",
-    fetchedAt: getSerialisedNow(),
+    fetchedAt: serializeTime(),
     license: "ODbL",
   };
 

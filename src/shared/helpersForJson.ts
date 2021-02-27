@@ -3,18 +3,6 @@ import _ from "lodash";
 import { DateTime } from "luxon";
 import path from "path";
 
-// TODO: remove
-/**
- * @deprecated use serializeTime() instead
- */
-export const getSerialisedNow = (time?: string): string => {
-  if (time) {
-    return time;
-  }
-
-  return new Date().toUTCString();
-};
-
 export const serializeTime = (time?: string): string => {
   let t: DateTime | undefined = undefined;
   if (time) {

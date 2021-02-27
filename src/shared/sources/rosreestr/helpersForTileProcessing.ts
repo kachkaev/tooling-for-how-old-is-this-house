@@ -4,7 +4,7 @@ import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
 import { addBufferToBbox } from "../../helpersForGeometry";
-import { getSerialisedNow, writeFormattedJson } from "../../helpersForJson";
+import { serializeTime, writeFormattedJson } from "../../helpersForJson";
 import { ProcessTile, TileStatus } from "../../tiles";
 import { fetchJsonFromRosreestr } from "./fetchJsonFromRosreestr";
 import { getTileDataFilePath } from "./helpersForPaths";
@@ -110,7 +110,7 @@ export const generateProcessTile = (
 
   const tileData: RosreestrTileData = {
     tile,
-    fetchedAt: getSerialisedNow(),
+    fetchedAt: serializeTime(),
     fetchedExtent: tileExtentGeometry,
     response: sortKeys(tileResponse, { deep: true }),
   };

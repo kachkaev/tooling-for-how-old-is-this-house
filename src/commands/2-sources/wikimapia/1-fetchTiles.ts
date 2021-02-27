@@ -10,7 +10,7 @@ import sortKeys from "sort-keys";
 import { DOMParser } from "xmldom";
 
 import {
-  getSerialisedNow,
+  serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import { getRegionExtent } from "../../../shared/region";
@@ -138,7 +138,7 @@ export const fetchTiles: Command = async ({ logger }) => {
 
       const tileData: WikimapiaTileData = {
         tile,
-        fetchedAt: getSerialisedNow(),
+        fetchedAt: serializeTime(),
         response: processedTileResponse,
       };
 

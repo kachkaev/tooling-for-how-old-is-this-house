@@ -4,7 +4,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 
-import { getSerialisedNow } from "../../../shared/helpersForJson";
+import { prependCommentWithTimeToHtml } from "../../../shared/helpersForHtml";
 import {
   getHouseFilePath,
   loopThroughHouseLists,
@@ -38,7 +38,7 @@ export const fetchRawHouseInfos: Command = async ({ logger }) => {
         await fs.ensureDir(path.dirname(rawHouseInfoFilePath));
         await fs.writeFile(
           rawHouseInfoFilePath,
-          `<!-- fetchedAt: ${getSerialisedNow()} -->\n${responseBody}`,
+          prependCommentWithTimeToHtml(responseBody),
           "utf8",
         );
 

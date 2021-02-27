@@ -3,9 +3,9 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
-import { extractFetchedAt } from "../../../shared/helpersForHtml";
+import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
-  getSerialisedNow,
+  serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import { processFiles } from "../../../shared/processFiles";
@@ -102,8 +102,8 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
       }
 
       const objectInfoFileJson: WikimapiaObjectInfoFile = {
-        fetchedAt: extractFetchedAt(rawInfo),
-        parsedAt: getSerialisedNow(),
+        fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),
+        parsedAt: serializeTime(),
         data: sortKeys(info, { deep: true }),
       };
 
