@@ -81,7 +81,10 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
     logger,
     findAnchorObjects: (infoPageObjects) =>
       infoPageObjects.filter(
-        (infoPageObject) => infoPageObject.creationReason !== "gap",
+        (infoPageObject) =>
+          infoPageObject.creationReason !== "gap" ||
+          typeof infoPageObject.pkkResponse === "object" ||
+          typeof infoPageObject.firResponse === "object",
       ),
     includeObjectsAroundAnchors: 5,
     includeObjectsAroundEnds: 5,
