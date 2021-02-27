@@ -58,9 +58,7 @@ export const fetchGeojsonFromOverpassApi = async ({
     await axios.post(
       "https://overpass-api.de/api/interpreter",
       processedQuery,
-      {
-        responseType: "json",
-      },
+      { responseType: "json" },
     )
   ).data;
 
@@ -85,7 +83,9 @@ export const fetchGeojsonFromOverpassApi = async ({
 
   // Add metadata
   (geojsonData as any).properties = {
+    copyright: "OpenStreetMap contributors",
     fetchedAt: getSerialisedNow(),
+    license: "ODbL",
   };
 
   // Reorder features by id (helps reduce diffs following subsequent fetches)

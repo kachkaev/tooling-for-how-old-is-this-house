@@ -82,7 +82,8 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
     yarn exe src/commands/2-sources/rosreestr/3-previewTileData.ts ## optional
     yarn exe src/commands/2-sources/rosreestr/4-generateObjectInfoPages.ts
-    yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts ## supports concurrent launches
+    yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfosFromFirApi.ts ## supports concurrent launches
+    yarn exe src/commands/2-sources/rosreestr/6-fetchObjectInfosFromPkkApi.ts
     
     # yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
     ## wikidata flow is incomplete due to lack of good harvest for Penza

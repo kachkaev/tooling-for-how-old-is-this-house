@@ -145,7 +145,12 @@ export const generateOsmOutputLayer = async ({
       return turf.feature(building.geometry, deepClean(outputLayerProperties));
     },
   );
-  // logger?.log({ buildingCollection, getFederalSubjectName, getPlaceName });
 
-  return turf.featureCollection(outputFeatures);
+  const result = turf.featureCollection(outputFeatures);
+  (result as any).properties = {
+    copyright: "OpenStreetMap contributors",
+    license: "ODbL",
+  };
+
+  return result;
 };
