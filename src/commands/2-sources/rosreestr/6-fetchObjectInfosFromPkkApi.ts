@@ -27,7 +27,7 @@ const processRawPkkFeatureResponse = (
   }
   const oksType = feature.attrs.oks_type;
   if (!oksType) {
-    return "lot";
+    return "notOks";
   }
 
   if (oksType === "flat") {
@@ -79,15 +79,21 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
     concurrencyDisabledReason:
       "PKK API returns 403 for a few hours after receiving more than ≈50 requests per minute.",
     logger,
-    pickObjectsToProcess: (allInfoPageObjects) => {
-      return allInfoPageObjects.filter(
-        (infoPageObject) =>
-          infoPageObject.creationReason === "ccoInTile" &&
-          infoPageObject.firResponse === "not-found" &&
-          !infoPageObject.pkkResponse,
-      );
-    },
+    findAnchorObjects: (infoPageObjects) =>
+      infoPageObjects.filter(
+        (infoPageObject) => infoPageObject.creationReason !== "gap",
+      ),
+    includeObjectsAroundAnchors: 5,
+    includeObjectsAroundEnds: 5,
     processObject: async (infoPageObject) => {
+      if (
+        infoPageObject.creationReason === "lotInTile" ||
+        infoPageObject.firResponse !== "not-found" ||
+        infoPageObject.pkkResponse
+      ) {
+        return infoPageObject;
+      }
+
       const featureId = convertCnToId(infoPageObject.cn);
 
       const pkkResponse = processRawPkkFeatureResponse(

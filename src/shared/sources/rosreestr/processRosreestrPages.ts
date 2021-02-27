@@ -8,17 +8,67 @@ import { processFiles } from "../../processFiles";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject } from "./types";
 
+/**
+ * @example
+ *   ---⚓️-----⚓️-⚓️---⚓️-⚓️
+ *     ↓ range = 2 ↓
+ *   -xx-xx-xx-x-xxx-x-
+ */
+const findItemsAroundAnchors = <Item>(
+  items: Item[],
+  anchorItems: Item[],
+  range: number,
+): Item[] => {
+  const anchorItemSet = new Set(anchorItems);
+  const foundItemSet = new Set<Item>();
+
+  for (let index = 0; index < items.length; index += 1) {
+    const item = items[index]!;
+    if (!item || !anchorItemSet.has(item)) {
+      continue;
+    }
+
+    for (
+      let index2 = Math.max(0, index - range);
+      index2 <= Math.min(items.length - 1, index + range);
+      index2 += 1
+    ) {
+      const item2 = items[index2];
+
+      if (item2 && item2 !== item) {
+        foundItemSet.add(item2);
+      }
+    }
+  }
+
+  return [...foundItemSet.values()];
+};
+
+/**
+ * @example
+ *   ------------------
+ *     ↓ range = 3 ↓
+ *   xxx------------xxx
+ */
+const findItemsAroundEnds = <Item>(items: Item[], range: number): Item[] => {
+  return items.filter(
+    (item, index) => index < range || items.length - index <= range,
+  );
+};
+
 export const processRosreestrPages = async ({
   concurrencyDisabledReason,
+  findAnchorObjects,
+  includeObjectsAroundAnchors = 0,
+  includeObjectsAroundEnds = 0,
   logger,
-  pickObjectsToProcess,
   processObject,
 }: {
   concurrencyDisabledReason?: string;
   logger?: Console;
-  pickObjectsToProcess: (
-    allInfoPageObjects: InfoPageObject[],
-  ) => InfoPageObject[];
+  findAnchorObjects: (allInfoPageObjects: InfoPageObject[]) => InfoPageObject[];
+  includeObjectsAroundAnchors?: number;
+  includeObjectsAroundEnds?: number;
   processObject: (
     infoPageObject: Readonly<InfoPageObject>,
   ) => Promise<InfoPageObject>;
@@ -54,7 +104,22 @@ export const processRosreestrPages = async ({
       const infoPageData = (await fs.readJson(filePath)) as InfoPageData;
       process.stdout.write(prefix);
 
-      const pickedObjectsSet = new Set(pickObjectsToProcess(infoPageData));
+      const anchorObjects = findAnchorObjects(infoPageData);
+      const objectsAroundAnchors = findItemsAroundAnchors(
+        infoPageData,
+        anchorObjects,
+        includeObjectsAroundAnchors,
+      );
+      const objectsAroundEnds = findItemsAroundEnds(
+        infoPageData,
+        includeObjectsAroundEnds,
+      );
+
+      const pickedObjectsSet = new Set([
+        ...anchorObjects,
+        ...objectsAroundAnchors,
+        ...objectsAroundEnds,
+      ]);
 
       for (let index = 0; index < infoPageData.length; index += 1) {
         const originalObject = infoPageData[index]!;
@@ -71,7 +136,7 @@ export const processRosreestrPages = async ({
         let progressSymbol = "?";
 
         const latestResponse =
-          (processedObject.pkkFetchedAt ?? "") >
+          (processedObject.pkkFetchedAt ?? "") >=
             (processedObject.firFetchedAt ?? "") ||
           !processedObject.firFetchedAt
             ? processedObject.pkkResponse

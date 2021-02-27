@@ -68,7 +68,11 @@ export type CreationReasonForObjectInInfoPage =
   | "lotInTile"
   | "gap";
 
-export type EdgeCaseResponseInInfoPage = "not-found" | "lot" | "flat";
+export type EdgeCaseResponseInInfoPage =
+  | "not-found" // FIXME: convert to absent for consistency
+  | "lot"
+  | "flat"
+  | "notOks";
 
 export type OksType = "building" | "construction" | "flat" | "incomplete";
 

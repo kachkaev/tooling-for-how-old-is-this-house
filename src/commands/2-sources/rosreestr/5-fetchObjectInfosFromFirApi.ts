@@ -4,7 +4,7 @@ import chalk from "chalk";
 import sortKeys from "sort-keys";
 
 import { deepClean } from "../../../shared/deepClean";
-import { getSerialisedNow } from "../../../shared/helpersForJson";
+import { serializeTime } from "../../../shared/helpersForJson";
 import {
   convertCnToId,
   fetchJsonFromRosreestr,
@@ -59,42 +59,21 @@ export const fetchObjectInfosFromFirApi: Command = async ({ logger }) => {
   );
 
   await processRosreestrPages({
+    findAnchorObjects: (infoPageObjects) =>
+      infoPageObjects.filter(
+        (infoPageObject) => infoPageObject.creationReason !== "gap",
+      ),
+    includeObjectsAroundAnchors: 100,
+    includeObjectsAroundEnds: 100,
     logger,
-
-    pickObjectsToProcess: (allInfoPageObjects) => {
-      const indexesInRange = new Set<number>();
-      const gapFetchRange = 100; // Set to 0 to not fetch gaps around known CNs
-      for (let index = -1; index <= allInfoPageObjects.length; index += 1) {
-        const shouldTreatAsAnchor =
-          index === -1 ||
-          index === allInfoPageObjects.length ||
-          allInfoPageObjects[index]?.creationReason !== "gap";
-
-        if (!shouldTreatAsAnchor) {
-          continue;
-        }
-
-        for (
-          let index2 = Math.max(0, index - gapFetchRange);
-          index2 <=
-          Math.min(allInfoPageObjects.length - 1, index + gapFetchRange);
-          index2 += 1
-        ) {
-          const canInclude =
-            allInfoPageObjects[index2]?.creationReason !== "lotInTile";
-          if (canInclude) {
-            indexesInRange.add(index2);
-          }
-        }
+    processObject: async (infoPageObject) => {
+      if (
+        infoPageObject.creationReason === "lotInTile" ||
+        infoPageObject.firFetchedAt
+      ) {
+        return infoPageObject;
       }
 
-      return allInfoPageObjects.filter(
-        (infoPageObject, index) =>
-          indexesInRange.has(index) && infoPageObject.firFetchedAt,
-      );
-    },
-
-    processObject: async (infoPageObject) => {
       const firResponse = processRawFirApiResponse(
         await fetchJsonFromRosreestr(
           `https://rosreestr.gov.ru/api/online/fir_object/${convertCnToId(
@@ -105,7 +84,7 @@ export const fetchObjectInfosFromFirApi: Command = async ({ logger }) => {
 
       return {
         ...infoPageObject,
-        firFetchedAt: getSerialisedNow(),
+        firFetchedAt: serializeTime(),
         firResponse,
       };
     },
