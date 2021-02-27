@@ -77,7 +77,7 @@ export const processRosreestrPages = async ({
   processObject: (
     infoPageObject: Readonly<InfoPageObject>,
   ) => Promise<InfoPageObject>;
-  revisit: boolean;
+  revisit?: boolean;
 }) => {
   const scriptStartTime = DateTime.utc().toMillis();
   await processFiles({
