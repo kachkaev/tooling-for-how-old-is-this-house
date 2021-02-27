@@ -66,7 +66,7 @@ export const combineRosreestrTiles = async ({
 
         const center: ObjectCenterFeature = turf.toWgs84(
           turf.point(
-            [responseFeature.center.x, responseFeature.center.y],
+            responseFeature.center,
             sortKeys({
               tileId,
               ...responseFeature.attrs,
@@ -75,12 +75,7 @@ export const combineRosreestrTiles = async ({
         );
 
         const plainExtent = turf.toWgs84(
-          turf.bboxPolygon([
-            responseFeature.extent.xmin,
-            responseFeature.extent.ymin,
-            responseFeature.extent.xmax,
-            responseFeature.extent.ymax,
-          ]),
+          turf.bboxPolygon(responseFeature.extent),
         );
         const extent: ObjectExtentFeature = turf.feature(
           plainExtent.geometry!,

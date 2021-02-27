@@ -7,8 +7,13 @@ import { addBufferToBbox } from "../../helpersForGeometry";
 import { serializeTime, writeFormattedJson } from "../../helpersForJson";
 import { ProcessTile, TileStatus } from "../../tiles";
 import { fetchJsonFromRosreestr } from "./fetchJsonFromRosreestr";
+import {
+  compressRosreestrCenter,
+  compressRosreestrExtent,
+} from "./helpersForApiResponses";
 import { getTileDataFilePath } from "./helpersForPaths";
 import {
+  RawRosreestrTileResponse,
   RosreestrObjectType,
   RosreestrTileData,
   RosreestrTileResponse,
@@ -97,8 +102,8 @@ export const generateProcessTile = (
     throw new Error("Unexpected empty geometry");
   }
 
-  const tileResponse = (
-    await fetchJsonFromRosreestr<RosreestrTileResponse>(
+  const rawTileResponse = (
+    await fetchJsonFromRosreestr<RawRosreestrTileResponse>(
       `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[objectType]}`,
       {
         sq: JSON.stringify(tileExtentGeometry),
@@ -108,11 +113,22 @@ export const generateProcessTile = (
     )
   ).data;
 
+  const compressedTileResponse: RosreestrTileResponse = {
+    ...rawTileResponse,
+    features: rawTileResponse.features.map((feature) => {
+      return {
+        ...feature,
+        center: compressRosreestrCenter(feature.center),
+        extent: compressRosreestrExtent(feature.extent),
+      };
+    }),
+  };
+
   const tileData: RosreestrTileData = {
     tile,
     fetchedAt: serializeTime(),
     fetchedExtent: tileExtentGeometry,
-    response: sortKeys(tileResponse, { deep: true }),
+    response: sortKeys(compressedTileResponse, { deep: true }),
   };
 
   await writeFormattedJson(tileDataFilePath, tileData);

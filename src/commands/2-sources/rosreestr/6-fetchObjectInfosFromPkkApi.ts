@@ -7,6 +7,8 @@ import sortKeys from "sort-keys";
 import { deepClean } from "../../../shared/deepClean";
 import { serializeTime } from "../../../shared/helpersForJson";
 import {
+  compressRosreestrCenter,
+  compressRosreestrExtent,
   convertCnToId,
   fetchJsonFromRosreestr,
   PkkFeatureResponse,
@@ -34,35 +36,19 @@ const processRawPkkFeatureResponse = (
     return "flat";
   }
 
-  const center = feature.center
-    ? ([feature.center.x, feature.center.y] as const)
-    : undefined;
-  const extent = feature.extent
-    ? ([
-        feature.extent.xmin,
-        feature.extent.ymin,
-        feature.extent.xmax,
-        feature.extent.ymax,
-      ] as const)
-    : undefined;
-
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const extent_parent = feature.extent_parent
-    ? ([
-        feature.extent_parent.xmin,
-        feature.extent_parent.ymin,
-        feature.extent_parent.xmax,
-        feature.extent_parent.ymax,
-      ] as const)
-    : undefined;
-
   return sortKeys(
     deepClean({
       ...feature,
-      center,
-      extent,
+      center: feature.center
+        ? compressRosreestrCenter(feature.center)
+        : undefined,
+      extent: feature.extent
+        ? compressRosreestrExtent(feature.extent)
+        : undefined,
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      extent_parent,
+      extent_parent: feature.extent_parent
+        ? compressRosreestrExtent(feature.extent_parent)
+        : undefined,
     }),
     { deep: true },
   );

@@ -8,21 +8,47 @@ import { Tile } from "../../tiles";
  */
 export type RosreestrObjectType = "cco" | "lot";
 
-export interface RosreestrTileFeatureObject {
-  center: { x: number; y: number };
+export interface RawRosreestrCenter {
+  y: number;
+  x: number;
+}
+
+export interface RawRosreestrExtent {
+  xmin: number;
+  xmax: number;
+  ymin: number;
+  ymax: number;
+}
+
+export type CompressedRosreesterCenter = [x: number, y: number];
+export type CompressedRosreesterExtent = [
+  xmin: number,
+  ymin: number,
+  xmax: number,
+  ymax: number,
+];
+
+export interface RawRosreestrTileFeatureObject {
+  center: RawRosreestrCenter;
   attrs: {
     address: string;
     cn: string;
     id: string;
   };
-  extent: {
-    xmin: number;
-    xmax: number;
-    ymin: number;
-    ymax: number;
-  };
+  extent: RawRosreestrExtent;
   sort: number;
   type: number;
+}
+
+export interface RawRosreestrTileResponse {
+  total: number;
+  features: RawRosreestrTileFeatureObject[];
+}
+
+export interface RosreestrTileFeatureObject
+  extends Omit<RawRosreestrTileFeatureObject, "center" | "extent"> {
+  center: CompressedRosreesterCenter;
+  extent: CompressedRosreesterExtent;
 }
 
 export interface RosreestrTileResponse {
@@ -108,13 +134,6 @@ export type SuccessfulFirObjectResponseInInfoPage = Omit<
  */
 export interface SuccessfulPkkFeatureResponse {
   feature: {
-    extent_parent: {
-      xmax: number;
-      xmin: number;
-      ymax: number;
-      ymin: number;
-    };
-    center?: { y: number; x: number };
     attrs: {
       area_value: 240.0;
       cn: string;
@@ -149,15 +168,12 @@ export interface SuccessfulPkkFeatureResponse {
       area_dev?: unknown;
       cc_date_entering?: string;
     };
+    center?: RawRosreestrCenter;
+    extent_parent: RawRosreestrExtent;
+    extent?: RawRosreestrExtent;
     sort: number;
-    type: number;
     type_parent: unknown;
-    extent?: {
-      xmax: number;
-      xmin: number;
-      ymax: number;
-      ymin: number;
-    };
+    type: number;
   };
 }
 
@@ -169,17 +185,16 @@ export type PkkFeatureResponse =
       feature: null;
     };
 
-export type SuccessfulPkkFeatureResponseInInfoPage = Omit<
-  SuccessfulPkkFeatureResponse["feature"],
-  "center" | "extent" | "extent_parent"
-> & {
-  center?: Readonly<[x: number, y: number]>;
-  extent?: Readonly<[xmin: number, ymin: number, xmax: number, ymax: number]>;
+export interface CompressedSuccessfulPkkFeatureResponse
+  extends Omit<
+    SuccessfulPkkFeatureResponse["feature"],
+    "center" | "extent" | "extent_parent"
+  > {
+  center?: CompressedRosreesterCenter;
+  extent?: CompressedRosreesterExtent;
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  extent_parent?: Readonly<
-    [xmin: number, ymin: number, xmax: number, ymax: number]
-  >;
-};
+  extent_parent?: CompressedRosreesterExtent;
+}
 
 export type FirResponseInInfoPageResponse =
   | EdgeCaseResponseInInfoPage
@@ -188,7 +203,7 @@ export type FirResponseInInfoPageResponse =
 // used as fallback if FIR API returns 204
 export type PkkResponseInInfoPageResponse =
   | EdgeCaseResponseInInfoPage
-  | SuccessfulPkkFeatureResponseInInfoPage;
+  | CompressedSuccessfulPkkFeatureResponse;
 
 export interface InfoPageObject {
   cn: string;
