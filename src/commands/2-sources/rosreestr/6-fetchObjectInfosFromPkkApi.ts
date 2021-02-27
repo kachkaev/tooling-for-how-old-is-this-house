@@ -77,7 +77,7 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
 
   await processRosreestrPages({
     concurrencyDisabledReason:
-      "PKK API returns 403 for a few hours after receiving more than ≈50 requests per minute",
+      "PKK API returns 403 for a few hours after receiving more than ≈50 requests per minute.",
     logger,
     pickObjectsToProcess: (allInfoPageObjects) => {
       return allInfoPageObjects.filter(
