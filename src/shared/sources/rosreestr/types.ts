@@ -65,14 +65,10 @@ export type ObjectExtentFeature = turf.Feature<
 
 export type CreationReasonForObjectInInfoPage =
   | "ccoInTile"
-  | "lotInTile"
-  | "gap";
+  | "gap"
+  | "lotInTile";
 
-export type EdgeCaseResponseInInfoPage =
-  | "not-found" // FIXME: convert to absent for consistency
-  | "lot"
-  | "flat"
-  | "notOks";
+export type EdgeCaseResponseInInfoPage = "flat" | "lot" | "notOks" | "void";
 
 export type OksType = "building" | "construction" | "flat" | "incomplete";
 

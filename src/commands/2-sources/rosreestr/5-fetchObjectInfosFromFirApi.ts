@@ -28,7 +28,7 @@ const processRawFirApiResponse = (
   rawApiResponse: AxiosResponse<unknown>,
 ): FirResponseInInfoPageResponse => {
   if (rawApiResponse.status === 204) {
-    return "not-found";
+    return "void";
   } else if (rawApiResponse.status !== 200) {
     throw new Error(`Unexpected response status ${rawApiResponse.status}`);
   }
@@ -59,12 +59,6 @@ export const fetchObjectInfosFromFirApi: Command = async ({ logger }) => {
   );
 
   await processRosreestrPages({
-    findAnchorObjects: (infoPageObjects) =>
-      infoPageObjects.filter(
-        (infoPageObject) => infoPageObject.creationReason !== "gap",
-      ),
-    includeObjectsAroundAnchors: 100,
-    includeObjectsAroundEnds: 100,
     logger,
     processObject: async (infoPageObject) => {
       if (

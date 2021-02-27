@@ -62,13 +62,17 @@ export const processRosreestrPages = async ({
   includeObjectsAroundAnchors = 0,
   includeObjectsAroundEnds = 0,
   logger,
+  pageSaveFrequency = 1,
   processObject,
 }: {
   concurrencyDisabledReason?: string;
   logger?: Console;
-  findAnchorObjects: (allInfoPageObjects: InfoPageObject[]) => InfoPageObject[];
+  findAnchorObjects?: (
+    allInfoPageObjects: InfoPageObject[],
+  ) => InfoPageObject[];
   includeObjectsAroundAnchors?: number;
   includeObjectsAroundEnds?: number;
+  pageSaveFrequency?: number;
   processObject: (
     infoPageObject: Readonly<InfoPageObject>,
   ) => Promise<InfoPageObject>;
@@ -104,7 +108,9 @@ export const processRosreestrPages = async ({
       const infoPageData = (await fs.readJson(filePath)) as InfoPageData;
       process.stdout.write(prefix);
 
-      const anchorObjects = findAnchorObjects(infoPageData);
+      const anchorObjects = findAnchorObjects
+        ? findAnchorObjects(infoPageData)
+        : infoPageData;
       const objectsAroundAnchors = findItemsAroundAnchors(
         infoPageData,
         anchorObjects,
@@ -121,6 +127,7 @@ export const processRosreestrPages = async ({
         ...objectsAroundEnds,
       ]);
 
+      let unsavedObjectCount = 0;
       for (let index = 0; index < infoPageData.length; index += 1) {
         const originalObject = infoPageData[index]!;
         const picked = pickedObjectsSet.has(originalObject);
@@ -130,7 +137,11 @@ export const processRosreestrPages = async ({
 
         if (processedObject !== originalObject) {
           infoPageData[index] = processedObject;
-          await writeFormattedJson(filePath, infoPageData);
+          unsavedObjectCount += 1;
+          if (pageSaveFrequency && unsavedObjectCount === pageSaveFrequency) {
+            await writeFormattedJson(filePath, infoPageData);
+            unsavedObjectCount = 0;
+          }
         }
 
         let progressSymbol = "?";
@@ -151,7 +162,7 @@ export const processRosreestrPages = async ({
           progressSymbol = "·";
         } else if (latestResponse === "flat") {
           progressSymbol = "f";
-        } else if (latestResponse === "not-found") {
+        } else if (latestResponse === "void") {
           progressSymbol = "•";
         } else if (typeof latestResponse === "object") {
           if ("parcelData" in latestResponse) {
@@ -176,7 +187,10 @@ export const processRosreestrPages = async ({
 
         process.stdout.write(progressDecoration(progressColor(progressSymbol)));
       }
-      await writeFormattedJson(filePath, infoPageData);
+
+      if (unsavedObjectCount) {
+        await writeFormattedJson(filePath, infoPageData);
+      }
       logger?.log("");
     },
   });

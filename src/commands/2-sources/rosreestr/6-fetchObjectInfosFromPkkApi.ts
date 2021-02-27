@@ -23,7 +23,7 @@ const processRawPkkFeatureResponse = (
   const rawResponseData = rawApiResponse.data as PkkFeatureResponse;
   const feature = rawResponseData.feature;
   if (!feature) {
-    return "not-found";
+    return "void";
   }
   const oksType = feature.attrs.oks_type;
   if (!oksType) {
@@ -88,7 +88,7 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
     processObject: async (infoPageObject) => {
       if (
         infoPageObject.creationReason === "lotInTile" ||
-        infoPageObject.firResponse !== "not-found" ||
+        infoPageObject.firResponse !== "void" ||
         infoPageObject.pkkResponse
       ) {
         return infoPageObject;
