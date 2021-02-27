@@ -10,7 +10,9 @@ const axiosInstance = axios.create({
 
 axiosRetry(axiosInstance, {
   retries: 30,
-  retryDelay: (retryCount) => (retryCount - 1) * 500,
+  retryDelay: (retryCount) =>
+    (retryCount - 1) * 500 +
+    Math.max(retryCount - 3, 0) * (retryCount - 3) * 1000 * 5, // long retry mode after 10 attempts in case of request throttling
   retryCondition: (error) =>
     ![200, 204, 404].includes(error.response?.status ?? 0),
   shouldResetTimeout: true,

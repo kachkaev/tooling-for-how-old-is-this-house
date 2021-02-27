@@ -22,7 +22,7 @@ export const combineRosreestrTiles = async ({
   logger,
 }: {
   objectType: RosreestrObjectType;
-  logger: Console;
+  logger?: Console;
 }): Promise<{
   objectCenterFeatures: ObjectCenterFeature[];
   objectExtentFeatures: ObjectExtentFeature[];
@@ -57,7 +57,7 @@ export const combineRosreestrTiles = async ({
         const { cn, id } = responseFeature.attrs;
         const derivedId = convertCnToId(cn);
         if (derivedId !== id) {
-          logger.log(
+          logger?.log(
             chalk.red(
               `Id mismatch detected for object with cn ${responseFeature.attrs.cn}: Derived id is ${derivedId}, while real id is ${id}. Downstream scripts may fail.`,
             ),
@@ -95,7 +95,9 @@ export const combineRosreestrTiles = async ({
     },
   });
 
-  process.stdout.write(chalk.green("Deduplicating features..."));
+  if (logger) {
+    process.stdout.write(chalk.green("Deduplicating features..."));
+  }
 
   const objectCenterFeatures = _.uniqBy(
     rawObjectCenterFeatures,
@@ -107,9 +109,11 @@ export const combineRosreestrTiles = async ({
     (feature) => feature.properties?.cn,
   );
 
-  process.stdout.write(
-    ` Count reduced from ${rawObjectExtentFeatures.length} to ${objectExtentFeatures.length}.\n`,
-  );
+  if (logger) {
+    process.stdout.write(
+      ` Count reduced from ${rawObjectExtentFeatures.length} to ${objectExtentFeatures.length}.\n`,
+    );
+  }
 
   return {
     objectCenterFeatures,

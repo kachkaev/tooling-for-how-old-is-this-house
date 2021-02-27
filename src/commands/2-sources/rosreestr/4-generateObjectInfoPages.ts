@@ -9,7 +9,7 @@ import {
   combineRosreestrTiles,
   getObjectInfoPageFilePath,
   InfoPageData,
-  InitialObjectInInfoPage,
+  InfoPageObject,
   ObjectCenterFeature,
   RosreestrObjectType,
 } from "../../../shared/sources/rosreestr";
@@ -84,7 +84,6 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
     Object.entries(objectsByBlock),
     (tuple) => tuple[0],
   );
-  // .slice(0, 30);
 
   logger.log(
     ` Found ${objects.length} objects (${ccoCentersInTiles.length} CCOs and ${lotCentersInTiles.length} lots) in ${blockTuples.length} blocks.`,
@@ -148,7 +147,7 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
         }
         const cn = `${block}:${pageNumber * pageSize + index}`;
         const objectType = objectByCn[cn]?.objectType;
-        const item: InitialObjectInInfoPage = {
+        const item: InfoPageObject = {
           cn,
           creationReason:
             objectType === "cco"
@@ -156,7 +155,8 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
               : objectType === "lot"
               ? "lotInTile"
               : "gap",
-          fetchedAt: null, // This line reduces git diffs data files
+          firFetchedAt: null, // This line reduces git diffs data files
+          pkkFetchedAt: null, // This line reduces git diffs data files
         };
         infoPageData.push(item);
       }
