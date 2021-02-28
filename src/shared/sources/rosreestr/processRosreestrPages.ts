@@ -141,6 +141,12 @@ export const processRosreestrPages = async ({
         }
 
         process.stdout.write(prefix);
+
+        // Compensate lack of 0 on page-000 (improve vertical alignment)
+        if (infoPageData[0]?.cn?.endsWith(":1")) {
+          process.stdout.write(chalk.gray(" "));
+        }
+
         let unsavedObjectCount = 0;
         for (let index = 0; index < infoPageData.length; index += 1) {
           const originalObject = infoPageData[index]!;

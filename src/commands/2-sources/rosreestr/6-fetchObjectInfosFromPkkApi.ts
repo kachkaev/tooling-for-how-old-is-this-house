@@ -1,9 +1,11 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import { AxiosResponse } from "axios";
 import chalk from "chalk";
+import * as envalid from "envalid";
 import sleep from "sleep-promise";
 import sortKeys from "sort-keys";
 
+import { customEnvalidReporter } from "../../../shared/customEnvalidReporter";
 import { deepClean } from "../../../shared/deepClean";
 import { serializeTime } from "../../../shared/helpersForJson";
 import {
@@ -61,6 +63,22 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
     ),
   );
 
+  const env = envalid.cleanEnv(
+    process.env,
+    {
+      RANGE: envalid.num({
+        default: 0,
+        desc: "Number of CNs to fetch around anchor CNs",
+      }),
+      DELAY: envalid.num({
+        default: 500,
+        desc:
+          "Recommended: 500. The lower the value, the higher the risk of getting banned for a few hours.",
+      }),
+    },
+    { strict: true, reporter: customEnvalidReporter },
+  );
+
   await processRosreestrPages({
     concurrencyDisabledReason:
       "PKK API returns 403 for a few hours after receiving more than ≈50 requests per minute.",
@@ -72,8 +90,8 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
           typeof infoPageObject.pkkResponse === "object" ||
           typeof infoPageObject.firResponse === "object",
       ),
-    includeObjectsAroundAnchors: 5,
-    includeObjectsAroundEnds: 5,
+    includeObjectsAroundAnchors: env.RANGE,
+    includeObjectsAroundEnds: env.RANGE,
     processObject: async (infoPageObject) => {
       if (
         infoPageObject.creationReason === "lotInTile" ||
@@ -91,7 +109,7 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
         ),
       );
 
-      await sleep(500); // Protection against 403
+      await sleep(env.DELAY); // Protection against 403
 
       return {
         ...infoPageObject,
