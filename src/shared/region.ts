@@ -1,17 +1,15 @@
 import turf from "@turf/turf";
-import envalid from "envalid";
+import * as envalid from "envalid";
 import fs from "fs-extra";
 import { load } from "js-yaml";
 import path from "path";
 
-import { customEnvalidReporter } from "./customEnvalidReporter";
+import { cleanEnv } from "./cleanEnv";
 
 export const getRegionDirPath = (): string => {
-  const env = envalid.cleanEnv(
-    process.env,
-    { REGION_VAR_DIR: envalid.str({}) },
-    { strict: true, reporter: customEnvalidReporter },
-  );
+  const env = cleanEnv({
+    REGION_VAR_DIR: envalid.str({}),
+  });
 
   return path.resolve(env.REGION_VAR_DIR);
 };

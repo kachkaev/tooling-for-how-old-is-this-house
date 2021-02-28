@@ -1,15 +1,13 @@
-import envalid from "envalid";
+import * as envalid from "envalid";
 import path from "path";
 
-import { customEnvalidReporter } from "../../customEnvalidReporter";
+import { cleanEnv } from "../../cleanEnv";
 import { getRegionDirPath } from "../../region";
 
 export const getMkrfJsonsDumpFilePath = (): string => {
-  const env = envalid.cleanEnv(
-    process.env,
-    { MKRF_JSONS_DUMP_FILE_PATH: envalid.str({}) },
-    { strict: true, reporter: customEnvalidReporter },
-  );
+  const env = cleanEnv({
+    MKRF_JSONS_DUMP_FILE_PATH: envalid.str({}),
+  });
 
   return path.resolve(env.MKRF_JSONS_DUMP_FILE_PATH);
 };

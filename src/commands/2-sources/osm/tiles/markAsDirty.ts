@@ -2,21 +2,17 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import * as envalid from "envalid";
 
-import { customEnvalidReporter } from "../../../../shared/customEnvalidReporter";
+import { cleanEnv } from "../../../../shared/cleanEnv";
 import { getRegionExtent } from "../../../../shared/region";
 import { createAxiosInstanceForOsmTiles } from "../../../../shared/sources/osm";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 
 export const getOsmTileVersion = (): string => {
-  const env = envalid.cleanEnv(
-    process.env,
-    {
-      OSM_TILE_VERSION: envalid.str({
-        desc: "Name of subdirectory for tiles to download",
-      }),
-    },
-    { strict: true, reporter: customEnvalidReporter },
-  );
+  const env = cleanEnv({
+    OSM_TILE_VERSION: envalid.str({
+      desc: "Name of subdirectory for tiles to download",
+    }),
+  });
 
   return env.OSM_TILE_VERSION;
 };

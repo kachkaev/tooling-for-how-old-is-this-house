@@ -5,7 +5,7 @@ import * as envalid from "envalid";
 import fs from "fs-extra";
 import path from "path";
 
-import { customEnvalidReporter } from "../../../../shared/customEnvalidReporter";
+import { cleanEnv } from "../../../../shared/cleanEnv";
 import { getRegionExtent } from "../../../../shared/region";
 import {
   createAxiosInstanceForOsmTiles,
@@ -31,15 +31,11 @@ const downloadFile = async (
 };
 
 export const getOsmTileVersion = (): string => {
-  const env = envalid.cleanEnv(
-    process.env,
-    {
-      OSM_TILE_VERSION: envalid.str({
-        desc: "Name of subdirectory for tiles to download",
-      }),
-    },
-    { strict: true, reporter: customEnvalidReporter },
-  );
+  const env = cleanEnv({
+    OSM_TILE_VERSION: envalid.str({
+      desc: "Name of subdirectory for tiles to download",
+    }),
+  });
 
   return env.OSM_TILE_VERSION;
 };

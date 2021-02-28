@@ -5,7 +5,7 @@ import * as envalid from "envalid";
 import sleep from "sleep-promise";
 import sortKeys from "sort-keys";
 
-import { customEnvalidReporter } from "../../../shared/customEnvalidReporter";
+import { cleanEnv } from "../../../shared/cleanEnv";
 import { deepClean } from "../../../shared/deepClean";
 import { serializeTime } from "../../../shared/helpersForJson";
 import {
@@ -63,21 +63,17 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
     ),
   );
 
-  const env = envalid.cleanEnv(
-    process.env,
-    {
-      RANGE: envalid.num({
-        default: 0,
-        desc: "Number of CNs to fetch around anchor CNs",
-      }),
-      DELAY: envalid.num({
-        default: 500,
-        desc:
-          "Recommended: 500. The lower the value, the higher the risk of getting banned for a few hours.",
-      }),
-    },
-    { strict: true, reporter: customEnvalidReporter },
-  );
+  const env = cleanEnv({
+    RANGE: envalid.num({
+      default: 0,
+      desc: "Number of CNs to fetch around anchor CNs",
+    }),
+    DELAY: envalid.num({
+      default: 500,
+      desc:
+        "Recommended: 500. The lower the value, the higher the risk of getting banned for a few hours.",
+    }),
+  });
 
   await processRosreestrPages({
     concurrencyDisabledReason:
