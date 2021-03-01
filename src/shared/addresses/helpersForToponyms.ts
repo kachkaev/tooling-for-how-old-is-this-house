@@ -13,6 +13,9 @@ export const designationConfigs: DesignationConfig[] = [
   { normalizedName: "поселок", aliases: ["п."], gender: "m" },
   { normalizedName: "проезд", aliases: ["проезд.", "пр."], gender: "m" },
   { normalizedName: "проспект", aliases: ["пр-кт.", "просп."], gender: "m" },
+  { normalizedName: "снт", aliases: ["с/т.", "с/т", "снт."], gender: "n" }, // садовое некоммерческое товарищество
+  { normalizedName: "совхоз", aliases: [], gender: "m" },
+  { normalizedName: "станция", aliases: ["ст", "ст."], gender: "f" },
   { normalizedName: "территория", aliases: ["тер."], gender: "f" },
   { normalizedName: "улица", aliases: ["ул."], gender: "f" },
   { normalizedName: "шоссе", aliases: ["ш."], gender: "n" },
