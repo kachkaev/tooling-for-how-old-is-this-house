@@ -134,8 +134,15 @@ export const generateOsmOutputLayer = async ({
 
   const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(
     (building) => {
+      const buildingTagValue = building.properties["building"];
+      const buildingType =
+        buildingTagValue && buildingTagValue !== "yes"
+          ? buildingTagValue
+          : undefined;
+
       const outputLayerProperties: OutputLayerProperties = {
         id: building.properties.id,
+        buildingType,
         completionDates: building.properties["start_date"],
         completionYear: extractYearFromDates(building.properties["start_date"]),
         normalizedAddress: generateNormalizedAddress(building),

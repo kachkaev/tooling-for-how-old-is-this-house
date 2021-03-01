@@ -3,6 +3,7 @@ import * as turf from "@turf/turf";
 export interface OutputLayerProperties {
   completionDates?: string;
   completionYear?: number;
+  buildingType?: string;
   id: string;
   knownAt: string;
   name?: string;

@@ -83,8 +83,9 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
       infoPageObjects.filter(
         (infoPageObject) =>
           infoPageObject.creationReason !== "gap" ||
-          typeof infoPageObject.pkkResponse === "object" ||
-          typeof infoPageObject.firResponse === "object",
+          (infoPageObject.firResponse &&
+            infoPageObject.firResponse !== "void") ||
+          (infoPageObject.pkkResponse && infoPageObject.pkkResponse !== "void"),
       ),
     includeObjectsAroundAnchors: env.RANGE,
     includeObjectsAroundEnds: env.RANGE,

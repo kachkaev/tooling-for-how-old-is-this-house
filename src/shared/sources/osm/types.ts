@@ -2,7 +2,7 @@ import * as turf from "@turf/turf";
 
 export interface OsmFeatureProperties {
   id: string;
-  name?: string;
+  [key: string]: string;
 }
 
 export type OsmFeature<G = turf.Polygon | turf.MultiPolygon> = turf.Feature<

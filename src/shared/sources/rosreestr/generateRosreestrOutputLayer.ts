@@ -7,13 +7,57 @@ import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-  // OutputLayerProperties,
 } from "../../output";
+import { extractYearFromDates } from "../../output/parseYear";
 import { processFiles } from "../../processFiles";
 import { getRegionExtent } from "../../region";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
-import { InfoPageData, ObjectCenterFeature } from "./types";
+import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
+
+const extractPropertiesFromFirResponse = (
+  infoPageObject: InfoPageObject,
+): OutputLayerProperties | "notBuilding" | undefined => {
+  const { cn, firResponse, firFetchedAt } = infoPageObject;
+  if (typeof firResponse !== "object" || !firFetchedAt) {
+    return;
+  }
+
+  if (firResponse.parcelData.oksType !== "building") {
+    return "notBuilding";
+  }
+
+  const completionDates = firResponse.parcelData.oksYearBuilt;
+
+  return {
+    id: cn,
+    knownAt: firFetchedAt,
+    completionDates,
+    completionYear: extractYearFromDates(completionDates),
+  };
+};
+
+const extractPropertiesFromPkkResponse = (
+  infoPageObject: InfoPageObject,
+): OutputLayerProperties | "notBuilding" | undefined => {
+  const { cn, pkkResponse, pkkFetchedAt } = infoPageObject;
+  if (typeof pkkResponse !== "object" || !pkkFetchedAt) {
+    return;
+  }
+
+  if (pkkResponse.attrs.oks_type !== "building") {
+    return "notBuilding";
+  }
+
+  const completionDates = pkkResponse.attrs.year_built;
+
+  return {
+    id: cn,
+    knownAt: pkkFetchedAt,
+    completionDates,
+    completionYear: extractYearFromDates(completionDates),
+  };
+};
 
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   logger,
@@ -45,32 +89,23 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     processFile: async (filePath) => {
       const infoPageData: InfoPageData = await fs.readJson(filePath);
       for (const infoPageEntry of infoPageData) {
-        const cn = infoPageEntry.cn;
-        if (
-          typeof infoPageEntry.firResponse !== "object" ||
-          !infoPageEntry.firFetchedAt
-        ) {
+        const outputLayerProperties =
+          extractPropertiesFromFirResponse(infoPageEntry) ??
+          extractPropertiesFromPkkResponse(infoPageEntry);
+
+        if (!outputLayerProperties) {
           continue;
         }
 
-        // Geometry
+        const cn = infoPageEntry.cn;
         const { geometry } = objectCenterFeatureByCn[cn] ?? {};
         if (geometry) {
           cnsWithGeometrySet.add(cn);
         }
 
-        if (
-          infoPageEntry.firResponse.parcelData.oksFlag !== 1 ||
-          infoPageEntry.firResponse.parcelData.oksType !== "building"
-        ) {
+        if (outputLayerProperties === "notBuilding") {
           continue;
         }
-
-        // Combined properties
-        const outputLayerProperties: OutputLayerProperties = {
-          id: cn,
-          knownAt: infoPageEntry.firFetchedAt,
-        };
 
         outputFeatures.push(
           turf.feature(geometry, deepClean(outputLayerProperties)),
@@ -86,13 +121,17 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     .filter((cn) => !cnsWithGeometrySet.has(cn))
     .sort();
 
+  const unusedCnsWithGeometryInRegion = unusedCnsWithGeometry.filter((cn) =>
+    turf.booleanPointInPolygon(objectCenterFeatureByCn[cn]!, regionExtent),
+  );
+
   logger?.log({
-    l: objectCenterFeatures.length,
-    lInside: objectCenterFeaturesInsideRegion.length,
-    lu: Object.keys(objectCenterFeatureByCn).length,
-    l2: outputFeatures.length,
-    l3: cnsWithGeometrySet.size,
-    unused: unusedCnsWithGeometry,
+    objectCenterFeatures: objectCenterFeatures.length,
+    objectCenterFeaturesInsideRegion: objectCenterFeaturesInsideRegion.length,
+    outputFeatures: outputFeatures.length,
+    cnsWithGeometries: cnsWithGeometrySet.size,
+    unusedCnsWithGeometry,
+    unusedCnsWithGeometryInRegion,
   });
   // const { objectExtentFeatures } = await combineWikimapiaTiles({ logger });
 
