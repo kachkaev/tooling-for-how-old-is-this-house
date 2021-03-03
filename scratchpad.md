@@ -41,7 +41,41 @@ say "Finished ${INSTANCE}"
 
 ## Команды для картовечеринки
 
+Обновление зданий
+
 ```sh
+COMMIT_MESSAGE="Update fetched OSM buildings ($(date +"%Y-%m-%d %H:%M"))"
+
 yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
-COMMIT_MESSAGE="Update fetched OSM buildings (2021-02-24 09:38)"
+yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
+
+git add ../data/regions/penza/sources/osm/fetched-buildings.geojson
+
+git commit -m ${COMMIT_MESSAGE}
+```
+
+Обновление тайлов
+
+```sh
+yarn exe src/commands/2-sources/osm/tiles/markAsDirty.ts
+
+OSM_TILE_VERSION=$(date +"%Y-%m-%d-%H%M")
+echo ${OSM_TILE_VERSION}
+
+OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
+OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
+```
+
+Обработка карт из QGIS
+
+```sh
+MAP_VERSION=2021-03-03-2308
+MAP_DIR="/Users/ak/Desktop/mapping party"
+
+MAP_TYPE=diff
+MAP_TYPE=progress
+
+convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}.jpg"
+
+convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -resize 3000 -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}.preview.jpg"
 ```
