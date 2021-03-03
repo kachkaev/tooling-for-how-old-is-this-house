@@ -1,6 +1,6 @@
 import * as turf from "@turf/turf";
-// import chalk from "chalk";
 import fs from "fs-extra";
+import _ from "lodash";
 
 import { deepClean } from "../../deepClean";
 import {
@@ -12,8 +12,15 @@ import { extractYearFromDates } from "../../output/parseYear";
 import { processFiles } from "../../processFiles";
 import { getRegionExtent } from "../../region";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
+import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
+
+const normalizeRosreestrAddress = <T extends string | undefined>(
+  address: T,
+): T => {
+  return address;
+};
 
 const extractPropertiesFromFirResponse = (
   infoPageObject: InfoPageObject,
@@ -33,6 +40,9 @@ const extractPropertiesFromFirResponse = (
     id: cn,
     knownAt: firFetchedAt,
     completionDates,
+    normalizedAddress: normalizeRosreestrAddress(
+      firResponse.objectData.objectAddress?.mergedAddress,
+    ),
     completionYear: extractYearFromDates(completionDates),
   };
 };
@@ -54,6 +64,7 @@ const extractPropertiesFromPkkResponse = (
   return {
     id: cn,
     knownAt: pkkFetchedAt,
+    normalizedAddress: normalizeRosreestrAddress(pkkResponse.attrs.address),
     completionDates,
     completionYear: extractYearFromDates(completionDates),
   };
@@ -133,40 +144,10 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     unusedCnsWithGeometry,
     unusedCnsWithGeometryInRegion,
   });
-  // const { objectExtentFeatures } = await combineWikimapiaTiles({ logger });
 
-  // for (const objectFeature of objectExtentFeatures) {
-  //   const id = `${objectFeature.properties.wikimapiaId}`;
-  //   const objectInfoFile = objectInfoFileById[id];
-  //   if (!objectInfoFile) {
-  //     logger?.log(chalk.yellow(`Could not find info for object ${id}`));
-  //     continue;
-  //   }
-
-  //   const photos = objectInfoFile.data.photos;
-
-  //   if (!photos?.length) {
-  //     continue;
-  //   }
-
-  //   const areaInMeters = turf.area(objectFeature);
-  //   if (areaInMeters > maxAreaInMeters || areaInMeters < minAreaInMeters) {
-  //     continue;
-  //   }
-  //   // Excludes 'long' features such as streets
-  //   const perimeterInMeters =
-  //     turf.length(turf.polygonToLine(objectFeature)) * 1000;
-  //   if (perimeterInMeters > maxPerimeterInMeters) {
-  //     continue;
-  //   }
-
-  //   const perimeterToAreaSqrtRatio =
-  //     perimeterInMeters / Math.sqrt(areaInMeters);
-  //   if (perimeterToAreaSqrtRatio > maxPerimeterToAreaSqrtRatio) {
-  //     continue;
-  //   }
-
-  //   const mostRecentPhotoInfo = photos[photos.length - 1]!;
-
-  return turf.featureCollection(outputFeatures);
+  return turf.featureCollection(
+    _.sortBy(outputFeatures, (outputFeature) =>
+      normalizeCnForSorting(outputFeature.properties.id),
+    ),
+  );
 };

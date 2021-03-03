@@ -24,3 +24,10 @@ export const convertCnToId = (cn: string): string => {
     .map((part) => `${parseInt(part)}`)
     .join(":");
 };
+
+export const normalizeCnForSorting = (cn: string): string => {
+  return cn
+    .split(":")
+    .map((chunk) => chunk.padStart(7, "0"))
+    .join(":");
+};
