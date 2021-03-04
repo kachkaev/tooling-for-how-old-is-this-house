@@ -20,7 +20,11 @@ export type OutputLayerGeometry = turf.Polygon | turf.MultiPolygon | turf.Point;
 export type OutputLayer = turf.FeatureCollection<
   OutputLayerGeometry | undefined,
   OutputLayerProperties
->;
+> & {
+  properties?: {
+    originalSpellings?: string[];
+  };
+};
 
 export type FindPointForNormalizedAddress = (
   normalizedAddress: string,

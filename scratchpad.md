@@ -47,6 +47,7 @@ say "Finished ${INSTANCE}"
 COMMIT_MESSAGE="Update fetched OSM buildings ($(date +"%Y-%m-%d %H:%M"))"
 
 yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
+yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
 yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
 
 git add ../data/regions/penza/sources/osm/fetched-buildings.geojson
@@ -69,13 +70,12 @@ OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/f
 Обработка карт из QGIS
 
 ```sh
-MAP_VERSION=2021-03-03-2308
+MAP_VERSION=2021-03-03-2317
 MAP_DIR="/Users/ak/Desktop/mapping party"
 
-MAP_TYPE=diff
-MAP_TYPE=progress
+for MAP_TYPE in diff progress; do
+  convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}.jpg"
 
-convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}.jpg"
-
-convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -resize 3000 -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}.preview.jpg"
+  convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -resize 3000 -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}.preview.jpg"
+done
 ```

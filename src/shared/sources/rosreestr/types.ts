@@ -110,7 +110,9 @@ export interface SuccessfulFirObjectResponse {
   objectData: {
     id: string;
     objectCn: string;
+    addressNote?: string;
     objectAddress?: {
+      addressNote?: string;
       mergedAddress?: string;
     };
   };

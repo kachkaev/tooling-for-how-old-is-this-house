@@ -1,4 +1,5 @@
 import * as turf from "@turf/turf";
+import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 
@@ -16,15 +17,36 @@ import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
 
-const normalizeRosreestrAddress = <T extends string | undefined>(
-  address: T,
-): T => {
-  return address;
+const simplifyAddress = (rawAddress: string) => ({
+  simplifiedAddress: rawAddress
+    ?.toUpperCase()
+    .replace(/\./g, ". ")
+    .replace(/\s+/g, " ")
+    .trim(),
+  originalSpellings: [] as string[],
+});
+
+type NormalizeAddress = (address: string | undefined) => string | undefined;
+type StandardizeAddress = (simplifiedAddress: string) => string;
+
+// TODO: Generalize logic
+const standardizeRosreestrAddress: StandardizeAddress = (simplifiedAddress) => {
+  const chunks = simplifiedAddress.split(",").map((chunk) => chunk.trim());
+
+  if (chunks[0] === "РОССИЙСКАЯ ФЕДЕРАЦИЯ") {
+    chunks.shift();
+  }
+  throw new Error("Not implemented yet");
 };
+
+type OutputLayerPropertiesWithRawAddress = Omit<
+  OutputLayerProperties,
+  "normalizedAddress"
+> & { rawAddress?: string };
 
 const extractPropertiesFromFirResponse = (
   infoPageObject: InfoPageObject,
-): OutputLayerProperties | "notBuilding" | undefined => {
+): OutputLayerPropertiesWithRawAddress | "notBuilding" | undefined => {
   const { cn, firResponse, firFetchedAt } = infoPageObject;
   if (typeof firResponse !== "object" || !firFetchedAt) {
     return;
@@ -40,16 +62,14 @@ const extractPropertiesFromFirResponse = (
     id: cn,
     knownAt: firFetchedAt,
     completionDates,
-    normalizedAddress: normalizeRosreestrAddress(
-      firResponse.objectData.objectAddress?.mergedAddress,
-    ),
+    rawAddress: firResponse.objectData.addressNote,
     completionYear: extractYearFromDates(completionDates),
   };
 };
 
 const extractPropertiesFromPkkResponse = (
   infoPageObject: InfoPageObject,
-): OutputLayerProperties | "notBuilding" | undefined => {
+): OutputLayerPropertiesWithRawAddress | "notBuilding" | undefined => {
   const { cn, pkkResponse, pkkFetchedAt } = infoPageObject;
   if (typeof pkkResponse !== "object" || !pkkFetchedAt) {
     return;
@@ -64,7 +84,7 @@ const extractPropertiesFromPkkResponse = (
   return {
     id: cn,
     knownAt: pkkFetchedAt,
-    normalizedAddress: normalizeRosreestrAddress(pkkResponse.attrs.address),
+    rawAddress: pkkResponse.attrs.address,
     completionDates,
     completionYear: extractYearFromDates(completionDates),
   };
@@ -91,6 +111,26 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     ] = objectCenterFeature;
   }
 
+  const originalSpellingsSet = new Set<string>();
+
+  const normalizeAddress: NormalizeAddress = (address) => {
+    if (!address) {
+      return undefined;
+    }
+    const { simplifiedAddress, originalSpellings } = simplifyAddress(address);
+    for (const originalSpelling of originalSpellings) {
+      originalSpellingsSet.add(originalSpelling);
+    }
+
+    try {
+      return standardizeRosreestrAddress(simplifiedAddress);
+    } catch (e) {
+      logger?.log(chalk.yellow(simplifiedAddress));
+
+      return simplifiedAddress;
+    }
+  };
+
   const cnsWithGeometrySet = new Set<string>();
   const outputFeatures: OutputLayer["features"] = [];
   await processFiles({
@@ -100,11 +140,11 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     processFile: async (filePath) => {
       const infoPageData: InfoPageData = await fs.readJson(filePath);
       for (const infoPageEntry of infoPageData) {
-        const outputLayerProperties =
+        const outputLayerPropertiesWithRawAddress =
           extractPropertiesFromFirResponse(infoPageEntry) ??
           extractPropertiesFromPkkResponse(infoPageEntry);
 
-        if (!outputLayerProperties) {
+        if (!outputLayerPropertiesWithRawAddress) {
           continue;
         }
 
@@ -114,10 +154,21 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
           cnsWithGeometrySet.add(cn);
         }
 
-        if (outputLayerProperties === "notBuilding") {
+        if (outputLayerPropertiesWithRawAddress === "notBuilding") {
           continue;
         }
 
+        const {
+          rawAddress,
+          ...otherProperties
+        } = outputLayerPropertiesWithRawAddress;
+
+        const normalizedAddress = normalizeAddress(rawAddress);
+
+        const outputLayerProperties: OutputLayerProperties = {
+          ...otherProperties,
+          normalizedAddress,
+        };
         outputFeatures.push(
           turf.feature(geometry, deepClean(outputLayerProperties)),
         );
@@ -145,9 +196,15 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     unusedCnsWithGeometryInRegion,
   });
 
-  return turf.featureCollection(
+  const result: OutputLayer = turf.featureCollection(
     _.sortBy(outputFeatures, (outputFeature) =>
       normalizeCnForSorting(outputFeature.properties.id),
     ),
   );
+
+  result.properties = {
+    originalSpellings: [...originalSpellingsSet],
+  };
+
+  return result;
 };
