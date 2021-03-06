@@ -18,7 +18,7 @@ export const designationConfigs: DesignationConfig[] = [
   { normalizedName: "станция", aliases: ["ст"], gender: "f" },
   { normalizedName: "территория", aliases: ["тер"], gender: "f" },
   { normalizedName: "улица", aliases: ["ул"], gender: "f" },
-  { normalizedName: "шоссе", aliases: ["ш."], gender: "n" },
+  { normalizedName: "шоссе", aliases: ["ш"], gender: "n" },
 ];
 
 const designationConfigByWord: Record<string, DesignationConfig> = {};
