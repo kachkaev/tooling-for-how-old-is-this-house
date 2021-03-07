@@ -1,6 +1,6 @@
 import { AddressToken, SimpleAddressToken } from "./types";
 
-export const makeTokens = (
+export const mergeSimpleTokens = (
   simpleTokens: SimpleAddressToken[],
 ): AddressToken[] => {
   const result: AddressToken[] = [];
