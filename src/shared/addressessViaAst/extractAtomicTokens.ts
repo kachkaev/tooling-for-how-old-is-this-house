@@ -66,6 +66,7 @@ export const extractAtomicTokens = (
         continue;
 
       case "№":
+      case "n":
       case "#":
         result.push(["numberSign", char]);
         continue;

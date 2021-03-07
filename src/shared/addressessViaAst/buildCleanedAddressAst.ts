@@ -194,6 +194,40 @@ export const buildCleanedAddressAst = (
     }
   }
 
+  // Attach ending to cardinal numbers ‘10 Б’
+  for (let index = nodes.length - 2; index >= 0; index -= 1) {
+    const node = nodes[index]!;
+    if (
+      node.nodeType !== "word" ||
+      node.wordType !== "cardinalNumber" ||
+      node.ending.length
+    ) {
+      continue;
+    }
+
+    const nextNode = nodes[index + 1]!;
+    if (
+      nextNode.nodeType !== "word" ||
+      nextNode.wordType !== "unclassified" ||
+      nextNode.value.length !== 1
+    ) {
+      continue;
+    }
+
+    const nextNode2 = nodes[index + 2];
+    if (
+      nextNode2 &&
+      nextNode2.nodeType === "word" &&
+      nextNode2.wordType === "cardinalNumber"
+    ) {
+      continue;
+    }
+
+    nodes.splice(index + 1, 1);
+    node.value += nextNode.value;
+    node.ending = nextNode.value;
+  }
+
   // Convert dash into a comma if it is not between two cardinal numbers
   for (let index = 1; index < nodes.length - 1; index += 1) {
     const node = nodes[index]!;
