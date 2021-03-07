@@ -18,6 +18,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "settlement", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
   
   { designation: "place", normalizedValue: "городок", gender: "m", aliases: [] },
+  { designation: "place", normalizedValue: "гск", gender: "m", aliases: ["гк"] },
 
   { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н"] },
   { designation: "district", normalizedValue: "микрорайон", gender: "m", aliases: ["мкр", "м-н"] },
@@ -29,7 +30,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "переулок", gender: "m", aliases: ["пер"] },
   { designation: "street", normalizedValue: "площадь", gender: "f", aliases: ["пл"] },
   { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр"] },
-  { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-кт", "просп"] },
+  { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-т", "пр-кт", "просп"] },
   { designation: "street", normalizedValue: "снт", gender: "n", aliases: ["с/т"] }, // садовое некоммерческое товарищество
   { designation: "street", normalizedValue: "совхоз", gender: "m", aliases: ["свх", "совх", "с/х"] },
   { designation: "street", normalizedValue: "станция", gender: "f", aliases: ["ст"] },
@@ -41,7 +42,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "house", normalizedValue: "здание", gender: "n", aliases: ["зд"] },
   { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["з/у", "уч"] },
 
-  { designation: "housePart", normalizedValue: "блок", gender: "m" },
+  { designation: "housePart", normalizedValue: "блок", gender: "m", aliases: ["бл"] },
   { designation: "housePart", normalizedValue: "гараж", gender: "m", aliases: ["бокс", "гар"] },
   { designation: "housePart", normalizedValue: "квартира", gender: "m", aliases: ["кв"] },
   { designation: "housePart", normalizedValue: "корпус", gender: "m", aliases: ["к", "корп"] },

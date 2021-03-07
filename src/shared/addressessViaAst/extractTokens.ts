@@ -12,7 +12,7 @@ export const extractTokens = (rawAddress: string): AddressToken[] => {
 
     const openWord = wordIsOpen ? result[result.length - 1] : undefined;
     if (openWord) {
-      const [openWordType] = openWord;
+      const [openWordType, openWordValue] = openWord;
 
       const nextToken = atomicTokens[index + 1];
       const [nextTokenType, nextTokenValue] = nextToken ?? [];
@@ -28,8 +28,11 @@ export const extractTokens = (rawAddress: string): AddressToken[] => {
       // с/т
       if (
         openWordType === "letterSequence" &&
+        openWordValue.length < 3 &&
         tokenType === "slash" &&
-        nextTokenType === "letterSequence"
+        nextTokenType === "letterSequence" &&
+        nextTokenValue &&
+        nextTokenValue.length < 3
       ) {
         openWord[0] = "protoWord";
         openWord[1] += `/${nextTokenValue}`;

@@ -113,7 +113,15 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
       return printStandardizedAddressAst(standardizedAddressAst);
     } catch {
       const cleanedAddress = printCleanedAddressAst(cleanedAddressAst);
-      logger?.log(chalk.yellow(cleanedAddress));
+      if (
+        !cleanedAddress.includes("ГАРАЖ") &&
+        !cleanedAddress.includes("ГСК") &&
+        !cleanedAddress.includes("ЗАРЕЧНЫЙ") &&
+        cleanedAddress.length > 5
+      ) {
+        logger?.log(rawAddress);
+        logger?.log(chalk.yellow(cleanedAddress));
+      }
 
       return cleanedAddress;
     }
