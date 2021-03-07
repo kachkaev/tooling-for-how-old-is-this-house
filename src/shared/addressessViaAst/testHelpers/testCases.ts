@@ -5,6 +5,7 @@ export const testCases: Array<{
   expectedAtomicTokens?: AtomicAddressToken[];
   expectedTokens?: AddressToken[];
   expectedCleanedAddressAst?: CleanedAddressAst;
+  expectedCleanedAddress?: string;
 }> = [
   {
     rawAddress: "",
@@ -14,6 +15,8 @@ export const testCases: Array<{
   {
     rawAddress:
       "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,МАЛ.ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
+    expectedCleanedAddress:
+      "58, ПЕНЗЕНСКИЙ РАЙОН, ЗАСЕЧНОЕ СЕЛО, МАЛЫЙ ШКОЛЬНЫЙ ПРОЕЗД 10А/42",
     expectedAtomicTokens: [
       ["bracket", "("],
       ["comma", ","],
@@ -129,6 +132,8 @@ export const testCases: Array<{
 
   {
     rawAddress: ",,Пенз обл., 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
+    // expectedCleanedAddress:
+    //   "ПЕНЗ ОБЛАСТЬ, 1-Я УЛИЦА А. С. ПУШКИНА-ТЕСТОВА, ДОМ 4, КОРПУС 5000",
     expectedTokens: [
       ["comma", ","],
       ["comma", ","],
@@ -228,12 +233,14 @@ export const testCases: Array<{
     },
   },
   {
-    rawAddress: "(р-н. 1-й,10 к10 10корп5 10к,1кк",
+    rawAddress: "(р-н. 1-ый,10 к10 10корп5 10к,1кк",
+    expectedCleanedAddress: "РАЙОН 1-ЫЙ, 10 КОРПУС 10 10 КОРПУС 5 10К, 1КК",
+    // expectedCleanedAddress: "РАЙОН 1-Й, 10 КОРПУС 10 10 КОРПУС 5 10К, 1 КК",
     expectedTokens: [
       ["bracket", "("],
       ["protoWord", "р-н."],
       ["spacing", " "],
-      ["protoWord", "1-й"],
+      ["protoWord", "1-ый"],
       ["comma", ","],
       ["numberSequence", "10"],
       ["spacing", " "],
@@ -251,6 +258,7 @@ export const testCases: Array<{
   },
   {
     rawAddress: "Такая-то ул - 10-12",
+    // expectedCleanedAddress: "ТАКАЯ-ТО УЛИЦА, 10-12",
     expectedTokens: [
       ["protoWord", "такая-то"],
       ["spacing", " "],
@@ -264,7 +272,8 @@ export const testCases: Array<{
     ],
   },
   {
-    rawAddress: 'г.Пенза, с/т«Боль" ,10/12,сарай_10а',
+    rawAddress: 'г.Пенза, с/т«труД" ,10/12,сарай_10а',
+    expectedCleanedAddress: "ГОРОД ПЕНЗА, СНТ ТРУД, 10/12, САРАЙ 10А",
     expectedTokens: [
       ["protoWord", "г."],
       ["letterSequence", "пенза"],
@@ -272,7 +281,7 @@ export const testCases: Array<{
       ["spacing", " "],
       ["protoWord", "с/т"],
       ["quote", "«"],
-      ["letterSequence", "боль"],
+      ["letterSequence", "труд"],
       ["quote", '"'],
       ["spacing", " "],
       ["comma", ","],
@@ -286,7 +295,8 @@ export const testCases: Array<{
     ],
   },
   {
-    rawAddress: "2—й  с\\т Такой—то д42", // m-dash
+    rawAddress: "2—й  с\\т Такой—то д42", // m-dashes
+    expectedCleanedAddress: "2-Й СНТ ТАКОЙ-ТО ДОМ 42",
     expectedAtomicTokens: [
       ["numberSequence", "2"],
       ["dash", "—"],
