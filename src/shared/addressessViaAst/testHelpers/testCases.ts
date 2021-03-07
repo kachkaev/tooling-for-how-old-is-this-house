@@ -2,17 +2,17 @@ import { AddressToken, SimpleAddressToken } from "../types";
 
 export const testCases: Array<{
   rawAddress: string;
-  expectedTokens?: SimpleAddressToken[];
-  expectedTokensWithProtoWords?: AddressToken[];
+  expectedSimpleTokens?: SimpleAddressToken[];
+  expectedTokens?: AddressToken[];
 }> = [
   {
     rawAddress: "",
-    expectedTokens: [],
+    expectedSimpleTokens: [],
   },
   {
     rawAddress:
       "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
-    expectedTokens: [
+    expectedSimpleTokens: [
       ["bracket", "("],
       ["comma", ","],
       ["numberSequence", "58"],
@@ -48,7 +48,7 @@ export const testCases: Array<{
 
   {
     rawAddress: ",,Пенз область, 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
-    expectedTokensWithProtoWords: [
+    expectedTokens: [
       ["comma", ","],
       ["comma", ","],
       ["letterSequence", "пенз"],
@@ -74,7 +74,7 @@ export const testCases: Array<{
   },
   {
     rawAddress: "(р-н. 1-й,10 к10 10корп5 10к,1кк",
-    expectedTokensWithProtoWords: [
+    expectedTokens: [
       ["bracket", "("],
       ["protoWord", "р-н."],
       ["spacing", " "],
@@ -96,7 +96,7 @@ export const testCases: Array<{
   },
   {
     rawAddress: "Такая-то ул - 10-12",
-    expectedTokensWithProtoWords: [
+    expectedTokens: [
       ["protoWord", "такая-то"],
       ["spacing", " "],
       ["letterSequence", "ул"],
@@ -110,7 +110,7 @@ export const testCases: Array<{
   },
   {
     rawAddress: 'г.Пенза, с/т«Боль" ,10/12,сарай_10а',
-    expectedTokensWithProtoWords: [
+    expectedTokens: [
       ["protoWord", "г."],
       ["letterSequence", "пенза"],
       ["comma", ","],
@@ -132,7 +132,7 @@ export const testCases: Array<{
   },
   {
     rawAddress: "",
-    expectedTokensWithProtoWords: [],
+    expectedTokens: [],
   },
 ];
 
