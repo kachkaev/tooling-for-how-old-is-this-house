@@ -24,7 +24,7 @@ export interface DesignationAdjectiveConfig {
 
 type GenericAddressToken<T extends string> = [type: T, value: string];
 
-export type SimpleAddressTokenType =
+export type AtomicAddressTokenType =
   | "letterSequence"
   | "numberSequence"
   // punctuation
@@ -39,9 +39,9 @@ export type SimpleAddressTokenType =
   // rest
   | "unknown";
 
-export type SimpleAddressToken = GenericAddressToken<SimpleAddressTokenType>;
+export type AtomicAddressToken = GenericAddressToken<AtomicAddressTokenType>;
 
-export type AddressTokenType = SimpleAddressTokenType | "protoWord";
+export type AddressTokenType = AtomicAddressTokenType | "protoWord";
 export type AddressToken = GenericAddressToken<AddressTokenType>;
 
 export interface AddressWordBase {

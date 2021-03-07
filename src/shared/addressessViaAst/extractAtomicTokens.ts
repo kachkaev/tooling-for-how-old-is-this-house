@@ -1,7 +1,7 @@
-import { SimpleAddressToken, SimpleAddressTokenType } from "./types";
+import { AtomicAddressToken, AtomicAddressTokenType } from "./types";
 
 const multiCharTokens: Array<
-  [SimpleAddressTokenType, (char: string) => boolean]
+  [AtomicAddressTokenType, (char: string) => boolean]
 > = [
   [
     "letterSequence",
@@ -21,8 +21,10 @@ const multiCharTokens: Array<
   ],
 ];
 
-export const makeSimpleTokens = (rawAddress: string): SimpleAddressToken[] => {
-  const result: SimpleAddressToken[] = [];
+export const extractAtomicTokens = (
+  rawAddress: string,
+): AtomicAddressToken[] => {
+  const result: AtomicAddressToken[] = [];
   const address = rawAddress.toLowerCase();
   for (let index = 0; index < address.length; index += 1) {
     const char = address[index]!;

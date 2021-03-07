@@ -1,11 +1,11 @@
-import { makeTokens } from "./makeTokens";
+import { extractTokens } from "./extractTokens";
 import { testCases } from "./testHelpers/testCases";
 
-describe("makeTokens", () => {
+describe("extractTokens", () => {
   testCases.forEach(({ rawAddress, expectedTokens }) => {
     if (expectedTokens) {
       it(`works for "${rawAddress}"`, () => {
-        expect(makeTokens(rawAddress)).toEqual(expectedTokens);
+        expect(extractTokens(rawAddress)).toEqual(expectedTokens);
       });
     }
   });

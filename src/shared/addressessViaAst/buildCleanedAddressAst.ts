@@ -1,4 +1,4 @@
-import { makeTokens } from "./makeTokens";
+import { extractTokens } from "./extractTokens";
 import {
   AddressNodeWithWord,
   AddressToken,
@@ -23,7 +23,7 @@ const punctuationTokensToKeep = new Set<AddressTokenType>([
 export const buildCleanedAddressAst = (
   rawAddress: string,
 ): CleanedAddressAst => {
-  const tokens = makeTokens(rawAddress);
+  const tokens = extractTokens(rawAddress);
   const filteredTokens = tokens.filter(
     ([type]) =>
       tokensToConvertToWords.has(type) || punctuationTokensToKeep.has(type),

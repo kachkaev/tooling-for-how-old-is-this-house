@@ -1,22 +1,22 @@
 import { designationWordConfigLookup } from "../helpersForDesignations";
-import { AddressToken, CleanedAddressAst, SimpleAddressToken } from "../types";
+import { AddressToken, AtomicAddressToken, CleanedAddressAst } from "../types";
 
 export const testCases: Array<{
   rawAddress: string;
-  expectedSimpleTokens?: SimpleAddressToken[];
+  expectedAtomicTokens?: AtomicAddressToken[];
   expectedTokens?: AddressToken[];
   expectedCleanedAddressAst?: CleanedAddressAst;
 }> = [
   {
     rawAddress: "",
-    expectedSimpleTokens: [],
+    expectedAtomicTokens: [],
     expectedTokens: [],
   },
   {
     rawAddress:
       // "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,МАЛ.ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
       "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
-    expectedSimpleTokens: [
+    expectedAtomicTokens: [
       ["bracket", "("],
       ["comma", ","],
       ["numberSequence", "58"],
@@ -274,7 +274,7 @@ export const testCases: Array<{
   },
   {
     rawAddress: "с\\т Такой—то д42", // m-dash
-    expectedSimpleTokens: [
+    expectedAtomicTokens: [
       ["letterSequence", "с"],
       ["slash", "\\"],
       ["letterSequence", "т"],

@@ -1,20 +1,20 @@
-import { makeSimpleTokens } from "./makeSimpleTokens";
+import { extractAtomicTokens } from "./extractAtomicTokens";
 import { AddressToken } from "./types";
 
-export const makeTokens = (rawAddress: string): AddressToken[] => {
-  const simpleTokens = makeSimpleTokens(rawAddress);
+export const extractTokens = (rawAddress: string): AddressToken[] => {
+  const atomicTokens = extractAtomicTokens(rawAddress);
 
   const result: AddressToken[] = [];
   let wordIsOpen = false;
-  for (let index = 0; index < simpleTokens.length; index += 1) {
-    const token = simpleTokens[index]!;
+  for (let index = 0; index < atomicTokens.length; index += 1) {
+    const token = atomicTokens[index]!;
     const [tokenType, tokenValue] = token;
 
     const openWord = wordIsOpen ? result[result.length - 1] : undefined;
     if (openWord) {
       const [openWordType] = openWord;
 
-      const nextToken = simpleTokens[index + 1];
+      const nextToken = atomicTokens[index + 1];
       const [nextTokenType, nextTokenValue] = nextToken ?? [];
 
       // что-то.
