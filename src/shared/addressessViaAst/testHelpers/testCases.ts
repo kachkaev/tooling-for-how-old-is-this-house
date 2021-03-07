@@ -13,8 +13,7 @@ export const testCases: Array<{
   },
   {
     rawAddress:
-      "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
-    // "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,МАЛ.ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
+      "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,МАЛ.ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
     expectedAtomicTokens: [
       ["bracket", "("],
       ["comma", ","],
@@ -33,8 +32,8 @@ export const testCases: Array<{
       ["letterSequence", "с"],
       ["period", "."],
       ["comma", ","],
-      // ["letterSequence", "мал"],
-      // ["period", "."],
+      ["letterSequence", "мал"],
+      ["period", "."],
       ["letterSequence", "школьный"],
       ["spacing", " "],
       ["quote", '"'],
@@ -92,6 +91,11 @@ export const testCases: Array<{
         {
           nodeType: "separator",
           separatorType: "comma",
+        },
+        {
+          nodeType: "word",
+          wordType: "designationAdjective",
+          value: "малый",
         },
         {
           nodeType: "word",

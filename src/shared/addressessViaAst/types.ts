@@ -57,7 +57,6 @@ export interface AddressNodeWithNumber extends AddressWordBase {
 
 export interface AddressNodeWithDesignationAdjective extends AddressWordBase {
   wordType: "designationAdjective";
-  meta: DesignationAdjectiveConfig;
 }
 
 export type AddressNodeWithWord =

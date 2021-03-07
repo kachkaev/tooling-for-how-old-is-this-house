@@ -1,8 +1,13 @@
 import { extractTokens } from "./extractTokens";
 import {
+  DesignationConfig,
   designationConfigLookup,
   designationWordLookup,
 } from "./shared/designations";
+import {
+  designationAdjectiveConfigLookup,
+  isNormalizedDesignationAdjective,
+} from "./shared/designiationAdjectives";
 import {
   AddressNodeWithDesignation,
   AddressNodeWithNumber,
@@ -38,6 +43,37 @@ const canBeInitial = (
   isUnclassifiedWord(node) &&
   (node.value.length === 1 ||
     (node.value.length === 2 && node.value[1] === "."));
+
+const findRelevantDesignation = (
+  nodes: CleanedAddressNode[],
+  node: CleanedAddressNode,
+): DesignationConfig | undefined => {
+  const nodeIndex = nodes.indexOf(node);
+
+  // look left
+  for (let index = nodeIndex - 1; index >= 0; index -= 1) {
+    const nodeAtIndex = nodes[index]!;
+    if (nodeAtIndex.nodeType === "separator") {
+      break;
+    }
+    if (nodeAtIndex.wordType === "designation") {
+      return designationConfigLookup[nodeAtIndex.value];
+    }
+  }
+
+  // look right
+  for (let index = nodeIndex + 1; index < nodes.length; index += 1) {
+    const nodeAtIndex = nodes[index]!;
+    if (nodeAtIndex.nodeType === "separator") {
+      break;
+    }
+    if (nodeAtIndex.wordType === "designation") {
+      return designationConfigLookup[nodeAtIndex.value];
+    }
+  }
+
+  return undefined;
+};
 
 export const buildCleanedAddressAst = (
   rawAddress: string,
@@ -170,6 +206,33 @@ export const buildCleanedAddressAst = (
     updatedNode.value = designationWord;
     updatedNode.designation =
       designationConfigLookup[designationWord].designation;
+  }
+
+  // Expand designation adjectives (мал. → малый)
+  for (const node of nodes) {
+    if (!isUnclassifiedWord(node)) {
+      continue;
+    }
+
+    const designationAdjectiveConfig =
+      designationAdjectiveConfigLookup[node.value];
+    if (!designationAdjectiveConfig) {
+      continue;
+    }
+
+    (node as AddressNodeWithWord).wordType = "designationAdjective";
+    if (isNormalizedDesignationAdjective(node.value)) {
+      continue;
+    }
+
+    const designationConfig = findRelevantDesignation(nodes, node);
+    if (!designationConfig) {
+      continue;
+    }
+    node.value =
+      designationAdjectiveConfig.normalizedNameByGender[
+        designationConfig.gender
+      ];
   }
 
   return {
