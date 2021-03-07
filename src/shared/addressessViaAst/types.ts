@@ -1,5 +1,22 @@
-import { Designation } from "./shared/designations";
-import { Gender } from "./shared/types";
+export type Gender = "f" | "m" | "n";
+
+export type Designation =
+  | "country"
+  | "region"
+  | "county"
+  | "settlement"
+  | "place"
+  | "district"
+  | "street"
+  | "house"
+  | "housePart";
+
+export interface DesignationConfig {
+  normalizedValue: string;
+  aliases?: Readonly<string[]>;
+  designation: Designation;
+  gender: Gender;
+}
 
 export interface DesignationAdjectiveConfig {
   normalizedNameByGender: Record<Gender, string>;

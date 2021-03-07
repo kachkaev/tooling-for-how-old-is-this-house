@@ -1,12 +1,9 @@
 import { extractTokens } from "./extractTokens";
 import {
-  DesignationConfig,
-  designationConfigLookup,
-} from "./shared/designations";
-import {
   designationAdjectiveConfigLookup,
   isNormalizedDesignationAdjective,
-} from "./shared/designiationAdjectives";
+} from "./helpersForDesignationAdjectives";
+import { designationConfigLookup } from "./helpersForDesignations";
 import {
   AddressNodeWithDesignation,
   AddressNodeWithNumber,
@@ -16,6 +13,7 @@ import {
   AddressTokenType,
   CleanedAddressAst,
   CleanedAddressNode,
+  DesignationConfig,
 } from "./types";
 
 const wordTokensSet = new Set<AddressTokenType>([

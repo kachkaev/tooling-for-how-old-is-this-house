@@ -1,4 +1,4 @@
-import { designationConfigLookup } from "./designations";
+import { designationConfigLookup } from "./helpersForDesignations";
 import { Gender } from "./types";
 
 export interface DesignationAdjectiveConfig {
@@ -69,6 +69,7 @@ designationAdjectiveConfigs.forEach((designationAdjectiveConfig) => {
     addToDesignationAdjectiveLookup(alias, designationAdjectiveConfig);
     addToDesignationAdjectiveLookup(`${alias}.`, designationAdjectiveConfig);
   });
+
   Object.values(designationAdjectiveConfig.normalizedValueByGender).forEach(
     (normalizedValue) => {
       addToDesignationAdjectiveLookup(

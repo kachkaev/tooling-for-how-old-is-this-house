@@ -1,22 +1,4 @@
-import { Gender } from "./types";
-
-export type Designation =
-  | "country"
-  | "region"
-  | "county"
-  | "settlement"
-  | "place"
-  | "district"
-  | "street"
-  | "house"
-  | "housePart";
-
-export interface DesignationConfig {
-  normalizedValue: string;
-  aliases?: Readonly<string[]>;
-  designation: Designation;
-  gender: Gender;
-}
+import { DesignationConfig } from "./types";
 
 // Related info: https://wiki.openstreetmap.org/wiki/RU:Россия/Соглашение_об_именовании_дорог
 
