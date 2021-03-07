@@ -155,7 +155,7 @@ export const buildCleanedAddressAst = (
     if (node.nodeType !== "word" || node.wordType !== "unclassified") {
       continue;
     }
-    const match = node.value.match(/^(\d+)(.*)$/);
+    const match = node.value.match(/^(\d+)([^.]*).?$/);
     if (!match) {
       continue;
     }
@@ -167,11 +167,12 @@ export const buildCleanedAddressAst = (
 
     if (ordinalNumberEndingConfig) {
       const normalizedEnding = ordinalNumberEndingConfig.normalizedValue;
-      updatedNode.value = `${rawNumber}${normalizedEnding}`;
       updatedNode.wordType = "ordinalNumber";
+      updatedNode.value = `${rawNumber}${normalizedEnding}`;
       updatedNode.ending = normalizedEnding;
     } else {
       updatedNode.wordType = "cardinalNumber";
+      updatedNode.value = `${rawNumber}${ending}`;
       updatedNode.ending = ending;
     }
   }

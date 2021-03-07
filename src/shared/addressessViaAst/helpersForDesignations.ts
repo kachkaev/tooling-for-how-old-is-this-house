@@ -4,46 +4,48 @@ import { DesignationConfig } from "./types";
 
 // prettier-ignore
 const designationConfigs: DesignationConfig[]  = [
-  { designation: "country", normalizedValue:'федерация', gender: "f" },
+  { designation: "country", normalizedValue: "федерация", gender: "f" },
 
-  { designation: "region", normalizedValue:'область', gender: "f", aliases: ["обл"] },
+  { designation: "region", normalizedValue: "область", gender: "f", aliases: ["обл"] },
 
-  { designation: "county", normalizedValue:'сельсовет', gender: "f" },
+  { designation: "county", normalizedValue: "сельсовет", gender: "f" },
 
-  { designation: "settlement", normalizedValue:'город', gender: "m", aliases: ["г", "гор"] },
-  { designation: "settlement", normalizedValue:'село', gender: "n", aliases: ["с"] },
-  { designation: "settlement", normalizedValue:'поселение', gender: "n" },
+  { designation: "settlement", normalizedValue: "город", gender: "m", aliases: ["г", "гор"] },
+  { designation: "settlement", normalizedValue: "село", gender: "n", aliases: ["с"] },
+  { designation: "settlement", normalizedValue: "поселение", gender: "n" },
 
-  { designation: "settlement", normalizedValue:'поселок', gender: "n", aliases: ["пос", "п"] },
-  {designation: "settlement", normalizedValue: 'лесничество', gender: "n", aliases: ["лес-во", "лесн-во"] },
+  { designation: "settlement", normalizedValue: "поселок", gender: "n", aliases: ["пос", "п"] },
+  { designation: "settlement", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
   
-  { designation: "place", normalizedValue:'городок', gender: "m", aliases: [] },
+  { designation: "place", normalizedValue: "городок", gender: "m", aliases: [] },
 
-  { designation: "district", normalizedValue:'район', gender: "m", aliases: ["р-н"] },
+  { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н"] },
+  
+  { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв"] },
+  { designation: "street", normalizedValue: "километр", gender: "m", aliases: ["км"] },
+  { designation: "street", normalizedValue: "набережная", gender: "f", aliases: ["наб"] },
+  { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [] },
+  { designation: "street", normalizedValue: "переулок", gender: "m", aliases: ["пер"] },
+  { designation: "street", normalizedValue: "площадь", gender: "f", aliases: ["пл"] },
+  { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр"] },
+  { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-кт", "просп"] },
+  { designation: "street", normalizedValue: "снт", gender: "n", aliases: ["с/т"] }, // садовое некоммерческое товарищество
+  { designation: "street", normalizedValue: "совхоз", gender: "m", aliases: ["совх"] },
+  { designation: "street", normalizedValue: "станция", gender: "f", aliases: ["ст"] },
+  { designation: "street", normalizedValue: "территория", gender: "f", aliases: ["тер"] },
+  { designation: "street", normalizedValue: "улица", gender: "f", aliases: ["ул"] },
+  { designation: "street", normalizedValue: "шоссе", gender: "n", aliases: ["ш"] },
 
-  { designation: "street", normalizedValue:'бульвар', gender: "m", aliases: ["бульв"] },
-  { designation: "street", normalizedValue:'километр', gender: "m", aliases: ["км"] },
-  { designation: "street", normalizedValue:'набережная', gender: "f", aliases: ["наб"] },
-  { designation: "street", normalizedValue:'овраг', gender: "m", aliases: [] },
-  { designation: "street", normalizedValue:'переулок', gender: "m", aliases: ["пер"] },
-  { designation: "street", normalizedValue:'площадь', gender: "f", aliases: ["пл"] },
-  { designation: "street", normalizedValue:'проезд', gender: "m", aliases: ["пр"] },
-  { designation: "street", normalizedValue:'проспект', gender: "m", aliases: ["пр-кт", "просп"] },
-  { designation: "street", normalizedValue:'снт', gender: "n", aliases: ["с/т"] }, // садовое некоммерческое товарищество
-  { designation: "street", normalizedValue:'совхоз', gender: "m", aliases: [] },
-  { designation: "street", normalizedValue:'станция', gender: "f", aliases: ["ст"] },
-  { designation: "street", normalizedValue:'территория', gender: "f", aliases: ["тер"] },
-  { designation: "street", normalizedValue:'улица', gender: "f", aliases: ["ул"] },
-  { designation: "street", normalizedValue:'шоссе', gender: "n", aliases: ["ш"] },
+  { designation: "house", normalizedValue: "дом", gender: "m", aliases: ["д"] },
+  { designation: "house", normalizedValue: "здание", gender: "n", aliases: ["зд"] },
+  { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["уч"] },
 
-  { designation: "house", normalizedValue:'дом', gender: "m", aliases: ["д"] },
-  { designation: "house", normalizedValue:'здание', gender: "n", aliases: ["зд"] },
-
-  { designation: "housePart", normalizedValue:'блок', gender: "m" },
-  { designation: "housePart", normalizedValue:'гараж', gender: "m" },
-  { designation: "housePart", normalizedValue:'квартира', gender: "m", aliases: ["кв"] },
-  { designation: "housePart", normalizedValue:'корпус', gender: "m", aliases: ["к", "корп"] },
-  { designation: "housePart", normalizedValue:'сарай', gender: "m", aliases: ["сар"] },
+  { designation: "housePart", normalizedValue: "блок", gender: "m" },
+  { designation: "housePart", normalizedValue: "гараж", gender: "m" },
+  { designation: "housePart", normalizedValue: "квартира", gender: "m", aliases: ["кв"] },
+  { designation: "housePart", normalizedValue: "корпус", gender: "m", aliases: ["к", "корп"] },
+  { designation: "housePart", normalizedValue: "сарай", gender: "m", aliases: ["сар"] },
+  { designation: "housePart", normalizedValue: "строение", gender: "m", aliases: ["стр", "строен"] },
 ];
 
 export const designationConfigLookup: Record<
