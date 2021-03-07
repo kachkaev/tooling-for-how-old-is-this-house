@@ -2,10 +2,7 @@ import { DesignationWordConfig } from "./types";
 
 // Related info: https://wiki.openstreetmap.org/wiki/RU:Россия/Соглашение_об_именовании_дорог
 
-export const DesignationWordConfigLookup: Record<
-  string,
-  DesignationWordConfig | undefined
-> = {
+const designationWordConfigLookupInner = {
   федерация: { designation: "country", gender: "f" },
 
   область: { designation: "region", gender: "f" },
@@ -49,4 +46,9 @@ export const DesignationWordConfigLookup: Record<
   квартира: { designation: "housePart", gender: "m", aliases: ["кв"] },
   копрус: { designation: "housePart", gender: "m", aliases: ["к"] },
   сарай: { designation: "housePart", gender: "m", aliases: ["сар"] },
-};
+} as const;
+
+export const designationWordConfigLookup: Record<
+  keyof typeof designationWordConfigLookupInner,
+  DesignationWordConfig
+> = designationWordConfigLookupInner;

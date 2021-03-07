@@ -1,5 +1,3 @@
-import { DesignationConfig } from "../addresses/types";
-
 export type Designation =
   | "country"
   | "region"
@@ -14,7 +12,7 @@ export type Designation =
 export type Gender = "m" | "f" | "n";
 
 export interface DesignationWordConfig {
-  aliases?: string[];
+  aliases?: Readonly<string[]>;
   designation: Designation;
   gender: Gender;
 }
@@ -47,7 +45,7 @@ export type AddressTokenType = SimpleAddressTokenType | "protoWord";
 export type AddressToken = GenericAddressToken<AddressTokenType>;
 
 export interface AddressWordBase {
-  type: "word";
+  nodeType: "word";
   value: string;
 }
 
@@ -61,7 +59,7 @@ export interface AddressNodeWithInitial extends AddressWordBase {
 
 export interface AddressNodeWithDesignation extends AddressWordBase {
   wordType: "designation";
-  designationConfig: DesignationConfig;
+  meta: DesignationWordConfig;
 }
 
 export interface AddressNodeWithCardinalNumber extends AddressWordBase {
@@ -73,23 +71,48 @@ export interface AddressNodeWithOrdinalNumber extends AddressWordBase {
 
 export interface AddressNodeWithDesignationAdjective extends AddressWordBase {
   wordType: "designationAdjective";
-  designationAdjectiveConfig: DesignationAdjectiveConfig;
+  meta: DesignationAdjectiveConfig;
 }
 
-type AddressNodeWithWord =
+export type AddressNodeWithWord =
   | AddressNodeWithCardinalNumber
   | AddressNodeWithDesignation
+  | AddressNodeWithDesignationAdjective
   | AddressNodeWithInitial
   | AddressNodeWithOrdinalNumber
-  | AddressNodeWithUnclassifiedWord
-  | AddressNodeWithDesignationAdjective;
+  | AddressNodeWithUnclassifiedWord;
+
+export interface AddressNodeWithSeparator {
+  nodeType: "separator";
+  separatorType: "comma" | "slash";
+}
+
+export type CleanedAddressNode = AddressNodeWithWord | AddressNodeWithSeparator;
+export interface CleanedAddressAst {
+  nodeType: "cleanedAddress";
+  children: CleanedAddressNode[];
+}
 
 export interface AddressNodeWithSegment {
-  type: "segment";
+  nodeType: "segment";
   designation?: Designation;
   words: AddressNodeWithWord[];
 }
 
-export interface AddressAst {
+export interface StandardizedAddressAst {
+  nodeType: "standardizedAddress";
   segments: AddressNodeWithSegment[];
 }
+
+/*
+
+atomic token
+lexical token
+
+Flat AST
+Node: word / separator
+
+normalized
+standardized
+
+*/

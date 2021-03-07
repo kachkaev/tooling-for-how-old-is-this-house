@@ -1,9 +1,11 @@
-import { AddressToken, SimpleAddressToken } from "../types";
+import { designationWordConfigLookup } from "../helpersForDesignations";
+import { AddressToken, CleanedAddressAst, SimpleAddressToken } from "../types";
 
 export const testCases: Array<{
   rawAddress: string;
   expectedSimpleTokens?: SimpleAddressToken[];
   expectedTokens?: AddressToken[];
+  expectedCleanedAddressAst?: CleanedAddressAst;
 }> = [
   {
     rawAddress: "",
@@ -12,6 +14,7 @@ export const testCases: Array<{
   },
   {
     rawAddress:
+      // "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,МАЛ.ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
       "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
     expectedSimpleTokens: [
       ["bracket", "("],
@@ -31,6 +34,8 @@ export const testCases: Array<{
       ["letterSequence", "с"],
       ["period", "."],
       ["comma", ","],
+      // ["letterSequence", "мал"],
+      // ["period", "."],
       ["letterSequence", "школьный"],
       ["spacing", " "],
       ["quote", '"'],
@@ -45,16 +50,85 @@ export const testCases: Array<{
       ["comma", ","],
       ["bracket", ")"],
     ],
+    expectedCleanedAddressAst: {
+      nodeType: "cleanedAddress",
+      children: [
+        {
+          nodeType: "word",
+          wordType: "cardinalNumber",
+          value: "58",
+        },
+        {
+          nodeType: "separator",
+          separatorType: "comma",
+        },
+        {
+          nodeType: "word",
+          wordType: "unclassified",
+          value: "пензенский",
+        },
+        {
+          nodeType: "word",
+          wordType: "designation",
+          value: "район",
+          meta: designationWordConfigLookup["район"],
+        },
+        {
+          nodeType: "separator",
+          separatorType: "comma",
+        },
+        {
+          nodeType: "word",
+          wordType: "unclassified",
+          value: "засечное",
+        },
+        {
+          nodeType: "word",
+          wordType: "designation",
+          value: "село",
+          meta: designationWordConfigLookup["село"],
+        },
+        {
+          nodeType: "separator",
+          separatorType: "comma",
+        },
+        {
+          nodeType: "word",
+          wordType: "unclassified",
+          value: "школьный",
+        },
+        {
+          nodeType: "word",
+          wordType: "designation",
+          value: "проезд",
+          meta: designationWordConfigLookup["проезд"],
+        },
+        {
+          nodeType: "word",
+          wordType: "cardinalNumber",
+          value: "10а",
+        },
+        {
+          nodeType: "separator",
+          separatorType: "slash",
+        },
+        {
+          nodeType: "word",
+          wordType: "cardinalNumber",
+          value: "42",
+        },
+      ],
+    },
   },
 
   {
-    rawAddress: ",,Пенз область, 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
+    rawAddress: ",,Пенз. обл., 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
     expectedTokens: [
       ["comma", ","],
       ["comma", ","],
-      ["letterSequence", "пенз"],
+      ["protoWord", "пенз."],
       ["spacing", " "],
-      ["letterSequence", "область"],
+      ["protoWord", "обл."],
       ["comma", ","],
       ["spacing", " "],
       ["protoWord", "1я"],
@@ -72,6 +146,73 @@ export const testCases: Array<{
       ["numberSign", "№"],
       ["numberSequence", "5000"],
     ],
+    expectedCleanedAddressAst: {
+      nodeType: "cleanedAddress",
+      children: [
+        {
+          nodeType: "word",
+          wordType: "unclassified",
+          value: "пензенская",
+        },
+        {
+          nodeType: "word",
+          wordType: "designation",
+          value: "область",
+          meta: designationWordConfigLookup["область"],
+        },
+        {
+          nodeType: "separator",
+          separatorType: "comma",
+        },
+        {
+          nodeType: "word",
+          wordType: "ordinalNumber",
+          value: "1-я",
+        },
+        {
+          nodeType: "word",
+          wordType: "designation",
+          value: "улица",
+          meta: designationWordConfigLookup["улица"],
+        },
+        {
+          nodeType: "word",
+          wordType: "initial",
+          value: "а.",
+        },
+        {
+          nodeType: "word",
+          wordType: "initial",
+          value: "с.",
+        },
+        {
+          nodeType: "word",
+          wordType: "unclassified",
+          value: "пушкина-тестова",
+        },
+        {
+          nodeType: "word",
+          wordType: "designation",
+          value: "дом",
+          meta: designationWordConfigLookup["дом"],
+        },
+        {
+          nodeType: "separator",
+          separatorType: "comma",
+        },
+        {
+          nodeType: "word",
+          wordType: "designation",
+          value: "корпус",
+          meta: designationWordConfigLookup["корпус"],
+        },
+        {
+          nodeType: "word",
+          wordType: "cardinalNumber",
+          value: "5000",
+        },
+      ],
+    },
   },
   {
     rawAddress: "(р-н. 1-й,10 к10 10корп5 10к,1кк",

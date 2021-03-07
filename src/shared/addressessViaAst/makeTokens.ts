@@ -1,8 +1,9 @@
-import { AddressToken, SimpleAddressToken } from "./types";
+import { makeSimpleTokens } from "./makeSimpleTokens";
+import { AddressToken } from "./types";
 
-export const mergeSimpleTokens = (
-  simpleTokens: SimpleAddressToken[],
-): AddressToken[] => {
+export const makeTokens = (rawAddress: string): AddressToken[] => {
+  const simpleTokens = makeSimpleTokens(rawAddress);
+
   const result: AddressToken[] = [];
   let wordIsOpen = false;
   for (let index = 0; index < simpleTokens.length; index += 1) {
