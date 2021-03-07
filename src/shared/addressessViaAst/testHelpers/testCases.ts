@@ -132,8 +132,8 @@ export const testCases: Array<{
 
   {
     rawAddress: ",,Пенз обл., 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
-    // expectedCleanedAddress:
-    //   "ПЕНЗ ОБЛАСТЬ, 1-Я УЛИЦА А. С. ПУШКИНА-ТЕСТОВА, ДОМ 4, КОРПУС 5000",
+    expectedCleanedAddress:
+      "ПЕНЗ ОБЛАСТЬ, 1Я УЛИЦА А. С. ПУШКИНА-ТЕСТОВА ДОМ 4, КОРПУС 5000",
     expectedTokens: [
       ["comma", ","],
       ["comma", ","],
@@ -199,7 +199,7 @@ export const testCases: Array<{
         {
           nodeType: "word",
           wordType: "unclassified",
-          value: "пушкина-тестова.",
+          value: "пушкина-тестова",
         },
         {
           nodeType: "word",

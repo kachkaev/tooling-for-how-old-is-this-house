@@ -230,6 +230,16 @@ export const buildCleanedAddressAst = (
       ];
   }
 
+  // Remove . at the end of unclassified words
+  for (const node of nodes) {
+    if (!isUnclassifiedWord(node)) {
+      continue;
+    }
+    if (node.value.endsWith(".")) {
+      node.value = node.value.slice(0, -1);
+    }
+  }
+
   return {
     nodeType: "cleanedAddress",
     children: nodes,
