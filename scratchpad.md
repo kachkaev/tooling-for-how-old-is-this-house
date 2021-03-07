@@ -74,7 +74,7 @@ OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/f
 Обработка карт из QGIS
 
 ```sh
-MAP_VERSION=2021-03-05-2243
+MAP_VERSION=2021-03-06-2242
 MAP_DIR="/Users/ak/Desktop/mapping party"
 
 for MAP_TYPE in diff progress; do

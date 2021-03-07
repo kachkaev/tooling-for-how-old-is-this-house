@@ -1,11 +1,14 @@
+import { makeSimpleTokens } from "./makeSimpleTokens";
 import { makeTokens } from "./makeTokens";
 import { testCases } from "./testHelpers/testCases";
 
-describe("tokenizeAddress", () => {
-  testCases.forEach(({ rawAddress, expectedTokens }) => {
-    if (expectedTokens) {
+describe("makeTokens", () => {
+  testCases.forEach(({ rawAddress, expectedTokensWithProtoWords }) => {
+    if (expectedTokensWithProtoWords) {
       it(`works for "${rawAddress}"`, () => {
-        expect(makeTokens(rawAddress)).toEqual(expectedTokens);
+        expect(makeTokens(makeSimpleTokens(rawAddress))).toEqual(
+          expectedTokensWithProtoWords,
+        );
       });
     }
   });

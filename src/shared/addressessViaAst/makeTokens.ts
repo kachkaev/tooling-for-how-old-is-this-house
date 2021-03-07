@@ -1,92 +1,84 @@
-import { AddressToken, AddressTokenType } from "./types";
+import { AddressToken, SimpleAddressToken } from "./types";
 
-const multiCharTokens: Array<[AddressTokenType, (char: string) => boolean]> = [
-  [
-    "letterSequence",
-    (char) => Boolean(char.match(/^\p{L}$/u)), //
-  ],
-  [
-    "numberSequence",
-    (char) => Boolean(char >= "0" && char <= "9"), //
-  ],
-  [
-    "spacing",
-    (char) =>
-      char === " " ||
-      char === "_" ||
-      char === "\t" ||
-      char === "\u00A0" /* nbsp */,
-  ],
-];
-
-export const makeTokens = (rawAddress: string): AddressToken[] => {
+export const makeTokens = (
+  simpleTokens: SimpleAddressToken[],
+): AddressToken[] => {
   const result: AddressToken[] = [];
-  const address = rawAddress.toLowerCase();
-  for (let index = 0; index < address.length; index += 1) {
-    const char = address[index]!;
-    switch (char) {
-      case "(":
-      case ")":
-        result.push({ value: char, type: "bracket" });
-        continue;
+  let wordIsOpen = false;
+  for (let index = 0; index < simpleTokens.length; index += 1) {
+    const token = simpleTokens[index]!;
+    const { type: tokenType, value: tokenValue } = token;
 
-      case ",":
-        result.push({ value: char, type: "comma" });
-        continue;
+    const openWord = wordIsOpen ? result[result.length - 1] : undefined;
+    if (openWord) {
+      const { type: openWordType } = openWord;
 
-      case "-":
-      case "–": // n-dash
-      case "—": // m-dash
-      case "−": // minus
-        result.push({ value: char, type: "dash" });
-        continue;
+      const nextToken = simpleTokens[index + 1];
+      const { type: nextTokenType, value: nextTokenValue } = nextToken ?? {};
 
-      case ".":
-        result.push({ value: char, type: "period" });
+      // что-то.
+      if (tokenType === "period") {
+        openWord.type = "protoWord";
+        openWord.value += tokenValue;
+        wordIsOpen = false;
         continue;
+      }
 
-      case "/":
-        result.push({ value: char, type: "slash" });
+      // такой-то
+      if (
+        openWordType === "letterSequence" &&
+        tokenType === "dash" &&
+        nextTokenType === "letterSequence"
+      ) {
+        openWord.type = "protoWord";
+        openWord.value += tokenValue + nextTokenValue;
+        index += 1;
         continue;
+      }
 
-      case '"':
-      case "'":
-      case "«":
-      case "»":
-      case "“":
-      case "”":
-      case "‘":
-      case "’":
-        result.push({ value: char, type: "quote" });
+      // с/т
+      if (
+        openWordType === "letterSequence" &&
+        tokenType === "slash" &&
+        nextTokenType === "letterSequence"
+      ) {
+        openWord.type = "protoWord";
+        openWord.value += tokenValue + nextTokenValue;
+        index += 1;
         continue;
+      }
 
-      case "№":
-      case "#":
-        result.push({ value: char, type: "numberSign" });
+      // 42-й
+      if (
+        openWordType === "numberSequence" &&
+        tokenType === "dash" &&
+        nextTokenType === "letterSequence"
+      ) {
+        openWord.type = "protoWord";
+        openWord.value += tokenValue + nextTokenValue;
+        index += 1;
         continue;
-    }
+      }
 
-    let hasMultiCharToken = false;
-    for (const [tokenType, match] of multiCharTokens) {
-      if (match(char)) {
-        let index2 = index + 1;
-        while (address[index2] && match(address[index2]!)) {
-          index2 += 1;
-        }
-        result.push({
-          value: address.slice(index, index2),
-          type: tokenType,
-        });
-        hasMultiCharToken = true;
-        index = index2 - 1;
+      // 41А или 1ый (но не 10к10)
+      if (
+        openWordType === "numberSequence" &&
+        tokenType === "letterSequence" &&
+        nextTokenType !== "numberSequence"
+      ) {
+        openWord.type = "protoWord";
+        openWord.value += tokenValue;
+        continue;
+      }
+
+      wordIsOpen = false;
+    } else {
+      if (tokenType === "numberSequence" || tokenType === "letterSequence") {
+        wordIsOpen = true;
       }
     }
 
-    if (hasMultiCharToken) {
-      continue;
-    }
-
-    result.push({ value: char, type: "unknown" });
+    result.push(token);
   }
 
   return result;

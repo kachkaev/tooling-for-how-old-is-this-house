@@ -1,9 +1,9 @@
-import { AddressToken, AddressTokenOrProtoWord } from "../types";
+import { AddressToken, SimpleAddressToken } from "../types";
 
 export const testCases: Array<{
   rawAddress: string;
-  expectedTokens?: AddressToken[];
-  expectedTokensWithProtoWords?: AddressTokenOrProtoWord[];
+  expectedTokens?: SimpleAddressToken[];
+  expectedTokensWithProtoWords?: AddressToken[];
 }> = [
   {
     rawAddress: "",
