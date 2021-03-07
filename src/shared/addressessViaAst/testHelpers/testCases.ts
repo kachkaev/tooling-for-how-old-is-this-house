@@ -1,4 +1,3 @@
-import { designationWordConfigLookup } from "../helpersForDesignations";
 import { AddressToken, AtomicAddressToken, CleanedAddressAst } from "../types";
 
 export const testCases: Array<{
@@ -14,8 +13,8 @@ export const testCases: Array<{
   },
   {
     rawAddress:
-      // "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,МАЛ.ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
       "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
+    // "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,МАЛ.ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
     expectedAtomicTokens: [
       ["bracket", "("],
       ["comma", ","],
@@ -57,6 +56,8 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "cardinalNumber",
           value: "58",
+          number: 58,
+          ending: "",
         },
         {
           nodeType: "separator",
@@ -71,7 +72,7 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "район",
-          meta: designationWordConfigLookup["район"],
+          designation: "district",
         },
         {
           nodeType: "separator",
@@ -86,7 +87,7 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "село",
-          meta: designationWordConfigLookup["село"],
+          designation: "settlement",
         },
         {
           nodeType: "separator",
@@ -101,12 +102,14 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "проезд",
-          meta: designationWordConfigLookup["проезд"],
+          designation: "street",
         },
         {
           nodeType: "word",
           wordType: "cardinalNumber",
           value: "10а",
+          number: 10,
+          ending: "а",
         },
         {
           nodeType: "separator",
@@ -116,17 +119,19 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "cardinalNumber",
           value: "42",
+          number: 42,
+          ending: "",
         },
       ],
     },
   },
 
   {
-    rawAddress: ",,Пенз. обл., 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
+    rawAddress: ",,Пенз обл., 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
     expectedTokens: [
       ["comma", ","],
       ["comma", ","],
-      ["protoWord", "пенз."],
+      ["letterSequence", "пенз"],
       ["spacing", " "],
       ["protoWord", "обл."],
       ["comma", ","],
@@ -152,13 +157,13 @@ export const testCases: Array<{
         {
           nodeType: "word",
           wordType: "unclassified",
-          value: "пензенская",
+          value: "пенз",
         },
         {
           nodeType: "word",
           wordType: "designation",
           value: "область",
-          meta: designationWordConfigLookup["область"],
+          designation: "region",
         },
         {
           nodeType: "separator",
@@ -167,13 +172,15 @@ export const testCases: Array<{
         {
           nodeType: "word",
           wordType: "ordinalNumber",
-          value: "1-я",
+          value: "1я",
+          number: 1,
+          ending: "я",
         },
         {
           nodeType: "word",
           wordType: "designation",
           value: "улица",
-          meta: designationWordConfigLookup["улица"],
+          designation: "street",
         },
         {
           nodeType: "word",
@@ -188,13 +195,20 @@ export const testCases: Array<{
         {
           nodeType: "word",
           wordType: "unclassified",
-          value: "пушкина-тестова",
+          value: "пушкина-тестова.",
         },
         {
           nodeType: "word",
           wordType: "designation",
           value: "дом",
-          meta: designationWordConfigLookup["дом"],
+          designation: "house",
+        },
+        {
+          nodeType: "word",
+          wordType: "cardinalNumber",
+          value: "4",
+          number: 4,
+          ending: "",
         },
         {
           nodeType: "separator",
@@ -204,12 +218,14 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "корпус",
-          meta: designationWordConfigLookup["корпус"],
+          designation: "housePart",
         },
         {
           nodeType: "word",
           wordType: "cardinalNumber",
           value: "5000",
+          number: 5000,
+          ending: "",
         },
       ],
     },
@@ -273,8 +289,12 @@ export const testCases: Array<{
     ],
   },
   {
-    rawAddress: "с\\т Такой—то д42", // m-dash
+    rawAddress: "2—й  с\\т Такой—то д42", // m-dash
     expectedAtomicTokens: [
+      ["numberSequence", "2"],
+      ["dash", "—"],
+      ["letterSequence", "й"],
+      ["spacing", "  "],
       ["letterSequence", "с"],
       ["slash", "\\"],
       ["letterSequence", "т"],
@@ -287,6 +307,8 @@ export const testCases: Array<{
       ["numberSequence", "42"],
     ],
     expectedTokens: [
+      ["protoWord", "2-й"], // hyphen
+      ["spacing", "  "],
       ["protoWord", "с/т"],
       ["spacing", " "],
       ["protoWord", "такой-то"], // hyphen

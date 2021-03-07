@@ -25,18 +25,6 @@ export const extractTokens = (rawAddress: string): AddressToken[] => {
         continue;
       }
 
-      // такой-то
-      if (
-        openWordType === "letterSequence" &&
-        tokenType === "dash" &&
-        nextTokenType === "letterSequence"
-      ) {
-        openWord[0] = "protoWord";
-        openWord[1] += `-${nextTokenValue}`;
-        index += 1;
-        continue;
-      }
-
       // с/т
       if (
         openWordType === "letterSequence" &&
@@ -49,6 +37,18 @@ export const extractTokens = (rawAddress: string): AddressToken[] => {
         continue;
       }
 
+      // такой-то
+      if (
+        openWordType === "letterSequence" &&
+        tokenType === "dash" &&
+        nextTokenType === "letterSequence"
+      ) {
+        openWord[0] = "protoWord";
+        openWord[1] += `-${nextTokenValue}`;
+        index += 1;
+        continue;
+      }
+
       // 42-й
       if (
         openWordType === "numberSequence" &&
@@ -56,7 +56,7 @@ export const extractTokens = (rawAddress: string): AddressToken[] => {
         nextTokenType === "letterSequence"
       ) {
         openWord[0] = "protoWord";
-        openWord[1] += tokenValue + nextTokenValue;
+        openWord[1] += `-${nextTokenValue}`;
         index += 1;
         continue;
       }

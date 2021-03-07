@@ -1,21 +1,5 @@
-export type Designation =
-  | "country"
-  | "region"
-  | "county"
-  | "settlement"
-  | "place"
-  | "district"
-  | "street"
-  | "house"
-  | "housePart";
-
-export type Gender = "m" | "f" | "n";
-
-export interface DesignationWordConfig {
-  aliases?: Readonly<string[]>;
-  designation: Designation;
-  gender: Gender;
-}
+import { Designation, DesignationWord } from "./shared/designations";
+import { Gender } from "./shared/types";
 
 export interface DesignationAdjectiveConfig {
   normalizedNameByGender: Record<Gender, string>;
@@ -59,14 +43,16 @@ export interface AddressNodeWithInitial extends AddressWordBase {
 
 export interface AddressNodeWithDesignation extends AddressWordBase {
   wordType: "designation";
-  meta: DesignationWordConfig;
+  value: DesignationWord;
+  designation: Designation;
 }
 
-export interface AddressNodeWithCardinalNumber extends AddressWordBase {
-  wordType: "cardinalNumber"; // 1, 42А
-}
-export interface AddressNodeWithOrdinalNumber extends AddressWordBase {
-  wordType: "ordinalNumber"; // 1-я, 2-й
+export interface AddressNodeWithNumber extends AddressWordBase {
+  wordType:
+    | "cardinalNumber" // 1, 42А
+    | "ordinalNumber"; // 1-я, 2-й
+  number: number;
+  ending: string;
 }
 
 export interface AddressNodeWithDesignationAdjective extends AddressWordBase {
@@ -75,11 +61,10 @@ export interface AddressNodeWithDesignationAdjective extends AddressWordBase {
 }
 
 export type AddressNodeWithWord =
-  | AddressNodeWithCardinalNumber
+  | AddressNodeWithNumber
   | AddressNodeWithDesignation
   | AddressNodeWithDesignationAdjective
   | AddressNodeWithInitial
-  | AddressNodeWithOrdinalNumber
   | AddressNodeWithUnclassifiedWord;
 
 export interface AddressNodeWithSeparator {
@@ -107,12 +92,10 @@ export interface StandardizedAddressAst {
 /*
 
 atomic token
-lexical token
+token
 
-Flat AST
-Node: word / separator
-
-normalized
-standardized
+normalized:
+1. cleaned (always possible)
+2. standardized (if possible)
 
 */

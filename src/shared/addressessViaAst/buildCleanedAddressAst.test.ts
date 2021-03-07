@@ -1,7 +1,7 @@
 import { buildCleanedAddressAst } from "./buildCleanedAddressAst";
 import { testCases } from "./testHelpers/testCases";
 
-describe.skip("buildCleanedAddressAst", () => {
+describe("buildCleanedAddressAst", () => {
   testCases.forEach(({ rawAddress, expectedCleanedAddressAst }) => {
     if (expectedCleanedAddressAst) {
       it(`works for "${rawAddress}"`, () => {
