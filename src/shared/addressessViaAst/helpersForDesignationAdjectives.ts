@@ -1,10 +1,5 @@
 import { designationConfigLookup } from "./helpersForDesignations";
-import { Gender } from "./types";
-
-export interface DesignationAdjectiveConfig {
-  normalizedValueByGender: Record<Gender, string>;
-  aliases: Readonly<string[]>;
-}
+import { DesignationAdjectiveConfig } from "./types";
 
 export const designationAdjectiveConfigs: DesignationAdjectiveConfig[] = [
   {
@@ -43,7 +38,7 @@ export const designationAdjectiveConfigLookup: Record<
   DesignationAdjectiveConfig
 > = {};
 
-const addToDesignationAdjectiveLookup = (
+const addToLookup = (
   value: string,
   config: DesignationAdjectiveConfig,
   isNormalizedName?: boolean,
@@ -66,22 +61,14 @@ const addToDesignationAdjectiveLookup = (
 
 designationAdjectiveConfigs.forEach((designationAdjectiveConfig) => {
   designationAdjectiveConfig.aliases.forEach((alias) => {
-    addToDesignationAdjectiveLookup(alias, designationAdjectiveConfig);
-    addToDesignationAdjectiveLookup(`${alias}.`, designationAdjectiveConfig);
+    addToLookup(alias, designationAdjectiveConfig);
+    addToLookup(`${alias}.`, designationAdjectiveConfig);
   });
 
   Object.values(designationAdjectiveConfig.normalizedValueByGender).forEach(
     (normalizedValue) => {
-      addToDesignationAdjectiveLookup(
-        normalizedValue,
-        designationAdjectiveConfig,
-        true,
-      );
-      addToDesignationAdjectiveLookup(
-        `${normalizedValue}.`,
-        designationAdjectiveConfig,
-        true,
-      );
+      addToLookup(normalizedValue, designationAdjectiveConfig, true);
+      addToLookup(`${normalizedValue}.`, designationAdjectiveConfig, true);
     },
   );
 });

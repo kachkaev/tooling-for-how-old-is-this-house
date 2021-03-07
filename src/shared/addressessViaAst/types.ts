@@ -19,7 +19,13 @@ export interface DesignationConfig {
 }
 
 export interface DesignationAdjectiveConfig {
-  normalizedNameByGender: Record<Gender, string>;
+  normalizedValueByGender: Record<Gender, string>;
+  aliases: Readonly<string[]>;
+}
+
+export interface OrdinalNumberEndingConfig {
+  gender: Gender;
+  normalizedValue: string;
   aliases: string[];
 }
 

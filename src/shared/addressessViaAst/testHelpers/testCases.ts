@@ -133,7 +133,7 @@ export const testCases: Array<{
   {
     rawAddress: ",,Пенз обл., 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
     expectedCleanedAddress:
-      "ПЕНЗ ОБЛАСТЬ, 1Я УЛИЦА А. С. ПУШКИНА-ТЕСТОВА ДОМ 4, КОРПУС 5000",
+      "ПЕНЗ ОБЛАСТЬ, 1-Я УЛИЦА А. С. ПУШКИНА-ТЕСТОВА ДОМ 4, КОРПУС 5000",
     expectedTokens: [
       ["comma", ","],
       ["comma", ","],
@@ -177,9 +177,9 @@ export const testCases: Array<{
         {
           nodeType: "word",
           wordType: "ordinalNumber",
-          value: "1я",
+          value: "1-я",
           number: 1,
-          ending: "я",
+          ending: "-я",
         },
         {
           nodeType: "word",
@@ -233,9 +233,8 @@ export const testCases: Array<{
     },
   },
   {
-    rawAddress: "(р-н. 1-ый,10 к10 10корп5 10к,1кк",
-    expectedCleanedAddress: "РАЙОН 1-ЫЙ, 10 КОРПУС 10 10 КОРПУС 5 10К, 1КК",
-    // expectedCleanedAddress: "РАЙОН 1-Й, 10 КОРПУС 10 10 КОРПУС 5 10К, 1 КК",
+    rawAddress: "(р-н. 1-ый,10 к10 10корп5 10Ж,1корп",
+    expectedCleanedAddress: "РАЙОН 1-Й, 10 КОРПУС 10 10 КОРПУС 5 10Ж, 1 КОРПУС",
     expectedTokens: [
       ["bracket", "("],
       ["protoWord", "р-н."],
@@ -251,9 +250,9 @@ export const testCases: Array<{
       ["letterSequence", "корп"],
       ["numberSequence", "5"],
       ["spacing", " "],
-      ["protoWord", "10к"],
+      ["protoWord", "10ж"],
       ["comma", ","],
-      ["protoWord", "1кк"],
+      ["protoWord", "1корп"],
     ],
   },
   {

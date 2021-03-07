@@ -51,23 +51,17 @@ export const designationConfigLookup: Record<
   DesignationConfig | undefined
 > = {};
 
-const addToDesignationConfigLookup = (
-  alias: string,
-  designationConfig: DesignationConfig,
-) => {
+const addToLookup = (alias: string, config: DesignationConfig) => {
   if (designationConfigLookup[alias]) {
     throw new Error(`Duplicate entry in designationConfigLookup for ${alias}`);
   }
-  designationConfigLookup[alias] = designationConfig;
+  designationConfigLookup[alias] = config;
 };
 
 designationConfigs.forEach((designationConfig) => {
-  addToDesignationConfigLookup(
-    designationConfig.normalizedValue,
-    designationConfig,
-  );
+  addToLookup(designationConfig.normalizedValue, designationConfig);
   designationConfig.aliases?.forEach((alias) => {
-    addToDesignationConfigLookup(alias, designationConfig);
-    addToDesignationConfigLookup(`${alias}.`, designationConfig);
+    addToLookup(alias, designationConfig);
+    addToLookup(`${alias}.`, designationConfig);
   });
 });

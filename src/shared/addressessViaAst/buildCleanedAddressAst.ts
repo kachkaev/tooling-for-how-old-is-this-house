@@ -4,6 +4,7 @@ import {
   isNormalizedDesignationAdjective,
 } from "./helpersForDesignationAdjectives";
 import { designationConfigLookup } from "./helpersForDesignations";
+import { ordinalNumberEndingConfigLookup } from "./helpersForOrdinalNumbers";
 import {
   AddressNodeWithDesignation,
   AddressNodeWithNumber,
@@ -159,15 +160,36 @@ export const buildCleanedAddressAst = (
     }
     const [, rawNumber = "", ending = ""] = match;
     const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithNumber;
-    updatedNode.wordType =
-      ending[0] === "-" ||
-      ending.length > 1 ||
-      ending[0] === "я" ||
-      ending[0] === "й"
-        ? "ordinalNumber"
-        : "cardinalNumber";
     updatedNode.number = parseInt(rawNumber);
-    updatedNode.ending = ending;
+
+    const ordinalNumberEndingConfig = ordinalNumberEndingConfigLookup[ending];
+
+    if (ordinalNumberEndingConfig) {
+      const normalizedEnding = ordinalNumberEndingConfig.normalizedValue;
+      updatedNode.value = `${rawNumber}${normalizedEnding}`;
+      updatedNode.wordType = "ordinalNumber";
+      updatedNode.ending = normalizedEnding;
+    } else {
+      updatedNode.wordType = "cardinalNumber";
+      updatedNode.ending = ending;
+    }
+  }
+
+  // Detach endings from cardinal numbers in cases like ‘10корп’
+  for (let index = nodes.length - 1; index >= 0; index -= 1) {
+    const node = nodes[index]!;
+    if (node.nodeType !== "word" || node.wordType !== "cardinalNumber") {
+      continue;
+    }
+    if (node.ending.length > 1) {
+      nodes.splice(index + 1, 0, {
+        nodeType: "word",
+        wordType: "unclassified",
+        value: node.ending,
+      });
+      node.ending = "";
+      node.value = `${node.number}`;
+    }
   }
 
   // Find initials
