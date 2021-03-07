@@ -71,7 +71,6 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "район",
-          designation: "district",
         },
         {
           nodeType: "separator",
@@ -86,7 +85,6 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "село",
-          designation: "settlement",
         },
         {
           nodeType: "separator",
@@ -106,7 +104,6 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "проезд",
-          designation: "street",
         },
         {
           nodeType: "word",
@@ -167,7 +164,6 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "область",
-          designation: "region",
         },
         {
           nodeType: "separator",
@@ -184,7 +180,6 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "улица",
-          designation: "street",
         },
         {
           nodeType: "word",
@@ -205,7 +200,6 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "дом",
-          designation: "house",
         },
         {
           nodeType: "word",
@@ -222,7 +216,6 @@ export const testCases: Array<{
           nodeType: "word",
           wordType: "designation",
           value: "корпус",
-          designation: "housePart",
         },
         {
           nodeType: "word",

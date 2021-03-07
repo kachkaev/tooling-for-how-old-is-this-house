@@ -1,4 +1,4 @@
-import { Designation, DesignationWord } from "./shared/designations";
+import { Designation } from "./shared/designations";
 import { Gender } from "./shared/types";
 
 export interface DesignationAdjectiveConfig {
@@ -43,8 +43,10 @@ export interface AddressNodeWithInitial extends AddressWordBase {
 
 export interface AddressNodeWithDesignation extends AddressWordBase {
   wordType: "designation";
-  value: DesignationWord;
-  designation: Designation;
+}
+
+export interface AddressNodeWithDesignationAdjective extends AddressWordBase {
+  wordType: "designationAdjective";
 }
 
 export interface AddressNodeWithNumber extends AddressWordBase {
@@ -53,10 +55,6 @@ export interface AddressNodeWithNumber extends AddressWordBase {
     | "ordinalNumber"; // 1-я, 2-й
   number: number;
   ending: string;
-}
-
-export interface AddressNodeWithDesignationAdjective extends AddressWordBase {
-  wordType: "designationAdjective";
 }
 
 export type AddressNodeWithWord =

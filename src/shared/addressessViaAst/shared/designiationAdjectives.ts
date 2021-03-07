@@ -1,15 +1,15 @@
-import { designationWordLookup } from "./designations";
+import { designationConfigLookup } from "./designations";
 import { Gender } from "./types";
 
 export interface DesignationAdjectiveConfig {
-  normalizedNameByGender: Record<Gender, string>;
+  normalizedValueByGender: Record<Gender, string>;
   aliases: Readonly<string[]>;
 }
 
 export const designationAdjectiveConfigs: DesignationAdjectiveConfig[] = [
   {
     aliases: ["м", "мал"],
-    normalizedNameByGender: {
+    normalizedValueByGender: {
       f: "малая",
       m: "малый",
       n: "малое",
@@ -17,7 +17,7 @@ export const designationAdjectiveConfigs: DesignationAdjectiveConfig[] = [
   },
   {
     aliases: ["сред"],
-    normalizedNameByGender: {
+    normalizedValueByGender: {
       f: "средняя",
       m: "средний",
       n: "среднее",
@@ -25,7 +25,7 @@ export const designationAdjectiveConfigs: DesignationAdjectiveConfig[] = [
   },
   {
     aliases: ["б", "бол"],
-    normalizedNameByGender: {
+    normalizedValueByGender: {
       f: "большая",
       m: "большой",
       n: "большое",
@@ -53,9 +53,9 @@ const addToDesignationAdjectiveLookup = (
       `Duplicate entry in designationAdjectiveConfigLookup for ${value}`,
     );
   }
-  if (designationWordLookup[value]) {
+  if (designationConfigLookup[value]) {
     throw new Error(
-      `Clash between designationAdjectiveConfigLookup and designationWordLookup ${value}`,
+      `Clash between designationAdjectiveConfigLookup and designationConfigLookup ${value}`,
     );
   }
   designationAdjectiveConfigLookup[value] = config;
@@ -69,7 +69,7 @@ designationAdjectiveConfigs.forEach((designationAdjectiveConfig) => {
     addToDesignationAdjectiveLookup(alias, designationAdjectiveConfig);
     addToDesignationAdjectiveLookup(`${alias}.`, designationAdjectiveConfig);
   });
-  Object.values(designationAdjectiveConfig.normalizedNameByGender).forEach(
+  Object.values(designationAdjectiveConfig.normalizedValueByGender).forEach(
     (normalizedValue) => {
       addToDesignationAdjectiveLookup(
         normalizedValue,

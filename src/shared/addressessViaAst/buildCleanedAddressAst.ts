@@ -2,7 +2,6 @@ import { extractTokens } from "./extractTokens";
 import {
   DesignationConfig,
   designationConfigLookup,
-  designationWordLookup,
 } from "./shared/designations";
 import {
   designationAdjectiveConfigLookup,
@@ -197,15 +196,13 @@ export const buildCleanedAddressAst = (
       continue;
     }
 
-    const designationWord = designationWordLookup[node.value];
-    if (!designationWord) {
+    const designationConfig = designationConfigLookup[node.value];
+    if (!designationConfig) {
       continue;
     }
     const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithDesignation;
     updatedNode.wordType = "designation";
-    updatedNode.value = designationWord;
-    updatedNode.designation =
-      designationConfigLookup[designationWord].designation;
+    updatedNode.value = designationConfig.normalizedValue;
   }
 
   // Expand designation adjectives (мал. → малый)
@@ -230,7 +227,7 @@ export const buildCleanedAddressAst = (
       continue;
     }
     node.value =
-      designationAdjectiveConfig.normalizedNameByGender[
+      designationAdjectiveConfig.normalizedValueByGender[
         designationConfig.gender
       ];
   }
