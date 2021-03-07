@@ -31,7 +31,7 @@ export const makeTokens = (
         nextTokenType === "letterSequence"
       ) {
         openWord[0] = "protoWord";
-        openWord[1] += tokenValue + nextTokenValue;
+        openWord[1] += `-${nextTokenValue}`;
         index += 1;
         continue;
       }
@@ -43,7 +43,7 @@ export const makeTokens = (
         nextTokenType === "letterSequence"
       ) {
         openWord[0] = "protoWord";
-        openWord[1] += tokenValue + nextTokenValue;
+        openWord[1] += `/${nextTokenValue}`;
         index += 1;
         continue;
       }

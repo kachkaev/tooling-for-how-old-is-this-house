@@ -48,6 +48,7 @@ export const makeSimpleTokens = (rawAddress: string): SimpleAddressToken[] => {
         continue;
 
       case "/":
+      case "\\":
         result.push(["slash", char]);
         continue;
 

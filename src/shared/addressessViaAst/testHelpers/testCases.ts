@@ -8,6 +8,7 @@ export const testCases: Array<{
   {
     rawAddress: "",
     expectedSimpleTokens: [],
+    expectedTokens: [],
   },
   {
     rawAddress:
@@ -131,8 +132,27 @@ export const testCases: Array<{
     ],
   },
   {
-    rawAddress: "",
-    expectedTokens: [],
+    rawAddress: "с\\т Такой—то д42", // m-dash
+    expectedSimpleTokens: [
+      ["letterSequence", "с"],
+      ["slash", "\\"],
+      ["letterSequence", "т"],
+      ["spacing", " "],
+      ["letterSequence", "такой"],
+      ["dash", "—"],
+      ["letterSequence", "то"],
+      ["spacing", " "],
+      ["letterSequence", "д"],
+      ["numberSequence", "42"],
+    ],
+    expectedTokens: [
+      ["protoWord", "с/т"],
+      ["spacing", " "],
+      ["protoWord", "такой-то"], // hyphen
+      ["spacing", " "],
+      ["letterSequence", "д"],
+      ["numberSequence", "42"],
+    ],
   },
 ];
 
