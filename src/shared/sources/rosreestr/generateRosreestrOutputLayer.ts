@@ -3,6 +3,12 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 
+import {
+  buildCleanedAddressAst,
+  buildStandardizedAddressAst,
+  printCleanedAddressAst,
+  printStandardizedAddressAst,
+} from "../../addressessViaAst";
 import { deepClean } from "../../deepClean";
 import {
   GenerateOutputLayer,
@@ -16,28 +22,6 @@ import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
-
-const simplifyAddress = (rawAddress: string) => ({
-  simplifiedAddress: rawAddress
-    ?.toUpperCase()
-    .replace(/\./g, ". ")
-    .replace(/\s+/g, " ")
-    .trim(),
-  originalSpellings: [] as string[],
-});
-
-type NormalizeAddress = (address: string | undefined) => string | undefined;
-type StandardizeAddress = (simplifiedAddress: string) => string;
-
-// TODO: Generalize logic
-const standardizeRosreestrAddress: StandardizeAddress = (simplifiedAddress) => {
-  const chunks = simplifiedAddress.split(",").map((chunk) => chunk.trim());
-
-  if (chunks[0] === "РОССИЙСКАЯ ФЕДЕРАЦИЯ") {
-    chunks.shift();
-  }
-  throw new Error("Not implemented yet");
-};
 
 type OutputLayerPropertiesWithRawAddress = Omit<
   OutputLayerProperties,
@@ -113,21 +97,25 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
 
   const originalSpellingsSet = new Set<string>();
 
-  const normalizeAddress: NormalizeAddress = (address) => {
-    if (!address) {
+  const normalizeAddress = (
+    rawAddress: string | undefined,
+  ): string | undefined => {
+    if (!rawAddress) {
       return undefined;
     }
-    const { simplifiedAddress, originalSpellings } = simplifyAddress(address);
-    for (const originalSpelling of originalSpellings) {
-      originalSpellingsSet.add(originalSpelling);
-    }
+    const cleanedAddressAst = buildCleanedAddressAst(rawAddress);
 
     try {
-      return standardizeRosreestrAddress(simplifiedAddress);
-    } catch (e) {
-      logger?.log(chalk.yellow(simplifiedAddress));
+      const standardizedAddressAst = buildStandardizedAddressAst(
+        cleanedAddressAst,
+      );
 
-      return simplifiedAddress;
+      return printStandardizedAddressAst(standardizedAddressAst);
+    } catch {
+      const cleanedAddress = printCleanedAddressAst(cleanedAddressAst);
+      logger?.log(chalk.yellow(cleanedAddress));
+
+      return cleanedAddress;
     }
   };
 
