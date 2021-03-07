@@ -145,7 +145,8 @@ export const buildCleanedAddressAst = (
 
     nodes.push({
       nodeType: "separator",
-      separatorType: tokenType === "slash" ? "slash" : "comma",
+      separatorType:
+        tokenType === "slash" || tokenType === "dash" ? tokenType : "comma",
     });
   }
 
@@ -189,6 +190,25 @@ export const buildCleanedAddressAst = (
       });
       node.ending = "";
       node.value = `${node.number}`;
+    }
+  }
+
+  // Convert dash into a comma if it is not between two cardinal numbers
+  for (let index = 1; index < nodes.length - 1; index += 1) {
+    const node = nodes[index]!;
+    if (node.nodeType !== "separator" || node.separatorType !== "dash") {
+      continue;
+    }
+
+    const prevNode = nodes[index - 1]!;
+    const nextNode = nodes[index + 1]!;
+    if (
+      prevNode.nodeType !== "word" ||
+      prevNode.wordType !== "cardinalNumber" ||
+      nextNode.nodeType !== "word" ||
+      nextNode.wordType !== "cardinalNumber"
+    ) {
+      node.separatorType = "comma";
     }
   }
 

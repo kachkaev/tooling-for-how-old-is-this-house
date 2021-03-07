@@ -22,6 +22,10 @@ export const printCleanedAddressAst = (
       chunks.push(", ");
     } else if (node.separatorType === "slash") {
       chunks.push("/");
+    } else if (node.separatorType === "dash") {
+      chunks.push("-");
+    } else {
+      throw new Error(`Unprintable separator type ${node.separatorType}`);
     }
   }
 

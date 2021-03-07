@@ -89,7 +89,7 @@ export type AddressNodeWithWord =
 
 export interface AddressNodeWithSeparator {
   nodeType: "separator";
-  separatorType: "comma" | "slash";
+  separatorType: "comma" | "slash" | "dash";
 }
 
 export type CleanedAddressNode = AddressNodeWithWord | AddressNodeWithSeparator;

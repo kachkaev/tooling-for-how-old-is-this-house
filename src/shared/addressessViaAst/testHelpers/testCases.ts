@@ -257,7 +257,7 @@ export const testCases: Array<{
   },
   {
     rawAddress: "Такая-то ул - 10-12",
-    // expectedCleanedAddress: "ТАКАЯ-ТО УЛИЦА, 10-12",
+    expectedCleanedAddress: "ТАКАЯ-ТО УЛИЦА, 10-12",
     expectedTokens: [
       ["protoWord", "такая-то"],
       ["spacing", " "],
@@ -269,6 +269,36 @@ export const testCases: Array<{
       ["dash", "-"],
       ["numberSequence", "12"],
     ],
+    expectedCleanedAddressAst: {
+      nodeType: "cleanedAddress",
+      children: [{
+        nodeType: "word",
+        wordType: 'unclassified',
+        value: 'такая-то'
+      }, {
+        nodeType: "word",
+        wordType: 'designation',
+        value: 'улица'
+      }, {
+        nodeType: "separator",
+        separatorType: 'comma'
+      }, {
+        nodeType: "word",
+        wordType: 'cardinalNumber',
+        value: '10',
+        number: 10,
+        ending: '',
+      }, {
+        nodeType: "separator",
+        separatorType: 'dash'
+      }, {
+        nodeType: "word",
+        wordType: 'cardinalNumber',
+        value: '12',
+        number: 12,
+        ending: '',
+      }]
+    }
   },
   {
     rawAddress: 'г.Пенза, с/т«труД" ,10/12,сарай_10а',
