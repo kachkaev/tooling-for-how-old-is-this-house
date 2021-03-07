@@ -7,19 +7,19 @@ export const makeTokens = (
   let wordIsOpen = false;
   for (let index = 0; index < simpleTokens.length; index += 1) {
     const token = simpleTokens[index]!;
-    const { type: tokenType, value: tokenValue } = token;
+    const [tokenType, tokenValue] = token;
 
     const openWord = wordIsOpen ? result[result.length - 1] : undefined;
     if (openWord) {
-      const { type: openWordType } = openWord;
+      const [openWordType] = openWord;
 
       const nextToken = simpleTokens[index + 1];
-      const { type: nextTokenType, value: nextTokenValue } = nextToken ?? {};
+      const [nextTokenType, nextTokenValue] = nextToken ?? [];
 
       // что-то.
       if (tokenType === "period") {
-        openWord.type = "protoWord";
-        openWord.value += tokenValue;
+        openWord[0] = "protoWord";
+        openWord[1] += tokenValue;
         wordIsOpen = false;
         continue;
       }
@@ -30,8 +30,8 @@ export const makeTokens = (
         tokenType === "dash" &&
         nextTokenType === "letterSequence"
       ) {
-        openWord.type = "protoWord";
-        openWord.value += tokenValue + nextTokenValue;
+        openWord[0] = "protoWord";
+        openWord[1] += tokenValue + nextTokenValue;
         index += 1;
         continue;
       }
@@ -42,8 +42,8 @@ export const makeTokens = (
         tokenType === "slash" &&
         nextTokenType === "letterSequence"
       ) {
-        openWord.type = "protoWord";
-        openWord.value += tokenValue + nextTokenValue;
+        openWord[0] = "protoWord";
+        openWord[1] += tokenValue + nextTokenValue;
         index += 1;
         continue;
       }
@@ -54,8 +54,8 @@ export const makeTokens = (
         tokenType === "dash" &&
         nextTokenType === "letterSequence"
       ) {
-        openWord.type = "protoWord";
-        openWord.value += tokenValue + nextTokenValue;
+        openWord[0] = "protoWord";
+        openWord[1] += tokenValue + nextTokenValue;
         index += 1;
         continue;
       }
@@ -66,8 +66,8 @@ export const makeTokens = (
         tokenType === "letterSequence" &&
         nextTokenType !== "numberSequence"
       ) {
-        openWord.type = "protoWord";
-        openWord.value += tokenValue;
+        openWord[0] = "protoWord";
+        openWord[1] += tokenValue;
         continue;
       }
 

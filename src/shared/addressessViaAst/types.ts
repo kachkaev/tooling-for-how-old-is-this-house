@@ -24,10 +24,7 @@ export interface DesignationAdjectiveConfig {
   aliases: string[];
 }
 
-interface GenericAddressToken<T extends string> {
-  type: T;
-  value: string;
-}
+type GenericAddressToken<T extends string> = [type: T, value: string];
 
 export type SimpleAddressTokenType =
   | "letterSequence"

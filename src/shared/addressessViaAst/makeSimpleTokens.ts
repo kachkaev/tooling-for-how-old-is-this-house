@@ -29,26 +29,26 @@ export const makeSimpleTokens = (rawAddress: string): SimpleAddressToken[] => {
     switch (char) {
       case "(":
       case ")":
-        result.push({ value: char, type: "bracket" });
+        result.push(["bracket", char]);
         continue;
 
       case ",":
-        result.push({ value: char, type: "comma" });
+        result.push(["comma", char]);
         continue;
 
       case "-":
       case "–": // n-dash
       case "—": // m-dash
       case "−": // minus
-        result.push({ value: char, type: "dash" });
+        result.push(["dash", char]);
         continue;
 
       case ".":
-        result.push({ value: char, type: "period" });
+        result.push(["period", char]);
         continue;
 
       case "/":
-        result.push({ value: char, type: "slash" });
+        result.push(["slash", char]);
         continue;
 
       case '"':
@@ -59,12 +59,12 @@ export const makeSimpleTokens = (rawAddress: string): SimpleAddressToken[] => {
       case "”":
       case "‘":
       case "’":
-        result.push({ value: char, type: "quote" });
+        result.push(["quote", char]);
         continue;
 
       case "№":
       case "#":
-        result.push({ value: char, type: "numberSign" });
+        result.push(["numberSign", char]);
         continue;
     }
 
@@ -75,10 +75,7 @@ export const makeSimpleTokens = (rawAddress: string): SimpleAddressToken[] => {
         while (address[index2] && match(address[index2]!)) {
           index2 += 1;
         }
-        result.push({
-          value: address.slice(index, index2),
-          type: tokenType,
-        });
+        result.push([tokenType, address.slice(index, index2)]);
         hasMultiCharToken = true;
         index = index2 - 1;
       }
@@ -88,7 +85,7 @@ export const makeSimpleTokens = (rawAddress: string): SimpleAddressToken[] => {
       continue;
     }
 
-    result.push({ value: char, type: "unknown" });
+    result.push(["unknown", char]);
   }
 
   return result;
