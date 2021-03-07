@@ -94,21 +94,21 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
     position: 0,
   };
 
-  for (let i = 0; i < recordCount; i += 1) {
-    if (!(i % 10000) || i === recordCount - 1) {
-      logger.log(generateProgress(i - 1, recordCount));
+  for (let index = 0; index < recordCount; index += 1) {
+    if (!(index % 10000) || index === recordCount - 1) {
+      logger.log(generateProgress(index - 1, recordCount));
     }
 
     let objectData: MkrfObjectData;
     try {
-      objectData = JSON.parse(records[i] ?? "") as MkrfObjectData;
+      objectData = JSON.parse(records[index] ?? "") as MkrfObjectData;
     } catch (e) {
       logger.log(
         chalk.red(
           `\n\nUnexpected JSON parse error occurred on row ${
-            i + 1
+            index + 1
           }. JSON content:\n\n${
-            records[i]
+            records[index]
           }\n\nThis can happen if the file has been truncated when unpacking. Please try extracting the downloaded zip file with the different software.\n\n`,
         ),
       );
