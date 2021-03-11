@@ -5,6 +5,7 @@ import { DesignationAdjectiveConfig, DesignationConfig } from "./types";
 export const designationConfigs: DesignationConfig[] = [
   { normalizedName: "бульвар", aliases: ["бульв"], gender: "m" },
   { normalizedName: "городок", aliases: [], gender: "m" },
+  { normalizedName: "дорога", aliases: [], gender: "f" },
   { normalizedName: "километр", aliases: ["км"], gender: "m" },
   { normalizedName: "набережная", aliases: ["наб"], gender: "f" },
   { normalizedName: "овраг", aliases: [], gender: "m" },

@@ -24,6 +24,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "district", normalizedValue: "микрорайон", gender: "m", aliases: ["мкр", "м-н"] },
   
   { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв"] },
+  { designation: "street", normalizedValue: "дорога", gender: "f", aliases: ["дор"] },
   { designation: "street", normalizedValue: "километр", gender: "m", aliases: ["км"] },
   { designation: "street", normalizedValue: "набережная", gender: "f", aliases: ["наб"] },
   { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [] },
@@ -31,7 +32,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "площадь", gender: "f", aliases: ["пл"] },
   { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр"] },
   { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-т", "пр-кт", "просп"] },
-  { designation: "street", normalizedValue: "снт", gender: "n", aliases: ["с/т"] }, // садовое некоммерческое товарищество
+  { designation: "street", normalizedValue: "снт", gender: "n", aliases: ["с/т", "сдт"] }, // садовое некоммерческое товарищество
   { designation: "street", normalizedValue: "совхоз", gender: "m", aliases: ["свх", "совх", "с/х"] },
   { designation: "street", normalizedValue: "станция", gender: "f", aliases: ["ст"] },
   { designation: "street", normalizedValue: "территория", gender: "f", aliases: ["тер"] },
