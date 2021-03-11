@@ -3,13 +3,15 @@ import { printCleanedAddressAst } from "./printCleanedAddressAst";
 import { testCases } from "./testHelpers/testCases";
 
 describe("printCleanedAddressAst", () => {
-  testCases.forEach(({ rawAddress, expectedCleanedAddress }) => {
+  testCases.forEach(({ rawAddresses, expectedCleanedAddress }) => {
     if (expectedCleanedAddress) {
-      it(`works for "${rawAddress}"`, () => {
-        expect(
-          printCleanedAddressAst(buildCleanedAddressAst(rawAddress)),
-        ).toEqual(expectedCleanedAddress);
-      });
+      for (const rawAddress of rawAddresses) {
+        it(`works for "${rawAddress}"`, () => {
+          expect(
+            printCleanedAddressAst(buildCleanedAddressAst(rawAddress)),
+          ).toEqual(expectedCleanedAddress);
+        });
+      }
     }
   });
 });

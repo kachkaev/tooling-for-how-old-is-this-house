@@ -1,20 +1,21 @@
 import { AddressToken, AtomicAddressToken, CleanedAddressAst } from "../types";
 
 export const testCases: Array<{
-  rawAddress: string;
+  rawAddresses: string[];
   expectedAtomicTokens?: AtomicAddressToken[];
   expectedTokens?: AddressToken[];
   expectedCleanedAddressAst?: CleanedAddressAst;
   expectedCleanedAddress?: string;
 }> = [
   {
-    rawAddress: "",
+    rawAddresses: [""],
     expectedAtomicTokens: [],
     expectedTokens: [],
   },
   {
-    rawAddress:
+    rawAddresses: [
       "(,58,ПЕНЗЕНСКИЙ Р-Н, ,Засечное С.,МАЛ.ШКОЛЬНЫЙ \"ПРОЕЗД'_10А/42,,)",
+    ],
     expectedCleanedAddress:
       "58, ПЕНЗЕНСКИЙ РАЙОН, ЗАСЕЧНОЕ СЕЛО, МАЛЫЙ ШКОЛЬНЫЙ ПРОЕЗД 10А/42",
     expectedAtomicTokens: [
@@ -131,7 +132,7 @@ export const testCases: Array<{
   },
 
   {
-    rawAddress: ",,Пенз обл., 1я  ул.А.С Пушкина-тестова. д.4,корп№5000",
+    rawAddresses: [",,Пенз обл., 1я  ул.А.С Пушкина-тестова. д.4,корп№5000"],
     expectedCleanedAddress:
       "ПЕНЗ ОБЛАСТЬ, 1-Я УЛИЦА А. С. ПУШКИНА-ТЕСТОВА ДОМ 4, КОРПУС 5000",
     expectedTokens: [
@@ -233,7 +234,7 @@ export const testCases: Array<{
     },
   },
   {
-    rawAddress: "(р-н. 1-ый,10 к10 10корп5 10Ж,1корп",
+    rawAddresses: ["(р-н. 1-ый,10 к10 10корп5 10Ж,1корп"],
     expectedCleanedAddress: "РАЙОН 1-Й, 10 КОРПУС 10 10 КОРПУС 5 10Ж, 1 КОРПУС",
     expectedTokens: [
       ["bracket", "("],
@@ -256,7 +257,7 @@ export const testCases: Array<{
     ],
   },
   {
-    rawAddress: "Такая-то ул - 10-12",
+    rawAddresses: ["Такая-то ул - 10-12"],
     expectedCleanedAddress: "ТАКАЯ-ТО УЛИЦА, 10-12",
     expectedTokens: [
       ["protoWord", "такая-то"],
@@ -308,7 +309,7 @@ export const testCases: Array<{
     },
   },
   {
-    rawAddress: 'г.Пенза, с/т«труД" ,10/12,сарай_10а',
+    rawAddresses: ['г.Пенза, с/т«труД" ,10/12,сарай_10а'],
     expectedCleanedAddress: "ГОРОД ПЕНЗА, СНТ ТРУД, 10/12, САРАЙ 10А",
     expectedTokens: [
       ["protoWord", "г."],
@@ -331,7 +332,7 @@ export const testCases: Array<{
     ],
   },
   {
-    rawAddress: "2—й  с\\т Такой—то д42", // m-dashes
+    rawAddresses: ["2—й  с\\т Такой—то д42"], // m-dashes
     expectedCleanedAddress: "2-Й СНТ ТАКОЙ-ТО ДОМ 42",
     expectedAtomicTokens: [
       ["numberSequence", "2"],
@@ -361,66 +362,63 @@ export const testCases: Array<{
     ],
   },
   {
-    rawAddress:
+    rawAddresses: [
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ПЕНЗЕНСКИЙ Р-Н, С. ЗАСЕЧНОЕ, УЛ_ОВРАЖНАЯ, ДОМ_17, БЛОК №2, КВ.N3",
+    ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ПЕНЗЕНСКИЙ РАЙОН, СЕЛО ЗАСЕЧНОЕ, УЛИЦА ОВРАЖНАЯ, ДОМ 17, БЛОК 2, КВАРТИРА 3",
   },
   {
-    rawAddress:
+    rawAddresses: [
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, Р-Н ПЕНЗЕНСКИЙ, С. ЗАСЕЧНОЕ, УЛ. МЕХАНИЗАТОРОВ - 36, ГАРАЖ114",
+    ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, РАЙОН ПЕНЗЕНСКИЙ, СЕЛО ЗАСЕЧНОЕ, УЛИЦА МЕХАНИЗАТОРОВ, 36, ГАРАЖ 114",
   },
   {
-    rawAddress:
+    rawAddresses: [
       'Пензенская обл., г. Пенза, с/т "Заря" на территории совхоза "Заря", уч. 350.',
+    ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ПЕНЗА, СНТ ЗАРЯ НА ТЕРРИТОРИИ СОВХОЗА ЗАРЯ, УЧАСТОК 350",
   },
   {
-    rawAddress:
+    rawAddresses: [
       "Пензенская область, г.Пенза, Октябрьский район, пр. Брусничный 6-Й, строен.57",
+    ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ПЕНЗА, ОКТЯБРЬСКИЙ РАЙОН, ПРОЕЗД БРУСНИЧНЫЙ 6-Й, СТРОЕНИЕ 57",
   },
   {
-    rawAddress:
+    rawAddresses: [
       "Пензенская обл., Пензенский р-н, с. Засечное, ул. Прибрежная, д..1 Б",
+    ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ПЕНЗЕНСКИЙ РАЙОН, СЕЛО ЗАСЕЧНОЕ, УЛИЦА ПРИБРЕЖНАЯ, ДОМ 1Б",
   },
   {
-    rawAddress: "ул.Московская/ул.К Маркса, сквер 40 лет Октября",
+    rawAddresses: ["ул.Московская/ул.К Маркса, сквер 40 лет Октября"],
     expectedCleanedAddress:
       "УЛИЦА МОСКОВСКАЯ/УЛИЦА К. МАРКСА, СКВЕР 40 ЛЕТ ОКТЯБРЯ",
   },
-  // {
-  //   rawAddress:
-  //     "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30 - ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
-  //   expectedCleanedAddress:
-  //     "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30-ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
-  // },
-  // {
-  //   rawAddress:
-  //     "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30  -ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
-  //   expectedCleanedAddress:
-  //     "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30-ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
-  // },
-  // {
-  //   rawAddress:
-  //     "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30  - ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
-  //   expectedCleanedAddress:
-  //     "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30-ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
-  // },
-  // {
-  //   rawAddress:
-  //     "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, РАЙОН ЖИЛОГО ДОМА ПО УЛИЦА ЗЕЛЕНАЯ ДОМ 10-Е",
-  //   expectedCleanedAddress:
-  //     "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, РАЙОН ЖИЛОГО ДОМА ПО УЛИЦА ЗЕЛЕНАЯ ДОМ 10Е",
-  // },
   {
-    rawAddress: "ул. Максима Горького/ул. Володарского 38/45",
+    rawAddresses: [
+      "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30 - ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
+      "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30  -ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
+      "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30  - ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
+    ],
+    expectedCleanedAddress:
+      "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30-ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
+  },
+  {
+    rawAddresses: [
+      "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, РАЙОН ЖИЛОГО ДОМА ПО УЛИЦА ЗЕЛЕНАЯ ДОМ 10-Е",
+    ],
+    expectedCleanedAddress:
+      "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, РАЙОН ЖИЛОГО ДОМА ПО УЛИЦА ЗЕЛЕНАЯ ДОМ 10Е",
+  },
+  {
+    rawAddresses: ["ул. Максима Горького/ул. Володарского 38/45"],
     expectedCleanedAddress: "УЛИЦА МАКСИМА ГОРЬКОГО/УЛИЦА ВОЛОДАРСКОГО 38/45",
   },
 ];
