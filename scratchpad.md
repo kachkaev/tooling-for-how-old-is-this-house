@@ -44,18 +44,44 @@ say "Finished ${INSTANCE}"
 Обновление зданий
 
 ```sh
-COMMIT_MESSAGE="Update fetched OSM buildings ($(date +"%Y-%m-%d %H:%M"))"
+MAP_VERSION=$(date +"%Y-%m-%d-%H%M")
+COMMIT_MESSAGE="Update fetched OSM buildings (${MAP_VERSION})"
 
 yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
 yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
 yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
 
 cd ../data/regions/penza
-
 git add sources/osm/fetched-buildings.geojson
-
 git commit -m ${COMMIT_MESSAGE}
+cd -
+```
 
+Обработка карт из QGIS
+
+```sh
+# MAP_VERSION=
+MAP_SUFFIX='.with-mapcraft'
+MAP_DIR="/Users/ak/Desktop/mapping party"
+
+echo ${MAP_VERSION}
+
+for MAP_TYPE in diff progress; do
+  convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}${MAP_SUFFIX}.jpg"
+
+  convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -resize 3000 -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}${MAP_SUFFIX}.preview.jpg"
+done
+```
+
+Сохранение обновлённых геокодов
+
+```sh
+# MAP_VERSION=
+COMMIT_MESSAGE="Update geocodes (${MAP_VERSION})"
+
+cd ../data/regions/penza
+git add geocoding/*
+git commit -m ${COMMIT_MESSAGE}
 cd -
 ```
 
@@ -64,24 +90,13 @@ cd -
 ```sh
 yarn exe src/commands/2-sources/osm/tiles/markAsDirty.ts
 
+sleep 1800 # 30 mins
+
 OSM_TILE_VERSION=$(date +"%Y-%m-%d-%H%M")
 echo ${OSM_TILE_VERSION}
 
 OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
 OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
-```
-
-Обработка карт из QGIS
-
-```sh
-MAP_VERSION=2021-03-06-2242
-MAP_DIR="/Users/ak/Desktop/mapping party"
-
-for MAP_TYPE in diff progress; do
-  convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}.jpg"
-
-  convert "${MAP_DIR}/qgis-layout-osm-${MAP_TYPE}.png" -resize 3000 -quality 80% "${MAP_DIR}/Penza mapping party ${MAP_TYPE} ${MAP_VERSION}.preview.jpg"
-done
 ```
 
 Цвета
