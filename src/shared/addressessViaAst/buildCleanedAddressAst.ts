@@ -35,12 +35,22 @@ const isUnclassifiedWord = (
 ): node is AddressNodeWithUnclassifiedWord =>
   !!node && node.nodeType === "word" && node.wordType === "unclassified";
 
+const isDesignation = (
+  node?: CleanedAddressNode,
+): node is AddressNodeWithDesignation =>
+  !!node && node.nodeType === "word" && node.wordType === "designation";
+
 const canBeInitial = (
   node?: CleanedAddressNode,
 ): node is AddressNodeWithUnclassifiedWord =>
   isUnclassifiedWord(node) &&
   (node.value.length === 1 ||
     (node.value.length === 2 && node.value[1] === "."));
+
+const canHaveDesignationAdjective = (
+  node?: CleanedAddressNode,
+): node is AddressNodeWithUnclassifiedWord =>
+  isUnclassifiedWord(node) && Boolean(node.value.match(/(ая|ый|ое|нка|вка)$/));
 
 const findRelevantDesignation = (
   nodes: CleanedAddressNode[],
@@ -247,8 +257,8 @@ export const buildCleanedAddressAst = (
     }
   }
 
-  // Find initials
-  for (let index = 0; index < nodes.length - 3; index += 1) {
+  // Find initials (И. О.)
+  for (let index = 0; index < nodes.length - 2; index += 1) {
     const node1 = nodes[index];
     const node2 = nodes[index + 1];
     const node3 = nodes[index + 2];
@@ -266,8 +276,10 @@ export const buildCleanedAddressAst = (
   }
 
   // Find designations
-  for (const node of nodes) {
-    if (!isUnclassifiedWord(node)) {
+  for (let index = 0; index < nodes.length; index += 1) {
+    const prevNode = nodes[index - 1];
+    const node = nodes[index];
+    if (!isUnclassifiedWord(node) || isDesignation(prevNode)) {
       continue;
     }
 
@@ -278,6 +290,23 @@ export const buildCleanedAddressAst = (
     const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithDesignation;
     updatedNode.wordType = "designation";
     updatedNode.value = designationConfig.normalizedValue;
+  }
+
+  // Find single initials (И.)
+  for (let index = 0; index < nodes.length - 3; index += 1) {
+    const node1 = nodes[index];
+    const node2 = nodes[index + 1];
+    const node3 = nodes[index + 2];
+
+    if (
+      isDesignation(node1) &&
+      canBeInitial(node2) &&
+      isUnclassifiedWord(node3) &&
+      !canHaveDesignationAdjective(node3)
+    ) {
+      (node2 as AddressNodeWithWord).wordType = "initial";
+      node2.value = `${node2.value[0]}.`;
+    }
   }
 
   // Expand designation adjectives (мал. → малый)
