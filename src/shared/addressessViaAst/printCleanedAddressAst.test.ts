@@ -12,6 +12,14 @@ describe("printCleanedAddressAst", () => {
           ).toEqual(expectedCleanedAddress);
         });
       }
+
+      it(`autoencodes "${expectedCleanedAddress}"`, () => {
+        expect(
+          printCleanedAddressAst(
+            buildCleanedAddressAst(expectedCleanedAddress),
+          ),
+        ).toEqual(expectedCleanedAddress);
+      });
     }
   });
 });
