@@ -57,6 +57,12 @@ git commit -m ${COMMIT_MESSAGE}
 cd -
 ```
 
+Обновление графика
+
+```sh
+yarn exe src/commands/2-sources/osm/generateHistoricSnapshots.ts
+```
+
 Обработка карт из QGIS
 
 ```sh
