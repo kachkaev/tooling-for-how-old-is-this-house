@@ -22,6 +22,7 @@ export type OutputLayer = turf.FeatureCollection<
   OutputLayerProperties
 > & {
   properties?: {
+    knownAt?: string;
     originalSpellings?: string[];
   };
 };

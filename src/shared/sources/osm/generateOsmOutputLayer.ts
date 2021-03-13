@@ -68,17 +68,21 @@ const generateGetIntersectedBoundaryName = ({
 
 export const generateOsmOutputLayer = async ({
   logger,
+  fetchedOsmBuildingsFilePath = getFetchedOsmBuildingsFilePath(),
+  fetchedOsmBoundariesFilePath = getFetchedOsmBoundariesFilePath(),
 }: {
   logger?: Console;
+  fetchedOsmBuildingsFilePath?: string;
+  fetchedOsmBoundariesFilePath?: string;
 }): Promise<OutputLayer> => {
   const regionExtent = await getRegionExtent();
 
   const buildingCollection = (await fs.readJson(
-    getFetchedOsmBuildingsFilePath(),
+    fetchedOsmBuildingsFilePath,
   )) as OsmFeatureCollection;
 
   const boundaryCollection = (await fs.readJson(
-    getFetchedOsmBoundariesFilePath(),
+    fetchedOsmBoundariesFilePath,
   )) as OsmFeatureCollection;
 
   const getFederalSubjectName = generateGetIntersectedBoundaryName({
@@ -154,10 +158,8 @@ export const generateOsmOutputLayer = async ({
   );
 
   const result = turf.featureCollection(outputFeatures);
-  (result as any).properties = {
-    copyright: "OpenStreetMap contributors",
-    license: "ODbL",
-  };
+  const { fetchedAt, ...rest } = buildingCollection.properties;
+  (result as any).properties = { ...rest, knownAt: fetchedAt };
 
   return result;
 };
