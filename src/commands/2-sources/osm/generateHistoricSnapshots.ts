@@ -92,12 +92,24 @@ const generateVegaSpec = (
           type: "line",
           interpolate: "linear",
           tooltip: { content: "data" },
+          strokeCap: "round",
         },
+        transform: [
+          {
+            timeUnit: "utcyearmonthdatehoursminutesseconds",
+            field: "0",
+            as: "3",
+          },
+          {
+            calculate: "timeOffset('hours', datum[0], 3)", // UTC+3
+            as: "4",
+          },
+        ],
         encoding: {
           strokeWidth: { value: 3 },
           x: {
             timeUnit: "utcyearmonthdatehoursminutesseconds",
-            field: "0",
+            field: "4",
             scale: {
               domain: ["2021-02-20T00:00:00Z", "2021-03-31T00:00:00Z"],
               clamp: true,
@@ -115,7 +127,7 @@ const generateVegaSpec = (
               },
               titlePadding: 15,
             },
-            title: "время: 2021 год, часовой пояс UTC",
+            title: "февраль-март 2021 года, часовой пояс MSK (UTC+3)",
           },
           y: {
             aggregate: "sum",
@@ -169,7 +181,7 @@ const generateVegaSpec = (
             "",
             "Адрес условно считается",
             "необязательным у зданий",
-            "с тэгом building =",
+            "с тегом building =",
             ...[...optionalBuildingTypesSet]
               .sort()
               .map((v) => `\u2060 \u2060 \u2060 ${v}`),
