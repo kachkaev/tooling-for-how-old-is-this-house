@@ -248,82 +248,87 @@ export const generateHistoricSnapshots: Command = async ({ logger }) => {
 
     await fs.ensureDir(commitDirPath);
 
-    // Check out fetched buildings if needed
-    const fetchedOsmBuildingsFilePath = path.resolve(
-      commitDirPath,
-      fetchedOsmBuildingsBasename,
-    );
-    if (!(await fs.pathExists(fetchedOsmBuildingsFilePath))) {
-      const subprocess = execa(
-        "git",
-        ["show", `${commit}:${fetchedOsmBuildingsRelativeFilePath}`],
-        { cwd: gitRepoDirPath },
-      );
-      subprocess.stdout?.pipe(
-        fs.createWriteStream(fetchedOsmBuildingsFilePath),
-      );
-      await subprocess;
-    }
-
-    // Generate output layer if needed
-    const outputLayerFilePath = path.resolve(
-      commitDirPath,
-      outputLayerBasename,
-    );
-    let outputLayer: OutputLayer | undefined = undefined;
-
-    if (!(await fs.pathExists(outputLayerFilePath))) {
-      outputLayer = await generateOsmOutputLayer({
-        logger,
-        fetchedOsmBuildingsFilePath,
-      });
-      await writeFormattedJson(outputLayerFilePath, outputLayer);
-    }
-
-    // Generate summary if needed
     const summaryFilePath = path.resolve(commitDirPath, "summary.json");
     let summary: HistoricSnapshotSummaryForOsm | undefined = undefined;
+
     if (!(await fs.pathExists(summaryFilePath))) {
-      if (!outputLayer) {
-        outputLayer = await fs.readJson(outputLayerFilePath);
-      }
-
-      if (!outputLayer) {
-        throw new Error("Unexpected empty output layer");
-      }
-
-      let numberOfBuildingsWithAddresses = 0;
-      let numberOfBuildingsWithoutRequiredAddresses = 0;
-      let numberOfBuildingsWithoutOptionalAddresses = 0;
-
-      for (const feature of outputLayer?.features) {
-        if (feature.properties.normalizedAddress) {
-          numberOfBuildingsWithAddresses += 1;
-        } else if (
-          feature.properties.buildingType &&
-          optionalBuildingTypesSet.has(feature.properties.buildingType)
-        ) {
-          numberOfBuildingsWithoutOptionalAddresses += 1;
-        } else {
-          numberOfBuildingsWithoutRequiredAddresses += 1;
-        }
-      }
-
-      if (!outputLayer?.properties?.knownAt) {
-        throw new Error(
-          `Unexpected empty knownAt ${JSON.stringify(
-            outputLayer?.properties ?? null,
-          )}`,
+      // Check out fetched buildings if needed
+      const fetchedOsmBuildingsFilePath = path.resolve(
+        commitDirPath,
+        fetchedOsmBuildingsBasename,
+      );
+      if (!(await fs.pathExists(fetchedOsmBuildingsFilePath))) {
+        const subprocess = execa(
+          "git",
+          ["show", `${commit}:${fetchedOsmBuildingsRelativeFilePath}`],
+          { cwd: gitRepoDirPath },
         );
+        subprocess.stdout?.pipe(
+          fs.createWriteStream(fetchedOsmBuildingsFilePath),
+        );
+        await subprocess;
       }
-      summary = {
-        knownAt: serializeTime(outputLayer?.properties?.knownAt),
-        numberOfBuildingsWithAddresses,
-        numberOfBuildingsWithoutRequiredAddresses,
-        numberOfBuildingsWithoutOptionalAddresses,
-      };
 
-      await writeFormattedJson(summaryFilePath, summary);
+      // Generate output layer if needed
+      const outputLayerFilePath = path.resolve(
+        commitDirPath,
+        outputLayerBasename,
+      );
+      let outputLayer: OutputLayer | undefined = undefined;
+
+      if (!(await fs.pathExists(outputLayerFilePath))) {
+        outputLayer = await generateOsmOutputLayer({
+          logger,
+          fetchedOsmBuildingsFilePath,
+        });
+        await writeFormattedJson(outputLayerFilePath, outputLayer);
+      }
+
+      // Generate summary if needed
+      if (!(await fs.pathExists(summaryFilePath))) {
+        if (!outputLayer) {
+          outputLayer = await fs.readJson(outputLayerFilePath);
+        }
+
+        if (!outputLayer) {
+          throw new Error("Unexpected empty output layer");
+        }
+
+        let numberOfBuildingsWithAddresses = 0;
+        let numberOfBuildingsWithoutRequiredAddresses = 0;
+        let numberOfBuildingsWithoutOptionalAddresses = 0;
+
+        for (const feature of outputLayer?.features) {
+          if (feature.properties.normalizedAddress) {
+            numberOfBuildingsWithAddresses += 1;
+          } else if (
+            feature.properties.buildingType &&
+            optionalBuildingTypesSet.has(feature.properties.buildingType)
+          ) {
+            numberOfBuildingsWithoutOptionalAddresses += 1;
+          } else {
+            numberOfBuildingsWithoutRequiredAddresses += 1;
+          }
+        }
+
+        if (!outputLayer?.properties?.knownAt) {
+          throw new Error(
+            `Unexpected empty knownAt ${JSON.stringify(
+              outputLayer?.properties ?? null,
+            )}`,
+          );
+        }
+        summary = {
+          knownAt: serializeTime(outputLayer?.properties?.knownAt),
+          numberOfBuildingsWithAddresses,
+          numberOfBuildingsWithoutRequiredAddresses,
+          numberOfBuildingsWithoutOptionalAddresses,
+        };
+
+        await writeFormattedJson(summaryFilePath, summary);
+        await fs.remove(fetchedOsmBuildingsFilePath);
+        await fs.remove(outputLayerFilePath);
+      }
     }
 
     if (!summary) {
