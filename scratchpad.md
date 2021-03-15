@@ -13,6 +13,20 @@ say "Finished ${INSTANCE}"
 
 ## Команды для картовечеринки
 
+Обновление тайлов
+
+```sh
+yarn exe src/commands/2-sources/osm/tiles/markAsDirty.ts
+
+sleep 1800 # 30 mins
+
+OSM_TILE_VERSION=$(date +"%Y-%m-%d-%H%M")
+echo ${OSM_TILE_VERSION}
+
+OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
+OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
+```
+
 Обновление зданий
 
 ```sh
@@ -63,18 +77,8 @@ git commit -m ${COMMIT_MESSAGE}
 cd -
 ```
 
-Обновление тайлов
-
 ```sh
-yarn exe src/commands/2-sources/osm/tiles/markAsDirty.ts
-
-sleep 1800 # 30 mins
-
-OSM_TILE_VERSION=$(date +"%Y-%m-%d-%H%M")
-echo ${OSM_TILE_VERSION}
-
-OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
-OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
+git push
 ```
 
 Цвета
