@@ -1,0 +1,141 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "values": [
+      {
+        "city": "Пенза (только OSM)",
+        "category": "есть адес и возраст",
+        "value": 212
+      },
+      {
+        "city": "Пенза (только OSM)",
+        "category": "есть только адрес",
+        "value": 16437
+      },
+      {
+        "city": "Пенза (только OSM)",
+        "category": "есть только возраст",
+        "value": 19
+      },
+      {
+        "city": "Пенза (только OSM)",
+        "category": "нет ничего",
+        "value": 22292
+      },
+      {
+        "city": "Владимир",
+        "category": "есть адес и возраст",
+        "value": 7904
+      },
+      {
+        "city": "Владимир",
+        "category": "есть только адрес",
+        "value": 2454
+      },
+      {
+        "city": "Владимир",
+        "category": "есть только возраст",
+        "value": 134
+      },
+      {
+        "city": "Владимир",
+        "category": "нет ничего",
+        "value": 10938
+      },
+      {
+        "city": "Казань",
+        "category": "есть адес и возраст",
+        "value": 37147
+      },
+      {
+        "city": "Казань",
+        "category": "есть только адрес",
+        "value": 32
+      },
+      {
+        "city": "Казань",
+        "category": "есть только возраст",
+        "value": 43
+      },
+      {
+        "city": "Казань",
+        "category": "нет ничего",
+        "value": 37124
+      },
+      {
+        "city": "Моква",
+        "category": "есть адес и возраст",
+        "value": 119261
+      },
+      {
+        "city": "Моква",
+        "category": "есть только адрес",
+        "value": 48993
+      },
+      {
+        "city": "Моква",
+        "category": "есть только возраст",
+        "value": 5875
+      },
+      {
+        "city": "Моква",
+        "category": "нет ничего",
+        "value": 83148
+      },
+      {
+        "city": "Санкт-Петербург",
+        "category": "есть адес и возраст",
+        "value": 80099
+      },
+      {
+        "city": "Санкт-Петербург",
+        "category": "есть только адрес",
+        "value": 61936
+      },
+      {
+        "city": "Санкт-Петербург",
+        "category": "есть только возраст",
+        "value": 66
+      },
+      {
+        "city": "Санкт-Петербург",
+        "category": "нет ничего",
+        "value": 251
+      }
+    ]
+  },
+  "mark": {
+    "type": "bar",
+    "xOffset": 1
+  },
+  "encoding": {
+    "x": {
+      "aggregate": "sum",
+      "field": "value",
+      "stack": "normalize",
+      "axis": { "title": null, "labelExpr": "datum.value * 100 + '%'" }
+    },
+    "y": {
+      "field": "city",
+      "axis": { "title": null },
+      "sort": {
+        "field": "count"
+      }
+    },
+    "color": {
+      "field": "category",
+      "scale": {
+        "domain": [
+          "есть адес и возраст",
+          "есть только адрес",
+          "есть только возраст",
+          "нет ничего"
+        ],
+        "range": ["#2BEF00", "#07A9C1", "#764CC2", "#A8A8A8"]
+      },
+      "legend": {
+        "title": null
+      }
+    }
+  }
+}
