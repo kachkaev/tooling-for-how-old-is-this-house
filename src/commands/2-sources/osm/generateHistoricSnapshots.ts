@@ -80,9 +80,34 @@ const generateVegaSpec = (
 
   return {
     $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: 800,
-    height: 600,
-    padding: 20,
+    width: (5 * 7 + 4) * 20,
+    height: 30 * 20,
+    padding: 25,
+    config: {
+      axis: {
+        labelFont: "Helvetica",
+        titleFont: "Helvetica",
+        labelFontSize: 18,
+        titleFontSize: 18,
+      },
+      legend: {
+        labelFont: "Helvetica",
+        titleFont: "Helvetica",
+        labelFontSize: 18,
+        titleFontSize: 18,
+        titleLineHeight: 22,
+        clipHeight: 22,
+      },
+      mark: { font: "Helvetica" },
+      text: { font: "Helvetica", fontSize: 18, lineHeight: 22 },
+      title: {
+        font: "Helvetica",
+        fontSize: 32,
+        fontWeight: "normal",
+        subtitleFont: "Helvetica",
+        subtitleFontSize: 18,
+      },
+    },
     data: {
       values: vegaEntries,
     },
@@ -116,7 +141,10 @@ const generateVegaSpec = (
             },
             axis: {
               tickCount: "day",
-              tickSize: 0,
+              tickSize: {
+                condition: { test: "day(datum.value) !== 1", value: 0 },
+                value: 5,
+              },
               labelPadding: 4,
               labelExpr:
                 "day(datum.value) === 1 ? timeFormat(datum.value, '%d.%m') : ''",
@@ -125,9 +153,10 @@ const generateVegaSpec = (
                 condition: { test: "day(datum.value) === 1", value: [0, 0] },
                 value: [1, 3],
               },
+              gridDashOffset: 0.5,
               titlePadding: 15,
             },
-            title: "февраль-март 2021 года, часовой пояс MSK (UTC+3)",
+            title: "февраль–март 2021 года, часовой пояс MSK (UTC+3)",
           },
           y: {
             aggregate: "sum",
@@ -148,14 +177,17 @@ const generateVegaSpec = (
                 condition: { test: "datum.value % 5000", value: [1, 3] },
                 value: [0, 0],
               },
+              gridDashOffset: 0.5,
             },
           },
           color: {
             field: "2",
             legend: {
-              orient: "left",
-              labelLimit: 250,
-              titleLimit: 250,
+              orient: "none",
+              legendX: -300,
+              legendY: -8,
+              labelLimit: 200,
+              titleLimit: 200,
               title: "количество зданий",
               values: ["адрес есть", "адреса не хватает", "адрес необязателен"],
               symbolStrokeWidth: 3,
@@ -194,16 +226,16 @@ const generateVegaSpec = (
         data: { values: [0] },
         encoding: {
           x: { value: -300 },
-          y: { value: 120 },
+          y: { value: 100 },
         },
       },
     ],
     title: {
-      text:
-        "Домашняя картовечеринка в Пензе, Заречном и Спутнике (wiki.osm.org/wiki/RU:Пенза/встречи, t.me/osm_pnz)",
+      text: "Домашняя картовечеринка в Пензе, Заречном и Спутнике",
       align: "left",
       anchor: "start",
-      subtitle: " ",
+      subtitle: "wiki.osm.org/wiki/RU:Пенза/встречи, t.me/osm_pnz",
+      offset: 30,
     },
   };
 };
@@ -357,35 +389,9 @@ export const generateHistoricSnapshots: Command = async ({ logger }) => {
     "counts-over-time.png",
   );
 
-  const view = new vega.View(
-    vega.parse(vegaLite.compile(vegaLiteSpec).spec, {
-      axis: {
-        labelFont: "Helvetica",
-        titleFont: "Helvetica",
-        labelFontSize: 20,
-        titleFontSize: 20,
-      },
-      legend: {
-        labelFont: "Helvetica",
-        titleFont: "Helvetica",
-        labelFontSize: 20,
-        titleFontSize: 20,
-        // titleFontWeight: "normal",
-        // labelFontWeight: "normal",
-      },
-      mark: { font: "Helvetica" },
-      text: { font: "Helvetica", fontSize: 20 },
-      title: {
-        font: "Helvetica",
-        subtitleFont: "Helvetica",
-        fontSize: 20,
-        subtitleFontSize: 20,
-      },
-    }),
-    {
-      renderer: "none",
-    },
-  );
+  const view = new vega.View(vega.parse(vegaLite.compile(vegaLiteSpec).spec), {
+    renderer: "none",
+  });
   const svg = await view.toSVG(2);
 
   await fs.writeFile(svgImageFilePath, svg, "utf8");
