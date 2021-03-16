@@ -1,30 +1,36 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Полнота данных у зданий на сайте how-old-is-this.house",
+    "offset": 10,
+    "align": "left",
+    "anchor": "start"
+  },
   "data": {
     "values": [
       {
-        "city": "Пенза (только OSM)",
-        "category": "есть адес и возраст",
+        "city": "Пенза (только ОСМ)",
+        "category": "есть адрес и возраст",
         "value": 212
       },
       {
-        "city": "Пенза (только OSM)",
+        "city": "Пенза (только ОСМ)",
         "category": "есть только адрес",
         "value": 16437
       },
       {
-        "city": "Пенза (только OSM)",
+        "city": "Пенза (только ОСМ)",
         "category": "есть только возраст",
         "value": 19
       },
       {
-        "city": "Пенза (только OSM)",
+        "city": "Пенза (только ОСМ)",
         "category": "нет ничего",
         "value": 22292
       },
       {
         "city": "Владимир",
-        "category": "есть адес и возраст",
+        "category": "есть адрес и возраст",
         "value": 7904
       },
       {
@@ -43,8 +49,28 @@
         "value": 10938
       },
       {
+        "city": "Екатеринбург",
+        "category": "есть адрес и возраст",
+        "value": 21135
+      },
+      {
+        "city": "Екатеринбург",
+        "category": "есть только адрес",
+        "value": 2752
+      },
+      {
+        "city": "Екатеринбург",
+        "category": "есть только возраст",
+        "value": 587
+      },
+      {
+        "city": "Екатеринбург",
+        "category": "нет ничего",
+        "value": 128486
+      },
+      {
         "city": "Казань",
-        "category": "есть адес и возраст",
+        "category": "есть адрес и возраст",
         "value": 37147
       },
       {
@@ -63,28 +89,28 @@
         "value": 37124
       },
       {
-        "city": "Моква",
-        "category": "есть адес и возраст",
+        "city": "Москва",
+        "category": "есть адрес и возраст",
         "value": 119261
       },
       {
-        "city": "Моква",
+        "city": "Москва",
         "category": "есть только адрес",
         "value": 48993
       },
       {
-        "city": "Моква",
+        "city": "Москва",
         "category": "есть только возраст",
         "value": 5875
       },
       {
-        "city": "Моква",
+        "city": "Москва",
         "category": "нет ничего",
         "value": 83148
       },
       {
         "city": "Санкт-Петербург",
-        "category": "есть адес и возраст",
+        "category": "есть адрес и возраст",
         "value": 80099
       },
       {
@@ -104,38 +130,94 @@
       }
     ]
   },
-  "mark": {
-    "type": "bar",
-    "xOffset": 1
-  },
-  "encoding": {
-    "x": {
-      "aggregate": "sum",
-      "field": "value",
-      "stack": "normalize",
-      "axis": { "title": null, "labelExpr": "datum.value * 100 + '%'" }
-    },
-    "y": {
-      "field": "city",
-      "axis": { "title": null },
-      "sort": {
-        "field": "count"
+  "hconcat": [
+    {
+      "width": 200,
+      "mark": {
+        "type": "bar",
+        "xOffset": 1
+      },
+      "encoding": {
+        "x": {
+          "aggregate": "sum",
+          "field": "value",
+          "axis": {
+            "title": null,
+            "labelExpr": "round(datum.value / 1000) + (datum.value > 0 ? 'K' : '')"
+          }
+        },
+        "y": {
+          "field": "city",
+          "axis": {
+            "title": null,
+            "orient": "right",
+            "tickSize": 0,
+            "labelPadding": 10,
+            "domain": false
+          },
+          "sort": {
+            "field": "city"
+          }
+        },
+        "color": {
+          "field": "category",
+          "scale": {
+            "domain": [
+              "есть адрес и возраст",
+              "есть только адрес",
+              "есть только возраст",
+              "нет ничего"
+            ],
+            "range": ["#2BEF00", "#07A9C1", "#764CC2", "#A8A8A8"]
+          },
+          "legend": {
+            "title": null,
+            "orient": "left"
+          }
+        }
       }
     },
-    "color": {
-      "field": "category",
-      "scale": {
-        "domain": [
-          "есть адес и возраст",
-          "есть только адрес",
-          "есть только возраст",
-          "нет ничего"
-        ],
-        "range": ["#2BEF00", "#07A9C1", "#764CC2", "#A8A8A8"]
+    {
+      "width": 100,
+      "mark": {
+        "type": "bar",
+        "xOffset": 1
       },
-      "legend": {
-        "title": null
+      "encoding": {
+        "x": {
+          "aggregate": "sum",
+          "field": "value",
+          "stack": "normalize",
+          "axis": {
+            "title": null,
+            "labelExpr": "datum.value * 100 + (datum.value === 0 ? '%' : '')"
+          }
+        },
+        "y": {
+          "field": "city",
+          "axis": null,
+          "sort": {
+            "field": "city"
+          }
+        },
+        "color": {
+          "field": "category",
+          "scale": {
+            "domain": [
+              "есть адрес и возраст",
+              "есть только адрес",
+              "есть только возраст",
+              "нет ничего"
+            ],
+            "range": ["#2BEF00", "#07A9C1", "#764CC2", "#A8A8A8"]
+          },
+          "legend": {
+            "title": null,
+            "orient": "left"
+          }
+        }
       }
     }
-  }
+  ],
+  "spacing": 5
 }
