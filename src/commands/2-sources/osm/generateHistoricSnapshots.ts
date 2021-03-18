@@ -118,6 +118,7 @@ const generateVegaSpec = (
           interpolate: "linear",
           tooltip: { content: "data" },
           strokeCap: "round",
+          strokeJoin: "round",
         },
         transform: [
           {
@@ -226,7 +227,7 @@ const generateVegaSpec = (
         data: { values: [0] },
         encoding: {
           x: { value: -300 },
-          y: { value: 100 },
+          y: { value: 105 },
         },
       },
     ],
