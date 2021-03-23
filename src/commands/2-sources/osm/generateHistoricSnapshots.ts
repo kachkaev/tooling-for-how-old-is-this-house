@@ -40,11 +40,13 @@ const optionalBuildingTypes = [
   "grandstand",
   "greenhouse",
   "industrial",
+  "kiosk",
   "roof",
   "ruins",
   "service",
   "shed",
   "transformer_tower",
+  "warehouse",
 ];
 
 const optionalBuildingTypesSet = new Set([
@@ -93,7 +95,7 @@ const generateVegaSpec = (
     padding: {
       top: 25,
       right: 25,
-      bottom: -10,
+      bottom: 5,
       left: 25,
     },
     config: {
@@ -232,9 +234,6 @@ const generateVegaSpec = (
             ...optionalBuildingTypes
               .sort()
               .map((v) => `\u2060 \u2060 \u2060 ${v}`),
-            "⁠",
-            "",
-            "Этот список дополняем.",
           ],
         },
         data: { values: [0] },
