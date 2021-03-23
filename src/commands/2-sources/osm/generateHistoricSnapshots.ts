@@ -30,18 +30,26 @@ interface HistoricSnapshotSummaryForOsm {
 type VegaEntry = [date: string, count: number, category: string];
 // category: "withAddress" | "withoutRequiredAddress" | "withoutOptionalAddress";
 
-const optionalBuildingTypesSet = new Set([
+const optionalBuildingTypes = [
   "barn",
   "construction",
+  "container",
   "garage",
   "garages",
   "gazebo",
   "grandstand",
   "greenhouse",
   "industrial",
-  "service",
+  "roof",
   "ruins",
+  "service",
   "shed",
+  "transformer_tower",
+];
+
+const optionalBuildingTypesSet = new Set([
+  "abandoned", // special value (created from tag abandoned=*)
+  ...optionalBuildingTypes,
 ]);
 
 const generateVegaSpec = (
@@ -82,7 +90,12 @@ const generateVegaSpec = (
     $schema: "https://vega.github.io/schema/vega-lite/v5.json",
     width: (5 * 7 + 4) * 20,
     height: 30 * 20,
-    padding: 25,
+    padding: {
+      top: 25,
+      right: 25,
+      bottom: -10,
+      left: 25,
+    },
     config: {
       axis: {
         labelFont: "Helvetica",
@@ -214,20 +227,20 @@ const generateVegaSpec = (
             "",
             "Адрес условно считается",
             "необязательным у зданий",
+            "с тегом abandoned или",
             "с тегом building =",
-            ...[...optionalBuildingTypesSet]
+            ...optionalBuildingTypes
               .sort()
               .map((v) => `\u2060 \u2060 \u2060 ${v}`),
             "⁠",
             "",
             "Этот список дополняем.",
-            "",
           ],
         },
         data: { values: [0] },
         encoding: {
           x: { value: -300 },
-          y: { value: 105 },
+          y: { value: 115 },
         },
       },
     ],

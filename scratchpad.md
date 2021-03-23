@@ -78,7 +78,9 @@ cd -
 ```
 
 ```sh
+cd ../data/regions/penza
 git push
+cd -
 ```
 
 Цвета
