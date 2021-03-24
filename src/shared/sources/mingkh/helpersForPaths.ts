@@ -1,6 +1,6 @@
 import path from "path";
 
-import { getSourceDirPath } from "../../getSourceDirPath";
+import { getSourceDirPath } from "../../helpersForPaths";
 
 export const getMingkhDirPath = () => {
   return getSourceDirPath("mingkh");

@@ -4,8 +4,8 @@ import chalk from "chalk";
 import path from "path";
 
 import { loadCombinedGeocodeDictionary, resolveCoordinates } from "./geocoding";
-import { getSourceDirPath } from "./getSourceDirPath";
 import { writeFormattedJson } from "./helpersForJson";
+import { getSourceDirPath } from "./helpersForPaths";
 import {
   FindPointForNormalizedAddress,
   GenerateOutputLayer,
