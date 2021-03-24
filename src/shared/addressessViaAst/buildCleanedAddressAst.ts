@@ -160,8 +160,46 @@ export const buildCleanedAddressAst = (
     });
   }
 
+  // Stitch [NN]-[WW] into a single token. Examples: '42 - А', "улица 30 - летия победы"
+  for (let index = 0; index < nodes.length - 2; index += 1) {
+    const node = nodes[index];
+    if (
+      !node ||
+      node.nodeType !== "word" ||
+      node.wordType !== "cardinalNumber"
+    ) {
+      continue;
+    }
+
+    const node2 = nodes[index + 1];
+    if (
+      !node2 ||
+      node2.nodeType !== "separator" ||
+      node2.separatorType !== "dash"
+    ) {
+      continue;
+    }
+
+    const node3 = nodes[index + 2];
+    if (
+      !node3 ||
+      node3.nodeType !== "word" ||
+      node3.wordType !== "unclassified" ||
+      node3.value.match(/\d/)
+    ) {
+      continue;
+    }
+
+    nodes.splice(index, 3, {
+      nodeType: "word",
+      wordType: "unclassified",
+      value: `${node.value}-${node3.value}`,
+    });
+  }
+
   // Find cardinal and ordinal numbers
-  for (const node of nodes) {
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index]!;
     if (node.nodeType !== "word" || node.wordType !== "unclassified") {
       continue;
     }
@@ -174,8 +212,16 @@ export const buildCleanedAddressAst = (
     updatedNode.number = parseInt(rawNumber);
 
     const ordinalNumberEndingConfig = ordinalNumberEndingConfigLookup[ending];
-
-    if (ordinalNumberEndingConfig) {
+    // In a rare case, the address can finish with 42-Е, which is a cardinal number.
+    // We only make the number ordinal if it is not the last one
+    if (!nodes[index + 1]) {
+      const endingWithoutDash = ending.startsWith("-")
+        ? ending.slice(1)
+        : ending;
+      updatedNode.wordType = "cardinalNumber";
+      updatedNode.value = `${rawNumber}${endingWithoutDash}`;
+      updatedNode.ending = endingWithoutDash;
+    } else if (ordinalNumberEndingConfig) {
       const normalizedEnding = ordinalNumberEndingConfig.normalizedValue;
       updatedNode.wordType = "ordinalNumber";
       updatedNode.value = `${rawNumber}${normalizedEnding}`;
@@ -187,13 +233,13 @@ export const buildCleanedAddressAst = (
     }
   }
 
-  // Detach endings from cardinal numbers in cases like ‘10корп’
+  // Detach endings from cardinal numbers in cases like ‘10корп’ (but not 10-летия)
   for (let index = nodes.length - 1; index >= 0; index -= 1) {
     const node = nodes[index]!;
     if (node.nodeType !== "word" || node.wordType !== "cardinalNumber") {
       continue;
     }
-    if (node.ending.length > 1) {
+    if (node.ending.length > 1 && node.ending[0] !== "-") {
       nodes.splice(index + 1, 0, {
         nodeType: "word",
         wordType: "unclassified",
