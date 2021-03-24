@@ -138,7 +138,9 @@ export const generateOsmOutputLayer = async ({
 
   const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(
     (building) => {
-      const buildingTagValue = building.properties["building"];
+      const buildingTagValue = building.properties["abandoned"]
+        ? "abandoned"
+        : building.properties["building"];
       const buildingType =
         buildingTagValue && buildingTagValue !== "yes"
           ? buildingTagValue
