@@ -182,27 +182,30 @@ export const mixOutputLayers: Command = async ({ logger }) => {
         ),
       }));
 
-      let wipBboxWithBufferAroundBuildings: turf.BBox | undefined = undefined;
-      for (const filteredBaseLayer of filteredBaseLayers) {
-        for (const baseLayerFeature of filteredBaseLayer.features) {
-          if (!wipBboxWithBufferAroundBuildings) {
-            wipBboxWithBufferAroundBuildings = baseLayerFeature.bboxWithBuffer;
-          } else {
-            wipBboxWithBufferAroundBuildings = unionBboxes(
-              wipBboxWithBufferAroundBuildings,
-              baseLayerFeature.bboxWithBuffer,
-            );
+      const bboxWithBufferAroundBuildings = (() => {
+        let result: turf.BBox | undefined = undefined;
+        for (const filteredBaseLayer of filteredBaseLayers) {
+          for (const baseLayerFeature of filteredBaseLayer.features) {
+            if (!result) {
+              result = baseLayerFeature.bboxWithBuffer;
+            } else {
+              result = unionBboxes(result, baseLayerFeature.bboxWithBuffer);
+            }
           }
         }
-      }
 
-      if (!wipBboxWithBufferAroundBuildings) {
+        return result;
+      })();
+
+      if (!bboxWithBufferAroundBuildings) {
         return {
           cacheStatus: "used",
           tileStatus: "complete",
+          comment: "mixed features: 0",
         };
       }
-      const bboxWithBufferAroundBuildings = wipBboxWithBufferAroundBuildings;
+
+      const originalMixedFeatureCount = mixedFeatures.length;
 
       const filteredMixinLayers: MixinLayer[] = mixinLayers.map(
         (mixinLayer) => ({
@@ -267,6 +270,9 @@ export const mixOutputLayers: Command = async ({ logger }) => {
       return {
         cacheStatus: "notUsed",
         tileStatus: "complete",
+        comment: `mixed features: ${
+          mixedFeatures.length - originalMixedFeatureCount
+        }`,
       };
     },
   });
