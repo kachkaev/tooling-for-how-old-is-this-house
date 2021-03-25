@@ -1,10 +1,11 @@
-import { Coordinates, GeocodeDictionary } from "./types";
+import { Point2dCoordinates } from "../helpersForGeometry";
+import { GeocodeDictionary } from "./types";
 
 export const resolveCoordinates = (
   combinedGeocodeDictionary: GeocodeDictionary,
   normalizedAddress: string,
   sourcesInPriorityOrder: string[],
-): Coordinates | undefined => {
+): Point2dCoordinates | undefined => {
   const addressRecord = combinedGeocodeDictionary[normalizedAddress];
   if (!addressRecord) {
     return undefined;

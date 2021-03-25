@@ -19,8 +19,12 @@ export const deriveBboxCenter = (bbox: turf.BBox): Point2dCoordinates => {
   return [bbox[0] + (bbox[2] - bbox[0]) / 2, bbox[1] + (bbox[3] - bbox[1]) / 2];
 };
 
-// [xmin, xmax)
-// [ymin, ymax)
+/**
+ * Note that the inclusion is:
+ *
+ * [xmin, xmax)
+ * [ymin, ymax)
+ */
 export const isPointInBbox = (
   point: Point2dCoordinates | number[],
   bbox: turf.BBox,
