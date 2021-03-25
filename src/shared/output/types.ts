@@ -47,3 +47,51 @@ export type GenerateOutputLayer = (payload: {
   logger?: Console;
   findPointForNormalizedAddress?: FindPointForNormalizedAddress;
 }) => Promise<OutputLayer>;
+
+export interface PropertyLookupVariant extends OutputLayerProperties {
+  source: string;
+  distance: number; // distance to geometry in meters
+}
+export type OutputGeometry = turf.Polygon | turf.MultiPolygon;
+
+// mixed output layers
+
+export interface MixedOutputLayersFeatureProperties {
+  geometrySource: string;
+  variants: PropertyLookupVariant[];
+}
+
+export type MixedOutputLayersFeature = turf.Feature<
+  OutputGeometry,
+  MixedOutputLayersFeatureProperties
+>;
+
+export type MixedOutputLayersFeatureCollection = turf.FeatureCollection<
+  OutputGeometry,
+  MixedOutputLayersFeatureProperties
+>;
+
+// mixed property variants
+
+export interface PropertyLookupVariantAggregate {
+  completionYear?: number;
+  completionYearSource?: string;
+
+  normalizedAddress?: string;
+  normalizedAddressSource?: string;
+}
+
+export interface MixedPropertyVariantsFeatureProperties
+  extends PropertyLookupVariantAggregate {
+  geometrySource: string;
+}
+
+export type MixedPropertyVariantsFeature = turf.Feature<
+  OutputGeometry,
+  MixedPropertyVariantsFeatureProperties
+>;
+
+export type MixedPropertyVariantsFeatureCollection = turf.FeatureCollection<
+  OutputGeometry,
+  MixedPropertyVariantsFeatureProperties
+>;

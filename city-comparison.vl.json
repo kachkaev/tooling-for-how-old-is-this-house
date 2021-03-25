@@ -1,7 +1,7 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": {
-    "text": "Полнота данных у зданий на сайте how-old-is-this.house",
+    "text": "Полнота данных у зданий в проекте how-old-is-this.house",
     "offset": 10,
     "align": "left",
     "anchor": "start"
@@ -9,24 +9,24 @@
   "data": {
     "values": [
       {
-        "city": "Пенза (только ОСМ)",
+        "city": "Пенза (2021-03-25)",
         "category": "есть адрес и возраст",
-        "value": 219
+        "value": 8803
       },
       {
-        "city": "Пенза (только ОСМ)",
+        "city": "Пенза (2021-03-25)",
         "category": "есть только адрес",
-        "value": 21145
+        "value": 16253
       },
       {
-        "city": "Пенза (только ОСМ)",
+        "city": "Пенза (2021-03-25)",
         "category": "есть только возраст",
-        "value": 14
+        "value": 1113
       },
       {
-        "city": "Пенза (только ОСМ)",
+        "city": "Пенза (2021-03-25)",
         "category": "нет ничего",
-        "value": 19168
+        "value": 14612
       },
       {
         "city": "Владимир",

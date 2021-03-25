@@ -115,6 +115,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     ```
 
     ```sh
-    yarn exe src/commands/3-mixOutputLayers.ts          ## work in progress
-    yarn exe src/commands/4-distillMixedOutputLayers.ts ## todo
+    yarn exe src/commands/3-mixOutputLayers.ts
+    yarn exe src/commands/4-mixPropertyVariants.ts ## MVP
+    yarn exe src/commands/5-prepareUpload.ts       ## todo
     ```

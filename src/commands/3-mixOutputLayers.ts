@@ -21,9 +21,11 @@ import { getSourcesDirPath } from "../shared/helpersForPaths";
 import {
   getMixedOutputLayersFileName,
   getOutputLayerFileName,
+  MixedOutputLayersFeature,
   OutputLayer,
   OutputLayerFeatureWithGeometry,
   OutputLayerProperties,
+  PropertyLookupVariant,
 } from "../shared/output";
 import { processFiles } from "../shared/processFiles";
 import { getRegionExtent } from "../shared/region";
@@ -57,21 +59,6 @@ interface MixinLayer {
   source: string;
   hash: string;
 }
-
-interface PropertiesVariant extends OutputLayerProperties {
-  source: string;
-  distance: number; // distance to geometry
-}
-
-interface MixedFeatureProperties {
-  geometrySource: string;
-  variants: PropertiesVariant[];
-}
-
-type MixedFeature = turf.Feature<
-  turf.Polygon | turf.MultiPolygon,
-  MixedFeatureProperties
->;
 
 export const mixOutputLayers: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing output layers"));
@@ -164,7 +151,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
     );
   }
 
-  const mixedFeatures: MixedFeature[] = [];
+  const mixedFeatures: MixedOutputLayersFeature[] = [];
 
   const regionExtent = await getRegionExtent();
   await processTiles({
@@ -221,7 +208,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
       for (const filteredBaseLayer of filteredBaseLayers) {
         for (const baseLayerFeature of filteredBaseLayer.features) {
-          const propertiesVariants: PropertiesVariant[] = [
+          const propertiesVariants: PropertyLookupVariant[] = [
             {
               ...baseLayerFeature.properties,
               source: filteredBaseLayer.source,

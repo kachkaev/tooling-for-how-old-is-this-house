@@ -9,3 +9,6 @@ export const getOutputDirPath = (): string =>
 
 export const getMixedOutputLayersFileName = (): string =>
   path.resolve(getOutputDirPath(), "mixed-output-layers.geojson");
+
+export const getMixedPropertyVariantsFileName = (): string =>
+  path.resolve(getOutputDirPath(), "mixed-property-variants.geojson");

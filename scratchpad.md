@@ -11,6 +11,18 @@ RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say
 say "Finished ${INSTANCE}"
 ```
 
+Обработка карты из QGIS
+
+```sh
+MAP_VERSION=$(date +"%Y-%m-%d-%H%M")
+MAP_DIR="/Users/ak/Desktop/mapping party"
+FILE_NAME_PREFIX="Годы постройки зданий в Пензе (черновик)"
+echo ${MAP_VERSION}
+
+convert "${MAP_DIR}/qgis-layout-result-check.png" -quality 80% "${MAP_DIR}/${FILE_NAME_PREFIX} ${MAP_VERSION}.jpg"
+convert "${MAP_DIR}/qgis-layout-result-check.png" -resize 5000 -quality 80% "${MAP_DIR}/${FILE_NAME_PREFIX} ${MAP_VERSION}.preview.jpg"
+```
+
 ## Команды для картовечеринки
 
 Обновление тайлов
@@ -106,6 +118,7 @@ cd -
 
 2000: оттенки синего (РФ)
 2010:
+2020:
 ```
 
 Внутри группы
