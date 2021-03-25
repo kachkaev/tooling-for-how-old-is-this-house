@@ -11,6 +11,7 @@ import path from "path";
 
 import {
   addBufferToBbox,
+  calculatePointDistanceToPolygonInMeters,
   deriveBboxCenter,
   isPointInBbox,
   unionBboxes,
@@ -227,15 +228,24 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
           for (const filteredMixinLayer of filteredMixinLayers) {
             for (const mixinLayerFeature of filteredMixinLayer.features) {
-              // TODO: Improve distance measurements
-              const distance = isPointInBbox(
-                mixinLayerFeature.geometry.coordinates,
-                baseLayerFeature.bboxWithBuffer,
-              )
-                ? 0
-                : Infinity;
+              if (
+                !isPointInBbox(
+                  mixinLayerFeature.geometry.coordinates,
+                  baseLayerFeature.bboxWithBuffer,
+                )
+              ) {
+                continue;
+              }
 
-              if (distance < bufferSizeInMeters) {
+              const distance = Math.max(
+                0,
+                calculatePointDistanceToPolygonInMeters(
+                  mixinLayerFeature.geometry,
+                  baseLayerFeature,
+                ),
+              );
+
+              if (distance <= bufferSizeInMeters) {
                 propertiesVariants.push({
                   ...mixinLayerFeature.properties,
                   source: filteredMixinLayer.source,
@@ -261,9 +271,13 @@ export const mixOutputLayers: Command = async ({ logger }) => {
     },
   });
 
+  process.stdout.write(chalk.green(`Saving...`));
+
   const resultFileName = getMixedOutputLayersFileName();
   const mixedFeatureCollection = turf.featureCollection(mixedFeatures);
   await writeFormattedJson(resultFileName, mixedFeatureCollection);
+
+  logger.log(` Result saved to ${chalk.magenta(resultFileName)}`);
 };
 
 autoStartCommandIfNeeded(mixOutputLayers, __filename);
