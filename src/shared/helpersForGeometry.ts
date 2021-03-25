@@ -2,6 +2,8 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
 
+export type Point2dCoordinates = [lon: number, lat: number];
+
 export const addBufferToBbox = (
   bbox: turf.BBox,
   bufferInMeters: number,
@@ -12,6 +14,28 @@ export const addBufferToBbox = (
       steps: 1,
     }),
   );
+
+export const deriveBboxCenter = (bbox: turf.BBox): Point2dCoordinates => {
+  return [bbox[0] + (bbox[2] - bbox[0]) / 2, bbox[1] + (bbox[3] - bbox[1]) / 2];
+};
+
+// [xmin, xmax)
+// [ymin, ymax)
+export const isPointInBbox = (
+  point: Point2dCoordinates | number[],
+  bbox: turf.BBox,
+): boolean =>
+  bbox[0] <= point[0] &&
+  bbox[1] <= point[1] &&
+  bbox[2] > point[0] &&
+  bbox[3] > point[1];
+
+export const unionBboxes = (bboxA: turf.BBox, bboxB: turf.BBox): turf.BBox => [
+  Math.min(bboxA[0], bboxB[0]),
+  Math.min(bboxA[1], bboxB[1]),
+  Math.max(bboxA[2], bboxB[2]),
+  Math.max(bboxA[3], bboxB[3]),
+];
 
 export const roughenBbox = (bbox: turf.BBox, precision: number): turf.BBox => {
   return [

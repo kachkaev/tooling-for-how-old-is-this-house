@@ -1,3 +1,5 @@
+import { Point2dCoordinates } from "../../helpersForGeometry";
+
 export interface HouseListResponse {
   current: number;
   rowCount: number;
@@ -20,7 +22,7 @@ export interface HouseListFile {
 export interface HouseInfo {
   address?: string;
   cadastralId?: string;
-  centerPoint?: [lon: number, lat: number];
+  centerPoint?: Point2dCoordinates;
   id: number;
   numberOfFloors?: number;
   numberOfLivingQuarters?: number;

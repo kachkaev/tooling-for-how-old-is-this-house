@@ -1,8 +1,8 @@
-export type Coordinates = [lot: number, lat: number];
+import { Point2dCoordinates } from "../helpersForGeometry";
 
 export interface ReportedResolvedGeocode {
   normalizedAddress: string;
-  coordinates: Coordinates;
+  coordinates: Point2dCoordinates;
   knownAt?: string;
 }
 

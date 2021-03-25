@@ -1,23 +1,45 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
+import {
+  autoStartCommandIfNeeded,
+  Command,
+  CommandError,
+} from "@kachkaev/commands";
+import tilebelt from "@mapbox/tilebelt";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 
+import {
+  addBufferToBbox,
+  deriveBboxCenter,
+  isPointInBbox,
+  unionBboxes,
+} from "../shared/helpersForGeometry";
+import { writeFormattedJson } from "../shared/helpersForJson";
 import { getSourcesDirPath } from "../shared/helpersForPaths";
 import {
+  getMixedOutputLayersFileName,
   getOutputLayerFileName,
   OutputLayer,
+  OutputLayerFeatureWithGeometry,
   OutputLayerProperties,
 } from "../shared/output";
 import { processFiles } from "../shared/processFiles";
+import { getRegionExtent } from "../shared/region";
+import { processTiles } from "../shared/tiles";
 
 const geometrySources = ["osm"];
+const bufferSizeInMeters = 5;
+const tileZoom = 15;
 
 type BaseLayerFeature = turf.Feature<
   turf.Polygon | turf.MultiPolygon,
   OutputLayerProperties
-> & { bbox: turf.BBox };
+> & {
+  bbox: turf.BBox;
+  bboxCenter: [x: number, y: number];
+  bboxWithBuffer: turf.BBox;
+};
 
 interface BaseLayer {
   features: BaseLayerFeature[];
@@ -34,6 +56,21 @@ interface MixinLayer {
   source: string;
   hash: string;
 }
+
+interface PropertiesVariant extends OutputLayerProperties {
+  source: string;
+  distance: number; // distance to geometry
+}
+
+interface MixedFeatureProperties {
+  geometrySource: string;
+  variants: PropertiesVariant[];
+}
+
+type MixedFeature = turf.Feature<
+  turf.Polygon | turf.MultiPolygon,
+  MixedFeatureProperties
+>;
 
 export const mixOutputLayers: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing output layers"));
@@ -73,17 +110,24 @@ export const mixOutputLayers: Command = async ({ logger }) => {
         );
 
       if (layerType === "base") {
-        const features = outputLayer.features
-          .filter(
-            (feature) =>
+        const features: BaseLayerFeature[] = outputLayer.features
+          .filter((feature): feature is OutputLayerFeatureWithGeometry =>
+            Boolean(
               feature.geometry &&
-              (feature.geometry.type === "Polygon" ||
-                feature.geometry.type === "MultiPolygon"),
+                (feature.geometry.type === "Polygon" ||
+                  feature.geometry.type === "MultiPolygon"),
+            ),
           )
-          .map((feature) => ({
-            ...feature,
-            bbox: turf.bbox(feature),
-          })) as BaseLayerFeature[];
+          .map((feature) => {
+            const bbox = turf.bbox(feature);
+
+            return {
+              ...feature,
+              bbox,
+              bboxCenter: deriveBboxCenter(bbox),
+              bboxWithBuffer: addBufferToBbox(bbox, bufferSizeInMeters),
+            };
+          });
 
         logPickedFeatures("polygons and multipolygons", features.length);
 
@@ -100,7 +144,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
             properties: feature.properties,
           })) as MixinLayerFeature[];
 
-        logPickedFeatures("convertable to points", features.length);
+        logPickedFeatures("convertible to points", features.length);
 
         mixinLayers.push({
           source,
@@ -110,6 +154,116 @@ export const mixOutputLayers: Command = async ({ logger }) => {
       }
     },
   });
+
+  if (!baseLayers.length) {
+    throw new CommandError(
+      `No base layers found. Expected at least one of: ${geometrySources.join(
+        ", ",
+      )}`,
+    );
+  }
+
+  const mixedFeatures: MixedFeature[] = [];
+
+  const regionExtent = await getRegionExtent();
+  await processTiles({
+    regionExtent,
+    initialZoom: tileZoom,
+    maxAllowedZoom: tileZoom,
+    logger,
+    processTile: async (tile) => {
+      const tileBbox = tilebelt.tileToBBOX(tile) as turf.BBox;
+
+      const filteredBaseLayers: BaseLayer[] = baseLayers.map((baseLayer) => ({
+        ...baseLayer,
+        features: baseLayer.features.filter((baseLayerFeature) =>
+          isPointInBbox(baseLayerFeature.bboxCenter, tileBbox),
+        ),
+      }));
+
+      let wipBboxWithBufferAroundBuildings: turf.BBox | undefined = undefined;
+      for (const filteredBaseLayer of filteredBaseLayers) {
+        for (const baseLayerFeature of filteredBaseLayer.features) {
+          if (!wipBboxWithBufferAroundBuildings) {
+            wipBboxWithBufferAroundBuildings = baseLayerFeature.bboxWithBuffer;
+          } else {
+            wipBboxWithBufferAroundBuildings = unionBboxes(
+              wipBboxWithBufferAroundBuildings,
+              baseLayerFeature.bboxWithBuffer,
+            );
+          }
+        }
+      }
+
+      if (!wipBboxWithBufferAroundBuildings) {
+        return {
+          cacheStatus: "used",
+          tileStatus: "complete",
+        };
+      }
+      const bboxWithBufferAroundBuildings = wipBboxWithBufferAroundBuildings;
+
+      const filteredMixinLayers: MixinLayer[] = mixinLayers.map(
+        (mixinLayer) => ({
+          ...mixinLayer,
+          features: mixinLayer.features.filter((feature) =>
+            isPointInBbox(
+              feature.geometry.coordinates,
+              bboxWithBufferAroundBuildings,
+            ),
+          ),
+        }),
+      );
+
+      for (const filteredBaseLayer of filteredBaseLayers) {
+        for (const baseLayerFeature of filteredBaseLayer.features) {
+          const propertiesVariants: PropertiesVariant[] = [
+            {
+              ...baseLayerFeature.properties,
+              source: filteredBaseLayer.source,
+              distance: 0,
+            },
+          ];
+
+          for (const filteredMixinLayer of filteredMixinLayers) {
+            for (const mixinLayerFeature of filteredMixinLayer.features) {
+              // TODO: Improve distance measurements
+              const distance = isPointInBbox(
+                mixinLayerFeature.geometry.coordinates,
+                baseLayerFeature.bboxWithBuffer,
+              )
+                ? 0
+                : Infinity;
+
+              if (distance < bufferSizeInMeters) {
+                propertiesVariants.push({
+                  ...mixinLayerFeature.properties,
+                  source: filteredMixinLayer.source,
+                  distance,
+                });
+              }
+            }
+          }
+
+          mixedFeatures.push(
+            turf.feature(baseLayerFeature.geometry, {
+              geometrySource: filteredBaseLayer.source,
+              variants: propertiesVariants,
+            }),
+          );
+        }
+      }
+
+      return {
+        cacheStatus: "notUsed",
+        tileStatus: "complete",
+      };
+    },
+  });
+
+  const resultFileName = getMixedOutputLayersFileName();
+  const mixedFeatureCollection = turf.featureCollection(mixedFeatures);
+  await writeFormattedJson(resultFileName, mixedFeatureCollection);
 };
 
 autoStartCommandIfNeeded(mixOutputLayers, __filename);
