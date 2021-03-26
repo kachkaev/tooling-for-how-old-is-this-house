@@ -70,15 +70,24 @@ export const generateExtractOutputLayer = ({
       };
     }
 
+    process.stdout.write(chalk.green(`Generating data...`));
+
     const outputLayer = await generateOutputLayer({
       logger,
       findPointForNormalizedAddress,
     });
 
+    logger.log(` Done.`);
+
+    process.stdout.write(chalk.green(`Saving...`));
+
     const outputLayerFilePath = path.resolve(
       getSourceDirPath(source),
       getOutputLayerFileName(),
     );
+
     await writeFormattedJson(outputLayerFilePath, outputLayer);
+
+    logger.log(` Result saved to ${chalk.magenta(outputLayerFilePath)}`);
   };
 };

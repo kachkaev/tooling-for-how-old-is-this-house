@@ -7,5 +7,5 @@ export const getSourcesDirPath = () => {
 };
 
 export const getSourceDirPath = (source: string) => {
-  return path.resolve(getSourcesDirPath(), "sources", source);
+  return path.resolve(getSourcesDirPath(), source);
 };
