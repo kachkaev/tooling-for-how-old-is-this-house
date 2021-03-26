@@ -14,8 +14,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 ## Источники данных
 
-🥇 основной источник  
-🥈 дополнительный источник  
+🔢 данные, попадающие в финальный набор (цифра означает приоритет)  
 ⏳ временно используемые вспомогательные данные  
 🗑 данные игнорируются из-за редкости или низкого качества
 
@@ -26,11 +25,11 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 | | адрес | геометрия | год постройки | название | 🔗 Википедия | фотография |
 | :- | :-: | :-: | :-: | :-: | :-: | :-: |
-| **[МинЖКХ](https://mingkh.ru)**           | 🥈 | ⏳ 📍 | 🥈 |
-| **[Минкульт](https://opendata.mkrf.ru)**  | 🥈 | ⏳ 📍 | 🥇 | 🥇 |   | 🥇 |
-| **[ОСМ](https://www.openstreetmap.org)**  | 🥇 | 🥇 🟥 | 🥈 | 🥈 | 🥇 |
-| **[Росреестр](https://rosreestr.gov.ru)** | 🥈 | ⏳ 📍 |
-| **[Викимапия](https://wikimapia.org)**    | 🗑 | ⏳ 🟥 |   |   | 🗑 | 🥈 |
+| **[МинЖКХ](https://mingkh.ru)**           | 3️⃣ | ⏳ 📍 | 2️⃣ |
+| **[Минкульт](https://opendata.mkrf.ru)**  | 1️⃣ | ⏳ 📍 | 1️⃣ | 1️⃣ |   | 1️⃣ |
+| **[ОСМ](https://www.openstreetmap.org)**  | 2️⃣ | 1️⃣ 🟥 | 4️⃣ | 2️⃣ | 1️⃣ |
+| **[Росреестр](https://rosreestr.gov.ru)** | 4️⃣ | ⏳ 📍 | 3️⃣ |
+| **[Викимапия](https://wikimapia.org)**    | 🗑 | ⏳ 🟥 |   | 🗑 | 🗑 | 2️⃣ |
 
 <!-- prettier-ignore-end -->
 
@@ -51,7 +50,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     ## ≥ 1.22
     ```
 
-1.  Создать и заполнить файл `/path/to/data/regions/${MY_REGION}/region-config.yml` (по аналогии с таким файлом для уже обработанного города).
+1.  Создать и заполнить файл `/path/to/data/regions/?{MY_REGION}?/region-config.yml` (по аналогии с таким файлом для уже обработанного города).
 
 1.  Скачать список объектов [с сайта Минкультуры](https://opendata.mkrf.ru/opendata/7705851331-egrkn).
     Файл должен быть в формате `jsons` (с `s` на конце) и разарахивирован.
