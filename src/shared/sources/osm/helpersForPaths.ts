@@ -1,10 +1,10 @@
 import path from "path";
 
-import { getRegionDirPath } from "../../region";
+import { gettTerritoryDirPath } from "../../territory";
 import { Tile } from "../../tiles";
 
 export const getOsmDirPath = () => {
-  return path.resolve(getRegionDirPath(), "sources", "osm");
+  return path.resolve(gettTerritoryDirPath(), "sources", "osm");
 };
 
 export const getFetchedOsmBuildingsFilePath = (): string => {

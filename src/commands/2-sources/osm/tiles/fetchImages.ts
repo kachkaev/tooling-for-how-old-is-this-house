@@ -6,11 +6,11 @@ import fs from "fs-extra";
 import path from "path";
 
 import { cleanEnv } from "../../../../shared/cleanEnv";
-import { getRegionExtent } from "../../../../shared/region";
 import {
   createAxiosInstanceForOsmTiles,
   getOsmTileImageFilePath,
 } from "../../../../shared/sources/osm";
+import { getTerritoryExtent } from "../../../../shared/territory";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 
 // Inspired by https://www.kindacode.com/article/using-axios-to-download-images-and-videos-in-node-js/
@@ -46,15 +46,15 @@ const maxAllowedZoom = 17;
 export const fetchImages: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/osm: Fetching OSM tile images"));
 
-  const originalRegionExtent = await getRegionExtent();
-  const regionExtent = originalRegionExtent;
+  const originalTerritoryExtent = await getTerritoryExtent();
+  const territoryExtent = originalTerritoryExtent;
 
   const axiosInstance = createAxiosInstanceForOsmTiles();
 
   await processTiles({
     initialZoom,
     maxAllowedZoom,
-    regionExtent,
+    territoryExtent,
     processTile: async (tile) => {
       const [tileX, tileY, tileZoom] = tile;
       const tileStatus: TileStatus =

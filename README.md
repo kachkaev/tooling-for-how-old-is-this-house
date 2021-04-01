@@ -50,7 +50,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     ## ≥ 1.22
     ```
 
-1.  Создать и заполнить файл `/path/to/data/regions/?{MY_REGION}?/region-config.yml` (по аналогии с таким файлом для уже обработанного города).
+1.  Создать и заполнить файл `/path/to/data/territories/TERRITORY_NAME/territory-config.yml` (по аналогии с таким файлом для уже обработанного города).
 
 1.  Скачать список объектов [с сайта Минкультуры](https://opendata.mkrf.ru/opendata/7705851331-egrkn).
     Файл должен быть в формате `jsons` (с `s` на конце) и разарахивирован.
@@ -77,7 +77,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 1.  Будучи в папке `/path/to/tooling`, запустить команды:
 
     ```sh
-    yarn exe src/commands/1-buildRegionExtent.ts
+    yarn exe src/commands/1-buildTerritoryExtent.ts
     ```
 
     ```sh

@@ -1,9 +1,9 @@
 import path from "path";
 
-import { getRegionDirPath } from "../../region";
+import { gettTerritoryDirPath } from "../../territory";
 
 export const getWikidataDirPath = () => {
-  return path.resolve(getRegionDirPath(), "sources", "wikidata");
+  return path.resolve(gettTerritoryDirPath(), "sources", "wikidata");
 };
 
 export const getWikidataRecordsFilePath = (): string => {

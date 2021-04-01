@@ -6,9 +6,9 @@ import osmToGeojson from "osmtogeojson";
 
 import { filterFeaturesByGeometryType } from "../../helpersForGeometry";
 import { serializeTime } from "../../helpersForJson";
-import { getRegionExtent } from "../../region";
+import { getTerritoryExtent } from "../../territory";
 
-const regionExtentPlaceholder = "{{region_extent}}";
+const territoryExtentPlaceholder = "{{territory_extent}}";
 
 export const fetchGeojsonFromOverpassApi = async ({
   acceptedGeometryTypes,
@@ -22,18 +22,18 @@ export const fetchGeojsonFromOverpassApi = async ({
   process.stdout.write(chalk.green("Preparing to make Overpass API query..."));
 
   let processedQuery = query;
-  if (processedQuery.includes(regionExtentPlaceholder)) {
-    const regionExtent = await getRegionExtent();
-    if (!regionExtent.geometry) {
-      throw new Error("Unexpected empty geometry in regionExtent");
+  if (processedQuery.includes(territoryExtentPlaceholder)) {
+    const territoryExtent = await getTerritoryExtent();
+    if (!territoryExtent.geometry) {
+      throw new Error("Unexpected empty geometry in territoryExtent");
     }
-    if (regionExtent.geometry?.type === "MultiPolygon") {
+    if (territoryExtent.geometry?.type === "MultiPolygon") {
       throw new Error(
         "Fetching OSM for multipolygons is not yet supported. Please amend the script.",
       );
     }
 
-    const pointsInOuterRing = (regionExtent.geometry as turf.Polygon)
+    const pointsInOuterRing = (territoryExtent.geometry as turf.Polygon)
       .coordinates[0];
 
     if (!pointsInOuterRing) {
@@ -45,7 +45,7 @@ export const fetchGeojsonFromOverpassApi = async ({
       .join(" ")}"`;
 
     processedQuery = processedQuery.replace(
-      new RegExp(regionExtentPlaceholder, "g"),
+      new RegExp(territoryExtentPlaceholder, "g"),
       serializedPolygonForOverpassApi,
     );
   }

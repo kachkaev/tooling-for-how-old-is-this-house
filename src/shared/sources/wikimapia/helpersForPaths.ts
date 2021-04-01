@@ -1,10 +1,10 @@
 import path from "path";
 
-import { getRegionDirPath } from "../../region";
+import { gettTerritoryDirPath } from "../../territory";
 import { Tile } from "../../tiles";
 
 export const getWikimapiaDirPath = () => {
-  return path.resolve(getRegionDirPath(), "sources", "wikimapia");
+  return path.resolve(gettTerritoryDirPath(), "sources", "wikimapia");
 };
 
 export const getWikimapiaTilesDirPath = () => {

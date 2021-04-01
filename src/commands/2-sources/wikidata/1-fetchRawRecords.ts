@@ -6,19 +6,19 @@ import dedent from "dedent";
 
 import { roughenBbox } from "../../../shared/helpersForGeometry";
 import { writeFormattedJson } from "../../../shared/helpersForJson";
-import { getRegionExtent } from "../../../shared/region";
 import {
   getWikidataRecordsFilePath,
   WikidataApiResponse,
 } from "../../../shared/sources/wikidata";
+import { getTerritoryExtent } from "../../../shared/territory";
 
 export const fetchRawRecords: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikidata: Fetch raw records (execute query)"));
 
   process.stdout.write(chalk.green("Preparing to make the API query..."));
 
-  const regionExtent = await getRegionExtent();
-  const roughBbox = roughenBbox(turf.bbox(regionExtent), 3);
+  const territoryExtent = await getTerritoryExtent();
+  const roughBbox = roughenBbox(turf.bbox(territoryExtent), 3);
 
   const query = dedent`
       SELECT ?item ?image ?coordinate_location ?itemLabel ?article ?architectLabel  ?architectural_styleLabel WHERE {

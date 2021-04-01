@@ -13,12 +13,12 @@ import {
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import { OutputLayer } from "../../../shared/output";
-import { getRegionDirPath } from "../../../shared/region";
 import {
   generateOsmOutputLayer,
   getFetchedOsmBuildingsFilePath,
   getOsmDirPath,
 } from "../../../shared/sources/osm";
+import { gettTerritoryDirPath } from "../../../shared/territory";
 
 interface HistoricSnapshotSummaryForOsm {
   knownAt: string;
@@ -254,7 +254,7 @@ const generateVegaSpec = (
 };
 
 export const generateHistoricSnapshots: Command = async ({ logger }) => {
-  const gitRepoDirPath = getRegionDirPath();
+  const gitRepoDirPath = gettTerritoryDirPath();
   const fetchedOsmBuildingsRelativeFilePath = path.relative(
     gitRepoDirPath,
     getFetchedOsmBuildingsFilePath(),

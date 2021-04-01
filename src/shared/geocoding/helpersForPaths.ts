@@ -1,10 +1,10 @@
 import path from "path";
 
 import { splitAddress } from "../addresses";
-import { getRegionDirPath } from "../region";
+import { gettTerritoryDirPath } from "../territory";
 
 export const getGeocodeDictionariesDirPath = () => {
-  return path.resolve(getRegionDirPath(), "geocoding");
+  return path.resolve(gettTerritoryDirPath(), "geocoding");
 };
 
 export const getGeocodeDictionaryFileName = () => "dictionary.json";

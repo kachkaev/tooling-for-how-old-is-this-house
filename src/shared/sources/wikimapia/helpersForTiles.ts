@@ -10,7 +10,7 @@ import { WikimapiaTileData } from "./types";
  * Recommended tile edge length is approximately 300-500 meters.
  */
 export const getRecommendedWikimapiaTileZoom = async (): Promise<number> => {
-  // TODO: getRegionExtent, map lat to zoom level
+  // TODO: getTerritoryExtent, map lat to zoom level
 
   return 16;
 };

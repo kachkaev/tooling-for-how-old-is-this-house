@@ -6,15 +6,15 @@ import path from "path";
 
 import { cleanEnv } from "./cleanEnv";
 
-export const getRegionDirPath = (): string => {
+export const gettTerritoryDirPath = (): string => {
   const env = cleanEnv({
-    REGION_VAR_DIR: envalid.str({}),
+    TERRITORY_DATA_DIR: envalid.str({}),
   });
 
-  return path.resolve(env.REGION_VAR_DIR);
+  return path.resolve(env.TERRITORY_DATA_DIR);
 };
 
-export interface RegionConfig {
+export interface TerritoryConfig {
   name?: string;
 
   extent?: {
@@ -39,18 +39,18 @@ export interface RegionConfig {
   };
 }
 
-export const getRegionConfigFilePath = (): string =>
-  path.resolve(getRegionDirPath(), `region-config.yml`);
+export const getTerritoryConfigFilePath = (): string =>
+  path.resolve(gettTerritoryDirPath(), `territory-config.yml`);
 
-export const getRegionConfig = async (): Promise<RegionConfig> => {
-  return load(await fs.readFile(getRegionConfigFilePath(), "utf8")) as any;
+export const getTerritoryConfig = async (): Promise<TerritoryConfig> => {
+  return load(await fs.readFile(getTerritoryConfigFilePath(), "utf8")) as any;
 };
 
-export const getRegionExtentFilePath = (): string =>
-  path.resolve(getRegionDirPath(), `region-extent.geojson`);
+export const getTerritoryExtentFilePath = (): string =>
+  path.resolve(gettTerritoryDirPath(), `territory-extent.geojson`);
 
-export const getRegionExtent = async (): Promise<
+export const getTerritoryExtent = async (): Promise<
   turf.Feature<turf.Polygon | turf.MultiPolygon>
 > => {
-  return fs.readJson(getRegionExtentFilePath());
+  return fs.readJson(getTerritoryExtentFilePath());
 };

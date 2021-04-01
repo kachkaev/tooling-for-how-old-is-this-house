@@ -28,7 +28,7 @@ import {
   PropertyLookupVariant,
 } from "../shared/output";
 import { processFiles } from "../shared/processFiles";
-import { getRegionExtent } from "../shared/region";
+import { getTerritoryExtent } from "../shared/territory";
 import { processTiles } from "../shared/tiles";
 
 const geometrySources = ["osm"];
@@ -153,9 +153,9 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
   const mixedFeatures: MixedOutputLayersFeature[] = [];
 
-  const regionExtent = await getRegionExtent();
+  const territoryExtent = await getTerritoryExtent();
   await processTiles({
-    regionExtent,
+    territoryExtent,
     initialZoom: tileZoom,
     maxAllowedZoom: tileZoom,
     logger,

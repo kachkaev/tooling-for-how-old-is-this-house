@@ -12,36 +12,36 @@ import {
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import {
-  getRegionConfig,
-  getRegionExtent,
-  RegionConfig,
-} from "../../../shared/region";
-import {
   getMkrfJsonsDumpFilePath,
   getMkrfObjectFilePath,
   MkrfObjectData,
   MkrfObjectFile,
 } from "../../../shared/sources/mkrf";
+import {
+  getTerritoryConfig,
+  getTerritoryExtent,
+  TerritoryConfig,
+} from "../../../shared/territory";
 
 type PickReason = "position" | "address";
 
 const derivePickReason = (
   objectData: MkrfObjectData,
-  regionConfig: RegionConfig,
-  regionExtent: turf.Feature<turf.Polygon | turf.MultiPolygon>,
+  territoryConfig: TerritoryConfig,
+  territoryExtent: turf.Feature<turf.Polygon | turf.MultiPolygon>,
 ): PickReason | undefined => {
   const position =
     objectData.data.general.additionalCoordinates?.[0] ??
     objectData.data.general.address?.mapPosition;
 
   if (position) {
-    if (turf.booleanContains(regionExtent, position)) {
+    if (turf.booleanContains(territoryExtent, position)) {
       return "position";
     }
   }
 
   const fallbackAddressSelectors =
-    regionConfig?.sources?.mkrf
+    territoryConfig?.sources?.mkrf
       ?.fallbackAddressSelectorsForObjectsWithoutGeometry;
 
   const fullAddress = objectData.data.general.address?.fullAddress;
@@ -69,8 +69,8 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
     chalk.bold("sources/mkrf: Extracting raw objects from JSONS dump"),
   );
 
-  const regionConfig = await getRegionConfig();
-  const regionExtent = await getRegionExtent();
+  const territoryConfig = await getTerritoryConfig();
+  const territoryExtent = await getTerritoryExtent();
 
   process.stdout.write(chalk.green("Loading data..."));
   const jsonsDumpFilePath = getMkrfJsonsDumpFilePath();
@@ -85,7 +85,7 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
 
   logger.log(
     chalk.green(
-      "Scanning through objects and saving those within region extent...",
+      "Scanning through objects and saving those within territory extent...",
     ),
   );
 
@@ -115,7 +115,11 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
       throw e;
     }
 
-    const pickReason = derivePickReason(objectData, regionConfig, regionExtent);
+    const pickReason = derivePickReason(
+      objectData,
+      territoryConfig,
+      territoryExtent,
+    );
     if (!pickReason) {
       continue;
     }

@@ -6,14 +6,17 @@ import sortKeys from "sort-keys";
 
 import { multiUnion } from "../shared/helpersForGeometry";
 import { serializeTime, writeFormattedJson } from "../shared/helpersForJson";
-import { getRegionConfig, getRegionExtentFilePath } from "../shared/region";
+import {
+  getTerritoryConfig,
+  getTerritoryExtentFilePath,
+} from "../shared/territory";
 
-export const buildRegionExtent: Command = async ({ logger }) => {
-  logger.log(chalk.bold("Building region extent"));
+export const buildTerritoryExtent: Command = async ({ logger }) => {
+  logger.log(chalk.bold("Building territory extent"));
 
   logger.log(chalk.green("Obtaining elements to combine..."));
-  const regionConfig = await getRegionConfig();
-  const elementsToCombine = regionConfig.extent?.elementsToCombine ?? [];
+  const territoryConfig = await getTerritoryConfig();
+  const elementsToCombine = territoryConfig.extent?.elementsToCombine ?? [];
 
   const elementGeometries: turf.Geometry[] = [];
   for (const elementConfig of elementsToCombine) {
@@ -65,12 +68,12 @@ export const buildRegionExtent: Command = async ({ logger }) => {
     extent.properties = {};
   }
 
-  extent.properties.name = regionConfig.name;
+  extent.properties.name = territoryConfig.name;
   extent.properties.createdAt = serializeTime();
 
-  await writeFormattedJson(getRegionExtentFilePath(), sortKeys(extent));
+  await writeFormattedJson(getTerritoryExtentFilePath(), sortKeys(extent));
 
-  logger.log(` Result saved to ${chalk.magenta(getRegionExtentFilePath())}`);
+  logger.log(` Result saved to ${chalk.magenta(getTerritoryExtentFilePath())}`);
 };
 
-autoStartCommandIfNeeded(buildRegionExtent, __filename);
+autoStartCommandIfNeeded(buildTerritoryExtent, __filename);

@@ -13,7 +13,6 @@ import {
   serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
-import { getRegionExtent } from "../../../shared/region";
 import {
   generateWikimapiaTileComment,
   getRecommendedWikimapiaTileZoom,
@@ -21,6 +20,7 @@ import {
   ProcessedWikimapiaTileResponse,
   WikimapiaTileData,
 } from "../../../shared/sources/wikimapia";
+import { getTerritoryExtent } from "../../../shared/territory";
 import { processTiles } from "../../../shared/tiles";
 
 axiosRetry(axios);
@@ -93,7 +93,7 @@ export const fetchTiles: Command = async ({ logger }) => {
   await processTiles({
     initialZoom: recommendedTileZoom,
     maxAllowedZoom: recommendedTileZoom,
-    regionExtent: await getRegionExtent(),
+    territoryExtent: await getTerritoryExtent(),
     processTile: async (tile) => {
       const tileDataFilePath = getWikimapiaTileDataFilePath(tile);
 

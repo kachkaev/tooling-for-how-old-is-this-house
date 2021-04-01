@@ -31,27 +31,27 @@ export type ProcessTile = (
 }>;
 
 export const processTiles = async ({
-  regionExtent,
+  territoryExtent,
   initialZoom,
   maxAllowedZoom,
   processTile,
   logger,
 }: {
-  regionExtent: turf.Feature<turf.MultiPolygon | turf.Polygon>;
+  territoryExtent: turf.Feature<turf.MultiPolygon | turf.Polygon>;
   initialZoom: number;
   maxAllowedZoom: number;
   processTile: ProcessTile;
   logger: Console;
 }) => {
-  const regionBbox = turf.bbox(regionExtent);
+  const territoryBbox = turf.bbox(territoryExtent);
   const bottomLeftTile = tilebelt.pointToTile(
-    regionBbox[0],
-    regionBbox[1],
+    territoryBbox[0],
+    territoryBbox[1],
     initialZoom,
   ) as Tile;
   const topRightTile = tilebelt.pointToTile(
-    regionBbox[2],
-    regionBbox[3],
+    territoryBbox[2],
+    territoryBbox[3],
     initialZoom,
   ) as Tile;
 
@@ -75,7 +75,7 @@ export const processTiles = async ({
       if (
         !turf.intersect(
           tilebelt.tileToGeoJSON(tile) as turf.Polygon,
-          regionExtent.geometry as turf.Polygon,
+          territoryExtent.geometry as turf.Polygon,
         )
       ) {
         continue;

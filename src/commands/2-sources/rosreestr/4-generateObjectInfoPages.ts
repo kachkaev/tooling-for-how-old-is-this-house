@@ -4,7 +4,6 @@ import chalk from "chalk";
 import _ from "lodash";
 
 import { writeFormattedJson } from "../../../shared/helpersForJson";
-import { getRegionExtent } from "../../../shared/region";
 import {
   combineRosreestrTiles,
   getObjectInfoPageFilePath,
@@ -14,9 +13,10 @@ import {
   RosreestrObjectType,
 } from "../../../shared/sources/rosreestr";
 import { getCnChunk } from "../../../shared/sources/rosreestr/helpersForCn";
+import { getTerritoryExtent } from "../../../shared/territory";
 
 const minNumberOfObjectsPerBlock = 5;
-const minPercentageOutsideRegionExtent = 25;
+const minPercentageOutsideTerritoryExtent = 25;
 const pageSize = 100;
 const tailLength = 50;
 
@@ -41,7 +41,7 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
 
   process.stdout.write(chalk.green("Indexing by cadastral number..."));
 
-  const regionExtent = await getRegionExtent();
+  const territoryExtent = await getTerritoryExtent();
   const objectByCn: Record<
     string,
     {
@@ -113,17 +113,20 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
       continue;
     }
 
-    const objectsOutsideRegionExtent = objectsInCurrentBlock.filter(
-      ({ center }) => !turf.booleanPointInPolygon(center, regionExtent),
+    const objectsOutsideTerritoryExtent = objectsInCurrentBlock.filter(
+      ({ center }) => !turf.booleanPointInPolygon(center, territoryExtent),
     );
 
-    const percentageOutsideRegionExtent = Math.round(
-      (objectsOutsideRegionExtent.length / objectsInCurrentBlock.length) * 100,
+    const percentageOutsideTerritoryExtent = Math.round(
+      (objectsOutsideTerritoryExtent.length / objectsInCurrentBlock.length) *
+        100,
     );
-    if (percentageOutsideRegionExtent > minPercentageOutsideRegionExtent) {
+    if (
+      percentageOutsideTerritoryExtent > minPercentageOutsideTerritoryExtent
+    ) {
       logger.log(
         chalk.yellow(
-          `Does not qualify because ${percentageOutsideRegionExtent}% of objects are outside region extent (> ${minPercentageOutsideRegionExtent})`,
+          `Does not qualify because ${percentageOutsideTerritoryExtent}% of objects are outside territory extent (> ${minPercentageOutsideTerritoryExtent})`,
         ),
       );
       continue;

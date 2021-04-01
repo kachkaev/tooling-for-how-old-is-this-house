@@ -3,8 +3,8 @@ import chalk from "chalk";
 import * as envalid from "envalid";
 
 import { cleanEnv } from "../../../../shared/cleanEnv";
-import { getRegionExtent } from "../../../../shared/region";
 import { createAxiosInstanceForOsmTiles } from "../../../../shared/sources/osm";
+import { getTerritoryExtent } from "../../../../shared/territory";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 
 export const getOsmTileVersion = (): string => {
@@ -23,15 +23,14 @@ const maxAllowedZoom = 17;
 export const MarkAsDirty: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/osm: Marking tiles as dirty"));
 
-  const originalRegionExtent = await getRegionExtent();
-  const regionExtent = originalRegionExtent;
+  const territoryExtent = await getTerritoryExtent();
 
   const axiosInstance = createAxiosInstanceForOsmTiles();
 
   await processTiles({
     initialZoom,
     maxAllowedZoom,
-    regionExtent,
+    territoryExtent,
     processTile: async (tile) => {
       const [tileX, tileY, tileZoom] = tile;
       const tileStatus: TileStatus =

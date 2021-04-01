@@ -12,7 +12,7 @@ import {
 import { deepClean } from "../../deepClean";
 import { OutputLayer, OutputLayerProperties } from "../../output";
 import { extractYearFromDates } from "../../output/parseYear";
-import { getRegionExtent } from "../../region";
+import { getTerritoryExtent } from "../../territory";
 import {
   getFetchedOsmBoundariesFilePath,
   getFetchedOsmBuildingsFilePath,
@@ -75,7 +75,7 @@ export const generateOsmOutputLayer = async ({
   fetchedOsmBuildingsFilePath?: string;
   fetchedOsmBoundariesFilePath?: string;
 }): Promise<OutputLayer> => {
-  const regionExtent = await getRegionExtent();
+  const territoryExtent = await getTerritoryExtent();
 
   const buildingCollection = (await fs.readJson(
     fetchedOsmBuildingsFilePath,
@@ -89,13 +89,13 @@ export const generateOsmOutputLayer = async ({
     boundaryFeatures: boundaryCollection.features,
     boundaryFeatureFilter: (feature) =>
       feature.properties?.["admin_level"] === "4",
-    expectedBoundaryOfAllCheckedFeatures: regionExtent,
+    expectedBoundaryOfAllCheckedFeatures: territoryExtent,
   });
 
   const getPlaceName = generateGetIntersectedBoundaryName({
     boundaryFeatures: boundaryCollection.features,
     boundaryFeatureFilter: (feature) => feature.properties?.["place"],
-    expectedBoundaryOfAllCheckedFeatures: regionExtent,
+    expectedBoundaryOfAllCheckedFeatures: territoryExtent,
   });
 
   const generateNormalizedAddress = (

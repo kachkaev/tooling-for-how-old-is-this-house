@@ -17,8 +17,8 @@ export const fetchBuildings: Command = async ({ logger }) => {
     query: dedent`
         [out:json][timeout:60];
         (
-          way["building"]({{region_extent}});
-          relation["building"]({{region_extent}});
+          way["building"]({{territory_extent}});
+          relation["building"]({{territory_extent}});
         );
         out body;
         >;

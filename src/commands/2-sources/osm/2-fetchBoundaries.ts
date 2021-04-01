@@ -17,10 +17,10 @@ export const fetchBoundaries: Command = async ({ logger }) => {
     query: dedent`
         [out:json][timeout:60];
         (
-          way["admin_level"~"4"]({{region_extent}});
-          relation["admin_level"~"4"]({{region_extent}});
-          way["place"~"^(city|town|village)$"]({{region_extent}});
-          relation["place"~"^(city|town|village)$"]({{region_extent}});
+          way["admin_level"~"4"]({{territory_extent}});
+          relation["admin_level"~"4"]({{territory_extent}});
+          way["place"~"^(city|town|village)$"]({{territory_extent}});
+          relation["place"~"^(city|town|village)$"]({{territory_extent}});
         );
         out body;
         >;

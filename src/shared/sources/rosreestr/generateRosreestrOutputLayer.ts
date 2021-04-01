@@ -17,7 +17,7 @@ import {
 } from "../../output";
 import { extractYearFromDates } from "../../output/parseYear";
 import { processFiles } from "../../processFiles";
-import { getRegionExtent } from "../../region";
+import { getTerritoryExtent } from "../../territory";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
@@ -77,19 +77,19 @@ const extractPropertiesFromPkkResponse = (
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   logger,
 }) => {
-  const regionExtent = await getRegionExtent();
+  const territoryExtent = await getTerritoryExtent();
 
   const { objectCenterFeatures } = await combineRosreestrTiles({
     logger,
     objectType: "cco",
   });
 
-  const objectCenterFeaturesInsideRegion = objectCenterFeatures.filter(
-    ({ geometry }) => turf.booleanPointInPolygon(geometry, regionExtent),
+  const objectCenterFeaturesInsideTerritory = objectCenterFeatures.filter(
+    ({ geometry }) => turf.booleanPointInPolygon(geometry, territoryExtent),
   );
 
   const objectCenterFeatureByCn: Record<string, ObjectCenterFeature> = {};
-  for (const objectCenterFeature of objectCenterFeaturesInsideRegion) {
+  for (const objectCenterFeature of objectCenterFeaturesInsideTerritory) {
     objectCenterFeatureByCn[
       objectCenterFeature.properties.cn
     ] = objectCenterFeature;
@@ -175,22 +175,23 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     showFilePath: true,
   });
 
-  const unusedCnsWithGeometry = objectCenterFeaturesInsideRegion
+  const unusedCnsWithGeometry = objectCenterFeaturesInsideTerritory
     .map((f) => f.properties.cn)
     .filter((cn) => !cnsWithGeometrySet.has(cn))
     .sort();
 
-  const unusedCnsWithGeometryInRegion = unusedCnsWithGeometry.filter((cn) =>
-    turf.booleanPointInPolygon(objectCenterFeatureByCn[cn]!, regionExtent),
+  const unusedCnsWithGeometryInTerritory = unusedCnsWithGeometry.filter((cn) =>
+    turf.booleanPointInPolygon(objectCenterFeatureByCn[cn]!, territoryExtent),
   );
 
   logger?.log({
     objectCenterFeatures: objectCenterFeatures.length,
-    objectCenterFeaturesInsideRegion: objectCenterFeaturesInsideRegion.length,
+    objectCenterFeaturesInsideTerritory:
+      objectCenterFeaturesInsideTerritory.length,
     outputFeatures: outputFeatures.length,
     cnsWithGeometries: cnsWithGeometrySet.size,
     unusedCnsWithGeometry,
-    unusedCnsWithGeometryInRegion,
+    unusedCnsWithGeometryInTerritory,
   });
 
   const result: OutputLayer = turf.featureCollection(

@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import fs from "fs-extra";
 
-import { getRegionConfig } from "../../region";
+import { getTerritoryConfig } from "../../territory";
 import { getHouseListFilePath } from "./helpersForPaths";
 import { HouseListFile } from "./types";
 
@@ -12,8 +12,8 @@ export const loopThroughHouseLists = async (
     houseListFilePath: string;
   }) => Promise<void>,
 ) => {
-  const regionConfig = await getRegionConfig();
-  const houseListsToFetch = regionConfig.sources?.mingkh?.houseLists ?? [];
+  const territoryConfig = await getTerritoryConfig();
+  const houseListsToFetch = territoryConfig.sources?.mingkh?.houseLists ?? [];
 
   for (const houseListConfig of houseListsToFetch) {
     process.stdout.write(

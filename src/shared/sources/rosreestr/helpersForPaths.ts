@@ -1,11 +1,11 @@
 import path from "path";
 
-import { getRegionDirPath } from "../../region";
+import { gettTerritoryDirPath } from "../../territory";
 import { Tile } from "../../tiles";
 import { RosreestrObjectType } from "./types";
 
 export const getRosreestrDirPath = () => {
-  return path.resolve(getRegionDirPath(), "sources", "rosreestr");
+  return path.resolve(gettTerritoryDirPath(), "sources", "rosreestr");
 };
 
 export const getObjectDirPath = (objectType: RosreestrObjectType) => {
