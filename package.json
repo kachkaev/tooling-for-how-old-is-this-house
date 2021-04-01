@@ -63,6 +63,7 @@
     "dotenv": "^8.2.0",
     "envalid": "^7.1.0",
     "eslint": "^7.22.0",
+    "eslint-plugin-unicorn": "^29.0.0",
     "execa": "^5.0.0",
     "fs-extra": "^9.1.0",
     "globby": "^11.0.3",

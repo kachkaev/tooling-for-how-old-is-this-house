@@ -1,4 +1,4 @@
-import turf from "@turf/turf";
+import * as turf from "@turf/turf";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import { load } from "js-yaml";

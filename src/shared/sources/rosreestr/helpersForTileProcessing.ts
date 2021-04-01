@@ -1,5 +1,5 @@
 import * as tilebelt from "@mapbox/tilebelt";
-import turf from "@turf/turf";
+import * as turf from "@turf/turf";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 

@@ -1,4 +1,4 @@
-import type turf from "@turf/turf";
+import type * as turf from "@turf/turf";
 
 import { Tile } from "../../tiles";
 
