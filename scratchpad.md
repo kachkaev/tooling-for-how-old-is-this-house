@@ -14,7 +14,7 @@ say "Finished ${INSTANCE}"
 Обработка карты из QGIS
 
 ```sh
-MAP_VERSION=$(date +"%Y-%m-%d-%H%M")
+MAP_VERSION=$(date -u +"%Y-%m-%d-%H%M")
 MAP_DIR="/Users/ak/Desktop/mapping party"
 FILE_NAME_PREFIX="Годы постройки зданий в Пензе (черновик)"
 echo ${MAP_VERSION}
@@ -32,7 +32,7 @@ yarn exe src/commands/2-sources/osm/tiles/markAsDirty.ts
 
 sleep 1800 # 30 mins
 
-OSM_TILE_VERSION=$(date +"%Y-%m-%d-%H%M")
+OSM_TILE_VERSION=$(date -u +"%Y-%m-%d-%H%M")
 echo ${OSM_TILE_VERSION}
 
 OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
@@ -42,7 +42,7 @@ OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/f
 Обновление зданий
 
 ```sh
-MAP_VERSION=$(date +"%Y-%m-%d-%H%M")
+MAP_VERSION=$(date -u +"%Y-%m-%d-%H%M")
 COMMIT_MESSAGE="Update fetched OSM buildings (${MAP_VERSION})"
 
 yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
@@ -128,3 +128,10 @@ xxxx: светлый оттенок (ранний)
 xxxx: средний оттенок
 xxxx: тёмный оттенок (поздний)
 ```
+
+## TODO
+
+- time utc
+- цветовая схема
+- manual-(objects|patches)
+- геокодер
