@@ -56,11 +56,25 @@ Although some of the data sources are country-specific, parts of the repo can st
     Файл должен быть в формате `jsons` (с `s` на конце) и разарахивирован.
     Рекомендованная папка: `/path/to/data/sources/mkrf` (название файла желательно не менять).
 
-1.  [Клонировать](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) этот репозиторий в папку `path/to/tooling`.
+1.  [Клонировать](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) этот репозиторий в папку `/path/to/tooling`.
 
 1.  Скопировать `.env.dist` в `.env` и заполнить новый файл.
 
-1.  Запустить команды:
+1.  Будучи в папке `/path/to/tooling`, установить сторонние библиотеки:
+
+    ```sh
+    yarn install
+    ```
+
+1.  Будучи в папке `/path/to/tooling`, проверить готовность к запуску команд:
+
+    ```sh
+    yarn exe src/commands/probe.ts
+    ```
+
+    Если возникает ошибка, повторить предыдущие шаги (видимо, что-то пропустили).
+
+1.  Будучи в папке `/path/to/tooling`, запустить команды:
 
     ```sh
     yarn exe src/commands/1-buildRegionExtent.ts
