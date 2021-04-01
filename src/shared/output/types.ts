@@ -1,9 +1,9 @@
 import * as turf from "@turf/turf";
 
 export interface OutputLayerProperties {
+  buildingType?: string;
   completionDates?: string;
   completionYear?: number;
-  buildingType?: string;
   id: string;
   knownAt: string;
   name?: string;
@@ -11,6 +11,7 @@ export interface OutputLayerProperties {
   photoAuthorName?: string;
   photoAuthorUrl?: string;
   photoUrl?: string;
+  sourcesToIgnore?: string; // Special field that is only applicable to the "manual" layer
   url?: string;
   wikipediaUrl?: string;
 }

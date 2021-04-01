@@ -90,7 +90,7 @@ const generateVegaSpec = (
 
   return {
     $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: (5 * 7 + 4) * 20,
+    width: (5 * 7 + 5) * 20,
     height: 30 * 20,
     padding: {
       top: 25,
@@ -152,7 +152,7 @@ const generateVegaSpec = (
             timeUnit: "utcyearmonthdatehoursminutesseconds",
             field: "4",
             scale: {
-              domain: ["2021-02-20T00:00:00Z", "2021-03-31T00:00:00Z"],
+              domain: ["2021-02-20T00:00:00Z", "2021-04-01T00:00:00Z"],
               clamp: true,
             },
             axis: {
