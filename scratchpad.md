@@ -49,7 +49,7 @@ yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
 yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
 yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
 
-cd ../data/regions/penza
+cd ../data/territories/penza
 git add sources/osm/fetched-buildings.geojson
 git commit -m ${COMMIT_MESSAGE}
 cd -
@@ -83,14 +83,14 @@ done
 # MAP_VERSION=
 COMMIT_MESSAGE="Update geocodes (${MAP_VERSION})"
 
-cd ../data/regions/penza
+cd ../data/territories/penza
 git add geocoding/*
 git commit -m ${COMMIT_MESSAGE}
 cd -
 ```
 
 ```sh
-cd ../data/regions/penza
+cd ../data/territories/penza
 git push
 cd -
 ```

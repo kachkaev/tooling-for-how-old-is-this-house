@@ -31,6 +31,10 @@
       "prettier --write"
     ]
   },
+  "resolutions": {
+    "@mapbox/geojson-rewind": "^0.5.0",
+    "xmldom": "^0.5.0"
+  },
   "devDependencies": {
     "@hkdobrev/run-if-changed": "^0.3.1",
     "@kachkaev/commands": "^0.1.1",
