@@ -1,6 +1,7 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import axios from "axios";
 import chalk from "chalk";
+import qs from "qs";
 
 import {
   serializeTime,
@@ -20,17 +21,14 @@ export const fetchHouseLists: Command = async ({ logger }) => {
       const response = (
         await axios.post<HouseListResponse>(
           "https://dom.mingkh.ru/api/houses",
-          {
+          qs.stringify({
             current: "1",
             rowCount: "-1",
             searchPhrase: "",
             ["region_url"]: regionUrl,
             ["city_url"]: cityUrl,
-          },
-          {
-            headers: { "content-type": "application/x-www-form-urlencoded" },
-            responseType: "json",
-          },
+          }),
+          { responseType: "json" },
         )
       ).data;
 
