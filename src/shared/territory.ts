@@ -50,7 +50,21 @@ export const getTerritoryExtentFilePath = (): string =>
   path.resolve(gettTerritoryDirPath(), `territory-extent.geojson`);
 
 export const getTerritoryExtent = async (): Promise<
-  turf.Feature<turf.Polygon | turf.MultiPolygon>
+  turf.Feature<turf.Polygon>
 > => {
-  return fs.readJson(getTerritoryExtentFilePath());
+  const filePath = getTerritoryExtentFilePath();
+  const territoryExtent = (await fs.readJson(filePath)) as turf.Feature;
+  if (territoryExtent?.type !== "Feature") {
+    throw new Error(
+      `Expected ${filePath} to contain a geojson Feature, got: ${territoryExtent?.type}`,
+    );
+  }
+
+  if (territoryExtent?.geometry?.type !== "Polygon") {
+    throw new Error(
+      `Expected ${filePath} to contain a geojson Feature with Polygon, got: ${territoryExtent?.geometry?.type}`,
+    );
+  }
+
+  return territoryExtent as turf.Feature<turf.Polygon>;
 };

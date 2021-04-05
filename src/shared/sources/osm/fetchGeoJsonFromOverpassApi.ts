@@ -27,11 +27,6 @@ export const fetchGeojsonFromOverpassApi = async ({
     if (!territoryExtent.geometry) {
       throw new Error("Unexpected empty geometry in territoryExtent");
     }
-    if (territoryExtent.geometry?.type === "MultiPolygon") {
-      throw new Error(
-        "Fetching OSM for multipolygons is not yet supported. Please amend the script.",
-      );
-    }
 
     const pointsInOuterRing = (territoryExtent.geometry as turf.Polygon)
       .coordinates[0];
