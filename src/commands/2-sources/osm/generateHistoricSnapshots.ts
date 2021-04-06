@@ -45,6 +45,7 @@ const optionalBuildingTypes = [
   "ruins",
   "service",
   "shed",
+  "storage_tank",
   "transformer_tower",
   "warehouse",
 ];
@@ -53,6 +54,19 @@ const optionalBuildingTypesSet = new Set([
   "abandoned", // special value (created from tag abandoned=*)
   ...optionalBuildingTypes,
 ]);
+
+const optionalBuildingTypesToDisplay = optionalBuildingTypes
+  .map((type) => {
+    if (type === "garage") {
+      return "garage(s)";
+    }
+    if (type === "garages") {
+      return null;
+    }
+
+    return type;
+  })
+  .filter((type) => type);
 
 const generateVegaSpec = (
   summaries: HistoricSnapshotSummaryForOsm[],
@@ -210,7 +224,7 @@ const generateVegaSpec = (
             },
             scale: {
               domain: ["адрес есть", "адрес необязателен", "адреса не хватает"],
-              range: ["#6be0a6", "#a4a4a4", "#c82677"],
+              range: ["#4d9221", "#a4a4a4", "#c82677"],
             },
           },
         },
@@ -231,7 +245,7 @@ const generateVegaSpec = (
             "необязательным у зданий",
             "с тегом abandoned или",
             "с тегом building =",
-            ...optionalBuildingTypes
+            ...optionalBuildingTypesToDisplay
               .sort()
               .map((v) => `\u2060 \u2060 \u2060 ${v}`),
           ],
