@@ -1,9 +1,9 @@
 import path from "path";
 
-import { gettTerritoryDirPath } from "./territory";
+import { getTerritoryDirPath } from "./territory";
 
 export const getSourcesDirPath = () => {
-  return path.resolve(gettTerritoryDirPath(), "sources");
+  return path.resolve(getTerritoryDirPath(), "sources");
 };
 
 export const getSourceDirPath = (source: string) => {

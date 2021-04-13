@@ -268,7 +268,7 @@ const generateVegaSpec = (
 };
 
 export const generateHistoricSnapshots: Command = async ({ logger }) => {
-  const gitRepoDirPath = gettTerritoryDirPath();
+  const gitRepoDirPath = getTerritoryDirPath();
   const fetchedOsmBuildingsRelativeFilePath = path.relative(
     gitRepoDirPath,
     getFetchedOsmBuildingsFilePath(),

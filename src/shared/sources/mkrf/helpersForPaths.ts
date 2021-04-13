@@ -2,7 +2,7 @@ import * as envalid from "envalid";
 import path from "path";
 
 import { cleanEnv } from "../../cleanEnv";
-import { gettTerritoryDirPath } from "../../territory";
+import { getTerritoryDirPath } from "../../territory";
 
 export const getMkrfJsonsDumpFilePath = (): string => {
   const env = cleanEnv({
@@ -13,7 +13,7 @@ export const getMkrfJsonsDumpFilePath = (): string => {
 };
 
 export const getMkrfDirPath = () => {
-  return path.resolve(gettTerritoryDirPath(), "sources", "mkrf");
+  return path.resolve(getTerritoryDirPath(), "sources", "mkrf");
 };
 
 export const getMkrfObjectDirPath = (): string => {

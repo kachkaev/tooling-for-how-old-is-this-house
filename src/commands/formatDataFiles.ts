@@ -4,7 +4,7 @@ import fs from "fs-extra";
 
 import { formatJson, getJsonFormattingStyle } from "../shared/helpersForJson";
 import { processFiles } from "../shared/processFiles";
-import { gettTerritoryDirPath } from "../shared/territory";
+import { getTerritoryDirPath } from "../shared/territory";
 
 export const formatDataFiles: Command = async ({ logger }) => {
   logger.log(chalk.bold("Formatting all data files"));
@@ -12,7 +12,7 @@ export const formatDataFiles: Command = async ({ logger }) => {
   await processFiles({
     logger,
     fileSearchPattern: "**/*.(json|geojson)",
-    fileSearchDirPath: gettTerritoryDirPath(),
+    fileSearchDirPath: getTerritoryDirPath(),
     showFilePath: true,
     statusReportFrequency: 500,
     processFile: async (filePath) => {

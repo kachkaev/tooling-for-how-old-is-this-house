@@ -1,11 +1,11 @@
 import path from "path";
 
-import { gettTerritoryDirPath } from "../territory";
+import { getTerritoryDirPath } from "../territory";
 
 export const getOutputLayerFileName = (): string => "output-layer.geojson";
 
 export const getOutputDirPath = (): string =>
-  path.resolve(gettTerritoryDirPath(), "output");
+  path.resolve(getTerritoryDirPath(), "output");
 
 export const getMixedOutputLayersFileName = (): string =>
   path.resolve(getOutputDirPath(), "mixed-output-layers.geojson");

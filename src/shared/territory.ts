@@ -6,7 +6,7 @@ import path from "path";
 
 import { cleanEnv } from "./cleanEnv";
 
-export const gettTerritoryDirPath = (): string => {
+export const getTerritoryDirPath = (): string => {
   const env = cleanEnv({
     TERRITORY_DATA_DIR: envalid.str({}),
   });
@@ -40,14 +40,14 @@ export interface TerritoryConfig {
 }
 
 export const getTerritoryConfigFilePath = (): string =>
-  path.resolve(gettTerritoryDirPath(), `territory-config.yml`);
+  path.resolve(getTerritoryDirPath(), `territory-config.yml`);
 
 export const getTerritoryConfig = async (): Promise<TerritoryConfig> => {
   return load(await fs.readFile(getTerritoryConfigFilePath(), "utf8")) as any;
 };
 
 export const getTerritoryExtentFilePath = (): string =>
-  path.resolve(gettTerritoryDirPath(), `territory-extent.geojson`);
+  path.resolve(getTerritoryDirPath(), `territory-extent.geojson`);
 
 export const getTerritoryExtent = async (): Promise<
   turf.Feature<turf.Polygon>
