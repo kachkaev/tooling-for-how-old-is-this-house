@@ -1,5 +1,6 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as tilebelt from "@mapbox/tilebelt";
+// @ts-ignore https://github.com/tmcw/togeojson/issues/46
 import * as tj from "@tmcw/togeojson";
 import * as turf from "@turf/turf";
 import axios from "axios";

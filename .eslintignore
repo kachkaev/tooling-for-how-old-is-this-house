@@ -7,10 +7,26 @@ LICENSE
 !*.tsx
 
 ## same as in .gitignore
-/node_modules/
+# dependencies
+node_modules
+.pnp
+.pnp.js
 
-/.env
+# next.js
+/.next/
+/.vercel/
+/out/
 
+# production
+/build
+
+# misc
 .~lock.*
 .DS_Store
+.env
 *.log
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

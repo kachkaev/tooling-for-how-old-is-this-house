@@ -10,7 +10,7 @@ export const customEnvalidReporter: typeof defaultReporter = (opts) => {
   const originalProcessExit = process.exit;
 
   let errorOutput = "\n";
-  console.error = (output) => {
+  console.error = (output: unknown) => {
     errorOutput += output;
   };
   process.exit = () => undefined as never;

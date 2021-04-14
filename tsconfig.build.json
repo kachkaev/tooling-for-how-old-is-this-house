@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "module": "commonjs",
+    "noEmit": false,
+    "outDir": "dist/"
+  },
+  "include": ["src/commands/**/*.ts", "src/lib/**/*.ts"],
+  "exclude": ["**/__fixtures__", "**/__mocks__", "**/*.test.ts"]
+}
