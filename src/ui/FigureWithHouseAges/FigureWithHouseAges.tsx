@@ -1,4 +1,5 @@
 import * as React from "react";
+import styled from "styled-components";
 
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/output";
 import {
@@ -8,6 +9,17 @@ import {
 } from "../../shared/sources/osm/types";
 import { TerritoryExtent } from "../../shared/territory";
 import { Figure } from "../shared/figure";
+import {
+  GeoMap,
+  GeoMapLayerWithRoads,
+  GeoMapLayerWithTerritoryExtent,
+  GeoMapLayerWithWaterObjects,
+} from "../shared/geoMaps";
+
+const StyledGeoMap = styled(GeoMap)`
+  width: 1000px;
+  height: 1000px;
+`;
 
 export interface FigureWithHouseAgesProps {
   buildingCollection: MixedPropertyVariantsFeatureCollection;
@@ -31,6 +43,23 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
       roads: {roadCollection.features.length}
       <br />
       water objects: {waterObjectCollection.features.length}
+      <StyledGeoMap padding={12} extentToFit={territoryExtent}>
+        {(layerProps) => {
+          return (
+            <>
+              <GeoMapLayerWithWaterObjects
+                {...layerProps}
+                data={waterObjectCollection}
+              />
+              <GeoMapLayerWithRoads {...layerProps} data={roadCollection} />
+              <GeoMapLayerWithTerritoryExtent
+                {...layerProps}
+                data={territoryExtent}
+              />
+            </>
+          );
+        }}
+      </StyledGeoMap>
     </Figure>
   );
 };

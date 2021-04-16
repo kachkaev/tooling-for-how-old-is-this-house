@@ -1,5 +1,6 @@
 import fs from "fs-extra";
 import { GetStaticProps, NextPage } from "next";
+import dynamic from "next/dynamic";
 import * as React from "react";
 
 import { getMixedPropertyVariantsFileName } from "../shared/output";
@@ -8,10 +9,12 @@ import {
   getFetchedOsmWaterObjectsFilePath,
 } from "../shared/sources/osm";
 import { getTerritoryExtent } from "../shared/territory";
-import {
-  FigureWithHouseAges,
-  FigureWithHouseAgesProps,
-} from "../ui/FigureWithHouseAges";
+import { FigureWithHouseAgesProps } from "../ui/FigureWithHouseAges";
+
+const FigureWithHouseAges = dynamic<FigureWithHouseAgesProps>(
+  import("../ui/FigureWithHouseAges").then((m) => m.FigureWithHouseAges),
+  { ssr: false },
+);
 
 type MainPageProps = FigureWithHouseAgesProps;
 

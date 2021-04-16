@@ -1,0 +1,110 @@
+import * as React from "react";
+
+import {
+  OsmFeatureCollection,
+  OsmWaterObjectGeometry,
+} from "../../../shared/sources/osm/types";
+import { GeoMapLayer } from "./GeoMapLayer";
+import { FitExtent } from "./types";
+
+export interface GeoMapLayerWithWaterObjectsProps {
+  width: number;
+  height: number;
+  data: OsmFeatureCollection<OsmWaterObjectGeometry>;
+  fitExtent: FitExtent;
+}
+
+const waterColor = "#1F2737";
+// const waterColor = "red";
+
+export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLayerWithWaterObjectsProps> = ({
+  width,
+  height,
+  fitExtent,
+  data,
+}) => {
+  const allAreaFeatures = React.useMemo(
+    () =>
+      data.features.filter(
+        (feature) =>
+          feature.geometry.type === "Polygon" ||
+          feature.geometry.type === "MultiPolygon",
+      ),
+    [data],
+  );
+
+  const wetlandAreaFeatures = React.useMemo(
+    () =>
+      allAreaFeatures.filter(
+        (feature) => feature.properties.natural === "wetland",
+      ),
+    [allAreaFeatures],
+  );
+
+  const normalAreaFeatures = React.useMemo(
+    () =>
+      allAreaFeatures.filter(
+        (feature) => feature.properties.natural !== "wetland",
+      ),
+    [allAreaFeatures],
+  );
+
+  const areaProps = React.useCallback<() => React.SVGProps<SVGPathElement>>(
+    () => ({
+      fill: waterColor,
+      strokeWidth: 1,
+      strokeLinejoin: "round",
+      strokeLinecap: "round",
+    }),
+    [],
+  );
+
+  const lineFeatures = React.useMemo(
+    () =>
+      data.features.filter(
+        (feature) =>
+          feature.geometry.type === "LineString" ||
+          feature.geometry.type === "MultiLineString",
+      ),
+    [data],
+  );
+
+  const lineProps = React.useCallback<() => React.SVGProps<SVGPathElement>>(
+    () => ({
+      fill: "none",
+      stroke: waterColor,
+      strokeWidth: 1,
+      strokeLinejoin: "round",
+      strokeLinecap: "round",
+    }),
+    [],
+  );
+
+  return (
+    <>
+      <GeoMapLayer
+        width={width}
+        height={height}
+        fitExtent={fitExtent}
+        featureProps={areaProps}
+        features={normalAreaFeatures}
+      />
+      <g opacity={0.5}>
+        <GeoMapLayer
+          width={width}
+          height={height}
+          fitExtent={fitExtent}
+          featureProps={areaProps}
+          features={wetlandAreaFeatures}
+        />
+      </g>
+      <GeoMapLayer
+        width={width}
+        height={height}
+        fitExtent={fitExtent}
+        featureProps={lineProps}
+        features={lineFeatures}
+      />
+    </>
+  );
+};

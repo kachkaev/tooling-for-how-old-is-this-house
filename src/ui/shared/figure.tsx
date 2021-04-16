@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   display: flex;
 
   color: rgb(242, 246, 249);
-  background: #0c0c0e;
+  background: #0b0c0f;
 `;
 
 const Content = styled.div`
