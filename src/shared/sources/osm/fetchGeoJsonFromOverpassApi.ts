@@ -6,33 +6,29 @@ import osmToGeojson from "osmtogeojson";
 
 import { filterFeaturesByGeometryType } from "../../helpersForGeometry";
 import { serializeTime } from "../../helpersForJson";
-import { getTerritoryExtent, TerritoryExtent } from "../../territory";
 
-const territoryExtentPlaceholder = "{{territory_extent}}";
+const extentPlaceholder = "{{extent}}";
 
 export const fetchGeojsonFromOverpassApi = async ({
   acceptedGeometryTypes,
   logger,
   query,
-  customTerritoryExtent,
+  extent,
 }: {
   acceptedGeometryTypes?: turf.GeometryTypes[];
   logger?: Console;
   query: string;
-  customTerritoryExtent?: TerritoryExtent;
+  extent: turf.Feature<turf.Polygon>;
 }): Promise<turf.FeatureCollection<turf.GeometryObject>> => {
   process.stdout.write(chalk.green("Preparing to make Overpass API query..."));
 
-  const territoryExtent = customTerritoryExtent ?? (await getTerritoryExtent());
-
   let processedQuery = query;
-  if (processedQuery.includes(territoryExtentPlaceholder)) {
-    if (!territoryExtent.geometry) {
+  if (processedQuery.includes(extentPlaceholder)) {
+    if (!extent.geometry) {
       throw new Error("Unexpected empty geometry in territoryExtent");
     }
 
-    const pointsInOuterRing = (territoryExtent.geometry as turf.Polygon)
-      .coordinates[0];
+    const pointsInOuterRing = (extent.geometry as turf.Polygon).coordinates[0];
 
     if (!pointsInOuterRing) {
       throw new Error("Unexpected undefined outer ring in the polygon");
@@ -43,7 +39,7 @@ export const fetchGeojsonFromOverpassApi = async ({
       .join(" ")}"`;
 
     processedQuery = processedQuery.replace(
-      new RegExp(territoryExtentPlaceholder, "g"),
+      new RegExp(extentPlaceholder, "g"),
       serializedPolygonForOverpassApi,
     );
   }

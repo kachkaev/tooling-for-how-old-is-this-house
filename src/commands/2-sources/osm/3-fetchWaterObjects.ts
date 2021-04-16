@@ -1,56 +1,31 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
-import chalk from "chalk";
-import dedent from "dedent";
+import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { createBboxFeature } from "../../../shared/helpersForGeometry";
-import { writeFormattedJson } from "../../../shared/helpersForJson";
-import {
-  fetchGeojsonFromOverpassApi,
-  getFetchedOsmWaterObjectsFilePath,
-} from "../../../shared/sources/osm";
-import { getTerritoryExtent } from "../../../shared/territory";
+import { getFetchedOsmWaterObjectsFilePath } from "../../../shared/sources/osm";
+import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 
-const territoryExtentBboxBufferInMeters = 5000;
+export const fetchWaterObjects = generateFetchOsmObjects({
+  acceptedGeometryTypes: [
+    "LineString",
+    "MultiLineString",
+    "Polygon",
+    "MultiPolygon",
+  ],
+  filePath: getFetchedOsmWaterObjectsFilePath(),
+  selectors: [
+    'way["waterway"]',
+    'relation["waterway"]',
 
-export const fetchWaterObjects: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/osm: fetch water objects"));
+    'way["natural"="water"]',
+    'relation["natural"="water"]',
 
-  const geojsonData = await fetchGeojsonFromOverpassApi({
-    logger,
-    acceptedGeometryTypes: [
-      "LineString",
-      "MultiLineString",
-      "Polygon",
-      "MultiPolygon",
-    ],
-    query: dedent`
-        [out:json][timeout:60];
-        (
-          way["waterway"]({{territory_extent}});
-          relation["waterway"]({{territory_extent}});
-          way["natural"="water"]({{territory_extent}});
-          relation["natural"="water"]({{territory_extent}});
-          way["landuse"="reservoir"]({{territory_extent}});
-          relation["landuse"="reservoir"]({{territory_extent}});
-          way["natural"="wetland"]({{territory_extent}});
-          relation["natural"="wetland"]({{territory_extent}});
-        );
-        out body;
-        >;
-        out skel qt;
-      `,
-    customTerritoryExtent: createBboxFeature(
-      await getTerritoryExtent(),
-      territoryExtentBboxBufferInMeters,
-    ),
-  });
+    'way["landuse"="reservoir"]',
+    'relation["landuse"="reservoir"]',
 
-  process.stdout.write(chalk.green("Saving..."));
-
-  const filePath = getFetchedOsmWaterObjectsFilePath();
-  await writeFormattedJson(filePath, geojsonData);
-
-  process.stdout.write(` Done: ${chalk.magenta(filePath)}\n`);
-};
+    'way["natural"="wetland"]',
+    'relation["natural"="wetland"]',
+  ],
+  territoryExtentBboxBufferInMeters: 5000,
+  title: "water objects",
+});
 
 autoStartCommandIfNeeded(fetchWaterObjects, __filename);
