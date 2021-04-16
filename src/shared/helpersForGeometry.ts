@@ -19,6 +19,9 @@ export const deriveBboxCenter = (bbox: turf.BBox): Point2dCoordinates => {
   return [bbox[0] + (bbox[2] - bbox[0]) / 2, bbox[1] + (bbox[3] - bbox[1]) / 2];
 };
 
+export const createBboxFeature = (feature: turf.Feature, bufferInMeters = 0) =>
+  turf.bboxPolygon(addBufferToBbox(turf.bbox(feature), bufferInMeters));
+
 /**
  * Note that the inclusion is:
  *

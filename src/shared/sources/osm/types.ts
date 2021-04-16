@@ -15,3 +15,11 @@ export type OsmFeatureCollection<
 > = turf.FeatureCollection<G, OsmFeatureProperties> & {
   properties: { fetchedAt: string };
 };
+
+export type OsmWaterObjectGeometry =
+  | turf.LineString
+  | turf.MultiLineString
+  | turf.MultiPolygon
+  | turf.Polygon;
+
+export type OsmRoadGeometry = turf.LineString;

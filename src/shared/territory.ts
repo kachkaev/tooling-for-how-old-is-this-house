@@ -6,6 +6,8 @@ import path from "path";
 
 import { cleanEnv } from "./cleanEnv";
 
+export type TerritoryExtent = turf.Feature<turf.Polygon>;
+
 export const getTerritoryDirPath = (): string => {
   const env = cleanEnv({
     TERRITORY_DATA_DIR: envalid.str({}),
@@ -49,9 +51,7 @@ export const getTerritoryConfig = async (): Promise<TerritoryConfig> => {
 export const getTerritoryExtentFilePath = (): string =>
   path.resolve(getTerritoryDirPath(), `territory-extent.geojson`);
 
-export const getTerritoryExtent = async (): Promise<
-  turf.Feature<turf.Polygon>
-> => {
+export const getTerritoryExtent = async (): Promise<TerritoryExtent> => {
   const filePath = getTerritoryExtentFilePath();
   const territoryExtent = (await fs.readJson(filePath)) as turf.Feature;
   if (territoryExtent?.type !== "Feature") {
@@ -66,5 +66,5 @@ export const getTerritoryExtent = async (): Promise<
     );
   }
 
-  return territoryExtent as turf.Feature<turf.Polygon>;
+  return territoryExtent as TerritoryExtent;
 };

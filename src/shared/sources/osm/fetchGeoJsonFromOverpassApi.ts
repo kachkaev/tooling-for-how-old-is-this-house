@@ -6,7 +6,7 @@ import osmToGeojson from "osmtogeojson";
 
 import { filterFeaturesByGeometryType } from "../../helpersForGeometry";
 import { serializeTime } from "../../helpersForJson";
-import { getTerritoryExtent } from "../../territory";
+import { getTerritoryExtent, TerritoryExtent } from "../../territory";
 
 const territoryExtentPlaceholder = "{{territory_extent}}";
 
@@ -14,16 +14,19 @@ export const fetchGeojsonFromOverpassApi = async ({
   acceptedGeometryTypes,
   logger,
   query,
+  customTerritoryExtent,
 }: {
   acceptedGeometryTypes?: turf.GeometryTypes[];
   logger?: Console;
   query: string;
+  customTerritoryExtent?: TerritoryExtent;
 }): Promise<turf.FeatureCollection<turf.GeometryObject>> => {
   process.stdout.write(chalk.green("Preparing to make Overpass API query..."));
 
+  const territoryExtent = customTerritoryExtent ?? (await getTerritoryExtent());
+
   let processedQuery = query;
   if (processedQuery.includes(territoryExtentPlaceholder)) {
-    const territoryExtent = await getTerritoryExtent();
     if (!territoryExtent.geometry) {
       throw new Error("Unexpected empty geometry in territoryExtent");
     }

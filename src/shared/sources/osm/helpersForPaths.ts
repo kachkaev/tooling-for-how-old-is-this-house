@@ -15,6 +15,14 @@ export const getFetchedOsmBoundariesFilePath = (): string => {
   return path.resolve(getOsmDirPath(), "fetched-boundaries.geojson");
 };
 
+export const getFetchedOsmWaterObjectsFilePath = (): string => {
+  return path.resolve(getOsmDirPath(), "fetched-water-objects.geojson");
+};
+
+export const getFetchedOsmRoadsFilePath = (): string => {
+  return path.resolve(getOsmDirPath(), "fetched-roads.geojson");
+};
+
 export const getOsmTileImageFilePath = (
   version: string,
   tile: Tile,
