@@ -1,11 +1,11 @@
-# Tooling for adding new cities to [how-old-is-this.house](https://how-old-is-this.house/saint-p/en)
+# Tooling for adding new cities to [how-old-is-this.house](https://how-old-is-this.house/saint-p/en?city=spb-en)
 
 🚧🚧🚧 **WORK IN PROGRESS** 🚧🚧🚧
 
 This repository contains commands for assembling a dataset with building ages for a specified area.
 The commands collect data from various publicly available sources, process it and combine together into a single map layer.
 
-Because [how-old-is-this.house](https://how-old-is-this.house/saint-p/en) focuses on cities in Russia, the instructions below are in Russian.
+Because [how-old-is-this.house](https://how-old-is-this.house/saint-p/en?city=spb-en) focuses on cities in Russia, the instructions below are in Russian.
 Although some of the data sources are country-specific, parts of the repo can still be recycled for a global re-use.
 
 👀 [English version on Google Translate](https://translate.google.com/translate?sl=ru&tl=en&u=https://github.com/kachkaev/tooling-for-how-old-is-this-house/blob/main/README.md)
