@@ -18,13 +18,13 @@ const Wrapper = styled.div`
 `;
 
 const barLabelOffset = 5 * pointsInMm;
-const barWidth = 3 * pointsInMm;
+const barWidth = 1 * pointsInMm;
 const barMinHeight = 1 * pointsInMm;
 
 const barTick = 200;
 const barTickGap = 0.5 * pointsInMm;
 
-const yAxisThickness = 1 * pointsInMm;
+const yAxisThickness = 0.5 * pointsInMm;
 const yAxisOffsetLeft = 7 * pointsInMm;
 const yAxisOpacity = 0.3;
 
@@ -87,7 +87,6 @@ const Bar: React.VoidFunctionComponent<{
       {showLabel ? (
         <g x={0} transform={`translate(0,${yScale(0) + barLabelOffset})`}>
           <text
-            fontSize="5mm"
             fill={color}
             transform="rotate(-90,0,0)"
             textAnchor="end"
@@ -113,10 +112,10 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
 
-  const paddingLeft = 5 * pointsInMm;
-  const paddingRight = 30 * pointsInMm;
-  const paddingTop = 2 * pointsInMm;
-  const paddingBottom = 30 * pointsInMm;
+  const paddingLeft = 3 * pointsInMm;
+  const paddingRight = 22 * pointsInMm;
+  const paddingTop = 1 * pointsInMm;
+  const paddingBottom = 28 * pointsInMm;
 
   const minYear = 1850;
   const maxYear = 2020;
@@ -201,7 +200,6 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
                   />
                   <text
                     fill="#fff"
-                    fontSize="5mm"
                     y={yScale(value) + barTickGap}
                     width={yAxisThickness}
                     textAnchor="end"

@@ -27,6 +27,8 @@ const Figure = styled.div`
   width: 700mm;
   height: 600mm;
   position: relative;
+  font-size: 5mm;
+  line-height: 1.4em;
 `;
 
 const StyledGeoMap = styled(GeoMap)`
@@ -60,13 +62,6 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
   return (
     <Figure>
       <GlobalStyle />
-      buildings: {buildingCollection.features.length}
-      <br />
-      territory extent: {territoryExtent.geometry.coordinates.length}
-      <br />
-      roads: {roadCollection.features.length}
-      <br />
-      water objects: {waterObjectCollection.features.length}
       <StyledGeoMap padding={50 * pointsInMm} extentToFit={territoryExtent}>
         {(layerProps) => {
           return (
