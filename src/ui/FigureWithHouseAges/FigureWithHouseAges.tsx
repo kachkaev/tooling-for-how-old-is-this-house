@@ -16,14 +16,13 @@ import {
   GeoMapLayerWithWaterObjects,
 } from "../shared/geoMaps";
 import { GlobalStyle } from "../shared/GlobalStyle";
-import { pointsInMm } from "../shared/printing";
 import { AgeHistogram } from "./AgeHistogram";
 
-const mapPadding = {
-  top: 20 * pointsInMm,
-  right: 20 * pointsInMm,
-  bottom: 120 * pointsInMm,
-  left: 20 * pointsInMm,
+const mapPaddingInMm = {
+  top: 20,
+  right: 20,
+  bottom: 120,
+  left: 20,
 };
 
 const Figure = styled.div`
@@ -32,7 +31,7 @@ const Figure = styled.div`
   color: rgb(242, 246, 249);
   background: #0e0f12;
   width: 700mm;
-  height: 600mm;
+  height: 700mm;
   position: relative;
   font-size: 5mm;
   line-height: 1.4em;
@@ -48,8 +47,8 @@ const StyledGeoMap = styled(GeoMap)`
 
 const StyledAgeHistogram = styled(AgeHistogram)`
   position: absolute;
-  left: 25mm;
-  right: 25mm;
+  left: ${mapPaddingInMm.left}mm;
+  right: ${mapPaddingInMm.right}mm;
   bottom: 20mm;
 `;
 
@@ -69,7 +68,7 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
   return (
     <Figure>
       <GlobalStyle />
-      <StyledGeoMap padding={mapPadding} extentToFit={territoryExtent}>
+      <StyledGeoMap paddingInMm={mapPaddingInMm} extentToFit={territoryExtent}>
         {(layerProps) => {
           return (
             <>

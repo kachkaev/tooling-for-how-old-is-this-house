@@ -3,6 +3,7 @@ import * as React from "react";
 import { useMeasure } from "react-use";
 import styled from "styled-components";
 
+import { pointsInMm } from "../printing";
 import { FitExtent } from "./types";
 
 const Wrapper = styled.div`
@@ -38,7 +39,7 @@ const normalizePadding = (rawPadding: number | Padding): Padding => {
 
 export interface GeoMapProps extends React.HTMLAttributes<HTMLDivElement> {
   extentToFit: turf.Feature<turf.Polygon>;
-  padding?: number | Padding;
+  paddingInMm?: number | Padding;
   children: (payload: {
     width: number;
     height: number;
@@ -48,18 +49,21 @@ export interface GeoMapProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const GeoMap: React.VoidFunctionComponent<GeoMapProps> = ({
   extentToFit,
-  padding: rawPadding = 0,
+  paddingInMm: rawPaddingInMm = 0,
   children,
   ...rest
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
 
-  const padding = normalizePadding(rawPadding);
+  const paddingInMm = normalizePadding(rawPaddingInMm);
 
   const fitExtent: FitExtent = [
     [
-      [padding.left, padding.top],
-      [width - padding.right, height - padding.bottom],
+      [paddingInMm.left * pointsInMm, paddingInMm.top * pointsInMm],
+      [
+        width - paddingInMm.right * pointsInMm,
+        height - paddingInMm.bottom * pointsInMm,
+      ],
     ],
     turf.bboxPolygon(turf.bbox(extentToFit)).geometry,
   ];
