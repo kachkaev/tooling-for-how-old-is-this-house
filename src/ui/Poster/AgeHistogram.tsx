@@ -25,7 +25,7 @@ const barTick = 100;
 const barTickLabelFrequency = 2;
 const barTickGap = 0.5 * pointsInMm;
 
-const yAxisThickness = 0.5 * pointsInMm;
+const yAxisThickness = 0.3 * pointsInMm;
 const yAxisOffsetLeft = 10 * pointsInMm;
 const yAxisOpacity = 0.3;
 
@@ -56,7 +56,9 @@ const Bar: React.VoidFunctionComponent<{
   buildings: MixedPropertyVariantsFeature[];
   labelPrefix?: string;
 }> = ({ year, showLabel, xScale, yScale, buildings, labelPrefix }) => {
-  const color = mapBuildingCompletionYearToColor(year);
+  const color = mapBuildingCompletionYearToColor(
+    buildings.length > 0 ? year : undefined,
+  );
 
   const total = buildings.length;
   const tickifiedValues = tickify(total, barTick);
@@ -87,9 +89,8 @@ const Bar: React.VoidFunctionComponent<{
             width={barWidth}
             y={yScale(prevTickifiedValue) - height}
             height={height}
-            opacity={buildings.length === 0 ? 0.2 : 1}
             fill={color}
-            rx=".3mm"
+            rx=".5mm"
           />
         );
       })}

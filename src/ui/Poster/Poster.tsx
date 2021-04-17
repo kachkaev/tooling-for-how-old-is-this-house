@@ -50,30 +50,38 @@ const StyledAgeHistogram = styled(AgeHistogram)`
   position: absolute;
   left: ${mapPaddingInMm.left}mm;
   right: ${mapPaddingInMm.right}mm;
-  bottom: 20mm;
+  bottom: 22mm;
 `;
 
-const DraftNotice = styled.div`
+const Copyright = styled.div`
   position: absolute;
-  right: ${mapPaddingInMm.right + 10}mm;
-  top: ${mapPaddingInMm.top - 10}mm;
-  font-size: 75mm;
+  left: ${mapPaddingInMm.left + 1}mm;
+  bottom: 12mm;
   line-height: 1.1em;
-  text-align: right;
-  color: #85868a;
+  text-align: left;
   opacity: 0.3;
 `;
 
-const DraftNoticeDate = styled.span`
-  font-size: 60mm;
+const DraftNotice = styled.div`
+  right: 60mm;
+  top: 100mm;
+  position: absolute;
+  font-size: 40mm;
+  line-height: 1.1em;
+  text-align: right;
+  color: #f03939;
+  opacity: 0.15;
+`;
+
+const DraftNoticeHeader = styled.div`
+  font-size: 1.25em;
 `;
 
 const DraftNotice2 = styled(DraftNotice)`
   right: auto;
   top: auto;
   left: ${mapPaddingInMm.left}mm;
-  bottom: 70mm;
-  font-size: 60mm;
+  bottom: 100mm;
   text-align: left;
 `;
 
@@ -116,17 +124,19 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
       </StyledGeoMap>
       <StyledAgeHistogram buildingCollection={buildingCollection} />
       <DraftNotice>
-        черновик
-        <br />
-        <DraftNoticeDate>
-          {DateTime.now().toFormat("yyyy-MM-dd")}
-        </DraftNoticeDate>
+        <DraftNoticeHeader>черновик</DraftNoticeHeader>
+        {DateTime.now().toFormat("yyyy-MM-dd")}
       </DraftNotice>
       <DraftNotice2>
         не для
         <br />
         распространения
       </DraftNotice2>
+      <Copyright>
+        данные: © участники OpenStreetMap, Росреестр, МинЖКХ, Министерство
+        культуры РФ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; визуализация: Александр
+        Качкаев (kachkaev.ru)
+      </Copyright>
     </Figure>
   );
 };

@@ -1,3 +1,4 @@
+import * as turf from "@turf/turf";
 import * as React from "react";
 
 import { TerritoryExtent } from "../../../shared/territory";
@@ -22,20 +23,23 @@ export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapL
     () => ({
       stroke: "#fff",
       fill: "none",
-      strokeWidth: 1 * pointsInMm,
-      strokeLinejoin: "round",
-      strokeLinecap: "round",
+      strokeWidth: 4 * pointsInMm,
+      strokeLinejoin: "bevel",
+      strokeLinecap: "square",
     }),
     [],
   );
 
-  const dataToDraw: TerritoryExtent = {
-    ...data,
-    geometry: {
-      ...data.geometry,
-      coordinates: [[...data.geometry.coordinates[0]].reverse()],
+  const dataToDraw: TerritoryExtent = turf.buffer(
+    {
+      ...data,
+      geometry: {
+        ...data.geometry,
+        coordinates: [[...data.geometry.coordinates[0]].reverse()],
+      },
     },
-  };
+    0.04,
+  );
 
   return (
     <GeoMapLayer
@@ -43,7 +47,7 @@ export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapL
       height={height}
       fitExtent={fitExtent}
       featureProps={featureProps}
-      opacity={0.1}
+      opacity={0.08}
       features={[dataToDraw]}
     />
   );
