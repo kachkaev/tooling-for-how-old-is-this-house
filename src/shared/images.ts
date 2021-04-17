@@ -6,13 +6,11 @@ import puppeteer, { Browser } from "puppeteer";
 
 import { getOutputDirPath } from "./output";
 
-export const getLocale = (): string => process.env.LOCALE ?? "ru";
-
 export const getImageDirPath = (): string =>
   path.resolve(getOutputDirPath(), "images");
 
-export const generatePageUrl = (locale: string, pathname: string): string =>
-  `http://localhost:3000/${locale}/${pathname}`;
+export const generatePageUrl = (pathname: string): string =>
+  `http://localhost:3000/${pathname}`;
 
 export const openBrowser = async (): Promise<Browser> => {
   return await puppeteer.launch();
@@ -22,7 +20,6 @@ export const ensureRasterScreenshot = async ({
   browser,
   deviceScaleFactor,
   imagePath,
-  locale,
   logger,
   pagePath,
   quality,
@@ -30,7 +27,6 @@ export const ensureRasterScreenshot = async ({
   browser: Browser;
   deviceScaleFactor: number;
   imagePath: string;
-  locale: string;
   logger: Console;
   pagePath: string;
   quality?: number;
@@ -41,7 +37,7 @@ export const ensureRasterScreenshot = async ({
     return;
   }
   const page = await browser.newPage();
-  await page.goto(generatePageUrl(locale, pagePath));
+  await page.goto(generatePageUrl(pagePath));
   await page.setViewport({
     width: 100,
     height: 100,
@@ -69,8 +65,6 @@ export const makeImage = async ({
   logger: Console;
   pagePath: string;
 }) => {
-  const locale = getLocale();
-
   const imageDirPath = getImageDirPath();
 
   await fs.ensureDir(imageDirPath);
@@ -81,17 +75,13 @@ export const makeImage = async ({
 
   const imagePath = path.resolve(
     imageDirPath,
-    `${pagePath.replace(
-      /(\/|\\)/g,
-      "~",
-    )}.${resultVersion}.${locale}.${extension}`,
+    `${pagePath.replace(/(\/|\\)/g, "~")}.${resultVersion}.${extension}`,
   );
 
   await ensureRasterScreenshot({
     browser,
     deviceScaleFactor,
     imagePath,
-    locale,
     pagePath,
     logger,
     quality: extension === "jpg" ? 85 : undefined,
