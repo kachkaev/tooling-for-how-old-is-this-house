@@ -16,7 +16,9 @@ export interface GeoMapLayerWithWaterObjectsProps {
 }
 
 // const waterColor = "#1F2737";
-const waterColor = "#131921";
+const waterColor = "#181f2d";
+// const waterColor = "#131921";
+// const waterColor = "#203339";
 
 export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLayerWithWaterObjectsProps> = ({
   width,

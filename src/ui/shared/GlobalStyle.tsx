@@ -5,7 +5,7 @@ const base = css`
   body {
     color: #24292e;
     font-size: 12px;
-    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-family: "PT Sans Narrow", sans-serif;
     margin: 0;
     line-height: 1.4em;
 

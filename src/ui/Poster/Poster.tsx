@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import * as React from "react";
 import styled from "styled-components";
 
@@ -52,14 +53,38 @@ const StyledAgeHistogram = styled(AgeHistogram)`
   bottom: 20mm;
 `;
 
-export interface FigureWithHouseAgesProps {
+const DraftNotice = styled.div`
+  position: absolute;
+  right: ${mapPaddingInMm.right + 10}mm;
+  top: ${mapPaddingInMm.top - 10}mm;
+  font-size: 75mm;
+  line-height: 1.1em;
+  text-align: right;
+  color: #85868a;
+  opacity: 0.3;
+`;
+
+const DraftNoticeDate = styled.span`
+  font-size: 60mm;
+`;
+
+const DraftNotice2 = styled(DraftNotice)`
+  right: auto;
+  top: auto;
+  left: ${mapPaddingInMm.left}mm;
+  bottom: 70mm;
+  font-size: 60mm;
+  text-align: left;
+`;
+
+export interface PosterProps {
   buildingCollection: MixedPropertyVariantsFeatureCollection;
   roadCollection: OsmFeatureCollection<OsmRoadGeometry>;
   territoryExtent: TerritoryExtent;
   waterObjectCollection: OsmFeatureCollection<OsmWaterObjectGeometry>;
 }
 
-export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAgesProps> = ({
+export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   buildingCollection,
   roadCollection,
   territoryExtent,
@@ -90,6 +115,18 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
         }}
       </StyledGeoMap>
       <StyledAgeHistogram buildingCollection={buildingCollection} />
+      <DraftNotice>
+        черновик
+        <br />
+        <DraftNoticeDate>
+          {DateTime.now().toFormat("yyyy-MM-dd")}
+        </DraftNoticeDate>
+      </DraftNotice>
+      <DraftNotice2>
+        не для
+        <br />
+        распространения
+      </DraftNotice2>
     </Figure>
   );
 };

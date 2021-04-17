@@ -9,20 +9,20 @@ import {
   getFetchedOsmWaterObjectsFilePath,
 } from "../shared/sources/osm";
 import { getTerritoryExtent } from "../shared/territory";
-import { FigureWithHouseAgesProps } from "../ui/FigureWithHouseAges";
+import { PosterProps } from "../ui/Poster";
 
-const FigureWithHouseAges = dynamic<FigureWithHouseAgesProps>(
-  import("../ui/FigureWithHouseAges").then((m) => m.FigureWithHouseAges),
+const Poster = dynamic<PosterProps>(
+  import("../ui/Poster").then((m) => m.Poster),
   { ssr: false },
 );
 
-type MainPageProps = FigureWithHouseAgesProps;
+type PosterPageProps = PosterProps;
 
-const MainPage: NextPage<MainPageProps> = (props) => {
-  return <FigureWithHouseAges {...props} />;
+const PosterPage: NextPage<PosterPageProps> = (props) => {
+  return <Poster {...props} />;
 };
 
-export const getStaticProps: GetStaticProps<MainPageProps> = async () => {
+export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
   return {
     props: {
       buildingCollection: await fs.readJson(getMixedPropertyVariantsFileName()),
@@ -35,4 +35,4 @@ export const getStaticProps: GetStaticProps<MainPageProps> = async () => {
   };
 };
 
-export default MainPage;
+export default PosterPage;
