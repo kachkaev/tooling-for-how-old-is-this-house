@@ -16,9 +16,29 @@ const StyledSvg = styled.svg`
   overflow: hidden;
 `;
 
+interface Padding {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+}
+
+const normalizePadding = (rawPadding: number | Padding): Padding => {
+  if (typeof rawPadding === "number") {
+    return {
+      left: rawPadding,
+      right: rawPadding,
+      top: rawPadding,
+      bottom: rawPadding,
+    };
+  }
+
+  return rawPadding;
+};
+
 export interface GeoMapProps extends React.HTMLAttributes<HTMLDivElement> {
   extentToFit: turf.Feature<turf.Polygon>;
-  padding?: number;
+  padding?: number | Padding;
   children: (payload: {
     width: number;
     height: number;
@@ -28,19 +48,18 @@ export interface GeoMapProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const GeoMap: React.VoidFunctionComponent<GeoMapProps> = ({
   extentToFit,
-  padding = 0,
+  padding: rawPadding = 0,
   children,
   ...rest
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
 
-  const mapPaddingX = padding;
-  const mapPaddingY = padding;
+  const padding = normalizePadding(rawPadding);
 
   const fitExtent: FitExtent = [
     [
-      [mapPaddingX, mapPaddingY],
-      [width - mapPaddingX, height - mapPaddingY],
+      [padding.left, padding.top],
+      [width - padding.right, height - padding.bottom],
     ],
     turf.bboxPolygon(turf.bbox(extentToFit)).geometry,
   ];

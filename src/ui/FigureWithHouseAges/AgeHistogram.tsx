@@ -21,12 +21,21 @@ const barLabelOffset = 5 * pointsInMm;
 const barWidth = 1 * pointsInMm;
 const barMinHeight = 1 * pointsInMm;
 
-const barTick = 200;
+const barTick = 100;
+const barTickLabelFrequency = 2;
 const barTickGap = 0.5 * pointsInMm;
 
 const yAxisThickness = 0.5 * pointsInMm;
-const yAxisOffsetLeft = 7 * pointsInMm;
+const yAxisOffsetLeft = 10 * pointsInMm;
 const yAxisOpacity = 0.3;
+
+const paddingLeft = 3 * pointsInMm;
+const paddingRight = 25 * pointsInMm;
+const paddingTop = 1 * pointsInMm;
+const paddingBottom = 28 * pointsInMm;
+
+const minYear = 1850;
+const maxYear = 2020;
 
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
@@ -112,14 +121,6 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
 
-  const paddingLeft = 3 * pointsInMm;
-  const paddingRight = 22 * pointsInMm;
-  const paddingTop = 1 * pointsInMm;
-  const paddingBottom = 28 * pointsInMm;
-
-  const minYear = 1850;
-  const maxYear = 2020;
-
   const buildingsByYear: Record<
     string,
     MixedPropertyVariantsFeature[] | undefined
@@ -198,19 +199,21 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
                     }
                     rx=".3mm"
                   />
-                  <text
-                    fill="#fff"
-                    y={yScale(value) + barTickGap}
-                    width={yAxisThickness}
-                    textAnchor="end"
-                    alignmentBaseline="text-before-edge"
-                    transform={`translate(${14 * pointsInMm},${
-                      -1.5 * pointsInMm
-                    })`}
-                    rx=".3mm"
-                  >
-                    {value}
-                  </text>
+                  {(value / barTickLabelFrequency) % barTick ? null : (
+                    <text
+                      fill="#fff"
+                      y={yScale(value) + barTickGap}
+                      width={yAxisThickness}
+                      textAnchor="end"
+                      alignmentBaseline="text-before-edge"
+                      transform={`translate(${14 * pointsInMm},${
+                        -1.5 * pointsInMm
+                      })`}
+                      rx=".3mm"
+                    >
+                      {value}
+                    </text>
+                  )}
                 </g>
               );
             })}

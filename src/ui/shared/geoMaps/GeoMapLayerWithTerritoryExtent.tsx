@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { TerritoryExtent } from "../../../shared/territory";
+import { pointsInMm } from "../printing";
 import { GeoMapLayer } from "./GeoMapLayer";
 import { FitExtent } from "./types";
 
@@ -19,14 +20,22 @@ export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapL
 }) => {
   const featureProps = React.useCallback<() => React.SVGProps<SVGPathElement>>(
     () => ({
-      fill: "none",
       stroke: "#fff",
-      strokeWidth: 2,
+      fill: "none",
+      strokeWidth: 1 * pointsInMm,
       strokeLinejoin: "round",
       strokeLinecap: "round",
     }),
     [],
   );
+
+  const dataToDraw: TerritoryExtent = {
+    ...data,
+    geometry: {
+      ...data.geometry,
+      coordinates: [[...data.geometry.coordinates[0]].reverse()],
+    },
+  };
 
   return (
     <GeoMapLayer
@@ -34,8 +43,8 @@ export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapL
       height={height}
       fitExtent={fitExtent}
       featureProps={featureProps}
-      opacity={0.25}
-      features={[data]}
+      opacity={0.1}
+      features={[dataToDraw]}
     />
   );
 };

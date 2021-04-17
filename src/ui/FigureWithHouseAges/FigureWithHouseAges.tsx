@@ -19,6 +19,13 @@ import { GlobalStyle } from "../shared/GlobalStyle";
 import { pointsInMm } from "../shared/printing";
 import { AgeHistogram } from "./AgeHistogram";
 
+const mapPadding = {
+  top: 20 * pointsInMm,
+  right: 20 * pointsInMm,
+  bottom: 120 * pointsInMm,
+  left: 20 * pointsInMm,
+};
+
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
   overflow: hidden;
@@ -62,7 +69,7 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
   return (
     <Figure>
       <GlobalStyle />
-      <StyledGeoMap padding={50 * pointsInMm} extentToFit={territoryExtent}>
+      <StyledGeoMap padding={mapPadding} extentToFit={territoryExtent}>
         {(layerProps) => {
           return (
             <>
