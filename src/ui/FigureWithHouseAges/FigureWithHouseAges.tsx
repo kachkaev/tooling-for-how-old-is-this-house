@@ -16,6 +16,8 @@ import {
   GeoMapLayerWithWaterObjects,
 } from "../shared/geoMaps";
 import { GlobalStyle } from "../shared/GlobalStyle";
+import { pointsInMm } from "../shared/printing";
+import { AgeHistogram } from "./AgeHistogram";
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
@@ -35,14 +37,19 @@ const StyledGeoMap = styled(GeoMap)`
   top: 0;
 `;
 
+const StyledAgeHistogram = styled(AgeHistogram)`
+  position: absolute;
+  left: 25mm;
+  right: 25mm;
+  bottom: 20mm;
+`;
+
 export interface FigureWithHouseAgesProps {
   buildingCollection: MixedPropertyVariantsFeatureCollection;
   roadCollection: OsmFeatureCollection<OsmRoadGeometry>;
   territoryExtent: TerritoryExtent;
   waterObjectCollection: OsmFeatureCollection<OsmWaterObjectGeometry>;
 }
-
-const pointsInMm = 2.83465;
 
 export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAgesProps> = ({
   buildingCollection,
@@ -81,6 +88,7 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
           );
         }}
       </StyledGeoMap>
+      <StyledAgeHistogram buildingCollection={buildingCollection} />
     </Figure>
   );
 };

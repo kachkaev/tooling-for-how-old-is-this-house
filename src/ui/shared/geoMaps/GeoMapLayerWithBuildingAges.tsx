@@ -4,7 +4,7 @@ import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
 } from "../../../shared/output";
-import { mapBuildingAgeToColor } from "../helpersForYears";
+import { mapBuildingCompletionYearToColor } from "../helpersForYears";
 import { GeoMapLayer } from "./GeoMapLayer";
 import { FitExtent } from "./types";
 
@@ -28,7 +28,7 @@ export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLaye
     (feature: MixedPropertyVariantsFeature) => React.SVGProps<SVGPathElement>
   >(
     (feature) => ({
-      fill: mapBuildingAgeToColor(feature),
+      fill: mapBuildingCompletionYearToColor(feature.properties.completionYear),
       stroke: "#0e0f12",
       strokeOpacity: 0.3,
       strokeWidth: 0.2,

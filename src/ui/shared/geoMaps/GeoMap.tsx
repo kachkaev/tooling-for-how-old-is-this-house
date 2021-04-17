@@ -13,6 +13,7 @@ const StyledSvg = styled.svg`
   position: absolute;
   left: 0;
   top: 0;
+  overflow: hidden;
 `;
 
 export interface GeoMapProps extends React.HTMLAttributes<HTMLDivElement> {

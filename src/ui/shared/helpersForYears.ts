@@ -1,4 +1,3 @@
-import * as turf from "@turf/turf";
 import { scaleLinear } from "@visx/scale";
 import { interpolateRainbow } from "d3-scale-chromatic";
 
@@ -8,10 +7,10 @@ const scale = scaleLinear({
   clamp: true,
 });
 
-export const mapBuildingAgeToColor = (
-  feature: turf.Feature<turf.Geometry, { completionYear?: number }>,
+export const mapBuildingCompletionYearToColor = (
+  completionYear: number | undefined,
 ): string => {
-  const year = feature.properties.completionYear;
+  const year = completionYear;
   if (year && year > 1000) {
     return interpolateRainbow(scale(year));
   }
