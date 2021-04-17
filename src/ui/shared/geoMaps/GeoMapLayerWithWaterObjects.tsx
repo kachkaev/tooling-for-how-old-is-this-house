@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import {
+  OsmFeature,
   OsmFeatureCollection,
   OsmWaterObjectGeometry,
 } from "../../../shared/sources/osm/types";
@@ -14,8 +15,8 @@ export interface GeoMapLayerWithWaterObjectsProps {
   fitExtent: FitExtent;
 }
 
-const waterColor = "#1F2737";
-// const waterColor = "red";
+// const waterColor = "#1F2737";
+const waterColor = "#131921";
 
 export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLayerWithWaterObjectsProps> = ({
   width,
@@ -69,11 +70,15 @@ export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLaye
     [data],
   );
 
-  const lineProps = React.useCallback<() => React.SVGProps<SVGPathElement>>(
-    () => ({
+  const lineProps = React.useCallback<
+    (
+      feature: OsmFeature<OsmWaterObjectGeometry>,
+    ) => React.SVGProps<SVGPathElement>
+  >(
+    (feature) => ({
       fill: "none",
       stroke: waterColor,
-      strokeWidth: 1,
+      strokeWidth: feature.properties.waterway === "stream" ? 0.5 : 1,
       strokeLinejoin: "round",
       strokeLinecap: "round",
     }),

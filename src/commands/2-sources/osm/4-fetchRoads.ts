@@ -10,6 +10,7 @@ export const fetchRoads = generateFetchOsmObjects({
     'way["highway"~"trunk"]', // ~ helps include "×_link"
     'way["highway"~"primary"]',
     'way["highway"~"secondary"]',
+    'way["highway"~"tertiary"]',
   ],
   territoryExtentBboxBufferInMeters: 5000,
   title: "roads",

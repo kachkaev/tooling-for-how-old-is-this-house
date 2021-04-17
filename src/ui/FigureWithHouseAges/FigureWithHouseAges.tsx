@@ -8,17 +8,31 @@ import {
   OsmWaterObjectGeometry,
 } from "../../shared/sources/osm/types";
 import { TerritoryExtent } from "../../shared/territory";
-import { Figure } from "../shared/figure";
 import {
   GeoMap,
+  GeoMapLayerWithBuildingAges,
   GeoMapLayerWithRoads,
   GeoMapLayerWithTerritoryExtent,
   GeoMapLayerWithWaterObjects,
 } from "../shared/geoMaps";
+import { GlobalStyle } from "../shared/GlobalStyle";
+
+const Figure = styled.div`
+  box-shadow: 5px 5px 10px #ddd;
+  overflow: hidden;
+  color: rgb(242, 246, 249);
+  background: #0e0f12;
+  width: 700mm;
+  height: 600mm;
+  position: relative;
+`;
 
 const StyledGeoMap = styled(GeoMap)`
-  width: 1000px;
-  height: 1000px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  top: 0;
 `;
 
 export interface FigureWithHouseAgesProps {
@@ -28,6 +42,8 @@ export interface FigureWithHouseAgesProps {
   waterObjectCollection: OsmFeatureCollection<OsmWaterObjectGeometry>;
 }
 
+const pointsInMm = 2.83465;
+
 export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAgesProps> = ({
   buildingCollection,
   roadCollection,
@@ -35,7 +51,8 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
   waterObjectCollection,
 }) => {
   return (
-    <Figure width={1000} height={1000}>
+    <Figure>
+      <GlobalStyle />
       buildings: {buildingCollection.features.length}
       <br />
       territory extent: {territoryExtent.geometry.coordinates.length}
@@ -43,7 +60,7 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
       roads: {roadCollection.features.length}
       <br />
       water objects: {waterObjectCollection.features.length}
-      <StyledGeoMap padding={12} extentToFit={territoryExtent}>
+      <StyledGeoMap padding={50 * pointsInMm} extentToFit={territoryExtent}>
         {(layerProps) => {
           return (
             <>
@@ -55,6 +72,10 @@ export const FigureWithHouseAges: React.VoidFunctionComponent<FigureWithHouseAge
               <GeoMapLayerWithTerritoryExtent
                 {...layerProps}
                 data={territoryExtent}
+              />
+              <GeoMapLayerWithBuildingAges
+                {...layerProps}
+                data={buildingCollection}
               />
             </>
           );

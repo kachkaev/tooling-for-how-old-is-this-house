@@ -5,13 +5,12 @@ import * as React from "react";
 
 import { FitExtent } from "./types";
 
-export interface GeoMapLayerProps<
-  Feature extends turf.Feature<
-    turf.Polygon | turf.MultiPolygon | turf.LineString | turf.MultiLineString
-  > = turf.Feature<
-    turf.Polygon | turf.MultiPolygon | turf.LineString | turf.MultiLineString
-  >
-> extends React.SVGAttributes<SVGGElement> {
+type BaseFeature = turf.Feature<
+  turf.Polygon | turf.MultiPolygon | turf.LineString | turf.MultiLineString
+>;
+
+export interface GeoMapLayerProps<Feature extends BaseFeature = BaseFeature>
+  extends React.SVGAttributes<SVGGElement> {
   width: number;
   height: number;
   fitExtent: FitExtent;
@@ -19,7 +18,11 @@ export interface GeoMapLayerProps<
   featureProps: (feature: Feature) => React.SVGProps<SVGPathElement>;
 }
 
-const GeoMapLayer: React.VoidFunctionComponent<GeoMapLayerProps> = ({
+type GeoMapLayerType = <Feature extends BaseFeature>(
+  props: GeoMapLayerProps<Feature>,
+) => React.ReactElement;
+
+const GeoMapLayer: GeoMapLayerType = ({
   width,
   height,
   fitExtent,
@@ -47,5 +50,5 @@ const GeoMapLayer: React.VoidFunctionComponent<GeoMapLayerProps> = ({
   );
 };
 
-const WrappedGeoMapLayer = React.memo(GeoMapLayer);
+const WrappedGeoMapLayer = React.memo(GeoMapLayer) as GeoMapLayerType;
 export { WrappedGeoMapLayer as GeoMapLayer };

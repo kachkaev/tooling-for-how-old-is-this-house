@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import {
+  OsmFeature,
   OsmFeatureCollection,
   OsmRoadGeometry,
 } from "../../../shared/sources/osm/types";
@@ -14,17 +15,30 @@ export interface GeoMapLayerWithRoadsProps {
   fitExtent: FitExtent;
 }
 
+type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
+
+const mapHighwayTypeToStrokeWidth = (highwayType: string | undefined): number =>
+  highwayType?.startsWith("trunk")
+    ? 3
+    : highwayType?.startsWith("primary")
+    ? 1.5
+    : highwayType?.startsWith("secondary")
+    ? 1.5
+    : 1;
+
 export const GeoMapLayerWithRoads: React.VoidFunctionComponent<GeoMapLayerWithRoadsProps> = ({
   width,
   height,
   fitExtent,
   data,
 }) => {
-  const featureProps = React.useCallback<() => React.SVGProps<SVGPathElement>>(
-    () => ({
+  const featureProps = React.useCallback<
+    (feature: RoadGeometryFeature) => React.SVGProps<SVGPathElement>
+  >(
+    (feature) => ({
       fill: "none",
-      stroke: "#151619",
-      strokeWidth: 1,
+      stroke: "#1a1e22",
+      strokeWidth: mapHighwayTypeToStrokeWidth(feature.properties.highway),
       strokeLinejoin: "round",
       strokeLinecap: "round",
     }),
@@ -32,7 +46,7 @@ export const GeoMapLayerWithRoads: React.VoidFunctionComponent<GeoMapLayerWithRo
   );
 
   return (
-    <GeoMapLayer
+    <GeoMapLayer<RoadGeometryFeature>
       width={width}
       height={height}
       fitExtent={fitExtent}
