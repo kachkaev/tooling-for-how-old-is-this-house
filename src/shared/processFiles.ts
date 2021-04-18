@@ -13,7 +13,7 @@ export const processFiles = async ({
   statusReportFrequency = 1,
 }: {
   logger?: Console;
-  fileSearchPattern: string;
+  fileSearchPattern: string | string[];
   fileSearchDirPath: string;
   processFile: (filePath: string, prefixLength: number) => void | Promise<void>;
   showFilePath?: boolean;

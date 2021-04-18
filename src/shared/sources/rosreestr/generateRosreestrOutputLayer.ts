@@ -9,13 +9,13 @@ import {
   printCleanedAddressAst,
   printStandardizedAddressAst,
 } from "../../addressessViaAst";
+import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
 } from "../../output";
-import { extractYearFromDates } from "../../output/parseYear";
 import { processFiles } from "../../processFiles";
 import { getTerritoryExtent } from "../../territory";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
@@ -49,7 +49,7 @@ const extractPropertiesFromFirResponse = (
     rawAddress:
       firResponse.objectData.objectAddress?.mergedAddress ??
       firResponse.objectData.addressNote,
-    completionYear: extractYearFromDates(completionDates),
+    completionYear: extractYearFromCompletionDates(completionDates),
   };
 };
 
@@ -72,7 +72,7 @@ const extractPropertiesFromPkkResponse = (
     knownAt: pkkFetchedAt,
     rawAddress: pkkResponse.attrs.address,
     completionDates,
-    completionYear: extractYearFromDates(completionDates),
+    completionYear: extractYearFromCompletionDates(completionDates),
   };
 };
 

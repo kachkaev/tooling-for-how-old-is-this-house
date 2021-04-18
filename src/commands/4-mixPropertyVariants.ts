@@ -2,8 +2,10 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
+import _ from "lodash";
 import sortKeys from "sort-keys";
 
+import { extractYearFromCompletionDates } from "../shared/completionDates";
 import { deepClean } from "../shared/deepClean";
 import { writeFormattedJson } from "../shared/helpersForJson";
 import {
@@ -21,15 +23,23 @@ const aggregateVariants = (
 ): PropertyLookupVariantAggregate => {
   const result: PropertyLookupVariantAggregate = {};
 
-  for (const variant of variants) {
-    if (variant.completionYear) {
-      result.completionYear = variant.completionYear;
-      result.completionYearSource = variant.source;
+  // TODO: order by priority
+  const orderedVariants = _.orderBy(variants, (variant) => variant.source);
+
+  for (const variant of orderedVariants) {
+    if (variant.completionDates) {
+      result.completionDates = variant.completionDates;
+      result.completionDatesSource = variant.source;
       break;
     }
   }
+  const completionYear = extractYearFromCompletionDates(result.completionDates);
+  if (completionYear) {
+    result.completionYear = completionYear;
+    result.completionYearSource = result.completionDatesSource;
+  }
 
-  for (const variant of variants) {
+  for (const variant of orderedVariants) {
     if (variant.normalizedAddress) {
       result.normalizedAddress = variant.normalizedAddress;
       result.normalizedAddressSource = variant.source;

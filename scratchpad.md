@@ -103,7 +103,4 @@ overrides: ## эта часть конфигурации не используе
 
 ## TODO
 
-- time utc
-- цветовая схема
-- manual-(objects|patches)
 - геокодер

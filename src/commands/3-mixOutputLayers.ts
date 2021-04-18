@@ -28,12 +28,15 @@ import {
   PropertyLookupVariant,
 } from "../shared/output";
 import { processFiles } from "../shared/processFiles";
-import { getTerritoryExtent } from "../shared/territory";
+import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
 import { processTiles } from "../shared/tiles";
 
 const geometrySources = ["osm"];
 const bufferSizeInMeters = 5;
 const tileZoom = 15;
+
+const manualBaseFileName = "manual-base.geojson";
+const manualMixinFileName = "manual-mixin.geojson";
 
 type BaseLayerFeature = turf.Feature<
   turf.Polygon | turf.MultiPolygon,
@@ -70,18 +73,31 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
   await processFiles({
     logger,
-    fileSearchPattern: `*/${getOutputLayerFileName()}`,
-    fileSearchDirPath: getSourcesDirPath(),
+    fileSearchPattern: [
+      manualBaseFileName,
+      manualMixinFileName,
+      `${path.relative(
+        getTerritoryDirPath(),
+        getSourcesDirPath(),
+      )}/*/${getOutputLayerFileName()}`,
+    ],
+    fileSearchDirPath: getTerritoryDirPath(),
     showFilePath: true,
     processFile: async (filePath, prefixLength) => {
       const prefix = " ".repeat(prefixLength + 1);
 
-      const source = path.basename(path.dirname(filePath));
+      const fileName = path.basename(filePath);
+      const source = fileName.startsWith("manual-")
+        ? "manual"
+        : path.basename(path.dirname(filePath));
       logger.log(`${prefix}source: ${chalk.cyan(source)}`);
 
       const outputLayer = (await fs.readJson(filePath)) as OutputLayer;
 
-      const layerType = geometrySources.includes(source) ? "base" : "mixin";
+      const layerType =
+        fileName === manualBaseFileName || geometrySources.includes(source)
+          ? "base"
+          : "mixin";
       logger.log(`${prefix}type: ${chalk.cyan(layerType)}`);
 
       const knownAt = outputLayer.properties?.knownAt;

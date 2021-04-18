@@ -1,4 +1,23 @@
+// TODO: implement and test
 import { scaleThreshold } from "@visx/scale";
+
+export const extractYearFromCompletionDates = (
+  completionDates: string | undefined,
+): number | undefined => {
+  if (!completionDates) {
+    return undefined;
+  }
+
+  const result = parseInt(completionDates);
+
+  return isFinite(result) ? result : undefined;
+};
+
+export const stringifyCompletionYear = (completionYear: number | undefined) => {
+  return completionYear ? `${completionYear}` : undefined;
+};
+
+// Colors
 
 const unknownYearColor = "#3E444b";
 
@@ -25,7 +44,7 @@ const scale = scaleThreshold<number, string>({
   range: ["#000", ...colorBins.map(([, color]) => color)],
 });
 
-export const mapBuildingCompletionYearToColor = (
+export const mapCompletionYearToColor = (
   completionYear: number | undefined,
 ): string => {
   const year = completionYear;

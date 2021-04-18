@@ -8,6 +8,7 @@ import {
   normalizeStreet,
   splitAddress,
 } from "../../addresses";
+import { stringifyCompletionYear } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
   GenerateOutputLayer,
@@ -56,9 +57,7 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
 
       const outputLayerProperties: OutputLayerProperties = {
         id: `${houseInfo.properties.id}`,
-        completionDates: houseInfo.properties.year
-          ? `${houseInfo.properties.year}`
-          : undefined,
+        completionDates: stringifyCompletionYear(houseInfo.properties.year),
         completionYear: houseInfo.properties.year,
         normalizedAddress,
         knownAt: houseInfo.properties.fetchedAt,

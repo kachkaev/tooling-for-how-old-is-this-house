@@ -9,9 +9,9 @@ import {
   normalizeBuilding,
   normalizeStreet,
 } from "../../addresses";
+import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import { OutputLayer, OutputLayerProperties } from "../../output";
-import { extractYearFromDates } from "../../output/parseYear";
 import { getTerritoryExtent } from "../../territory";
 import {
   getFetchedOsmBoundariesFilePath,
@@ -150,7 +150,9 @@ export const generateOsmOutputLayer = async ({
         id: building.properties.id,
         buildingType,
         completionDates: building.properties["start_date"],
-        completionYear: extractYearFromDates(building.properties["start_date"]),
+        completionYear: extractYearFromCompletionDates(
+          building.properties["start_date"],
+        ),
         normalizedAddress: generateNormalizedAddress(building),
         knownAt: buildingCollection.properties.fetchedAt,
       };

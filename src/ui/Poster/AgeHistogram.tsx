@@ -5,11 +5,11 @@ import * as React from "react";
 import { useMeasure } from "react-use";
 import styled from "styled-components";
 
+import { mapCompletionYearToColor } from "../../shared/completionDates";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/output";
-import { mapBuildingCompletionYearToColor } from "../shared/helpersForYears";
 import { pointsInMm } from "../shared/printing";
 
 const Wrapper = styled.div`
@@ -56,7 +56,7 @@ const Bar: React.VoidFunctionComponent<{
   buildings: MixedPropertyVariantsFeature[];
   labelPrefix?: string;
 }> = ({ year, showLabel, xScale, yScale, buildings, labelPrefix }) => {
-  const color = mapBuildingCompletionYearToColor(
+  const color = mapCompletionYearToColor(
     buildings.length > 0 ? year : undefined,
   );
 

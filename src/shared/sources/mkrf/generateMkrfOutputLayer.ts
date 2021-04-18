@@ -10,6 +10,7 @@ import {
   normalizeStreet,
   splitAddress,
 } from "../../addresses";
+import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import { serializeTime } from "../../helpersForJson";
 import {
@@ -17,7 +18,6 @@ import {
   OutputLayer,
   OutputLayerProperties,
 } from "../../output";
-import { extractYearFromDates } from "../../output/parseYear";
 import { processFiles } from "../../processFiles";
 import { getMkrfObjectDirPath } from "./helpersForPaths";
 import { MkrfObjectFile } from "./types";
@@ -142,7 +142,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         id: objectFile.nativeId,
         name: objectFile?.data?.nativeName,
         completionDates,
-        completionYear: extractYearFromDates(completionDates),
+        completionYear: extractYearFromCompletionDates(completionDates),
         knownAt: serializeTime(objectFile.modified),
         normalizedAddress,
         photoUrl: objectFile.data?.general?.photo?.url,

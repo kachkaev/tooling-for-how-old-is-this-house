@@ -90,6 +90,8 @@ Although some of the data sources are country-specific, parts of the repo can st
     
     yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
     yarn exe src/commands/2-sources/osm/2-fetchBoundaries.ts
+    yarn exe src/commands/2-sources/osm/3-fetchWaterObjects.ts ## optional
+    yarn exe src/commands/2-sources/osm/4-fetchRoads.ts        ## optional
     
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts

@@ -75,6 +75,10 @@ export type MixedOutputLayersFeatureCollection = turf.FeatureCollection<
 // mixed property variants
 
 export interface PropertyLookupVariantAggregate {
+  completionDates?: string;
+  completionDatesSource?: string;
+
+  /** Derived from completionDates */
   completionYear?: number;
   completionYearSource?: string;
 
