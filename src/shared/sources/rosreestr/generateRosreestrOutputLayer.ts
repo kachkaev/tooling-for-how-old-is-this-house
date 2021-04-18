@@ -197,14 +197,11 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   });
 
   return {
-    ...turf.featureCollection(
-      _.sortBy(outputFeatures, (outputFeature) =>
-        normalizeCnForSorting(outputFeature.properties.id),
-      ),
+    type: "FeatureCollection",
+    layerRole: "patch",
+    originalSpellings: [...originalSpellingsSet],
+    features: _.sortBy(outputFeatures, (outputFeature) =>
+      normalizeCnForSorting(outputFeature.properties.id),
     ),
-    properties: {
-      originalSpellings: [...originalSpellingsSet],
-      layerRole: "patch",
-    },
   };
 };

@@ -88,7 +88,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
       const outputLayer = (await fs.readJson(filePath)) as OutputLayer;
 
-      const layerRole = outputLayer.properties?.layerRole;
+      const layerRole = outputLayer.layerRole;
       if (layerRole !== "base" && layerRole !== "patch") {
         logger.log(
           `${prefix}layer role: ${chalk.red(
@@ -100,7 +100,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
       }
       logger.log(`${prefix}layer role: ${chalk.cyan(layerRole)}`);
 
-      const knownAt = outputLayer.properties?.knownAt;
+      const knownAt = outputLayer.knownAt;
       logger.log(`${prefix}known at: ${chalk.cyan(knownAt ?? "no date")}`);
 
       const totalFeatureCount = outputLayer.features.length;

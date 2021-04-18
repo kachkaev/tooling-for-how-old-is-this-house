@@ -36,11 +36,9 @@ export type OutputLayer = turf.FeatureCollection<
   OutputLayerGeometry | undefined,
   OutputLayerProperties
 > & {
-  properties: {
-    knownAt?: string;
-    originalSpellings?: string[];
-    layerRole: OutputLayerRole;
-  };
+  knownAt?: string;
+  layerRole: OutputLayerRole;
+  originalSpellings?: string[];
 };
 
 export type FindPointForNormalizedAddress = (

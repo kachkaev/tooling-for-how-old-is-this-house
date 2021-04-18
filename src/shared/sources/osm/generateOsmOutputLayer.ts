@@ -154,21 +154,17 @@ export const generateOsmOutputLayer = async ({
           building.properties["start_date"],
         ),
         normalizedAddress: generateNormalizedAddress(building),
-        knownAt: buildingCollection.properties.fetchedAt,
+        knownAt: buildingCollection.fetchedAt,
       };
 
       return turf.feature(building.geometry, deepClean(outputLayerProperties));
     },
   );
 
-  const { fetchedAt, ...rest } = buildingCollection.properties;
-
   return {
-    ...turf.featureCollection(outputFeatures),
-    properties: {
-      ...rest,
-      knownAt: fetchedAt,
-      layerRole: "base",
-    },
+    type: "FeatureCollection",
+    knownAt: buildingCollection.fetchedAt,
+    layerRole: "base",
+    features: outputFeatures,
   };
 };
