@@ -98,9 +98,9 @@ const Bar: React.VoidFunctionComponent<{
         <g x={0} transform={`translate(0,${yScale(0) + barLabelOffset})`}>
           <text
             fill={color}
-            transform="rotate(-90,0,0)"
+            transform={`rotate(-90),translate(0,${barWidth / 2})`}
             textAnchor="end"
-            alignmentBaseline="central"
+            alignmentBaseline="middle"
           >
             {labelPrefix ?? ""}
             {year}
@@ -202,15 +202,19 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
                   />
                   {(value / barTickLabelFrequency) % barTick ? null : (
                     <text
+                      rx=".3mm"
                       fill="#fff"
                       y={yScale(value) + barTickGap}
                       width={yAxisThickness}
-                      textAnchor="end"
                       alignmentBaseline="text-before-edge"
-                      transform={`translate(${14 * pointsInMm},${
-                        -1.5 * pointsInMm
+                      textAnchor="start"
+                      transform={`translate(${3 * pointsInMm},${
+                        -0.5 * pointsInMm
                       })`}
-                      rx=".3mm"
+                      // transform={`translate(${14 * pointsInMm},${
+                      //   -0.5 * pointsInMm
+                      // })`}
+                      // textAnchor="end"
                     >
                       {value}
                     </text>
