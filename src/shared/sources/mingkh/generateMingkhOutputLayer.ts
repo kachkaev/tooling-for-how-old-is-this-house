@@ -67,5 +67,8 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
     },
   );
 
-  return turf.featureCollection(outputFeatures);
+  return {
+    ...turf.featureCollection(outputFeatures),
+    properties: { layerRole: "patch" },
+  };
 };

@@ -156,5 +156,10 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
     showFilePath: true,
   });
 
-  return turf.featureCollection(outputFeatures);
+  return {
+    ...turf.featureCollection(outputFeatures),
+    properties: {
+      layerRole: "patch",
+    },
+  };
 };

@@ -161,9 +161,14 @@ export const generateOsmOutputLayer = async ({
     },
   );
 
-  const result = turf.featureCollection(outputFeatures);
   const { fetchedAt, ...rest } = buildingCollection.properties;
-  (result as any).properties = { ...rest, knownAt: fetchedAt };
 
-  return result;
+  return {
+    ...turf.featureCollection(outputFeatures),
+    properties: {
+      ...rest,
+      knownAt: fetchedAt,
+      layerRole: "base",
+    },
+  };
 };

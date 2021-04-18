@@ -31,12 +31,8 @@ import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
 import { processTiles } from "../shared/tiles";
 
-const geometrySources = ["osm"];
 const bufferSizeInMeters = 5;
 const tileZoom = 15;
-
-const manualBaseFileName = "manual-base.geojson";
-const manualMixinFileName = "manual-mixin.geojson";
 
 type BaseLayerFeature = turf.Feature<
   turf.Polygon | turf.MultiPolygon,
@@ -69,36 +65,40 @@ export const mixOutputLayers: Command = async ({ logger }) => {
   logger.log(chalk.green("Loading files..."));
 
   const baseLayers: BaseLayer[] = [];
-  const mixinLayers: MixinLayer[] = [];
+  const patchLayers: MixinLayer[] = [];
+
+  const relativeSourcesDirPath = path.relative(
+    getTerritoryDirPath(),
+    getSourcesDirPath(),
+  );
 
   await processFiles({
     logger,
     fileSearchPattern: [
-      manualBaseFileName,
-      manualMixinFileName,
-      `${path.relative(
-        getTerritoryDirPath(),
-        getSourcesDirPath(),
-      )}/*/${getOutputLayerFileName()}`,
+      `${relativeSourcesDirPath}/manual/*.geojson`,
+      `${relativeSourcesDirPath}/*/${getOutputLayerFileName()}`,
     ],
     fileSearchDirPath: getTerritoryDirPath(),
     showFilePath: true,
     processFile: async (filePath, prefixLength) => {
       const prefix = " ".repeat(prefixLength + 1);
 
-      const fileName = path.basename(filePath);
-      const source = fileName.startsWith("manual-")
-        ? "manual"
-        : path.basename(path.dirname(filePath));
+      const source = path.basename(path.dirname(filePath));
       logger.log(`${prefix}source: ${chalk.cyan(source)}`);
 
       const outputLayer = (await fs.readJson(filePath)) as OutputLayer;
 
-      const layerType =
-        fileName === manualBaseFileName || geometrySources.includes(source)
-          ? "base"
-          : "mixin";
-      logger.log(`${prefix}type: ${chalk.cyan(layerType)}`);
+      const layerRole = outputLayer.properties?.layerRole;
+      if (layerRole !== "base" && layerRole !== "patch") {
+        logger.log(
+          `${prefix}layer role: ${chalk.red(
+            layerRole,
+          )} (expected ‘base’ or ‘patch’, skipping)`,
+        );
+
+        return;
+      }
+      logger.log(`${prefix}layer role: ${chalk.cyan(layerRole)}`);
 
       const knownAt = outputLayer.properties?.knownAt;
       logger.log(`${prefix}known at: ${chalk.cyan(knownAt ?? "no date")}`);
@@ -113,7 +113,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
           )} (${Math.round((featureCount / totalFeatureCount) * 100)}%)`,
         );
 
-      if (layerType === "base") {
+      if (layerRole === "base") {
         const features: BaseLayerFeature[] = outputLayer.features
           .filter((feature): feature is OutputLayerFeatureWithGeometry =>
             Boolean(
@@ -150,7 +150,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
         logPickedFeatures("convertible to points", features.length);
 
-        mixinLayers.push({
+        patchLayers.push({
           source,
           features,
           hash: `${knownAt ?? totalFeatureCount}`,
@@ -161,9 +161,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
   if (!baseLayers.length) {
     throw new CommandError(
-      `No base layers found. Expected at least one of: ${geometrySources.join(
-        ", ",
-      )}`,
+      `No base layers found. Have you called all ‘generateOutputLayer’ commands?`,
     );
   }
 
@@ -210,7 +208,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
       const originalMixedFeatureCount = mixedFeatures.length;
 
-      const filteredMixinLayers: MixinLayer[] = mixinLayers.map(
+      const filteredMixinLayers: MixinLayer[] = patchLayers.map(
         (mixinLayer) => ({
           ...mixinLayer,
           features: mixinLayer.features.filter((feature) =>

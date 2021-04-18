@@ -1,5 +1,7 @@
 import * as turf from "@turf/turf";
 
+export type OutputLayerRole = "base" | "patch";
+
 export interface OutputLayerProperties {
   buildingType?: string;
   completionDates?: string;
@@ -34,9 +36,10 @@ export type OutputLayer = turf.FeatureCollection<
   OutputLayerGeometry | undefined,
   OutputLayerProperties
 > & {
-  properties?: {
+  properties: {
     knownAt?: string;
     originalSpellings?: string[];
+    layerRole: OutputLayerRole;
   };
 };
 
