@@ -1,7 +1,10 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
+import * as envalid from "envalid";
 import fs from "fs-extra";
+import path from "path";
 
+import { cleanEnv } from "../shared/cleanEnv";
 import { formatJson, getJsonFormattingStyle } from "../shared/helpersForJson";
 import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath } from "../shared/territory";
@@ -9,10 +12,16 @@ import { getTerritoryDirPath } from "../shared/territory";
 export const formatDataFiles: Command = async ({ logger }) => {
   logger.log(chalk.bold("Formatting all data files"));
 
+  const { CUSTOM_PATH: customPath } = cleanEnv({
+    CUSTOM_PATH: envalid.str({ default: "" }),
+  });
+
   await processFiles({
     logger,
     fileSearchPattern: "**/*.(json|geojson)",
-    fileSearchDirPath: getTerritoryDirPath(),
+    fileSearchDirPath: customPath
+      ? path.resolve(getTerritoryDirPath(), customPath)
+      : getTerritoryDirPath(),
     showFilePath: true,
     statusReportFrequency: 500,
     processFile: async (filePath) => {
