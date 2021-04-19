@@ -118,7 +118,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     ```
 
     ```sh
-    yarn exe src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts ## todo
+    yarn exe src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts ## mvp
     ```
 
     ```sh
@@ -134,3 +134,11 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/4-mixPropertyVariants.ts ## MVP
     yarn exe src/commands/5-prepareUpload.ts       ## todo
     ```
+
+## Использование геокодера от Яндекса
+
+Перед запуском команды `src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts` следует:
+
+1.  Перейти на страницу <https://developer.tech.yandex.ru/services>
+1.  Получить ключ АПИ формата `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+1.  Ввести полученный ключ в файле `.env` (`YANDEX_GEOCODER_API_KEY=...`)

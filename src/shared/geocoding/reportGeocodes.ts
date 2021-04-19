@@ -45,10 +45,12 @@ export const reportGeocodes = async ({
   logger,
   reportedGeocodes,
   source,
+  keepPrevious,
 }: {
-  logger: Console;
+  logger?: Console;
   reportedGeocodes: ReportedGeocode[];
   source: string;
+  keepPrevious?: boolean;
 }): Promise<void> => {
   const sourceDictionary: GeocodeDictionary = {};
 
@@ -86,11 +88,13 @@ export const reportGeocodes = async ({
     let dictionary = existingDictionaryLookup[sliceId] ?? {};
 
     // Remove previous values
-    dictionary = _.mapValues(dictionary, (addressRecord) => {
-      const { [source]: sourceRecord, ...rest } = addressRecord;
+    if (!keepPrevious) {
+      dictionary = _.mapValues(dictionary, (addressRecord) => {
+        const { [source]: sourceRecord, ...rest } = addressRecord;
 
-      return rest;
-    });
+        return rest;
+      });
+    }
 
     // Add new values
     dictionary = _.defaultsDeep(
