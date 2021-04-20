@@ -4,6 +4,7 @@ import axios, { AxiosInstance } from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import * as envalid from "envalid";
+import fs from "fs-extra";
 import http from "http";
 import https from "https";
 
@@ -11,14 +12,19 @@ import { cleanEnv } from "../../../shared/cleanEnv";
 import {
   listNormalizedAddressesWithoutPosition,
   loadCombinedGeocodeDictionary,
-  ReportedGeocode,
-  reportGeocodes,
 } from "../../../shared/geocoding";
 import {
   addBufferToBbox,
   roughenBbox,
 } from "../../../shared/helpersForGeometry";
-import { serializeTime } from "../../../shared/helpersForJson";
+import {
+  serializeTime,
+  writeFormattedJson,
+} from "../../../shared/helpersForJson";
+import {
+  getYandexGeocoderCacheEntryFilePath,
+  YandexGeocoderCacheEntry,
+} from "../../../shared/sources/yandex";
 import { getTerritoryExtent } from "../../../shared/territory";
 
 export const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
@@ -36,10 +42,10 @@ export const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
   return axiosInstance;
 };
 
-const saveEvery = 10;
-
 export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
-  logger.log(chalk.bold("Geocoding addresses without position using yandex"));
+  logger.log(
+    chalk.bold(`sources/yandex: geocoding addresses without position`),
+  );
 
   const apiKey = cleanEnv({
     YANDEX_GEOCODER_API_KEY: envalid.str({
@@ -68,59 +74,34 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
   process.stdout.write(
     chalk.green("Listing normalized addresses without position..."),
   );
-  const normalizedAddresses = listNormalizedAddressesWithoutPosition(
-    await loadCombinedGeocodeDictionary(),
-  );
+  const normalizedAddresses = listNormalizedAddressesWithoutPosition({
+    combinedGeocodeDictionary: await loadCombinedGeocodeDictionary(),
+    sourcesToIgnore: ["yandex"],
+  });
   process.stdout.write(` Found ${normalizedAddresses.length}.\n`);
 
-  let unsavedGeocodes: ReportedGeocode[] = [];
-
-  const saveUnsavedGeocodes = async () => {
-    if (!unsavedGeocodes.length) {
-      logger.log(chalk.gray(`No new geocodes to save.`));
-
-      return;
+  for (const normalizedAddress of normalizedAddresses) {
+    const cacheEntryFilePath = getYandexGeocoderCacheEntryFilePath(
+      normalizedAddress,
+    );
+    if (await fs.pathExists(cacheEntryFilePath)) {
+      logger.log(`${chalk.gray(cacheEntryFilePath)} ${normalizedAddress}`);
+      continue;
     }
 
-    process.stdout.write(
-      chalk.green(
-        `Saving ${unsavedGeocodes.length} reported geocode${
-          unsavedGeocodes.length > 1 ? "s" : "s"
-        }...`,
-      ),
-    );
-
-    await reportGeocodes({
-      reportedGeocodes: unsavedGeocodes,
-      keepPrevious: true,
-      source: "yandex",
-    });
-    unsavedGeocodes = [];
-  };
-
-  for (const normalizedAddress of normalizedAddresses) {
     try {
-      const response = await axiosInstance.get(
+      const apiResponse = await axiosInstance.get(
         "https://geocode-maps.yandex.ru/1.x",
         { params: { ...sharedRequestParams, geocode: normalizedAddress } },
       );
 
-      const rawCoordinates: string | undefined =
-        response.data?.response?.GeoObjectCollection?.featureMember?.[0]
-          ?.GeoObject?.Point?.pos;
-
-      const coordinates = rawCoordinates
-        ? (rawCoordinates.split(" ").map((n) => parseFloat(n)) as [
-            number,
-            number,
-          ])
-        : undefined;
-
-      unsavedGeocodes.push({
+      const cacheEntry: YandexGeocoderCacheEntry = {
         normalizedAddress,
-        coordinates,
-        knownAt: serializeTime(),
-      });
+        fetchedAt: serializeTime(),
+        data: apiResponse.data,
+      };
+      await writeFormattedJson(cacheEntryFilePath, cacheEntry);
+      logger.log(`${chalk.magenta(cacheEntryFilePath)} ${normalizedAddress}`);
     } catch (e) {
       logger.log(e);
       logger.log(
@@ -130,13 +111,7 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
       );
       break;
     }
-
-    if (unsavedGeocodes.length === saveEvery) {
-      await saveUnsavedGeocodes();
-    }
   }
-
-  await saveUnsavedGeocodes();
 
   process.stdout.write(chalk.magenta(` Done.\n`));
 };

@@ -117,9 +117,12 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/wikimapia/8-reportGeocodes.ts ## practically noop
     ```
 
+    <!--
     ```sh
-    yarn exe src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts ## mvp
+    yarn exe src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts
+    yarn exe src/commands/2-sources/yandex/8-reportGeocodes.ts
     ```
+    -->
 
     ```sh
     yarn exe src/commands/2-sources/mingkh/9-extractOutputLayer.ts

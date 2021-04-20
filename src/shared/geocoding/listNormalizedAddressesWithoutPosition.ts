@@ -1,15 +1,20 @@
 import { GeocodeDictionary } from "./types";
 
-export const listNormalizedAddressesWithoutPosition = (
-  combinedGeocodeDictionary: GeocodeDictionary,
-): string[] => {
+export const listNormalizedAddressesWithoutPosition = ({
+  combinedGeocodeDictionary,
+  sourcesToIgnore,
+}: {
+  combinedGeocodeDictionary: GeocodeDictionary;
+  sourcesToIgnore?: string[];
+}): string[] => {
   const result: string[] = [];
 
   Object.entries(combinedGeocodeDictionary).forEach(
     ([normalizedAddress, recordForAddress]) => {
       if (
-        !Object.values(recordForAddress).find(
-          (recordForSource) => recordForSource.length > 0,
+        !Object.entries(recordForAddress).find(
+          ([source, recordForSource]) =>
+            !sourcesToIgnore?.includes(source) && recordForSource.length > 0,
         )
       ) {
         result.push(normalizedAddress);
