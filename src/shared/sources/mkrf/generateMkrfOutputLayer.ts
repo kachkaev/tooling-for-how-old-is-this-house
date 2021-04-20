@@ -19,6 +19,7 @@ import {
   OutputLayerProperties,
 } from "../../output";
 import { processFiles } from "../../processFiles";
+import { getTerritoryExtent } from "../../territory";
 import { getMkrfObjectDirPath } from "./helpersForPaths";
 import { MkrfObjectFile } from "./types";
 
@@ -48,6 +49,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
   findPointForNormalizedAddress,
 }) => {
   const outputFeatures: OutputLayer["features"] = [];
+  const territoryCentroid = turf.centroid(await getTerritoryExtent());
 
   await processFiles({
     logger,
@@ -107,8 +109,34 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       const additionalCoordinates =
         objectFile.data.general?.additionalCoordinates;
       if (!point && additionalCoordinates) {
-        point = turf.centerOfMass(additionalCoordinates).geometry;
+        try {
+          point = turf.centerOfMass(additionalCoordinates).geometry;
+        } catch {
+          try {
+            point = turf.centroid(additionalCoordinates[0]).geometry;
+          } catch {
+            // noop
+          }
+        }
         pointSource = "additional";
+      }
+
+      // additionalCoordinates can be in [lon,lat] instead of [lat,lon], so flipping if possible
+      if (point) {
+        const distance = turf.distance(point, territoryCentroid);
+        const flippedPoint: turf.Point = {
+          type: "Point",
+          coordinates: [point.coordinates[1], point.coordinates[0]],
+        };
+        const flippedDistance = turf.distance(flippedPoint, territoryCentroid);
+        if (flippedDistance < distance) {
+          point = flippedPoint;
+        }
+      }
+
+      // Round coordinates
+      if (point) {
+        point = turf.truncate(point, { precision: 6 });
       }
 
       if (!point && normalizedAddress && findPointForNormalizedAddress) {
