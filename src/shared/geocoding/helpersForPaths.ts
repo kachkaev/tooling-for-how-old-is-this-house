@@ -65,11 +65,14 @@ export const deriveNormalizedAddressSliceId = (
     );
   } catch {
     slices.push("cleaned");
+    const firstLetters: string[] = [];
     cleanedAddressAst.children.forEach((node) => {
       if (node.nodeType === "word" && node.wordType === "unclassified") {
-        slices.push(node.value[0]);
+        firstLetters.push(node.value[0]);
       }
     });
+
+    slices.push(firstLetters.length ? firstLetters.join("-") : "-");
   }
 
   return slices

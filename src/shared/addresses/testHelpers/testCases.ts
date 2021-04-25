@@ -6,6 +6,8 @@ export const testCases: Array<{
   expectedTokens?: AddressToken[];
   expectedCleanedAddressAst?: CleanedAddressAst;
   expectedCleanedAddress?: string;
+  expectedStandardizedAddress?: string | null;
+  expectedNormalizedAddress?: string;
 }> = [
   {
     rawAddresses: [""],
@@ -129,6 +131,10 @@ export const testCases: Array<{
         },
       ],
     },
+    expectedStandardizedAddress:
+      "область пензенская, засечное, проезд школьный малый, 10А",
+    expectedNormalizedAddress:
+      "область пензенская, засечное, проезд школьный малый, 10А",
   },
 
   {
@@ -232,6 +238,9 @@ export const testCases: Array<{
         },
       ],
     },
+    expectedStandardizedAddress: null,
+    expectedNormalizedAddress:
+      "ПЕНЗ ОБЛАСТЬ, 1-Я УЛИЦА А. С. ПУШКИНА-ТЕСТОВА ДОМ 4, КОРПУС 5000",
   },
   {
     rawAddresses: ["(р-н. 1-ый,10 к10 10корп5 10Ж,1корп"],
@@ -398,9 +407,12 @@ export const testCases: Array<{
     ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30-ЛЕТИЯ ПОБЕДЫ, ЗДАНИЕ 43А",
+    expectedStandardizedAddress:
+      "область пензенская, заречный, проспект 30-летия победы, 43а",
   },
   {
     rawAddresses: [
+      "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2Е ТАКОЕ-ТО ШОССЕ ДОМ 10-В",
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2-Е ТАКОЕ-ТО ШОССЕ ДОМ 10-В",
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2-Е ТАКОЕ-ТО ШОССЕ ДОМ 10 - В",
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2-Е ТАКОЕ-ТО ШОССЕ ДОМ 10- В",
@@ -408,9 +420,12 @@ export const testCases: Array<{
     ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2-Е ТАКОЕ-ТО ШОССЕ ДОМ 10В",
+    expectedStandardizedAddress:
+      "область пензенская, заречный, шоссе такое-то 2-е, 10в",
   },
   {
     rawAddresses: [
+      "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2Е ТАКОЕ-ТО ШОССЕ ДОМ 10-Е",
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2-Е ТАКОЕ-ТО ШОССЕ ДОМ 10-Е",
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2 -Е ТАКОЕ-ТО ШОССЕ ДОМ 10 - Е",
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2 - Е ТАКОЕ-ТО ШОССЕ ДОМ 10- Е",
@@ -418,9 +433,16 @@ export const testCases: Array<{
     ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, 2-Е ТАКОЕ-ТО ШОССЕ ДОМ 10Е",
+    expectedStandardizedAddress:
+      "область пензенская, заречный, шоссе такое-то 2-Е, 10Е",
+    expectedNormalizedAddress:
+      "область пензенская, заречный, шоссе такое-то 2-е, 10е",
   },
   {
     rawAddresses: ["ул. Максима Горького/ул. Володарского 38/45"],
     expectedCleanedAddress: "УЛИЦА МАКСИМА ГОРЬКОГО/УЛИЦА ВОЛОДАРСКОГО 38/45",
+    expectedStandardizedAddress: null,
+    expectedNormalizedAddress:
+      "УЛИЦА МАКСИМА ГОРЬКОГО/УЛИЦА ВОЛОДАРСКОГО 38/45",
   },
 ];

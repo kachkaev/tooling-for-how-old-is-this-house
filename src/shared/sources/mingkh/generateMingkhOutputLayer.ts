@@ -1,13 +1,6 @@
 import * as turf from "@turf/turf";
-import chalk from "chalk";
 
-import {
-  combineAddressParts,
-  normalizeAddressPart,
-  normalizeBuilding,
-  normalizeStreet,
-  splitAddress,
-} from "../../addressesViaRegexps";
+import { normalizeAddress } from "../../addresses";
 import { stringifyCompletionYear } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
@@ -19,47 +12,16 @@ import { generateMingkhHouseInfoCollection } from "./generateMingkhHouseInfoColl
 
 export const notFilledIn = ["Не заполнено", "Нет данных"];
 
-// ул. Попова, д. 2, Пенза, Пензенская область
-// ул. Механизаторов, д. 13, к. 0, стр. 0, лит. 0, Засечное, Пензенская область
-export const normalizeMingkhAddress = (address: string): string => {
-  const addressParts = splitAddress(address);
-  if (addressParts.length < 4 || addressParts.length > 7) {
-    throw new Error(`Too many or too few address parts in "${address}"`);
-  }
-  const street = normalizeStreet(addressParts[0]!);
-  const region = addressParts[addressParts.length - 1]!;
-  const city = addressParts[addressParts.length - 2]!;
-  const building = normalizeBuilding(
-    addressParts[1]!,
-    ...addressParts.slice(2, addressParts.length - 2),
-  );
-
-  return combineAddressParts(
-    [region, city, street, building].map(normalizeAddressPart),
-  );
-};
-
-export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
-  logger,
-}) => {
+export const generateMingkhOutputLayer: GenerateOutputLayer = async () => {
   const houseInfoCollection = await generateMingkhHouseInfoCollection();
 
   const outputFeatures: OutputLayer["features"] = houseInfoCollection.features.map(
     (houseInfo) => {
-      let normalizedAddress: string | undefined = undefined;
-      try {
-        normalizedAddress = houseInfo.properties.address
-          ? normalizeMingkhAddress(houseInfo.properties.address)
-          : undefined;
-      } catch (e) {
-        logger?.log(chalk.yellow(e.message ?? e));
-      }
-
       const outputLayerProperties: OutputLayerProperties = {
         id: `${houseInfo.properties.id}`,
         completionDates: stringifyCompletionYear(houseInfo.properties.year),
         completionYear: houseInfo.properties.year,
-        normalizedAddress,
+        normalizedAddress: normalizeAddress(houseInfo.properties.address),
         knownAt: houseInfo.properties.fetchedAt,
       };
 

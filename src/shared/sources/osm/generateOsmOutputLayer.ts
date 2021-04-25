@@ -3,12 +3,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 
-import {
-  combineAddressParts,
-  normalizeAddressPart,
-  normalizeBuilding,
-  normalizeStreet,
-} from "../../addressesViaRegexps";
+import { normalizeAddress } from "../../addresses";
 import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import { OutputLayer, OutputLayerProperties } from "../../output";
@@ -85,14 +80,14 @@ export const generateOsmOutputLayer = async ({
     fetchedOsmBoundariesFilePath,
   )) as OsmFeatureCollection;
 
-  const getFederalSubjectName = generateGetIntersectedBoundaryName({
+  const getRegion = generateGetIntersectedBoundaryName({
     boundaryFeatures: boundaryCollection.features,
     boundaryFeatureFilter: (feature) =>
       feature.properties?.["admin_level"] === "4",
     expectedBoundaryOfAllCheckedFeatures: territoryExtent,
   });
 
-  const getPlaceName = generateGetIntersectedBoundaryName({
+  const getSettlement = generateGetIntersectedBoundaryName({
     boundaryFeatures: boundaryCollection.features,
     boundaryFeatureFilter: (feature) => feature.properties?.["place"],
     expectedBoundaryOfAllCheckedFeatures: territoryExtent,
@@ -101,39 +96,38 @@ export const generateOsmOutputLayer = async ({
   const generateNormalizedAddress = (
     building: OsmFeature,
   ): string | undefined => {
-    const streetName =
+    const streetOrPlace =
       building.properties["addr:street"] ?? building.properties["addr:place"];
+
     const houseNumber = building.properties["addr:housenumber"];
-    if (!streetName || !houseNumber) {
-      return undefined;
-    }
-    const federalSubjectName = getFederalSubjectName(building);
-    if (!federalSubjectName) {
-      logger?.log(
-        chalk.yellow(
-          `Unable to find federal subject for ${building.properties.id}`,
-        ),
-      );
 
+    if (!streetOrPlace || !houseNumber) {
       return undefined;
     }
-    const placeName = getPlaceName(building);
-    if (!placeName) {
+
+    const region = getRegion(building);
+    if (!region) {
       logger?.log(
-        chalk.yellow(
-          `Unable to find place (city / town / village) for ${building.properties.id}`,
-        ),
+        chalk.yellow(`Unable to find region for ${building.properties.id}`),
       );
 
       return undefined;
     }
 
-    return combineAddressParts([
-      normalizeAddressPart(federalSubjectName),
-      normalizeAddressPart(placeName),
-      normalizeStreet(streetName),
-      normalizeBuilding(houseNumber),
-    ]);
+    const settlement = getSettlement(building);
+    if (!settlement) {
+      logger?.log(
+        chalk.yellow(
+          `Unable to find settlement (city / town / village) for ${building.properties.id}`,
+        ),
+      );
+
+      return undefined;
+    }
+
+    return normalizeAddress(
+      [region, settlement, streetOrPlace, building].join(", "),
+    );
   };
 
   const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(
