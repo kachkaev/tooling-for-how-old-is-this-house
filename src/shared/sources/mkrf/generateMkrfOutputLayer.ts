@@ -2,14 +2,7 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 
-import {
-  combineAddressParts,
-  normalizeAddressPart,
-  normalizeBuilding,
-  normalizePlace,
-  normalizeStreet,
-  splitAddress,
-} from "../../addresses";
+import { normalizeAddress } from "../../addressessViaAst/normalizeAddress";
 import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import { serializeTime } from "../../helpersForJson";
@@ -22,23 +15,6 @@ import { processFiles } from "../../processFiles";
 import { getTerritoryExtent } from "../../territory";
 import { getMkrfObjectDirPath } from "./helpersForPaths";
 import { MkrfObjectFile } from "./types";
-
-export const normalizeMkrfAddress = (address: string): string => {
-  const addressParts = splitAddress(address);
-  if (addressParts.length !== 4) {
-    throw new Error(`Too many or too few address parts in "${address}"`);
-  }
-  const [rawRegion, rawPlace, rawStreet, rawBuilding] = addressParts;
-
-  const region = normalizeAddressPart(rawRegion!);
-  const place = normalizePlace(rawPlace!);
-  const street = normalizeStreet(rawStreet!);
-  const building = normalizeBuilding(rawBuilding!);
-
-  return combineAddressParts(
-    [region, place, street, building].map(normalizeAddressPart),
-  );
-};
 
 const acceptedTypologies = ["памятник градостроительства и архитектуры"];
 const isTypologyExpected = (typologyValue: string) =>
@@ -90,15 +66,13 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       }
 
       // Address
-      let normalizedAddress: string | undefined;
-      try {
-        const rawAddress = objectFile.data?.general?.address?.fullAddress;
-        normalizedAddress = rawAddress
-          ? normalizeMkrfAddress(rawAddress)
-          : undefined;
+      const normalizedAddress = normalizeAddress(
+        objectFile.data?.general?.address?.fullAddress,
+      );
+      if (normalizedAddress) {
         logger?.log(`${prefix}${chalk.cyan(normalizedAddress)}`);
-      } catch (e) {
-        logger?.log(`${warningPrefix}${chalk.yellow(e.message ?? e)}`);
+      } else {
+        logger?.log(`${warningPrefix}${chalk.yellow("No address")}`);
       }
 
       // Coordinates

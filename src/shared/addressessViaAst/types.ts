@@ -98,24 +98,22 @@ export interface CleanedAddressAst {
   children: CleanedAddressNode[];
 }
 
-export interface AddressNodeWithSegment {
+export interface StandardizedAddressNodeWithSegment {
   nodeType: "segment";
   designation?: Designation;
   words: AddressNodeWithWord[];
 }
 
+export type StandardizedAddressAstSectionType =
+  | "region"
+  | "settlement"
+  | "streetOrPlace"
+  | "building";
+
 export interface StandardizedAddressAst {
   nodeType: "standardizedAddress";
-  segments: AddressNodeWithSegment[];
+  sectionLookup: Record<
+    StandardizedAddressAstSectionType,
+    StandardizedAddressNodeWithSegment
+  >;
 }
-
-/*
-
-atomic token
-token
-
-normalized:
-1. cleaned (always possible)
-2. standardized (if possible)
-
-*/

@@ -1,7 +1,12 @@
 import path from "path";
 
-import { splitAddress } from "../addresses";
-import { buildCleanedAddressAst } from "../addressessViaAst";
+import {
+  buildCleanedAddressAst,
+  buildStandardizedAddressAst,
+  printStandardizedAddressSection,
+  StandardizedAddressAst,
+  StandardizedAddressAstSectionType,
+} from "../addressessViaAst";
 import { getTerritoryDirPath } from "../territory";
 
 export const getGeocodeDictionariesDirPath = () => {
@@ -18,14 +23,26 @@ export const getDictionaryFilePath = (sliceId: string) => {
   );
 };
 
+const createStandardizedSlice = (
+  standardizedAddressAst: StandardizedAddressAst,
+  sectionType: StandardizedAddressAstSectionType,
+): string | undefined => {
+  const sectionNode = standardizedAddressAst.sectionLookup[sectionType];
+  if (sectionNode) {
+    printStandardizedAddressSection(sectionNode);
+  }
+
+  return undefined;
+};
+
 /**
  *
  * for cleaned address (CAPS):
  *   first letters of words that are not designations
- *   e.g. "село проверочное 1234, улица тестовая" → "-/п-т"
+ *   e.g. "село проверочное 1234, улица тестовая" → "cleaned", п-т
  *
  * for standardised address (lower case):
- *   federal subject, settlement, street
+ *   "standardized", federal subject, settlement, street
  *
  * TODO: support villages
  *   federal subject, +district?, settlement, street
@@ -33,25 +50,30 @@ export const getDictionaryFilePath = (sliceId: string) => {
 export const deriveNormalizedAddressSliceId = (
   normalizedAddress: string,
 ): string => {
+  const slices: Array<string | undefined> = [];
   const cleanedAddressAst = buildCleanedAddressAst(normalizedAddress);
-  try {
-    if (normalizedAddress.toLowerCase() === normalizedAddress) {
-      return splitAddress(normalizedAddress)
-        .slice(0, 3)
-        .map((slice) => slice.replace(/\//g, ""))
-        .join("/");
-    }
 
-    // TODO: finish implementing (use address standardization)
-    throw "oops";
-  } catch (e) {
-    return `-/${cleanedAddressAst.children
-      .map((node) =>
-        node.nodeType === "word" && node.wordType === "unclassified"
-          ? node.value[0]
-          : null,
-      )
-      .filter((firstLetter) => Boolean(firstLetter))
-      .join("-")}`;
+  try {
+    const standardizedAddressAst = buildStandardizedAddressAst(
+      cleanedAddressAst,
+    );
+    slices.push("standardized");
+    slices.push(createStandardizedSlice(standardizedAddressAst, "region"));
+    slices.push(createStandardizedSlice(standardizedAddressAst, "settlement"));
+    slices.push(
+      createStandardizedSlice(standardizedAddressAst, "streetOrPlace"),
+    );
+  } catch {
+    slices.push("cleaned");
+    cleanedAddressAst.children.forEach((node) => {
+      if (node.nodeType === "word" && node.wordType === "unclassified") {
+        slices.push(node.value[0]);
+      }
+    });
   }
+
+  return slices
+    .filter((slice): slice is string => typeof slice === "string")
+    .map((slice) => slice.replace(/\//g, ""))
+    .join("/");
 };
