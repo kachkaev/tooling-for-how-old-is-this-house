@@ -21,7 +21,7 @@ describe("printStandardizedAddressAst", () => {
                     buildCleanedAddressAst(rawAddress),
                   ),
                 );
-              }).toThrow(AddressInterpretationError);
+              }).toThrowError(AddressInterpretationError);
             });
           } else {
             it(`works for "${rawAddress}"`, () => {

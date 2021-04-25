@@ -3,6 +3,7 @@ import _ from "lodash";
 import { AddressInterpretationError } from "./AddressInterpretationError";
 import { buildSectionedAddressAst } from "./buildSectionedAddressAst";
 import { convertSectionToSemanticPart } from "./convertSectionToSemanticPart";
+import { getDesignationConfig } from "./helpersForDesignations";
 import { resolveRegionCode } from "./helpersForRegions";
 import { orderedSectionTypes } from "./helpersForStandardization";
 import {
@@ -155,9 +156,28 @@ export const buildStandardizedAddressAst = (
       }
     }
 
+    const orderedWords = _.flatMap(
+      remainingSections,
+      (section) => section.words,
+    );
+    if (
+      orderedWords[0]?.wordType === "designation" &&
+      getDesignationConfig(orderedWords[0]).designation === "house"
+    ) {
+      orderedWords.shift();
+    }
+
+    // Remove second addresses in corner buildings
+    if (
+      orderedWords[0]?.wordType === "cardinalNumber" &&
+      orderedWords[1]?.wordType === "cardinalNumber"
+    ) {
+      orderedWords.splice(1, 1);
+    }
+
     semanticPartLookup.building = {
       nodeType: "semanticPart",
-      orderedWords: _.flatMap(remainingSections, (section) => section.words),
+      orderedWords,
     };
   }
 

@@ -27,6 +27,9 @@ export const buildSectionedAddressAst = (
         words: currentSectionWords,
         designation: currentDesignation,
       });
+      if (forceClosePreviousSection) {
+        nodeIndex -= 1;
+      }
       forceClosePreviousSection = false;
       currentSectionWords = [];
       currentDesignation = undefined;
