@@ -1,7 +1,7 @@
-import { StandardizedAddressNodeWithSegment } from "./types";
+import { AddressNodeWithSemanticPart } from "./types";
 
 export const printStandardizedAddressSection = (
-  astNode: StandardizedAddressNodeWithSegment,
+  astNode: AddressNodeWithSemanticPart,
 ): string => {
-  return astNode.words.join(" ");
+  return astNode.orderedWords.map((wordNode) => wordNode.value).join(" ");
 };

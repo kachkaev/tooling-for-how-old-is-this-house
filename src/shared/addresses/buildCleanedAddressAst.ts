@@ -323,9 +323,13 @@ export const buildCleanedAddressAst = (
 
   // Find designations
   for (let index = 0; index < nodes.length; index += 1) {
-    const prevNode = nodes[index - 1];
     const node = nodes[index];
-    if (!isUnclassifiedWord(node) || isDesignation(prevNode)) {
+    if (!isUnclassifiedWord(node)) {
+      continue;
+    }
+
+    const prevNode = nodes[index - 1];
+    if (isDesignation(prevNode) && canBeInitial(node)) {
       continue;
     }
 

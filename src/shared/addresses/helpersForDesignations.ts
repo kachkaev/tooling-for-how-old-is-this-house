@@ -1,4 +1,4 @@
-import { DesignationConfig } from "./types";
+import { AddressNodeWithDesignation, DesignationConfig } from "./types";
 
 // Related info: https://wiki.openstreetmap.org/wiki/RU:Россия/Соглашение_об_именовании_дорог
 
@@ -6,7 +6,10 @@ import { DesignationConfig } from "./types";
 const designationConfigs: DesignationConfig[]  = [
   { designation: "country", normalizedValue: "федерация", gender: "f" },
 
+  // TODO: add more regions based on federal division of Russia
+  { designation: "region", normalizedValue: "край", gender: "m" },
   { designation: "region", normalizedValue: "область", gender: "f", aliases: ["обл"] },
+  { designation: "region", normalizedValue: "республика", gender: "f", aliases: ["респ"] },
 
   { designation: "county", normalizedValue: "сельсовет", gender: "f" },
 
@@ -14,16 +17,16 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "settlement", normalizedValue: "село", gender: "n", aliases: ["с"] },
   { designation: "settlement", normalizedValue: "поселение", gender: "n" },
 
-  { designation: "settlement", normalizedValue: "поселок", gender: "n", aliases: ["пос", "п"] },
-  { designation: "settlement", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
+  // Can be settlement or street
+  { designation: "place", normalizedValue: "поселок", gender: "n", aliases: ["пос", "п"] },
+  { designation: "place", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
   
-  { designation: "place", normalizedValue: "городок", gender: "m", aliases: [] },
-  { designation: "place", normalizedValue: "гск", gender: "m", aliases: ["гк"] },
-
   { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н"] },
   { designation: "district", normalizedValue: "микрорайон", gender: "m", aliases: ["мкр", "м-н"] },
   
   { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв"] },
+  { designation: "street", normalizedValue: "городок", gender: "m", aliases: [] },
+  { designation: "street", normalizedValue: "гск", gender: "m", aliases: ["гк"] },
   { designation: "street", normalizedValue: "дорога", gender: "f", aliases: ["дор"] },
   { designation: "street", normalizedValue: "километр", gender: "m", aliases: ["км"] },
   { designation: "street", normalizedValue: "набережная", gender: "f", aliases: ["наб"] },
@@ -70,3 +73,16 @@ designationConfigs.forEach((designationConfig) => {
     addToLookup(`${alias}.`, designationConfig);
   });
 });
+
+export const getDesignationConfig = (
+  designationWord: AddressNodeWithDesignation,
+): DesignationConfig => {
+  const designationConfig = designationConfigLookup[designationWord.value];
+  if (!designationConfig) {
+    throw new Error(
+      `Unable to find designationConfig for ${designationWord.value}`,
+    );
+  }
+
+  return designationConfig;
+};

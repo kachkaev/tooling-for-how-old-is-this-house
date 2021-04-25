@@ -98,22 +98,26 @@ export interface CleanedAddressAst {
   children: CleanedAddressNode[];
 }
 
-export interface StandardizedAddressNodeWithSegment {
-  nodeType: "segment";
+export interface AddressNodeWithSection {
+  nodeType: "addressSection";
+  index: number;
   designation?: Designation;
   words: AddressNodeWithWord[];
 }
 
-export type StandardizedAddressAstSectionType =
-  | "region"
-  | "settlement"
-  | "streetOrPlace"
-  | "building";
+export interface SectionedAddressAst {
+  nodeType: "sectionedAddress";
+  sections: AddressNodeWithSection[];
+}
+
+export type SemanticPartType = "region" | "settlement" | "street" | "building";
+
+export interface AddressNodeWithSemanticPart {
+  nodeType: "semanticPart";
+  orderedWords: AddressNodeWithWord[];
+}
 
 export interface StandardizedAddressAst {
   nodeType: "standardizedAddress";
-  sectionLookup: Record<
-    StandardizedAddressAstSectionType,
-    StandardizedAddressNodeWithSegment
-  >;
+  semanticPartLookup: Record<SemanticPartType, AddressNodeWithSemanticPart>;
 }

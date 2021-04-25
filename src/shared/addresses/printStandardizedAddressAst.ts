@@ -1,15 +1,6 @@
+import { orderedSectionTypes } from "./helpersForStandardization";
 import { printStandardizedAddressSection } from "./printStandardizedAddressSection";
-import {
-  StandardizedAddressAst,
-  StandardizedAddressAstSectionType,
-} from "./types";
-
-const orderedSectionTypes: StandardizedAddressAstSectionType[] = [
-  "region",
-  "settlement",
-  "streetOrPlace",
-  "building",
-];
+import { StandardizedAddressAst } from "./types";
 
 export const printStandardizedAddressAst = (
   standardizedAddressAst: StandardizedAddressAst,
@@ -18,7 +9,7 @@ export const printStandardizedAddressAst = (
   for (const sectionType of orderedSectionTypes) {
     printedSections.push(
       printStandardizedAddressSection(
-        standardizedAddressAst.sectionLookup[sectionType],
+        standardizedAddressAst.semanticPartLookup[sectionType],
       ),
     );
   }

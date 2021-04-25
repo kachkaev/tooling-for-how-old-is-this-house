@@ -1,3 +1,4 @@
+import { AddressInterpretationError } from "./AddressInterpretationError";
 import { buildCleanedAddressAst } from "./buildCleanedAddressAst";
 import { buildStandardizedAddressAst } from "./buildStandardizedAddressAst";
 import { printCleanedAddressAst } from "./printCleanedAddressAst";
@@ -17,7 +18,10 @@ export const normalizeAddress = (
     );
 
     return printStandardizedAddressAst(standardizedAddressAst);
-  } catch {
-    return printCleanedAddressAst(cleanedAddressAst);
+  } catch (e: unknown) {
+    if (e instanceof AddressInterpretationError) {
+      return printCleanedAddressAst(cleanedAddressAst);
+    }
+    throw e;
   }
 };

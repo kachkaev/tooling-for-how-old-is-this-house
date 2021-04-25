@@ -4,8 +4,8 @@ import {
   buildCleanedAddressAst,
   buildStandardizedAddressAst,
   printStandardizedAddressSection,
+  SemanticPartType,
   StandardizedAddressAst,
-  StandardizedAddressAstSectionType,
 } from "../addresses";
 import { getTerritoryDirPath } from "../territory";
 
@@ -25,9 +25,9 @@ export const getDictionaryFilePath = (sliceId: string) => {
 
 const createStandardizedSlice = (
   standardizedAddressAst: StandardizedAddressAst,
-  sectionType: StandardizedAddressAstSectionType,
+  sectionType: SemanticPartType,
 ): string | undefined => {
-  const sectionNode = standardizedAddressAst.sectionLookup[sectionType];
+  const sectionNode = standardizedAddressAst.semanticPartLookup[sectionType];
   if (sectionNode) {
     printStandardizedAddressSection(sectionNode);
   }
@@ -60,9 +60,7 @@ export const deriveNormalizedAddressSliceId = (
     slices.push("standardized");
     slices.push(createStandardizedSlice(standardizedAddressAst, "region"));
     slices.push(createStandardizedSlice(standardizedAddressAst, "settlement"));
-    slices.push(
-      createStandardizedSlice(standardizedAddressAst, "streetOrPlace"),
-    );
+    slices.push(createStandardizedSlice(standardizedAddressAst, "street"));
   } catch {
     slices.push("cleaned");
     const firstLetters: string[] = [];

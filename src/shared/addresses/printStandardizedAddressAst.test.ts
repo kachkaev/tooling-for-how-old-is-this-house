@@ -1,3 +1,4 @@
+import { AddressInterpretationError } from "./AddressInterpretationError";
 import { buildCleanedAddressAst } from "./buildCleanedAddressAst";
 import { buildStandardizedAddressAst } from "./buildStandardizedAddressAst";
 import { printStandardizedAddressAst } from "./printStandardizedAddressAst";
@@ -20,7 +21,7 @@ describe("printStandardizedAddressAst", () => {
                     buildCleanedAddressAst(rawAddress),
                   ),
                 );
-              }).toThrow();
+              }).toThrow(AddressInterpretationError);
             });
           } else {
             it(`works for "${rawAddress}"`, () => {
