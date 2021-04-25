@@ -14,16 +14,8 @@
     "lint:prettier": "prettier --check \"**/*\"",
     "lint:tsc": "tsc --project .",
     "lint:yarn-deduplicate": "yarn-deduplicate --fail --list --strategy=fewer",
-    "test": "jest"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "post-commit": "run-if-changed",
-      "post-checkout": "run-if-changed",
-      "post-merge": "run-if-changed",
-      "post-rewrite": "run-if-changed"
-    }
+    "test": "jest",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "**/*": [
@@ -89,7 +81,7 @@
     "execa": "^5.0.0",
     "fs-extra": "^9.1.0",
     "globby": "^11.0.3",
-    "husky": "^4.3.8",
+    "husky": "^6.0.0",
     "immer": "^9.0.1",
     "jest": "^26.6.3",
     "js-yaml": "^4.1.0",
