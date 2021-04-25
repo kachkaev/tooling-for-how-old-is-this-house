@@ -8,7 +8,7 @@ import {
   buildStandardizedAddressAst,
   printCleanedAddressAst,
   printStandardizedAddressAst,
-} from "../../addressessViaAst";
+} from "../../addresses";
 import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {

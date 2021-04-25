@@ -8,7 +8,7 @@ import {
   normalizeAddressPart,
   normalizeBuilding,
   normalizeStreet,
-} from "../../addresses";
+} from "../../addressesViaRegexps";
 import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import { OutputLayer, OutputLayerProperties } from "../../output";

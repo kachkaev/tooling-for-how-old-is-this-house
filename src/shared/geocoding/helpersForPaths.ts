@@ -6,7 +6,7 @@ import {
   printStandardizedAddressSection,
   StandardizedAddressAst,
   StandardizedAddressAstSectionType,
-} from "../addressessViaAst";
+} from "../addresses";
 import { getTerritoryDirPath } from "../territory";
 
 export const getGeocodeDictionariesDirPath = () => {

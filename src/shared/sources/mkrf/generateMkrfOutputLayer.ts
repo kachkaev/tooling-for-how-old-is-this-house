@@ -2,7 +2,7 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 
-import { normalizeAddress } from "../../addressessViaAst/normalizeAddress";
+import { normalizeAddress } from "../../addresses/normalizeAddress";
 import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import { serializeTime } from "../../helpersForJson";

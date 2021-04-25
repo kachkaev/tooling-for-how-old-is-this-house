@@ -7,7 +7,7 @@ import {
   normalizeBuilding,
   normalizeStreet,
   splitAddress,
-} from "../../addresses";
+} from "../../addressesViaRegexps";
 import { stringifyCompletionYear } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
