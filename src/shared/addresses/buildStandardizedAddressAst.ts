@@ -46,10 +46,12 @@ export const buildStandardizedAddressAst = (
       continue;
     }
 
-    // Ignore country
+    // Ignore country (assume Russia)
     if (
       section.designation === "country" ||
-      (section.words.length === 1 && section.words[0].value === "россия")
+      (section.words.length === 1 &&
+        (section.words[0].value === "россия" ||
+          section.words[0].value === "рф"))
     ) {
       continue;
     }
@@ -179,6 +181,12 @@ export const buildStandardizedAddressAst = (
       nodeType: "semanticPart",
       orderedWords,
     };
+  }
+
+  // Add default region
+  if (!semanticPartLookup.region) {
+    // TODO: get value from config
+    semanticPartLookup.region = resolveRegionCode("58");
   }
 
   const foundSectionTypes = Object.keys(semanticPartLookup);

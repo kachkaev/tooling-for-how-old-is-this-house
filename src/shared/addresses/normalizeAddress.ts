@@ -12,6 +12,12 @@ export const normalizeAddress = (
   }
 
   const cleanedAddressAst = buildCleanedAddressAst(rawAddress);
+
+  // Check for empty addresses (only separators, e.g. "-")
+  if (!cleanedAddressAst.children.some((node) => node.nodeType === "word")) {
+    return undefined;
+  }
+
   try {
     const standardizedAddressAst = buildStandardizedAddressAst(
       cleanedAddressAst,

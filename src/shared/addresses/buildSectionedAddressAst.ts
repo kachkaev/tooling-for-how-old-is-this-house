@@ -1,3 +1,4 @@
+import { AddressInterpretationError } from "./AddressInterpretationError";
 import { getDesignationConfig } from "./helpersForDesignations";
 import {
   AddressNodeWithSection,
@@ -21,6 +22,12 @@ export const buildSectionedAddressAst = (
 
     // close previous section
     if (!node || node.nodeType === "separator" || forceClosePreviousSection) {
+      if (!currentSectionWords.length) {
+        throw new AddressInterpretationError(
+          `Unexpected empty section at index ${sections.length}`,
+        );
+      }
+
       sections.push({
         nodeType: "addressSection",
         index: sections.length,

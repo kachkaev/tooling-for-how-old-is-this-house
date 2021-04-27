@@ -15,7 +15,7 @@ export const convertSectionToSemanticPart = (
           word.wordType === "designationAdjective"
         ? 2
         : 1,
-    (word) => word.value,
+    (word, index) => index,
   ]);
 
   const firstWord = orderedWords[0];

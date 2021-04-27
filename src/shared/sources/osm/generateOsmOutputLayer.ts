@@ -126,7 +126,7 @@ export const generateOsmOutputLayer = async ({
     }
 
     return normalizeAddress(
-      [region, settlement, streetOrPlace, building].join(", "),
+      [region, settlement, streetOrPlace, houseNumber].join(", "),
     );
   };
 

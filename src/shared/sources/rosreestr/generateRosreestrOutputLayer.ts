@@ -1,14 +1,8 @@
 import * as turf from "@turf/turf";
-import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 
-import {
-  buildCleanedAddressAst,
-  buildStandardizedAddressAst,
-  printCleanedAddressAst,
-  printStandardizedAddressAst,
-} from "../../addresses";
+import { normalizeAddress } from "../../addresses";
 import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
@@ -47,8 +41,8 @@ const extractPropertiesFromFirResponse = (
     knownAt: firFetchedAt,
     completionDates,
     rawAddress:
-      firResponse.objectData.objectAddress?.mergedAddress ??
-      firResponse.objectData.addressNote,
+      firResponse.objectData.addressNote ??
+      firResponse.objectData.objectAddress?.mergedAddress,
     completionYear: extractYearFromCompletionDates(completionDates),
   };
 };
@@ -99,37 +93,6 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
 
   const originalSpellingsSet = new Set<string>();
 
-  const normalizeAddress = (
-    rawAddress: string | undefined,
-  ): string | undefined => {
-    if (!rawAddress) {
-      return undefined;
-    }
-    const cleanedAddressAst = buildCleanedAddressAst(rawAddress);
-
-    try {
-      const standardizedAddressAst = buildStandardizedAddressAst(
-        cleanedAddressAst,
-      );
-
-      return printStandardizedAddressAst(standardizedAddressAst);
-    } catch {
-      const cleanedAddress = printCleanedAddressAst(cleanedAddressAst);
-      if (
-        !cleanedAddress.includes("ГАРАЖ") &&
-        !cleanedAddress.includes("ГСК") &&
-        !cleanedAddress.includes("ЗАРЕЧНЫЙ") &&
-        !cleanedAddress.includes("ПЕНЗА") &&
-        cleanedAddress.length > 5
-      ) {
-        logger?.log(rawAddress);
-        logger?.log(chalk.yellow(cleanedAddress));
-      }
-
-      return cleanedAddress;
-    }
-  };
-
   const cnsWithGeometrySet = new Set<string>();
   const outputFeatures: OutputLayer["features"] = [];
   await processFiles({
@@ -162,11 +125,9 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
           ...otherProperties
         } = outputLayerPropertiesWithRawAddress;
 
-        const normalizedAddress = normalizeAddress(rawAddress);
-
         const outputLayerProperties: OutputLayerProperties = {
           ...otherProperties,
-          normalizedAddress,
+          normalizedAddress: normalizeAddress(rawAddress),
         };
         outputFeatures.push(
           turf.feature(geometry, deepClean(outputLayerProperties)),

@@ -25,7 +25,7 @@ export const extractAtomicTokens = (
   rawAddress: string,
 ): AtomicAddressToken[] => {
   const result: AtomicAddressToken[] = [];
-  const address = rawAddress.toLowerCase();
+  const address = rawAddress.toLowerCase().replace("ё", "е");
   for (let index = 0; index < address.length; index += 1) {
     const char = address[index]!;
     switch (char) {

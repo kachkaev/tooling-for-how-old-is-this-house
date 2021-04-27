@@ -32,19 +32,22 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "набережная", gender: "f", aliases: ["наб"] },
   { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [] },
   { designation: "street", normalizedValue: "переулок", gender: "m", aliases: ["пер"] },
+  { designation: "street", normalizedValue: "порядок", gender: "m" },
   { designation: "street", normalizedValue: "площадь", gender: "f", aliases: ["пл"] },
   { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр"] },
   { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-т", "пр-кт", "просп"] },
+  { designation: "street", normalizedValue: "разъезд", gender: "m" },
   { designation: "street", normalizedValue: "снт", gender: "n", aliases: ["с/т", "сдт"] }, // садовое некоммерческое товарищество
   { designation: "street", normalizedValue: "совхоз", gender: "m", aliases: ["свх", "совх", "с/х"] },
   { designation: "street", normalizedValue: "станция", gender: "f", aliases: ["ст"] },
   { designation: "street", normalizedValue: "территория", gender: "f", aliases: ["тер"] },
+  { designation: "street", normalizedValue: "тупик", gender: "m", aliases: ["туп"] },
   { designation: "street", normalizedValue: "улица", gender: "f", aliases: ["ул"] },
   { designation: "street", normalizedValue: "шоссе", gender: "n", aliases: ["ш"] },
 
   { designation: "house", normalizedValue: "дом", gender: "m", aliases: ["д"] },
   { designation: "house", normalizedValue: "здание", gender: "n", aliases: ["зд"] },
-  { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["з/у", "уч"] },
+  { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["з/у", "уч", "уч-к"] },
 
   { designation: "housePart", normalizedValue: "блок", gender: "m", aliases: ["бл"] },
   { designation: "housePart", normalizedValue: "гараж", gender: "m", aliases: ["бокс", "гар"] },
@@ -68,6 +71,7 @@ const addToLookup = (alias: string, config: DesignationConfig) => {
 
 designationConfigs.forEach((designationConfig) => {
   addToLookup(designationConfig.normalizedValue, designationConfig);
+  addToLookup(`${designationConfig.normalizedValue}.`, designationConfig);
   designationConfig.aliases?.forEach((alias) => {
     addToLookup(alias, designationConfig);
     addToLookup(`${alias}.`, designationConfig);
