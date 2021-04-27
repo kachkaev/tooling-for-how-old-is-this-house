@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "exe": "ts-node --transpile-only --project=tsconfig.build.json --compiler-options '{\"noEmit\":true}'",
+    "exe": "ts-node --transpile-only --project=tsconfig.build.json --compiler-options \"{\\\"noEmit\\\":true}\"",
     "fix": "npm-run-all --continue-on-error \"fix:*\"",
     "fix:eslint": "eslint --fix \"**/*\"",
     "fix:markdownlint": "markdownlint --fix \"**/*\"",
