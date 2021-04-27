@@ -138,6 +138,13 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/5-prepareUpload.ts       ## todo
     ```
 
+    <!--
+    ```sh
+    yarn dev
+    yarn exe src/commands/9-makePoster.ts
+    ```
+    -->
+
 ## Использование геокодера от Яндекса
 
 Перед запуском команды `src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts` следует:

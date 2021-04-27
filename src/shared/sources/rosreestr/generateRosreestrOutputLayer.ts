@@ -72,6 +72,7 @@ const extractPropertiesFromPkkResponse = (
 
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   logger,
+  findPointForNormalizedAddress,
 }) => {
   const territoryExtent = await getTerritoryExtent();
 
@@ -110,12 +111,6 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
           continue;
         }
 
-        const cn = infoPageEntry.cn;
-        const { geometry } = objectCenterFeatureByCn[cn] ?? {};
-        if (geometry) {
-          cnsWithGeometrySet.add(cn);
-        }
-
         if (outputLayerPropertiesWithRawAddress === "notBuilding") {
           continue;
         }
@@ -124,11 +119,22 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
           rawAddress,
           ...otherProperties
         } = outputLayerPropertiesWithRawAddress;
-
+        const normalizedAddress = normalizeAddress(rawAddress);
         const outputLayerProperties: OutputLayerProperties = {
           ...otherProperties,
-          normalizedAddress: normalizeAddress(rawAddress),
+          normalizedAddress,
         };
+
+        const cn = infoPageEntry.cn;
+        let geometry: turf.Point | undefined =
+          objectCenterFeatureByCn[cn]?.geometry;
+        if (geometry) {
+          cnsWithGeometrySet.add(cn);
+        }
+        if (normalizedAddress && !geometry && findPointForNormalizedAddress) {
+          geometry = findPointForNormalizedAddress(normalizedAddress);
+        }
+
         outputFeatures.push(
           turf.feature(geometry, deepClean(outputLayerProperties)),
         );
