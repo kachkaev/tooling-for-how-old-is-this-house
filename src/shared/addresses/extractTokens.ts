@@ -77,6 +77,11 @@ export const extractTokens = (rawAddress: string): AddressToken[] => {
 
       wordIsOpen = false;
     } else {
+      // TODO: Improve logic (handle "&quot;" as one token)
+      if (tokenType === "letterSequence" && tokenValue === "quot") {
+        result.push(["quote", tokenValue]);
+        continue;
+      }
       if (tokenType === "numberSequence" || tokenType === "letterSequence") {
         wordIsOpen = true;
       }

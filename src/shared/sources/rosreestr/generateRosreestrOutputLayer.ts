@@ -41,8 +41,8 @@ const extractPropertiesFromFirResponse = (
     knownAt: firFetchedAt,
     completionDates,
     rawAddress:
-      firResponse.objectData.addressNote ??
-      firResponse.objectData.objectAddress?.mergedAddress,
+      firResponse.objectData.objectAddress?.mergedAddress ??
+      firResponse.objectData.addressNote,
     completionYear: extractYearFromCompletionDates(completionDates),
   };
 };
