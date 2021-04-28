@@ -1,5 +1,7 @@
 import * as turf from "@turf/turf";
 
+import { AddressNormalizationConfig } from "../addresses";
+
 export type OutputLayerRole = "base" | "patch";
 
 export interface OutputLayerProperties {
@@ -48,6 +50,7 @@ export type FindPointForNormalizedAddress = (
 export type GenerateOutputLayer = (payload: {
   logger?: Console;
   findPointForNormalizedAddress?: FindPointForNormalizedAddress;
+  addressNormalizationConfig: AddressNormalizationConfig;
 }) => Promise<OutputLayer>;
 
 export interface PropertyLookupVariant extends OutputLayerProperties {

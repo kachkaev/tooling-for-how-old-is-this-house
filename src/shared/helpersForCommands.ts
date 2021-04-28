@@ -12,6 +12,7 @@ import {
   getOutputLayerFileName,
   reportGeocodesInOutputLayer,
 } from "./output";
+import { getAddressNormalizationConfig } from "./territory";
 
 export const generateProgress = (index: number, total: number) => {
   const totalLength = `${total}`.length;
@@ -29,7 +30,10 @@ export const generateReportGeocodes = ({
   return async ({ logger }) => {
     logger.log(chalk.bold(`sources/${source}: report geocodes`));
 
-    const outputLayer = await generateOutputLayer({ logger });
+    const outputLayer = await generateOutputLayer({
+      logger,
+      addressNormalizationConfig: await getAddressNormalizationConfig(),
+    });
 
     await reportGeocodesInOutputLayer({
       source,
@@ -75,6 +79,7 @@ export const generateExtractOutputLayer = ({
     const outputLayer = await generateOutputLayer({
       logger,
       findPointForNormalizedAddress,
+      addressNormalizationConfig: await getAddressNormalizationConfig(),
     });
 
     logger.log(` Done.`);

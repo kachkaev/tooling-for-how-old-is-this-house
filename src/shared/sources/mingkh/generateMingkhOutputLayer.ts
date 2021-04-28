@@ -12,7 +12,9 @@ import { generateMingkhHouseInfoCollection } from "./generateMingkhHouseInfoColl
 
 export const notFilledIn = ["Не заполнено", "Нет данных"];
 
-export const generateMingkhOutputLayer: GenerateOutputLayer = async () => {
+export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
+  addressNormalizationConfig,
+}) => {
   const houseInfoCollection = await generateMingkhHouseInfoCollection();
 
   const outputFeatures: OutputLayer["features"] = houseInfoCollection.features.map(
@@ -21,7 +23,10 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async () => {
         id: `${houseInfo.properties.id}`,
         completionDates: stringifyCompletionYear(houseInfo.properties.year),
         completionYear: houseInfo.properties.year,
-        normalizedAddress: normalizeAddress(houseInfo.properties.address),
+        normalizedAddress: normalizeAddress(
+          houseInfo.properties.address,
+          addressNormalizationConfig,
+        ),
         knownAt: houseInfo.properties.fetchedAt,
       };
 

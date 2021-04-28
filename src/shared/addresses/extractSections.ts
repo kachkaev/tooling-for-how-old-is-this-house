@@ -1,19 +1,18 @@
 import { AddressInterpretationError } from "./AddressInterpretationError";
 import { getDesignationConfig } from "./helpersForDesignations";
 import {
-  AddressNodeWithSection,
   AddressNodeWithWord,
+  AddressSection,
   CleanedAddressAst,
   Designation,
-  SectionedAddressAst,
 } from "./types";
 
-export const buildSectionedAddressAst = (
+export const extractSections = (
   cleanedAddressAst: CleanedAddressAst,
-): SectionedAddressAst => {
+): AddressSection[] => {
   const nodes = cleanedAddressAst.children;
 
-  const sections: AddressNodeWithSection[] = [];
+  const sections: AddressSection[] = [];
   let forceClosePreviousSection: boolean = false;
   let currentSectionWords: AddressNodeWithWord[] = [];
   let currentDesignation: Designation | undefined = undefined;
@@ -29,7 +28,6 @@ export const buildSectionedAddressAst = (
       }
 
       sections.push({
-        nodeType: "addressSection",
         index: sections.length,
         words: currentSectionWords,
         designation: currentDesignation,
@@ -66,8 +64,5 @@ export const buildSectionedAddressAst = (
     }
   }
 
-  return {
-    nodeType: "sectionedAddress",
-    sections,
-  };
+  return sections;
 };

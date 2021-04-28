@@ -1,7 +1,7 @@
 import { AddressInterpretationError } from "./AddressInterpretationError";
 import { buildCleanedAddressAst } from "./buildCleanedAddressAst";
-import { buildSectionedAddressAst } from "./buildSectionedAddressAst";
 import { convertSectionToSemanticPart } from "./convertSectionToSemanticPart";
+import { extractSections } from "./extractSections";
 import { AddressNodeWithSemanticPart } from "./types";
 
 // https://ru.wikipedia.org/wiki/Коды_субъектов_Российской_Федерации
@@ -22,7 +22,7 @@ const rawRegions: RawRegion[] = [
   ["12", "Республика Марий Эл"],
   ["13", "Республика Мордовия"],
   ["14", "Республика Саха (Якутия)"],
-  ["15", "Республика Северная Осетия — Алания"],
+  ["15", "Республика Северная Осетия"], // Алания
   ["16", "Республика Татарстан"],
   ["17", "Республика Тыва"],
   ["18", "Удмуртская Республика"],
@@ -99,14 +99,11 @@ export const regionByCode: Record<
 > = {};
 
 rawRegions.forEach(([code, rawName]) => {
-  const sectionedAddressAst = buildSectionedAddressAst(
-    buildCleanedAddressAst(rawName),
-  );
-  const sectionNode = sectionedAddressAst.sections[0];
-  if (!sectionNode) {
+  const section = extractSections(buildCleanedAddressAst(rawName))[0];
+  if (!section) {
     throw new Error(`Unexpected empty result for ${code} → ${rawName}`);
   }
-  regionByCode[code] = convertSectionToSemanticPart(sectionNode);
+  regionByCode[code] = convertSectionToSemanticPart(section);
 });
 
 export const resolveRegionCode = (
@@ -120,4 +117,8 @@ export const resolveRegionCode = (
   }
 
   return result;
+};
+
+export const resolveDefaultRegion = async (): Promise<AddressNodeWithSemanticPart> => {
+  throw new Error();
 };

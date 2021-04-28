@@ -1,14 +1,16 @@
 import _ from "lodash";
 
 import { AddressInterpretationError } from "./AddressInterpretationError";
-import { buildSectionedAddressAst } from "./buildSectionedAddressAst";
+import { buildCleanedAddressAst } from "./buildCleanedAddressAst";
 import { convertSectionToSemanticPart } from "./convertSectionToSemanticPart";
+import { extractSections } from "./extractSections";
 import { getDesignationConfig } from "./helpersForDesignations";
 import { resolveRegionCode } from "./helpersForRegions";
 import { orderedSectionTypes } from "./helpersForStandardization";
 import {
-  AddressNodeWithSection,
   AddressNodeWithSemanticPart,
+  AddressSection,
+  BuildStandardizedAddressAstConfig,
   CleanedAddressAst,
   SemanticPartType,
   StandardizedAddressAst,
@@ -16,15 +18,15 @@ import {
 
 export const buildStandardizedAddressAst = (
   cleanedAddressAst: CleanedAddressAst,
+  config: BuildStandardizedAddressAstConfig = {},
 ): StandardizedAddressAst => {
-  const sectionedAddressAst = buildSectionedAddressAst(cleanedAddressAst);
+  const sections = extractSections(cleanedAddressAst);
 
   const semanticPartLookup: Partial<
     Record<SemanticPartType, AddressNodeWithSemanticPart>
   > = {};
 
-  const sections = sectionedAddressAst.sections;
-  const remainingSections: AddressNodeWithSection[] = [];
+  const remainingSections: AddressSection[] = [];
 
   for (
     let sectionIndex = 0;
@@ -184,9 +186,10 @@ export const buildStandardizedAddressAst = (
   }
 
   // Add default region
-  if (!semanticPartLookup.region) {
-    // TODO: get value from config
-    semanticPartLookup.region = resolveRegionCode("58");
+  if (!semanticPartLookup.region && config.defaultRegion) {
+    semanticPartLookup.region = convertSectionToSemanticPart(
+      extractSections(buildCleanedAddressAst(config.defaultRegion))[0],
+    );
   }
 
   const foundSectionTypes = Object.keys(semanticPartLookup);

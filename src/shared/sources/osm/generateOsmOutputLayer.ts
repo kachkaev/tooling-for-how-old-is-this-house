@@ -6,7 +6,11 @@ import _ from "lodash";
 import { normalizeAddress } from "../../addresses";
 import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
-import { OutputLayer, OutputLayerProperties } from "../../output";
+import {
+  GenerateOutputLayer,
+  OutputLayer,
+  OutputLayerProperties,
+} from "../../output";
 import { getTerritoryExtent } from "../../territory";
 import {
   getFetchedOsmBoundariesFilePath,
@@ -61,16 +65,13 @@ const generateGetIntersectedBoundaryName = ({
     )?.properties?.name;
 };
 
-export const generateOsmOutputLayer = async ({
+export const generateOsmOutputLayer: GenerateOutputLayer = async ({
   logger,
-  fetchedOsmBuildingsFilePath = getFetchedOsmBuildingsFilePath(),
-  fetchedOsmBoundariesFilePath = getFetchedOsmBoundariesFilePath(),
-}: {
-  logger?: Console;
-  fetchedOsmBuildingsFilePath?: string;
-  fetchedOsmBoundariesFilePath?: string;
+  addressNormalizationConfig,
 }): Promise<OutputLayer> => {
   const territoryExtent = await getTerritoryExtent();
+  const fetchedOsmBuildingsFilePath = getFetchedOsmBuildingsFilePath();
+  const fetchedOsmBoundariesFilePath = getFetchedOsmBoundariesFilePath();
 
   const buildingCollection = (await fs.readJson(
     fetchedOsmBuildingsFilePath,
@@ -127,6 +128,7 @@ export const generateOsmOutputLayer = async ({
 
     return normalizeAddress(
       [region, settlement, streetOrPlace, houseNumber].join(", "),
+      addressNormalizationConfig,
     );
   };
 

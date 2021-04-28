@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import { load } from "js-yaml";
 import path from "path";
 
+import { AddressNormalizationConfig } from "./addresses";
 import { cleanEnv } from "./cleanEnv";
 
 export type TerritoryExtent = turf.Feature<turf.Polygon>;
@@ -39,6 +40,9 @@ export interface TerritoryConfig {
       fallbackAddressSelectorsForObjectsWithoutGeometry?: string[] | string[][];
     };
   };
+  addressNormalization?: {
+    defaultRegion?: string;
+  };
 }
 
 export const getTerritoryConfigFilePath = (): string =>
@@ -67,4 +71,8 @@ export const getTerritoryExtent = async (): Promise<TerritoryExtent> => {
   }
 
   return territoryExtent as TerritoryExtent;
+};
+
+export const getAddressNormalizationConfig = async (): Promise<AddressNormalizationConfig> => {
+  return (await getTerritoryConfig()).addressNormalization ?? {};
 };

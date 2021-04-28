@@ -73,6 +73,7 @@ const extractPropertiesFromPkkResponse = (
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   logger,
   findPointForNormalizedAddress,
+  addressNormalizationConfig,
 }) => {
   const territoryExtent = await getTerritoryExtent();
 
@@ -119,7 +120,10 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
           rawAddress,
           ...otherProperties
         } = outputLayerPropertiesWithRawAddress;
-        const normalizedAddress = normalizeAddress(rawAddress);
+        const normalizedAddress = normalizeAddress(
+          rawAddress,
+          addressNormalizationConfig,
+        );
         const outputLayerProperties: OutputLayerProperties = {
           ...otherProperties,
           normalizedAddress,

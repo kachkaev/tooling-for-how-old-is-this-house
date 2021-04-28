@@ -65,7 +65,11 @@ export const deriveNormalizedAddressSliceId = (
     slices.push("cleaned");
     const firstLetters: string[] = [];
     cleanedAddressAst.children.forEach((node) => {
-      if (node.nodeType === "word" && node.wordType === "unclassified") {
+      if (
+        node.nodeType === "word" &&
+        node.wordType === "unclassified" &&
+        node.value.length > 1
+      ) {
         firstLetters.push(node.value[0]);
       }
     });

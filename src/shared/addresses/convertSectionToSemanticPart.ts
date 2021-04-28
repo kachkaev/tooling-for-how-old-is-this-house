@@ -1,10 +1,10 @@
 import _ from "lodash";
 
 import { getDesignationConfig } from "./helpersForDesignations";
-import { AddressNodeWithSection, AddressNodeWithSemanticPart } from "./types";
+import { AddressNodeWithSemanticPart, AddressSection } from "./types";
 
 export const convertSectionToSemanticPart = (
-  addressSection: AddressNodeWithSection,
+  addressSection: AddressSection,
 ): AddressNodeWithSemanticPart => {
   const orderedWords = _.orderBy(addressSection.words, [
     (word) =>

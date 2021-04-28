@@ -3,7 +3,7 @@ import { testCases } from "./testHelpers/testCases";
 
 describe("normalizeAddress", () => {
   it(`returns undefined for undefined`, () => {
-    expect(normalizeAddress(undefined)).toEqual(undefined);
+    expect(normalizeAddress(undefined, {})).toEqual(undefined);
   });
 
   testCases.forEach(
@@ -14,13 +14,13 @@ describe("normalizeAddress", () => {
           : rawAddresses;
         for (const rawAddress of rawAddressesToUse) {
           it(`works for "${rawAddress}"`, () => {
-            expect(normalizeAddress(rawAddress)).toEqual(
+            expect(normalizeAddress(rawAddress, {})).toEqual(
               expectedNormalizedAddress,
             );
           });
 
           it(`autoencodes "${expectedNormalizedAddress}"`, () => {
-            expect(normalizeAddress(expectedNormalizedAddress)).toEqual(
+            expect(normalizeAddress(expectedNormalizedAddress, {})).toEqual(
               expectedNormalizedAddress,
             );
           });

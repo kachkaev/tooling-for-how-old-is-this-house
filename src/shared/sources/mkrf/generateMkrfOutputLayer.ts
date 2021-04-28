@@ -23,6 +23,7 @@ const isTypologyExpected = (typologyValue: string) =>
 export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
   logger,
   findPointForNormalizedAddress,
+  addressNormalizationConfig,
 }) => {
   const outputFeatures: OutputLayer["features"] = [];
   const territoryCentroid = turf.centroid(await getTerritoryExtent());
@@ -68,6 +69,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       // Address
       const normalizedAddress = normalizeAddress(
         objectFile.data?.general?.address?.fullAddress,
+        addressNormalizationConfig,
       );
       if (normalizedAddress) {
         logger?.log(`${prefix}${chalk.cyan(normalizedAddress)}`);

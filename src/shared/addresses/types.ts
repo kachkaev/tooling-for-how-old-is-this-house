@@ -98,16 +98,10 @@ export interface CleanedAddressAst {
   children: CleanedAddressNode[];
 }
 
-export interface AddressNodeWithSection {
-  nodeType: "addressSection";
+export interface AddressSection {
   index: number;
   designation?: Designation;
   words: AddressNodeWithWord[];
-}
-
-export interface SectionedAddressAst {
-  nodeType: "sectionedAddress";
-  sections: AddressNodeWithSection[];
 }
 
 export type SemanticPartType = "region" | "settlement" | "street" | "building";
@@ -121,3 +115,9 @@ export interface StandardizedAddressAst {
   nodeType: "standardizedAddress";
   semanticPartLookup: Record<SemanticPartType, AddressNodeWithSemanticPart>;
 }
+
+export interface BuildStandardizedAddressAstConfig {
+  defaultRegion?: string;
+}
+
+export type AddressNormalizationConfig = BuildStandardizedAddressAstConfig;
