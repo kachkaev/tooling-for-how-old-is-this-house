@@ -4,17 +4,17 @@ export const ordinalNumberEndingConfigs: OrdinalNumberEndingConfig[] = [
   {
     gender: "f",
     normalizedValue: "-я",
-    aliases: ["я", "ая", "-ая"],
+    aliases: ["я", "ая", "-ая", "ья", "-ья"],
   },
   {
     gender: "m",
     normalizedValue: "-й",
-    aliases: ["й", "ый", "-ый"],
+    aliases: ["й", "ый", "-ый", "ой", "-ой", "ий", "-ий"],
   },
   {
     gender: "n",
     normalizedValue: "-е",
-    aliases: ["е", "ое", "-ое"],
+    aliases: ["е", "ое", "-ое", "ье", "-ье", "ие", "-ие"],
   },
 ];
 

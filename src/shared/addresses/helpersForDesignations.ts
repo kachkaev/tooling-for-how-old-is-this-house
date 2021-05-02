@@ -21,10 +21,10 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "place", normalizedValue: "поселок", gender: "n", aliases: ["пос", "п"] },
   { designation: "place", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
   
-  { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н"] },
+  { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н", 'р-он'] },
   { designation: "district", normalizedValue: "микрорайон", gender: "m", aliases: ["мкр", "м-н"] },
   
-  { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв"] },
+  { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв", "б-р"] },
   { designation: "street", normalizedValue: "городок", gender: "m", aliases: [] },
   { designation: "street", normalizedValue: "гск", gender: "m", aliases: ["гк"] },
   { designation: "street", normalizedValue: "дорога", gender: "f", aliases: ["дор"] },

@@ -144,7 +144,7 @@ export interface SuccessfulPkkFeatureResponse {
       kvartal?: string;
       height?: unknown;
       cc_date_approval?: unknown;
-      year_used?: unknown;
+      year_used?: number;
       purpose?: string;
       fp?: null;
       name?: string;

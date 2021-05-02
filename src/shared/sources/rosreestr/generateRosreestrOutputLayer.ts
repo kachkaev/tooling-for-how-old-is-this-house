@@ -2,7 +2,11 @@ import * as turf from "@turf/turf";
 import fs from "fs-extra";
 import _ from "lodash";
 
-import { normalizeAddress } from "../../addresses";
+import {
+  buildCleanedAddressAst,
+  buildStandardizedAddressAst,
+  normalizeAddress,
+} from "../../addresses";
 import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
@@ -22,6 +26,30 @@ type OutputLayerPropertiesWithRawAddress = Omit<
   "normalizedAddress"
 > & { rawAddress?: string };
 
+const pickMostPromisingAddress = (
+  ...rawAddresses: Array<string | undefined>
+): string | undefined => {
+  const definedAddresses: string[] = rawAddresses.filter(
+    (rawAddress): rawAddress is string => typeof rawAddress === "string",
+  );
+
+  const standardizableAddresses = definedAddresses.filter((rawAddress) => {
+    try {
+      buildStandardizedAddressAst(buildCleanedAddressAst(rawAddress));
+    } catch {
+      return false;
+    }
+
+    return true;
+  });
+
+  const addressesToPickFrom = standardizableAddresses.length
+    ? standardizableAddresses
+    : definedAddresses;
+
+  return _.maxBy(addressesToPickFrom, (rawAddress) => rawAddress.length);
+};
+
 const extractPropertiesFromFirResponse = (
   infoPageObject: InfoPageObject,
 ): OutputLayerPropertiesWithRawAddress | "notBuilding" | undefined => {
@@ -40,9 +68,10 @@ const extractPropertiesFromFirResponse = (
     id: cn,
     knownAt: firFetchedAt,
     completionDates,
-    rawAddress:
-      firResponse.objectData.objectAddress?.mergedAddress ??
+    rawAddress: pickMostPromisingAddress(
+      firResponse.objectData.objectAddress?.mergedAddress,
       firResponse.objectData.addressNote,
+    ),
     completionYear: extractYearFromCompletionDates(completionDates),
   };
 };
@@ -59,7 +88,11 @@ const extractPropertiesFromPkkResponse = (
     return "notBuilding";
   }
 
-  const completionDates = pkkResponse.attrs.year_built;
+  const completionDates =
+    pkkResponse.attrs.year_built ||
+    (pkkResponse.attrs.year_used
+      ? `${pkkResponse.attrs.year_used}`
+      : undefined);
 
   return {
     id: cn,
