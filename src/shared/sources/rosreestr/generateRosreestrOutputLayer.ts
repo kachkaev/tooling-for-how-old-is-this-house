@@ -33,6 +33,10 @@ const pickMostPromisingAddress = (
     (rawAddress): rawAddress is string => typeof rawAddress === "string",
   );
 
+  if (definedAddresses.length === 1) {
+    return definedAddresses[0];
+  }
+
   const standardizableAddresses = definedAddresses.filter((rawAddress) => {
     try {
       buildStandardizedAddressAst(buildCleanedAddressAst(rawAddress));
