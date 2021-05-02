@@ -5,7 +5,6 @@ import _ from "lodash";
 import {
   buildCleanedAddressAst,
   buildStandardizedAddressAst,
-  normalizeAddress,
 } from "../../addresses";
 import { deepClean } from "../../deepClean";
 import {
@@ -19,11 +18,6 @@ import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
-
-type OutputLayerPropertiesWithRawAddress = Omit<
-  OutputLayerProperties,
-  "normalizedAddress"
-> & { rawAddress?: string };
 
 const pickMostPromisingAddress = (
   ...rawAddresses: Array<string | undefined>
@@ -55,7 +49,7 @@ const pickMostPromisingAddress = (
 
 const extractPropertiesFromFirResponse = (
   infoPageObject: InfoPageObject,
-): OutputLayerPropertiesWithRawAddress | "notBuilding" | undefined => {
+): OutputLayerProperties | "notBuilding" | undefined => {
   const { cn, firResponse, firFetchedAt } = infoPageObject;
   if (typeof firResponse !== "object" || !firFetchedAt) {
     return;
@@ -71,7 +65,7 @@ const extractPropertiesFromFirResponse = (
     id: cn,
     knownAt: firFetchedAt,
     completionDates,
-    rawAddress: pickMostPromisingAddress(
+    address: pickMostPromisingAddress(
       firResponse.objectData.objectAddress?.mergedAddress,
       firResponse.objectData.addressNote,
     ),
@@ -80,7 +74,7 @@ const extractPropertiesFromFirResponse = (
 
 const extractPropertiesFromPkkResponse = (
   infoPageObject: InfoPageObject,
-): OutputLayerPropertiesWithRawAddress | "notBuilding" | undefined => {
+): OutputLayerProperties | "notBuilding" | undefined => {
   const { cn, pkkResponse, pkkFetchedAt } = infoPageObject;
   if (typeof pkkResponse !== "object" || !pkkFetchedAt) {
     return;
@@ -99,15 +93,14 @@ const extractPropertiesFromPkkResponse = (
   return {
     id: cn,
     knownAt: pkkFetchedAt,
-    rawAddress: pkkResponse.attrs.address,
+    address: pkkResponse.attrs.address,
     completionDates,
   };
 };
 
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   logger,
-  findPointForNormalizedAddress,
-  addressNormalizationConfig,
+  geocodeAddress,
 }) => {
   const territoryExtent = await getTerritoryExtent();
 
@@ -138,39 +131,31 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     processFile: async (filePath) => {
       const infoPageData: InfoPageData = await fs.readJson(filePath);
       for (const infoPageEntry of infoPageData) {
-        const outputLayerPropertiesWithRawAddress =
+        const outputLayerProperties =
           extractPropertiesFromFirResponse(infoPageEntry) ??
           extractPropertiesFromPkkResponse(infoPageEntry);
 
-        if (!outputLayerPropertiesWithRawAddress) {
+        if (!outputLayerProperties) {
           continue;
         }
 
-        if (outputLayerPropertiesWithRawAddress === "notBuilding") {
+        if (outputLayerProperties === "notBuilding") {
           continue;
         }
-
-        const {
-          rawAddress,
-          ...otherProperties
-        } = outputLayerPropertiesWithRawAddress;
-        const normalizedAddress = normalizeAddress(
-          rawAddress,
-          addressNormalizationConfig,
-        );
-        const outputLayerProperties: OutputLayerProperties = {
-          ...otherProperties,
-          normalizedAddress,
-        };
 
         const cn = infoPageEntry.cn;
         let geometry: turf.Point | undefined =
           objectCenterFeatureByCn[cn]?.geometry;
-        if (geometry) {
-          cnsWithGeometrySet.add(cn);
-        }
-        if (normalizedAddress && !geometry && findPointForNormalizedAddress) {
-          geometry = findPointForNormalizedAddress(normalizedAddress);
+        // if (geometry) {
+        //   cnsWithGeometrySet.add(cn);
+        // }
+
+        if (!geometry && outputLayerProperties.address && geocodeAddress) {
+          const geocodeResult = geocodeAddress(outputLayerProperties.address);
+          if (geocodeResult?.location) {
+            geometry = geocodeResult.location;
+            outputLayerProperties.externalGeometrySource = geocodeResult.source;
+          }
         }
 
         outputFeatures.push(

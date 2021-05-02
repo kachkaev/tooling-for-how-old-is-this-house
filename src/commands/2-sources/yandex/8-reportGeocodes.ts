@@ -6,7 +6,7 @@ import {
   ReportedGeocode,
   reportGeocodes as importedReportGeocodes,
 } from "../../../shared/geocoding";
-import { serializeTime } from "../../../shared/helpersForJson";
+import { Point2dCoordinates } from "../../../shared/helpersForGeometry";
 import { processFiles } from "../../../shared/processFiles";
 import {
   getYandexGeocoderCacheDir,
@@ -28,21 +28,34 @@ export const reportGeocodes: Command = async ({ logger }) => {
     processFile: async (filePath) => {
       const entry = (await fs.readJson(filePath)) as YandexGeocoderCacheEntry;
 
-      const rawCoordinates: string | undefined =
-        entry.data?.response?.GeoObjectCollection?.featureMember?.[0]?.GeoObject
-          ?.Point?.pos;
+      let coordinates: Point2dCoordinates | undefined = undefined;
 
-      const coordinates = rawCoordinates
-        ? (rawCoordinates.split(" ").map((n) => parseFloat(n)) as [
-            number,
-            number,
-          ])
-        : undefined;
+      const geoObject =
+        entry.data?.response?.GeoObjectCollection?.featureMember?.[0]
+          ?.GeoObject;
+      const rawCoordinates: string | undefined = geoObject?.Point?.pos;
+
+      const [lon, lat] =
+        rawCoordinates?.split(" ").map((n) => parseFloat(n)) ?? [];
+
+      if (lon && lat) {
+        coordinates = [lon, lat];
+      }
+
+      const precision =
+        geoObject?.metaDataProperty?.GeocoderMetaData?.precision;
+
+      if (!coordinates || precision !== "exact") {
+        reportedGeocodes.push({
+          address: entry.normalizedAddress,
+          knownAt: entry.fetchedAt,
+        });
+      }
 
       reportedGeocodes.push({
-        normalizedAddress: entry.normalizedAddress,
+        address: entry.normalizedAddress,
         coordinates,
-        knownAt: serializeTime(),
+        knownAt: entry.fetchedAt,
       });
     },
   });

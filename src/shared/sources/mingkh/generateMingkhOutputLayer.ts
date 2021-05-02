@@ -1,6 +1,5 @@
 import * as turf from "@turf/turf";
 
-import { normalizeAddress } from "../../addresses";
 import { stringifyCompletionYear } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
@@ -12,9 +11,7 @@ import { generateMingkhHouseInfoCollection } from "./generateMingkhHouseInfoColl
 
 export const notFilledIn = ["Не заполнено", "Нет данных"];
 
-export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
-  addressNormalizationConfig,
-}) => {
+export const generateMingkhOutputLayer: GenerateOutputLayer = async () => {
   const houseInfoCollection = await generateMingkhHouseInfoCollection();
 
   const outputFeatures: OutputLayer["features"] = houseInfoCollection.features.map(
@@ -22,11 +19,7 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
       const outputLayerProperties: OutputLayerProperties = {
         id: `${houseInfo.properties.id}`,
         completionDates: stringifyCompletionYear(houseInfo.properties.year),
-        derivedCompletionYear: houseInfo.properties.year,
-        normalizedAddress: normalizeAddress(
-          houseInfo.properties.address,
-          addressNormalizationConfig,
-        ),
+        address: houseInfo.properties.address,
         knownAt: houseInfo.properties.fetchedAt,
       };
 

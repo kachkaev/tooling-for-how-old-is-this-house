@@ -1,6 +1,6 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import * as envalid from "envalid";
@@ -8,6 +8,10 @@ import fs from "fs-extra";
 import http from "http";
 import https from "https";
 
+import {
+  buildCleanedAddressAst,
+  buildStandardizedAddressAst,
+} from "../../../shared/addresses";
 import { cleanEnv } from "../../../shared/cleanEnv";
 import {
   listNormalizedAddressesWithoutPosition,
@@ -81,6 +85,29 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
   process.stdout.write(` Found ${normalizedAddresses.length}.\n`);
 
   for (const normalizedAddress of normalizedAddresses) {
+    try {
+      if (
+        normalizedAddress.includes(" гараж ") ||
+        normalizedAddress.includes(" место ") ||
+        normalizedAddress.includes(" участок ") ||
+        normalizedAddress.includes(" гск ") ||
+        normalizedAddress.includes(" гск, ") ||
+        normalizedAddress.includes(" проезд, ") ||
+        normalizedAddress.includes(" улица, ") ||
+        normalizedAddress.includes(" станция ") ||
+        normalizedAddress.includes(" шоссе, ") ||
+        normalizedAddress.includes(" снт, ") ||
+        normalizedAddress.includes(" , 8 марта ") ||
+        normalizedAddress.includes(" кооператив") ||
+        normalizedAddress.includes(" снт ")
+      ) {
+        throw new Error("stop word");
+      }
+      buildStandardizedAddressAst(buildCleanedAddressAst(normalizedAddress));
+    } catch {
+      continue;
+    }
+
     const cacheEntryFilePath = getYandexGeocoderCacheEntryFilePath(
       normalizedAddress,
     );
@@ -102,13 +129,15 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
       };
       await writeFormattedJson(cacheEntryFilePath, cacheEntry);
       logger.log(`${chalk.magenta(cacheEntryFilePath)} ${normalizedAddress}`);
-    } catch (e) {
+    } catch (e: unknown) {
+      if ((e as AxiosError)?.response?.status === 403) {
+        logger.log(
+          chalk.red(
+            "Looks like you’ve reached your API key limits. Try again tomorrow!",
+          ),
+        );
+      }
       logger.log(e);
-      logger.log(
-        chalk.red(
-          "Looks like you’ve reached your API key limits. Try again tomorrow!",
-        ),
-      );
       break;
     }
   }

@@ -1,13 +1,18 @@
+import * as turf from "@turf/turf";
+
 import { Point2dCoordinates } from "../helpersForGeometry";
 
 export interface ReportedResolvedGeocode {
-  normalizedAddress: string;
+  address: string;
   coordinates: Point2dCoordinates;
   knownAt?: string;
+  /** if multiple addresses are normalized the same way, the algorithm picks one with the highest weight (e.g. area) */
+  weight: number;
 }
 
 export interface ReportedUnresolvedGeocode {
-  normalizedAddress: string;
+  address: string;
+  knownAt?: string;
 }
 
 export type ReportedGeocode =
@@ -27,3 +32,7 @@ export type GeocodeAddressRecord = Record<
 >;
 export type GeocodeDictionary = Record<string, GeocodeAddressRecord>;
 export type GeocodeDictionaryLookup = Record<string, GeocodeDictionary>;
+
+export type GeocodeAddressResult =
+  | { source: string; location: turf.Point; knownAt?: string }
+  | undefined;

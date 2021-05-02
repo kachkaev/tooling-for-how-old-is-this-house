@@ -28,22 +28,22 @@ const aggregateVariants = (
 
   for (const variant of orderedVariants) {
     if (variant.completionDates) {
-      result.completionDates = variant.completionDates;
-      result.completionDatesSource = variant.source;
-      break;
+      const derivedCompletionYear = deriveCompletionYearFromCompletionDates(
+        variant.completionDates,
+      );
+      if (derivedCompletionYear) {
+        result.completionDates = variant.completionDates;
+        result.completionDatesSource = variant.source;
+        result.derivedCompletionYear = derivedCompletionYear;
+        break;
+      }
     }
-  }
-  const derivedCompletionYear = deriveCompletionYearFromCompletionDates(
-    result.completionDates,
-  );
-  if (derivedCompletionYear) {
-    result.derivedCompletionYear = derivedCompletionYear;
   }
 
   for (const variant of orderedVariants) {
-    if (variant.normalizedAddress) {
-      result.normalizedAddress = variant.normalizedAddress;
-      result.normalizedAddressSource = variant.source;
+    if (variant.address) {
+      result.address = variant.address;
+      result.addressSource = variant.source;
       break;
     }
   }

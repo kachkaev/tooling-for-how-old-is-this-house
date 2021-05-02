@@ -4,6 +4,11 @@ export interface YandexGeocoderSuccessfulApiData {
       featureMember: [
         {
           GeoObject: {
+            metaDataProperty?: {
+              GeocoderMetaData?: {
+                precision: string;
+              };
+            };
             Point: {
               pos: string;
             };

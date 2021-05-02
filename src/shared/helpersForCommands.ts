@@ -1,15 +1,14 @@
 import { Command } from "@kachkaev/commands";
-import * as turf from "@turf/turf";
 import chalk from "chalk";
 import path from "path";
 import sortKeys from "sort-keys";
 
 import { deriveCompletionYearFromCompletionDates } from "./completionDates";
-import { loadCombinedGeocodeDictionary, resolveCoordinates } from "./geocoding";
+import { geocodeAddress, loadCombinedGeocodeDictionary } from "./geocoding";
 import { writeFormattedJson } from "./helpersForJson";
 import { getSourceDirPath } from "./helpersForPaths";
 import {
-  FindPointForNormalizedAddress,
+  ConfiguredGeocodeAddress,
   GenerateOutputLayer,
   getOutputLayerFileName,
   OutputLayer,
@@ -33,10 +32,7 @@ export const generateReportGeocodes = ({
   return async ({ logger }) => {
     logger.log(chalk.bold(`sources/${source}: report geocodes`));
 
-    const outputLayer = await generateOutputLayer({
-      logger,
-      addressNormalizationConfig: await getAddressNormalizationConfig(),
-    });
+    const outputLayer = await generateOutputLayer({ logger });
 
     await reportGeocodesInOutputLayer({
       source,
@@ -58,31 +54,29 @@ export const generateExtractOutputLayer = ({
   return async ({ logger }) => {
     logger.log(chalk.bold(`sources/${source}: extract output layer`));
 
-    let findPointForNormalizedAddress:
-      | FindPointForNormalizedAddress
+    let configuredGeocodeAddress:
+      | ConfiguredGeocodeAddress
       | undefined = undefined;
 
     if (canUseCollectedGeocodes) {
+      const addressNormalizationConfig = await getAddressNormalizationConfig();
       const combinedGeocodeDictionary = await loadCombinedGeocodeDictionary();
 
-      findPointForNormalizedAddress = (normalizedAddress) => {
-        const coordinates = resolveCoordinates(
+      configuredGeocodeAddress = (address) =>
+        geocodeAddress(
+          address,
+          addressNormalizationConfig,
           combinedGeocodeDictionary,
-          normalizedAddress,
-          ["osm"],
+          // TODO: Pick from territory config / global config
+          ["osm", "yandex"],
         );
-        if (coordinates) {
-          return turf.point(coordinates).geometry;
-        }
-      };
     }
 
     process.stdout.write(chalk.green(`Generating data...`));
 
     const outputLayer = await generateOutputLayer({
       logger,
-      findPointForNormalizedAddress,
-      addressNormalizationConfig: await getAddressNormalizationConfig(),
+      geocodeAddress: configuredGeocodeAddress,
     });
 
     logger.log(` Done.`);

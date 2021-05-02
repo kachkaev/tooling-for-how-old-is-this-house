@@ -2,7 +2,6 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 
-import { normalizeAddress } from "../../addresses/normalizeAddress";
 import { deepClean } from "../../deepClean";
 import { serializeTime } from "../../helpersForJson";
 import {
@@ -21,8 +20,7 @@ const isTypologyExpected = (typologyValue: string) =>
 
 export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
   logger,
-  findPointForNormalizedAddress,
-  addressNormalizationConfig,
+  geocodeAddress,
 }) => {
   const outputFeatures: OutputLayer["features"] = [];
   const territoryCentroid = turf.centroid(await getTerritoryExtent());
@@ -66,12 +64,9 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       }
 
       // Address
-      const normalizedAddress = normalizeAddress(
-        objectFile.data?.general?.address?.fullAddress,
-        addressNormalizationConfig,
-      );
-      if (normalizedAddress) {
-        logger?.log(`${prefix}${chalk.cyan(normalizedAddress)}`);
+      const address = objectFile.data?.general?.address?.fullAddress;
+      if (address) {
+        logger?.log(`${prefix}${chalk.cyan(address)}`);
       } else {
         logger?.log(`${warningPrefix}${chalk.yellow("No address")}`);
       }
@@ -80,6 +75,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       const mapPosition = objectFile.data.general.address?.mapPosition;
       let point = mapPosition;
       let pointSource = "map position";
+      let externalGeometrySource: string | undefined = undefined;
 
       const additionalCoordinates =
         objectFile.data.general?.additionalCoordinates;
@@ -109,16 +105,18 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         }
       }
 
+      if (!point && address && geocodeAddress) {
+        const geocodeResult = geocodeAddress(address);
+        if (geocodeResult) {
+          point = geocodeResult.location;
+          externalGeometrySource = geocodeResult.source;
+          pointSource = `geocodes (${externalGeometrySource})`;
+        }
+      }
+
       // Round coordinates
       if (point) {
         point = turf.truncate(point, { precision: 6 });
-      }
-
-      if (!point && normalizedAddress && findPointForNormalizedAddress) {
-        point = findPointForNormalizedAddress(normalizedAddress);
-        if (point) {
-          pointSource = "geocodes";
-        }
       }
 
       if (point) {
@@ -129,7 +127,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         );
       }
 
-      if (!normalizedAddress && !point) {
+      if (!address && !point) {
         logger?.log(
           chalk.gray(`${shouldNotProceedPrefix}no coordinates and no address`),
         );
@@ -145,8 +143,9 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         id: objectFile.nativeId,
         name: objectFile?.data?.nativeName,
         completionDates,
+        externalGeometrySource,
         knownAt: serializeTime(objectFile.modified),
-        normalizedAddress,
+        address,
         photoUrl: objectFile.data?.general?.photo?.url,
       };
 

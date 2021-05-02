@@ -1,22 +1,25 @@
 import * as turf from "@turf/turf";
 
-import { AddressNormalizationConfig } from "../addresses";
+import { GeocodeAddressResult } from "../geocoding";
 
 export type OutputLayerRole = "base" | "patch";
 
 export interface OutputLayerProperties {
+  address?: string;
   buildingType?: string;
   completionDates?: string;
   derivedCompletionYear?: number;
+  /** This field is present if coordinates are coming from another source via geocoding */
+  externalGeometrySource?: string;
   id: string;
   knownAt: string;
   name?: string;
-  normalizedAddress?: string;
   photoAuthorName?: string;
   photoAuthorUrl?: string;
   photoUrl?: string;
-  sourcesToIgnore?: string; // Special field that is only applicable to the "manual" layer
   url?: string;
+  /** Special field that is only applicable to the "manual" layer */
+  variantsToIgnore?: string;
   wikipediaUrl?: string;
 }
 
@@ -43,14 +46,13 @@ export type OutputLayer = turf.FeatureCollection<
   originalSpellings?: string[];
 };
 
-export type FindPointForNormalizedAddress = (
-  normalizedAddress: string,
-) => turf.Point | undefined;
+export type ConfiguredGeocodeAddress = (
+  address: string,
+) => GeocodeAddressResult;
 
 export type GenerateOutputLayer = (payload: {
   logger?: Console;
-  findPointForNormalizedAddress?: FindPointForNormalizedAddress;
-  addressNormalizationConfig: AddressNormalizationConfig;
+  geocodeAddress?: ConfiguredGeocodeAddress;
 }) => Promise<OutputLayer>;
 
 export interface PropertyLookupVariant extends OutputLayerProperties {
@@ -79,14 +81,14 @@ export type MixedOutputLayersFeatureCollection = turf.FeatureCollection<
 // mixed property variants
 
 export interface PropertyLookupVariantAggregate {
+  address?: string;
+  addressSource?: string;
+
   completionDates?: string;
   completionDatesSource?: string;
 
   /** The value is derived from completionDates and is stored to simplify data visualization */
   derivedCompletionYear?: number;
-
-  normalizedAddress?: string;
-  normalizedAddressSource?: string;
 }
 
 export interface MixedPropertyVariantsFeatureProperties

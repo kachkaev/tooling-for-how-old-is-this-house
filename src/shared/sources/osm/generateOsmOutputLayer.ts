@@ -3,7 +3,6 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 
-import { normalizeAddress } from "../../addresses";
 import { deepClean } from "../../deepClean";
 import {
   GenerateOutputLayer,
@@ -66,7 +65,6 @@ const generateGetIntersectedBoundaryName = ({
 
 export const generateOsmOutputLayer: GenerateOutputLayer = async ({
   logger,
-  addressNormalizationConfig,
 }): Promise<OutputLayer> => {
   const territoryExtent = await getTerritoryExtent();
   const fetchedOsmBuildingsFilePath = getFetchedOsmBuildingsFilePath();
@@ -93,9 +91,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
     expectedBoundaryOfAllCheckedFeatures: territoryExtent,
   });
 
-  const generateNormalizedAddress = (
-    building: OsmFeature,
-  ): string | undefined => {
+  const generateAddress = (building: OsmFeature): string | undefined => {
     const streetOrPlace =
       building.properties["addr:street"] ?? building.properties["addr:place"];
 
@@ -125,10 +121,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
       return undefined;
     }
 
-    return normalizeAddress(
-      [region, settlement, streetOrPlace, houseNumber].join(", "),
-      addressNormalizationConfig,
-    );
+    return [region, settlement, streetOrPlace, houseNumber].join(", ");
   };
 
   const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(
@@ -145,7 +138,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         id: building.properties.id,
         buildingType,
         completionDates: building.properties["start_date"],
-        normalizedAddress: generateNormalizedAddress(building),
+        address: generateAddress(building),
         knownAt: buildingCollection.fetchedAt,
       };
 

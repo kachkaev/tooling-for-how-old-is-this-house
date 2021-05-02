@@ -1,6 +1,9 @@
+import chalk from "chalk";
 import _ from "lodash";
 import rmUp from "rm-up";
 
+import { normalizeAddress } from "../addresses";
+import { getAddressNormalizationConfig } from "../territory";
 import {
   deriveNormalizedAddressSliceId,
   getDictionaryFilePath,
@@ -50,12 +53,26 @@ export const reportGeocodes = async ({
   reportedGeocodes: ReportedGeocode[];
   source: string;
 }): Promise<void> => {
+  const addressNormalizationConfig = await getAddressNormalizationConfig();
   const sourceDictionary: GeocodeDictionary = {};
 
   for (const reportedGeocode of reportedGeocodes) {
-    const { normalizedAddress } = reportedGeocode;
+    const normalizedAddress = normalizeAddress(
+      reportedGeocode.address,
+      addressNormalizationConfig,
+    );
+
+    if (!normalizedAddress) {
+      logger?.log(
+        chalk.yellow(
+          `Skipping "${reportedGeocode.address}" (normalized address is empty)`,
+        ),
+      );
+      continue;
+    }
+
     const geocode: ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary =
-      "coordinates" in reportedGeocode
+      "coordinates" in reportedGeocode && reportedGeocode.coordinates
         ? reportedGeocode.knownAt
           ? [...reportedGeocode.coordinates, reportedGeocode.knownAt]
           : reportedGeocode.coordinates
