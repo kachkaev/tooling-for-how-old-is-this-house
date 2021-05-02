@@ -48,14 +48,20 @@ export const fetchGeojsonFromOverpassApi = async ({
 
   process.stdout.write(chalk.green("Calling Overpass API..."));
 
-  const osmData = (
-    await axios.post(
-      "https://overpass-api.de/api/interpreter",
-      processedQuery,
-      { responseType: "json" },
-    )
-  ).data;
+  const response = await axios.post(
+    "https://overpass-api.de/api/interpreter",
+    processedQuery,
+    {
+      responseType: "json",
+      validateStatus: (status) => status === 200 || status === 429,
+    },
+  );
 
+  if (response.status === 429) {
+    throw new Error("Too many requests. Please try again in a few minutes.");
+  }
+
+  const osmData = response.data;
   process.stdout.write(" Done.\n");
   process.stdout.write(chalk.green("Converting OSM data to geojson..."));
 
