@@ -58,7 +58,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 1.  [Клонировать](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) этот репозиторий в папку `/path/to/tooling`.
 
-1.  Скопировать `.env.dist` в `.env` и заполнить новый файл.
+1.  Будучи в папке `/path/to/tooling`, скопировать `.env.dist` в `.env` и заполнить новый файл.
 
 1.  Будучи в папке `/path/to/tooling`, установить сторонние библиотеки:
 
