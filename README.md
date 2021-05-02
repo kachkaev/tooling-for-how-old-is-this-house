@@ -37,17 +37,30 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 В названиях папок и файлов часть `/path/to` условно обозначает любую папку, выделенную для проекта.
 
-1.  Убедиться, что на машине установлены [git](https://git-scm.com/), [Node.js](https://nodejs.org) и [Yarn](https://yarnpkg.com):
+1.  Убедиться, что на машине установлены [гит](https://git-scm.com/) (система контроля версий) и [нода](https://nodejs.org/ru/) (среда запуска наших команд).
+    При установке ноды желательно выбрать версию LTS.
+
+    Команды для проверки установки:
 
     ```sh
     git --version
-    ## ≥ 2.30
+    ## покажет ≥ 2.30
     
     node --version
-    ## ≥ 14.16
-    
+    ## покажет ≥ 14.16
+    ```
+
+1.  Установить последнюю версию [ярна](<[Yarn](https://yarnpkg.com)>) (менеджера зависимостей):
+
+    ```sh
+    npm install --global yarn
+    ```
+
+    Команда для проверки установки:
+
+    ```sh
     yarn --version
-    ## ≥ 1.22
+    ## покажет ≥ 1.22
     ```
 
 1.  Создать и заполнить файл `/path/to/data/territories/TERRITORY_NAME/territory-config.yml` (по аналогии с таким файлом для уже обработанного города).
