@@ -2,7 +2,9 @@ import { Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import path from "path";
+import sortKeys from "sort-keys";
 
+import { deriveCompletionYearFromCompletionDates } from "./completionDates";
 import { loadCombinedGeocodeDictionary, resolveCoordinates } from "./geocoding";
 import { writeFormattedJson } from "./helpersForJson";
 import { getSourceDirPath } from "./helpersForPaths";
@@ -10,6 +12,7 @@ import {
   FindPointForNormalizedAddress,
   GenerateOutputLayer,
   getOutputLayerFileName,
+  OutputLayer,
   reportGeocodesInOutputLayer,
 } from "./output";
 import { getAddressNormalizationConfig } from "./territory";
@@ -83,6 +86,22 @@ export const generateExtractOutputLayer = ({
     });
 
     logger.log(` Done.`);
+    process.stdout.write(chalk.green(`Adding derived properties...`));
+
+    const outputLayerWithDerivedProperties: OutputLayer = {
+      ...outputLayer,
+      features: outputLayer.features.map((feature) => ({
+        ...feature,
+        properties: sortKeys({
+          ...feature.properties,
+          derivedCompletionYear: deriveCompletionYearFromCompletionDates(
+            feature.properties.completionDates,
+          ),
+        }),
+      })),
+    };
+
+    logger.log(` Done.`);
 
     process.stdout.write(chalk.green(`Saving...`));
 
@@ -91,7 +110,10 @@ export const generateExtractOutputLayer = ({
       getOutputLayerFileName(),
     );
 
-    await writeFormattedJson(outputLayerFilePath, outputLayer);
+    await writeFormattedJson(
+      outputLayerFilePath,
+      outputLayerWithDerivedProperties,
+    );
 
     logger.log(` Result saved to ${chalk.magenta(outputLayerFilePath)}`);
   };

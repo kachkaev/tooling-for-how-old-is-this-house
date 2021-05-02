@@ -6,7 +6,7 @@ import {
   interpolateWarm,
 } from "d3-scale-chromatic";
 
-export const extractYearFromCompletionDates = (
+export const deriveCompletionYearFromCompletionDates = (
   completionDates: string | undefined,
 ): number | undefined => {
   if (!completionDates) {

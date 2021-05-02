@@ -128,18 +128,18 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
   > = React.useMemo(
     () =>
       _.groupBy(buildingCollection.features, (buildingFeature) => {
-        const { completionYear } = buildingFeature.properties;
-        if (!completionYear) {
+        const { derivedCompletionYear } = buildingFeature.properties;
+        if (!derivedCompletionYear) {
           return "";
         }
-        if (completionYear < minYear) {
+        if (derivedCompletionYear < minYear) {
           return minYear;
         }
-        if (completionYear > maxYear) {
+        if (derivedCompletionYear > maxYear) {
           return maxYear;
         }
 
-        return completionYear;
+        return derivedCompletionYear;
       }),
     [buildingCollection.features],
   );

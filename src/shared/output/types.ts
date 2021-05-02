@@ -7,7 +7,7 @@ export type OutputLayerRole = "base" | "patch";
 export interface OutputLayerProperties {
   buildingType?: string;
   completionDates?: string;
-  completionYear?: number;
+  derivedCompletionYear?: number;
   id: string;
   knownAt: string;
   name?: string;
@@ -82,9 +82,8 @@ export interface PropertyLookupVariantAggregate {
   completionDates?: string;
   completionDatesSource?: string;
 
-  /** Derived from completionDates */
-  completionYear?: number;
-  completionYearSource?: string;
+  /** The value is derived from completionDates and is stored to simplify data visualization */
+  derivedCompletionYear?: number;
 
   normalizedAddress?: string;
   normalizedAddressSource?: string;

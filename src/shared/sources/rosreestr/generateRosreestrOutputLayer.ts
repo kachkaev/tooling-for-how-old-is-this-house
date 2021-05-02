@@ -7,7 +7,6 @@ import {
   buildStandardizedAddressAst,
   normalizeAddress,
 } from "../../addresses";
-import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
   GenerateOutputLayer,
@@ -76,7 +75,6 @@ const extractPropertiesFromFirResponse = (
       firResponse.objectData.objectAddress?.mergedAddress,
       firResponse.objectData.addressNote,
     ),
-    completionYear: extractYearFromCompletionDates(completionDates),
   };
 };
 
@@ -103,7 +101,6 @@ const extractPropertiesFromPkkResponse = (
     knownAt: pkkFetchedAt,
     rawAddress: pkkResponse.attrs.address,
     completionDates,
-    completionYear: extractYearFromCompletionDates(completionDates),
   };
 };
 

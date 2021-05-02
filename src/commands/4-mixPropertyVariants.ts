@@ -5,7 +5,7 @@ import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
 
-import { extractYearFromCompletionDates } from "../shared/completionDates";
+import { deriveCompletionYearFromCompletionDates } from "../shared/completionDates";
 import { deepClean } from "../shared/deepClean";
 import { writeFormattedJson } from "../shared/helpersForJson";
 import {
@@ -33,10 +33,11 @@ const aggregateVariants = (
       break;
     }
   }
-  const completionYear = extractYearFromCompletionDates(result.completionDates);
-  if (completionYear) {
-    result.completionYear = completionYear;
-    result.completionYearSource = result.completionDatesSource;
+  const derivedCompletionYear = deriveCompletionYearFromCompletionDates(
+    result.completionDates,
+  );
+  if (derivedCompletionYear) {
+    result.derivedCompletionYear = derivedCompletionYear;
   }
 
   for (const variant of orderedVariants) {

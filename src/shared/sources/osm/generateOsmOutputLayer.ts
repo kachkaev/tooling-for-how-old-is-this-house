@@ -4,7 +4,6 @@ import fs from "fs-extra";
 import _ from "lodash";
 
 import { normalizeAddress } from "../../addresses";
-import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
   GenerateOutputLayer,
@@ -146,9 +145,6 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         id: building.properties.id,
         buildingType,
         completionDates: building.properties["start_date"],
-        completionYear: extractYearFromCompletionDates(
-          building.properties["start_date"],
-        ),
         normalizedAddress: generateNormalizedAddress(building),
         knownAt: buildingCollection.fetchedAt,
       };

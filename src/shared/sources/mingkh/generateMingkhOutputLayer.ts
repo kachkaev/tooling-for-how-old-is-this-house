@@ -22,7 +22,7 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
       const outputLayerProperties: OutputLayerProperties = {
         id: `${houseInfo.properties.id}`,
         completionDates: stringifyCompletionYear(houseInfo.properties.year),
-        completionYear: houseInfo.properties.year,
+        derivedCompletionYear: houseInfo.properties.year,
         normalizedAddress: normalizeAddress(
           houseInfo.properties.address,
           addressNormalizationConfig,

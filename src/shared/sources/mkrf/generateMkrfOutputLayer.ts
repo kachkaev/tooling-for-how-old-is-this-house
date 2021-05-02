@@ -3,7 +3,6 @@ import chalk from "chalk";
 import fs from "fs-extra";
 
 import { normalizeAddress } from "../../addresses/normalizeAddress";
-import { extractYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import { serializeTime } from "../../helpersForJson";
 import {
@@ -146,7 +145,6 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         id: objectFile.nativeId,
         name: objectFile?.data?.nativeName,
         completionDates,
-        completionYear: extractYearFromCompletionDates(completionDates),
         knownAt: serializeTime(objectFile.modified),
         normalizedAddress,
         photoUrl: objectFile.data?.general?.photo?.url,

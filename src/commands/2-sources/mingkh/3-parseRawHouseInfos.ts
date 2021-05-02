@@ -3,7 +3,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
 
-import { extractYearFromCompletionDates } from "../../../shared/completionDates";
+import { deriveCompletionYearFromCompletionDates } from "../../../shared/completionDates";
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
   serializeTime,
@@ -69,7 +69,7 @@ export const parseRawHouseInfos: Command = async ({ logger }) => {
       const yearMatch = rawInfo.match(
         /<dt>Год постройки<\/dt>\s*<dd>(.*)<\/dd>/,
       );
-      const year = extractYearFromCompletionDates(yearMatch?.[0]);
+      const year = deriveCompletionYearFromCompletionDates(yearMatch?.[0]);
       if (year) {
         info.year = year;
       }
