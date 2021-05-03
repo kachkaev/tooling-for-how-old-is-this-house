@@ -33,12 +33,34 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 <!-- prettier-ignore-end -->
 
-## Шаги по сборке данных
+## Инструкции
 
-В названиях папок и файлов часть `/path/to` условно обозначает любую папку, выделенную для проекта.
+Чтобы выполнить приведённые ниже шаги, вам понадобится базовое понимание [командной строки](https://ru.wikipedia.org/wiki/Интерфейс_командной_строки) (терминала) и небольшой опыт работы с [гитом](https://ru.wikipedia.org/wiki/Git) (системой контроля версий).
+Также пригодится поверхностное знание форматов [GeoJSON](https://ru.wikipedia.org/wiki/GeoJSON) и [YAML](https://ru.wikipedia.org/wiki/YAML).
+
+В качестве текстового редактора рекомендуется [VSCode](https://code.visualstudio.com) с плагинами
+[DotENV](https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv),
+[Geo Data Viewer](https://marketplace.visualstudio.com/items?itemName=RandomFractalsInc.geo-data-viewer),
+[Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph),
+[Git Lens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens),
+[Yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml).
+Для визуализации полученных данных подойдёт любая геоинформационная программа, например, [QGIS](https://qgis.org/ru/site/).
+
+В упомянутых ниже папках и файлах `/path/to` условно обозначает локальную папку, выделенную для проекта.
+Например, если на вашем компьютере это `/Users/me/projects/how-old-is-this-house`, то `/path/to/some-folder` означает `/Users/me/projects/how-old-is-this-house/some-folder`.
+
+### Требования к системе
+
+Для запуска команд подойдёт любой относительно современный компьютер с любой операционной системой.
+Для обработки территории с населением порядка миллиона человека хватит 2-4 ГБ оперативной памяти и порядка 200-400 МБ свободного места на диске.
+Скорее всего, бутылочным горлышком будет пропускная способность интернета и ограничения, которые накладывают источники данных на скорость скачивания.
+
+### Настройка команд
+
+Эти шаги достаточно выполнить один раз, даже если вы планируете сбор данных для нескольких территорий.
 
 1.  Убедиться, что на машине установлены [гит](https://git-scm.com/) (система контроля версий) и [нода](https://nodejs.org/ru/) (среда запуска наших команд).
-    При установке ноды желательно выбрать версию LTS.
+    При установке ноды рекомендуется выбрать версию LTS.
 
     Команды для проверки установки:
 
@@ -63,105 +85,413 @@ Although some of the data sources are country-specific, parts of the repo can st
     ## покажет ≥ 1.22
     ```
 
-1.  Создать и заполнить файл `/path/to/data/territories/TERRITORY_NAME/territory-config.yml` (по аналогии с таким файлом для уже обработанного города).
-
-1.  Скачать список объектов [с сайта Минкультуры](https://opendata.mkrf.ru/opendata/7705851331-egrkn).
-    Файл должен быть в формате `jsons` (с `s` на конце) и разарахивирован.
-    Рекомендованная папка: `/path/to/data/sources/mkrf` (название файла желательно не менять).
-
 1.  [Клонировать](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) этот репозиторий в папку `/path/to/tooling`.
 
-1.  Будучи в папке `/path/to/tooling`, скопировать `.env.dist` в `.env` и заполнить новый файл.
+1.  Открыть терминал, перейти в папку `/path/to/tooling`:
 
-1.  Будучи в папке `/path/to/tooling`, установить сторонние библиотеки:
+    ```sh
+    cd "/path/to/tooling"
+    ```
+
+    Название этой папки должно появиться слева от места ввода команды.
+
+1.  Будучи в папке `/path/to/tooling`, установить зависимые библиотеки:
 
     ```sh
     yarn install
     ```
 
-1.  Будучи в папке `/path/to/tooling`, проверить готовность к запуску команд:
+    Это займёт пару минут.
+
+1.  Будучи в папке `/path/to/tooling`, создать пустой файл `.env.local`:
 
     ```sh
-    yarn exe src/commands/probe.ts
+    yarn exe src/commands/ensureDotEnvLocal.ts
     ```
 
     Если возникает ошибка, повторить предыдущие шаги (видимо, что-то пропустили).
 
-1.  Будучи в папке `/path/to/tooling`, запустить команды:
+### Подготовка данных Минкульта
+
+Эти шаги достаточно выполнить один раз, даже если вы планируете сбор данных для нескольких территорий.
+
+1.  Скачать список объектов с сайта Министерства Культуры:  
+    <https://opendata.mkrf.ru/opendata/7705851331-egrkn>
+
+    Ссылка на архив — в правом верхнем углу страницы.
+    Файл должен быть в формате `jsons` (с `s` на конце).
+
+1.  Разарахивировать скаченный файл и поместить его в папку `/path/to/data/sources/mkrf`.
+    Название файла желательно не менять.
+
+1.  Открыть файл `/path/to/tooling/.env.local` как текстовый и указать переменную `MKRF_JSONS_DUMP_FILE_PATH`.
+    Её смысл — указывать путь к скаченному файлу.
+    Вероятно, новая строчка будет выглядить так:
+
+    ```env
+    MKRF_JSONS_DUMP_FILE_PATH=../data/sources/mkrf/data-50-structure-6.jsons
+    ```
+
+    В пути к файлу может быть другая цифра вместо `50`.
+    Она означает версию данных.
+
+1.  Будучи в папке `/path/to/tooling`, проверить выполнение предыдущих шагов:
+
+    ```sh
+    yarn exe src/commands/2-sources/mkrf/0-checkJsonsDump.ts
+    ```
+
+### Подготовка территории
+
+Команды в этом репозитории могут запускаться для любой частьи РФ.
+Рекомендуется ограничиваться компактной территорией, например, одной городской агломерацией.
+Из-за особенностей процесса получения данных, попытка охвата большой, но при этом в основном пустой территории, будет неэффективной.
+
+Как и команды, скаченные в рамках этого проекта данные хранятся в гит-репозитории.
+Это позволяет отслеживать изменения в файлах, делать их резервные копии и совместно работать над территориями.
+Репозиторий с данными независим от репозитория с командами.
+
+Перед выполнением шагов в этом разделе вам надо получить доступ к репозиторию с данными.
+Для вас будет создана новая гит-ветка из специальной ветки-шаблона `territories/_blank`.
+После этого надо:
+
+1.  Создать папку `/path/to/data/territories`, если она пока не существует.
+
+1.  Клонировать соответствующую ветку репозитория с данными в папку `/path/to/data/territories/TERRITORY_NAME`.
+
+    `TERRITORY_NAME` — это название города или части субъекта РФ (например, `penza` или `penza_oblast_kuznetsk`).
+    Значение соответствует названию ветки репозитория (`territories/TERRITORY_NAME`).
+
+1.  Открыть файл `/path/to/tooling/.env.local` как текстовый и указать путь к папке для территории.
+    Это делается добавлением такой строчки:
+
+    ```dotenv
+    TERRITORY_DATA_DIR_PATH=../data/territories/TERRITORY_NAME
+    ```
+
+    Часть `TERRITORY_NAME` надо заменить на реальное название папки.
+
+1.  Если это новая территория, заполнить файл `/path/to/data/territories/TERRITORY_NAME/territory-config.yml`.
+    Внутри этого уже созданного гитом файла есть подсказки в комментариях.
+
+1.  Если это новая территория, построить её границу:
 
     ```sh
     yarn exe src/commands/1-buildTerritoryExtent.ts
     ```
 
+    Эта команда возьмёт настройки из `territory-config.yml` → `extent` и создаст файл `/path/to/data/territories/TERRITORY_NAME/territory-extent.geojson`.
+
+    Вместо использования команды, вы можете задать границу территории самостоятельно, сохранив любой полигон в файл `territory-extent.geojson`.
+
+    Из-за особенностей работы с АПИ Росреестра желательно выбирать границы территории так, чтобы они повторяли контуры кадастровых кварталов.
+
+1.  Закоммитить и запушить изменения в файлах `territory-config.yml` и `territory-extent.yml` при помощи гита.
+    Этот шаг упростит дальнейшую работу над территорий и избавит вас от необходимости делать резервные копии данных.
+
+### Получение и обработка данных для территории
+
+Все нижеперечисленные команды выполняются из папки `/path/to/tooling`.
+Перед их запуском важно выполнить инструкции в предыдущих разделах.
+
+Команды выполняются по очереди сверху вниз.
+Если у вас возникает проблема с одним из источников, можете продолжать выполнение любых команд, которые этот источник не упоминают.
+Например, если что-то пошло не так с Росреестром, достаточно вычеркнуть все последующие команды `src/commands/2-sources/rosreestr/*`, и можно продолжать.
+
+Если вы совместно работаете с кем-то ещё над одной территорией, то вам надо будет выполнять только команды ближе к концу списка.
+Какие именно — зависит от того, что уже успели сделать до вас.
+
+После запуска команд важно не забывать проверять статус локального гит-репозитория с данными: `/path/to/data/territories/TERRITORY_NAME`.
+
+- Команды, которые скачивают и обрабатывают сырые данные, создают новые файлы в репозиториях.
+  Эти файлы важно коммитить и пушить.
+
+- Промежуточные наборы данных дешевле перегенерировать локально, чем хранить в репозитории.
+  Они перечислены в специальном файле `/path/to/data/territories/TERRITORY_NAME/.gitignore`.
+  Благодаря этой настройке, вы не видите изменений в гит-репозитории с данными после запуска некоторых команд.
+
+Потратив несколько лишних секунд на гит после запуска очередной команды, вы можете сэкономить себе несколько часов.
+Гит позволяет откатить папку с данными к предыдущей версии, если что-то пошло не так (например, вы запустили команду, которая обнулила созданные ранее данные).
+
+Вот все шаги:
+
+1.  **Скачать и обработать данные с МинЖКХ**
+
     ```sh
     yarn exe src/commands/2-sources/mingkh/1-fetchHouseLists.ts
     yarn exe src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
     yarn exe src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
-    yarn exe src/commands/2-sources/mingkh/4-previewHouseInfos.ts ## optional
-    
+    ```
+
+    Создание файла для просмотра результата (опционально):
+
+    ```sh
+    yarn exe src/commands/2-sources/mingkh/4-previewHouseInfos.ts
+    ```
+
+1.  **Извлечь данные из скаченного ранее дампа Минкульта**
+
+    ```sh
     yarn exe src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
-    
+    ```
+
+1.  **Скачать данные с ОСМ**
+
+    Контуры зданий и административные границы:
+
+    ```sh
     yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
     yarn exe src/commands/2-sources/osm/2-fetchBoundaries.ts
-    yarn exe src/commands/2-sources/osm/3-fetchWaterObjects.ts ## optional
-    yarn exe src/commands/2-sources/osm/4-fetchRoads.ts        ## optional
-    
+    ```
+
+    Контуры водных объектов и дорог (опционально, понадобится только для визуализации):
+
+    ```sh
+    yarn exe src/commands/2-sources/osm/3-fetchWaterObjects.ts
+    yarn exe src/commands/2-sources/osm/4-fetchRoads.ts
+    ```
+
+1.  **Скачать данные с Росреестра**
+
+    ОКС и участки с геопривязкой:
+
+    ```sh
     yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
     yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
-    yarn exe src/commands/2-sources/rosreestr/3-previewTileData.ts ## optional
+    ```
+
+    Создание файла для просмотра результата (опционально):
+
+    ```sh
+    yarn exe src/commands/2-sources/rosreestr/3-previewTileData.ts
+    ```
+
+    Подготовка к скачиванию деталей объектов:
+
+    ```sh
     yarn exe src/commands/2-sources/rosreestr/4-generateObjectInfoPages.ts
-    yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfosFromFirApi.ts ## supports concurrent launches
+    ```
+
+    Скачивание деталей объектов из АПИ `fir_object`:
+
+    ```sh
+    yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfosFromFirApi.ts
+    ```
+
+    > ↑ Эта команда поддерживает многозадачность.
+    > Вы можете открыть до десяти терминалов и запустить её, чтобы ускорить процесс.
+
+    Скачивание деталей объектов АПИ ПКК, чтобы закрыть оставшиеся пробелы:
+
+    ```sh
     yarn exe src/commands/2-sources/rosreestr/6-fetchObjectInfosFromPkkApi.ts
-    
-    # yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
-    ## wikidata flow is incomplete due to lack of good harvest for Penza
-    
+    ```
+
+    > ↑ Эта команда не поддерживает многозадачность.
+    > Запуск слишком большого числа запросов приводит к блокировке.
+
+    <!--
+    Скачать данные с Викидаты:
+    ```sh
+    yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
+    ```
+    Эта команда пока не доделана, потому что для Пензы было мало мало данных.
+    -->
+
+1.  **Скачать данные с Викимапии**
+
+    Контуры объектов:
+
+    ```sh
     yarn exe src/commands/2-sources/wikimapia/1-fetchTiles.ts
-    yarn exe src/commands/2-sources/wikimapia/2-previewTileData.ts ## optional
+    ```
+
+    Создание файла для просмотра результата (опционально):
+
+    ```sh
+    yarn exe src/commands/2-sources/wikimapia/2-previewTileData.ts
+    ```
+
+    Детали объектов:
+
+    ```sh
     yarn exe src/commands/2-sources/wikimapia/3-fetchRawObjectInfos.ts
     yarn exe src/commands/2-sources/wikimapia/4-parseRawObjectInfos.ts
     ```
+
+1.  **Создать локальную библиотеку геокодов**
+
+    Геокодирование — процесс связывания адреса объекта и его координат.
+    У нас есть ряд источников, в некоторых из которых присутствует и адрес, и координаты, а в некоторых других — только адрес.
+    Собрав локальную библиотеку геокодов, мы уменьшим долю данных без координат.
 
     ```sh
     yarn exe src/commands/2-sources/mingkh/8-reportGeocodes.ts
     yarn exe src/commands/2-sources/mkrf/8-reportGeocodes.ts
     yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
     yarn exe src/commands/2-sources/rosreestr/8-reportGeocodes.ts
-    yarn exe src/commands/2-sources/wikimapia/8-reportGeocodes.ts ## practically noop
+    yarn exe src/commands/2-sources/wikimapia/8-reportGeocodes.ts
     ```
 
-    <!--
+    Результат будет в папке `/path/to/data/territories/TERRITORY_NAME/geocoding`.
+    Созданные файлы игнорируются гитом, поэтому команды следует выполнять локально каждый раз после клонирования или обновления репозитория с данными.
+
+1.  **Заполнить пробелы в библиотеке геокодов при помощи Яндекса**
+
+    Полнота данных ОСМ на выбранной вами территории существенно влияет на количество пробелов в локальной библиотеке геокодов.
+    Чтобы уменьшить зависимость от внешнего геокодера, попробуйте улучшить данные в ОСМ и потом скачать их заново.
+    См. [пензенскую картовечеринку](https://wiki.openstreetmap.org/wiki/RU:Пенза/встречи) в качестве примера такого подхода.
+
+    Чтобы воспользоваться геокодером от Яндекса, вам потребуется ключ для их АПИ.
+    Его получают на странице [developer.tech.yandex.ru/services](https://developer.tech.yandex.ru/services): следует выбрать _JavaScript API и HTTP Геокодер_.
+    Важно, чтобы у вас было разрешение кэшировать результат запросов, иначе вы будете нарушать лицензионное соглашение.
+
+    Созданный ключ надо добавить в файл `/path/to/tooling/.env.local`:
+
+    ```dotenv
+    YANDEX_GEOCODER_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    ```
+
+    Обращение к геокодеру:
+
     ```sh
     yarn exe src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts
+    ```
+
+    > ↑ В зависимости от лимита запросов для вашего ключа, вам может понадобиться несколько дней, чтобы закрыть все пробелы.
+    > Можно продолжать, не дожидаясь геокодирования всех адресов, а потом вернуться к этому шагу.
+
+    После сбора геокодов из Яндекса следует добавить их в локальную библиотеку:
+
+    ```sh
     yarn exe src/commands/2-sources/yandex/8-reportGeocodes.ts
     ```
-    -->
+
+    Как и на предыдущем шаге, результат команды `*/8-reportGeocodes.ts` не попадает в гит-репозиторий.
+    Значит, эту команду надо выполнить в том числе если `*/yandex/1-geocodeAddressesWithoutPosition.ts` запускали до вас на другой машине.
+
+1.  **Подготовить слои для склейки**
 
     ```sh
     yarn exe src/commands/2-sources/mingkh/9-extractOutputLayer.ts
-    yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts
+    yarn exe src/commands/2-sources/mkrf/9-extractOutтак putLayer.ts
     yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/wikimapia/9-extractOutputLayer.ts
     ```
 
+    Эти команды создадут файлы `/path/to/data/territories/TERRITORY_NAME/sources/*/output-layer.geojson`.
+    Некоторые из команд обращаются к локальной библиотеке геокодов, созданной ранее.
+    Результат команд игнорируется гитом, потому что его дешевле перегенерировать, чем хранить.
+
+1.  **Склеить слои**
+
+    Этот финальный этап обработки данных смешивает файлы, которые мы получили на предыдущем шаге.
+
+    Исходные слои выполняют одну из двух ролей: являются _базой_ (источником геометрии и характеристик) или _заплаткой_ (только источником характеристик).
+    Роль базового слоя выполняет ОСМ, все остальные источники — заплатки.
+
+    Подмешивание заплаток к базовому слою:
+
     ```sh
     yarn exe src/commands/3-mixOutputLayers.ts
-    yarn exe src/commands/4-mixPropertyVariants.ts ## MVP
-    yarn exe src/commands/5-prepareUpload.ts       ## todo
+    ```
+
+    Выбор характеристик объектов из получившихся вариантов:
+
+    ```sh
+    yarn exe src/commands/4-mixPropertyVariants.ts
     ```
 
     <!--
+    1.  **Подготовить данные к выгрузке**
+    Эта команда подгоняет склеенный набор данных под формат сайта <https://how-old-is-this.house>.
     ```sh
-    yarn dev
-    yarn exe src/commands/9-makePoster.ts
+    yarn exe src/commands/5-prepareUpload.ts
     ```
     -->
 
-## Использование геокодера от Яндекса
+### Просмотр черновика постера
 
-Перед запуском команды `src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts` следует:
+Результат склейки слоёв доступен в виде веб-страницы.
+Чтобы её открыть, надо запустить локальный веб-сервер, находясь в папке `/path/to/tooling`:
 
-1.  Перейти на страницу <https://developer.tech.yandex.ru/services>
-1.  Получить ключ АПИ формата `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
-1.  Ввести полученный ключ в файле `.env` (`YANDEX_GEOCODER_API_KEY=...`)
+```sh
+yarn dev
+```
+
+Эта команда остаётся запущенной в терминале до нажатия `ctrl+c`.
+Пока веб-сервер работает, черновик постера доступен в браузере по адресу [localhost:3000/poster](http://localhost:3000/poster).
+
+Чтобы сгенерировать изображение с постером, надо открыть второй терминал, перейти в папку `/path/to/tooling` и запустить эту команду:
+
+```sh
+yarn exe src/commands/9-makePoster.ts
+```
+
+Для успешной генерации картинки, важно, чтобы в первом терминале команда `yarn dev` продолжала быть запущенной.
+Путь к черновику постера будет написан в выводе команды.
+
+Цвета домиков настраиваются в файле `/path/to/tooling/src/shared/completionDates.ts`.
+Веб-страница обновляется автоматически при сохранении этого файла.
+
+### Корректировка результата
+
+Запуск команд не требует ручных шагов по обработке данных, при этом результат полностью зависит от внешних источников.
+Ошибки в источниках неизбежно попадают в итоговый набор данных.
+
+Чтобы повысить качество и полноту результата, существует возможность подмешивать созданные вручную данные при склейке слоёв.
+Это позволяет добавлять на карту особые объекты (например, мосты) или исправлять ошибки в характеристиках (например, корректировать год постройки).
+
+Как и файлы `/path/to/data/territories/TERRITORY_NAME/sources/*/output-layer.geojson`, ручные слои — это файлы `*.geojson`.
+Их помещают в папку `/path/to/data/territories/TERRITORY_NAME/sources/manual`.
+Название файла может быть любым, например, `bridges.geojson`.
+Струкура файлов — такая же, как у файлов `output-layer.geojson`.
+
+Объекты из папки `manual` имеют приоритет над остальными источниками.
+Важно не забыть указать `"layerRole": "base"` или `"layerRole": "patch"`, иначе ваш файл `*.geojson` будет проигнорирован.
+
+При ручном создании объекта-заплатки есть возможность указывать данные, которые следует проигнорировать при склейке.
+Например, в слое Минкульта может быть дом, который уже снесён, а на этом месте него построен новый, с уже правильными данными в Росреестре.
+Чтобы исключить данные по снесённому дому из склейки, мы создаём файл `/path/to/data/territories/TERRITORY_NAME/sources/manual/patches.geojson`.
+В этот файл добавляем точку с координатами внутри контура проблемного дома:
+
+```json
+{
+  "type": "FeatureCollection",
+  "layerRole": "patch",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [12.345678, 12.345678]
+      },
+      "properties": {
+        "dataToIgnore": "mkrf",
+        "description": "ул. Тестовая 42 отмечен как памятник, а это уже небоскрёб"
+      }
+    }
+  ]
+}
+```
+
+Благодаря `"dataToIgnore": "mkrf"`, харакеристики дома по версии Минкульта будут исключены из финального набора данных.
+Допускается указание идентификатора объекта и конкретной характеристики через разделитель `|`.
+Также разрешается указывать несколько правил через запятую:
+
+```json
+"dataToIgnore": "mkrf"
+"dataToIgnore": "mkrf|id12345"
+"dataToIgnore": "mkrf|id12345|completionDates"
+"dataToIgnore": "mkrf|*|completionDates"
+"dataToIgnore": "mkrf|id12345,mingkh|*|completionDates"
+```
+
+После обновления файлов `/path/to/data/territories/TERRITORY_NAME/sources/manual/*.geojson`, следует повторить шаг «Склеить слои» в предыдущем разделе.
+
+Важно не заниматься ручным редактированием файлов в во всех папках `/path/to/data/territories/TERRITORY_NAME/sources/*`, кроме `/path/to/data/territories/TERRITORY_NAME/sources/manual`.
+Исправления, сделанные в других папках, сотрутся при обновлении данных.
+
+Геометрию или характеристиках зданий из ОСМ проще всего исправить на сайте [osm.org](https://www.openstreetmap.org), так как исправлять ошибки локально более трудоёмко.
+Инструкции по редактированию данных ОСМ — на сайте [wiki.osm.org](https://wiki.openstreetmap.org/wiki/RU:Заглавная_страница).

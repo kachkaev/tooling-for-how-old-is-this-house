@@ -15,6 +15,7 @@ node_modules
 .~lock.*
 .DS_Store
 .env
+.env.local
 *.log
 
 # debug

@@ -86,6 +86,7 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
 
   for (const normalizedAddress of normalizedAddresses) {
     try {
+      // TODO: improve logic
       if (
         normalizedAddress.includes(" гараж ") ||
         normalizedAddress.includes(" место ") ||
@@ -99,6 +100,8 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
         normalizedAddress.includes(" снт, ") ||
         normalizedAddress.includes(" , 8 марта ") ||
         normalizedAddress.includes(" кооператив") ||
+        normalizedAddress.includes("километр") ||
+        normalizedAddress.includes("территория") ||
         normalizedAddress.includes(" снт ")
       ) {
         throw new Error("stop word");

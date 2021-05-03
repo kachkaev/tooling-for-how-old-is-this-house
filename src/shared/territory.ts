@@ -1,3 +1,4 @@
+import { CommandError } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import * as envalid from "envalid";
 import fs from "fs-extra";
@@ -10,11 +11,21 @@ import { cleanEnv } from "./cleanEnv";
 export type TerritoryExtent = turf.Feature<turf.Polygon>;
 
 export const getTerritoryDirPath = (): string => {
+  // TODO: Remove oldEnv after 2021-06-01
+  const oldEnv = cleanEnv({
+    TERRITORY_DATA_DIR: envalid.str({ default: "" }),
+  });
+  if (oldEnv.TERRITORY_DATA_DIR) {
+    throw new CommandError(
+      "Please open your .env.local file and replace TERRITORY_DATA_DIR with TERRITORY_DATA_DIR_PATH.",
+    );
+  }
+
   const env = cleanEnv({
-    TERRITORY_DATA_DIR: envalid.str({}),
+    TERRITORY_DATA_DIR_PATH: envalid.str({}),
   });
 
-  return path.resolve(env.TERRITORY_DATA_DIR);
+  return path.resolve(env.TERRITORY_DATA_DIR_PATH);
 };
 
 export interface TerritoryConfig {

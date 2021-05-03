@@ -1,11 +1,11 @@
-/* eslint-disable no-console */
-import { config as dotenvConfig } from "dotenv";
+import { config } from "dotenv-flow";
 import * as envalid from "envalid";
 
 import { defaultReporter } from "./envalidDefaultReporter";
 
 // https://github.com/af/envalid/issues/101
 export const customEnvalidReporter: typeof defaultReporter = (opts) => {
+  /* eslint-disable no-console */
   const originalConsoleError = console.error;
   const originalProcessExit = process.exit;
 
@@ -19,6 +19,7 @@ export const customEnvalidReporter: typeof defaultReporter = (opts) => {
 
   process.exit = originalProcessExit;
   console.error = originalConsoleError;
+  /* eslint-enable no-console */
 
   if (errorOutput.length > 1) {
     throw new Error(errorOutput);
@@ -30,7 +31,7 @@ export const cleanEnv = <T>(
     [K in keyof T]: envalid.ValidatorSpec<T[K]>;
   },
 ) => {
-  dotenvConfig();
+  config({ silent: true });
 
   return envalid.cleanEnv(process.env, specs, {
     reporter: customEnvalidReporter,
