@@ -388,7 +388,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 
     ```sh
     yarn exe src/commands/2-sources/mingkh/9-extractOutputLayer.ts
-    yarn exe src/commands/2-sources/mkrf/9-extractOutтак putLayer.ts
+    yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/wikimapia/9-extractOutputLayer.ts
