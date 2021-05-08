@@ -4,9 +4,9 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 import path from "path";
+import readline from "readline";
 import sortKeys from "sort-keys";
 
-import { generateProgress } from "../../../shared/helpersForCommands";
 import {
   serializeTime,
   writeFormattedJson,
@@ -72,13 +72,17 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
   const territoryConfig = await getTerritoryConfig();
   const territoryExtent = await getTerritoryExtent();
 
-  process.stdout.write(chalk.green("Loading data..."));
   const jsonsDumpFilePath = getMkrfJsonsDumpFilePath();
-  const jsonsDump = await fs.readFile(jsonsDumpFilePath, "utf8");
-  const records = jsonsDump.split("\n");
-  records.pop(); // Remove end of file line break
-  const recordCount = records.length;
-  process.stdout.write(` Done. Total records: ${recordCount}\n`);
+  logger.log(`File location: ${chalk.cyan(jsonsDumpFilePath)}`);
+
+  process.stdout.write(chalk.green(`Opening file...`));
+  const fileStream = fs.createReadStream(jsonsDumpFilePath);
+  const lineStream = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity,
+  });
+
+  logger.log(` Done.`);
 
   const dataDumpFileName = path.basename(jsonsDumpFilePath);
   const dataDumpProcessedAt = serializeTime();
@@ -89,31 +93,34 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
     ),
   );
 
+  let numberOfRecords = 0;
   const numberOfObjectsByPickReason: Record<PickReason, number> = {
     address: 0,
     position: 0,
   };
 
-  for (let index = 0; index < recordCount; index += 1) {
-    if (!(index % 10000) || index === recordCount - 1) {
-      logger.log(generateProgress(index - 1, recordCount));
+  for await (const line of lineStream) {
+    let objectData: MkrfObjectData;
+
+    // Skip final empty line
+    if (line === "") {
+      continue;
     }
 
-    let objectData: MkrfObjectData;
     try {
-      objectData = JSON.parse(records[index] ?? "") as MkrfObjectData;
+      objectData = JSON.parse(line) as MkrfObjectData;
     } catch (e) {
       logger.log(
         chalk.red(
           `\n\nUnexpected JSON parse error occurred on row ${
-            index + 1
-          }. JSON content:\n\n${
-            records[index]
-          }\n\nThis can happen if the file has been truncated when unpacking. Please try extracting the downloaded zip file with the different software.\n\n`,
+            numberOfRecords + 1
+          }. JSON content:\n\n${line}\n\nThis can happen if the file has been truncated when unpacking. Please try extracting the downloaded zip file with the different software.\n\n`,
         ),
       );
       throw e;
     }
+
+    numberOfRecords += 1;
 
     const pickReason = derivePickReason(
       objectData,
@@ -127,9 +134,16 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
     numberOfObjectsByPickReason[pickReason] += 1;
     const objectFilePath = getMkrfObjectFilePath(objectData.nativeId);
 
+    // Do not update the file if it originates from the same dump
     if (await fs.pathExists(objectFilePath)) {
-      logger.log(`${chalk.gray(objectFilePath)} (${pickReason})`);
-      continue;
+      const existingObject = (await fs.readJson(
+        objectFilePath,
+      )) as MkrfObjectFile;
+
+      if (existingObject.dataDumpFileName === dataDumpFileName) {
+        logger.log(`${chalk.gray(objectFilePath)} (${pickReason})`);
+        continue;
+      }
     }
 
     const objectFile: MkrfObjectFile = sortKeys(
@@ -145,12 +159,15 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
     logger.log(`${chalk.magenta(objectFilePath)} (${pickReason})`);
   }
 
+  lineStream.close();
+  fileStream.close();
+
   const numberOfPickedObjects = _.sum(
     Object.values(numberOfObjectsByPickReason),
   );
 
   logger.log(
-    `Done. Picked objects: ${numberOfPickedObjects} (${numberOfObjectsByPickReason["position"]} based on position and ${numberOfObjectsByPickReason["address"]} based on address).`,
+    `Done. Picked objects: ${numberOfPickedObjects} (${numberOfObjectsByPickReason["position"]} based on position and ${numberOfObjectsByPickReason["address"]} based on address). Number of records scanned: ${numberOfRecords}.`,
   );
 };
 
