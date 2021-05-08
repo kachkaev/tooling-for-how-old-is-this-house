@@ -18,12 +18,14 @@ import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
+import { validateCyrillic } from "./validateCyrillic";
 
 const pickMostPromisingAddress = (
   ...rawAddresses: Array<string | undefined>
 ): string | undefined => {
   const definedAddresses: string[] = rawAddresses.filter(
-    (rawAddress): rawAddress is string => typeof rawAddress === "string",
+    (rawAddress): rawAddress is string =>
+      typeof rawAddress === "string" && validateCyrillic(rawAddress),
   );
 
   if (definedAddresses.length === 1) {
