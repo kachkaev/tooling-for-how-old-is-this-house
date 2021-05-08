@@ -124,7 +124,6 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
 
   const originalSpellingsSet = new Set<string>();
 
-  const cnsWithGeometrySet = new Set<string>();
   const outputFeatures: OutputLayer["features"] = [];
   await processFiles({
     logger,
@@ -167,25 +166,6 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     },
     statusReportFrequency: 1000,
     showFilePath: true,
-  });
-
-  const unusedCnsWithGeometry = objectCenterFeaturesInsideTerritory
-    .map((f) => f.properties.cn)
-    .filter((cn) => !cnsWithGeometrySet.has(cn))
-    .sort();
-
-  const unusedCnsWithGeometryInTerritory = unusedCnsWithGeometry.filter((cn) =>
-    turf.booleanPointInPolygon(objectCenterFeatureByCn[cn]!, territoryExtent),
-  );
-
-  logger?.log({
-    objectCenterFeatures: objectCenterFeatures.length,
-    objectCenterFeaturesInsideTerritory:
-      objectCenterFeaturesInsideTerritory.length,
-    outputFeatures: outputFeatures.length,
-    cnsWithGeometries: cnsWithGeometrySet.size,
-    unusedCnsWithGeometry,
-    unusedCnsWithGeometryInTerritory,
   });
 
   return {
