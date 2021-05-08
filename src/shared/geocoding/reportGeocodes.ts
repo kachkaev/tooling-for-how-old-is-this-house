@@ -74,6 +74,7 @@ export const reportGeocodes = async ({
 }): Promise<void> => {
   const addressNormalizationConfig = await getAddressNormalizationConfig();
   const sourceDictionary: GeocodeDictionary = {};
+  const weightDictionary: Record<string, number | undefined> = {};
 
   for (const reportedGeocode of reportedGeocodes) {
     const normalizedAddress = normalizeAddress(
@@ -90,6 +91,13 @@ export const reportGeocodes = async ({
       continue;
     }
 
+    const existingWeight = weightDictionary[normalizedAddress];
+    const reportedWeight =
+      "weight" in reportedGeocode ? reportedGeocode.weight : -1;
+    if (existingWeight && existingWeight > reportedWeight) {
+      continue;
+    }
+
     const geocode: ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary =
       "coordinates" in reportedGeocode && reportedGeocode.coordinates
         ? reportedGeocode.knownAt
@@ -97,6 +105,7 @@ export const reportGeocodes = async ({
           : reportedGeocode.coordinates
         : [];
     sourceDictionary[normalizedAddress] = { [source]: geocode };
+    weightDictionary[normalizedAddress] = reportedWeight;
   }
 
   const sourceDictionaryLookup: GeocodeDictionaryLookup = {};
