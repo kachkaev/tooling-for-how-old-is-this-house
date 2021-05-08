@@ -18,7 +18,24 @@ import {
 } from "./types";
 import { writeGeocodeDictionary } from "./writeGeocodeDictionary";
 
+/**
+ * Trailing comma item looks like this ("↳"):
+ *
+ *    {
+ *      "область такая-то, тестовск, улица тестовая, 33": {
+ *        "rosreestr": [],
+ *        "osm": [12.123456, 12.123456],
+ *        "↳": []
+ *      }
+ *    }
+ *
+ * When enabled, it helps keep git diffs smaller.
+ * Historically the catalog of geocodes was under source control,
+ * which lead to creation of this option. Although disabled by default,
+ * it can still be leveraged to debug catalog changes.
+ */
 const trailingCommaItemKey = "↳";
+const trailingCommaShouldBeAdded = false;
 
 const addOrRemoveTrailingCommaItem = (
   dictionary: GeocodeDictionary,
@@ -31,7 +48,9 @@ const addOrRemoveTrailingCommaItem = (
         return [key, {}];
       }
 
-      return [key, { ...rest, [trailingCommaItemKey]: [] }];
+      return trailingCommaShouldBeAdded
+        ? [key, { ...rest, [trailingCommaItemKey]: [] }]
+        : [key, rest];
     }),
   );
 };

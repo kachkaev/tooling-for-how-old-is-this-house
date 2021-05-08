@@ -110,7 +110,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         if (geocodeResult) {
           point = geocodeResult.location;
           externalGeometrySource = geocodeResult.source;
-          pointSource = `geocodes (${externalGeometrySource})`;
+          pointSource = `geocodes: ${externalGeometrySource}`;
         }
       }
 
