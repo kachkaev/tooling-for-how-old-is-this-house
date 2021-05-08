@@ -65,27 +65,26 @@ export const colorBinsUsingSinebow: Array<[number, string]> = [
   [2010, interpolateSinebow(1 - step * 8)],
 ];
 
-const spectralMiddle = 0.5;
-const spectralStep0 = 0.08;
-const spectralStep1 = 0.06;
+const spectralBase = 0;
+const spectralStep1 = 0.09;
 
 export const colorBinsUsingSpectral: Array<[number, string]> = [
-  [0, interpolateSpectral(spectralMiddle - spectralStep0 * 6)],
-  [1860, interpolateSpectral(spectralMiddle - spectralStep0 * 5)],
-  [1900, interpolateSpectral(spectralMiddle - spectralStep0 * 4)],
+  [0, interpolateSpectral(0)],
+  [1860, interpolateSpectral(0)],
+  [1900, interpolateSpectral(spectralBase + spectralStep1 * 1)],
 
-  [1920, interpolateSpectral(spectralMiddle - spectralStep0 * 3)],
-  [1930, interpolateSpectral(spectralMiddle - spectralStep0 * 2)],
-  [1940, interpolateSpectral(spectralMiddle - spectralStep0 * 1)],
-  [1950, interpolateSpectral(spectralMiddle + spectralStep1 * 1)],
+  [1920, interpolateSpectral(spectralBase + spectralStep1 * 2)],
+  [1930, interpolateSpectral(spectralBase + spectralStep1 * 2)],
+  [1940, interpolateSpectral(spectralBase + spectralStep1 * 3)],
+  [1950, interpolateSpectral(spectralBase + spectralStep1 * 4)],
 
-  [1960, interpolateSpectral(spectralMiddle + spectralStep1 * 2)],
-  [1970, interpolateSpectral(spectralMiddle + spectralStep1 * 3)],
-  [1980, interpolateSpectral(spectralMiddle + spectralStep1 * 4)],
+  [1960, interpolateSpectral(spectralBase + spectralStep1 * 5.2)],
+  [1970, interpolateSpectral(spectralBase + spectralStep1 * 7)],
+  [1980, interpolateSpectral(spectralBase + spectralStep1 * 8.2)],
 
-  [1990, interpolateSpectral(spectralMiddle + spectralStep1 * 5)],
-  [2000, interpolateSpectral(spectralMiddle + spectralStep1 * 6)],
-  [2010, interpolateSpectral(spectralMiddle + spectralStep1 * 7)],
+  [1990, interpolateSpectral(spectralBase + spectralStep1 * 9.2)],
+  [2000, interpolateSpectral(spectralBase + spectralStep1 * 10.2)],
+  [2010, interpolateSpectral(spectralBase + spectralStep1 * 11)],
 ];
 
 const colorBins = colorBinsUsingSpectral;
