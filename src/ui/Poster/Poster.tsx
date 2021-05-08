@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/output";
 import {
   OsmFeatureCollection,
+  OsmRailwayGeometry,
   OsmRoadGeometry,
   OsmWaterObjectGeometry,
 } from "../../shared/sources/osm/types";
@@ -12,6 +13,7 @@ import { TerritoryExtent } from "../../shared/territory";
 import {
   GeoMap,
   GeoMapLayerWithBuildingAges,
+  GeoMapLayerWithRailways,
   GeoMapLayerWithRoads,
   GeoMapLayerWithTerritoryExtent,
   GeoMapLayerWithWaterObjects,
@@ -87,15 +89,19 @@ const DraftNotice2 = styled(DraftNotice)`
 
 export interface PosterProps {
   buildingCollection: MixedPropertyVariantsFeatureCollection;
-  roadCollection: OsmFeatureCollection<OsmRoadGeometry>;
   territoryExtent: TerritoryExtent;
-  waterObjectCollection: OsmFeatureCollection<OsmWaterObjectGeometry>;
+
+  railwayCollection?: OsmFeatureCollection<OsmRailwayGeometry>;
+  roadCollection?: OsmFeatureCollection<OsmRoadGeometry>;
+  waterObjectCollection?: OsmFeatureCollection<OsmWaterObjectGeometry>;
 }
 
 export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   buildingCollection,
-  roadCollection,
   territoryExtent,
+
+  railwayCollection,
+  roadCollection,
   waterObjectCollection,
 }) => {
   return (
@@ -105,11 +111,21 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
         {(layerProps) => {
           return (
             <>
-              <GeoMapLayerWithWaterObjects
-                {...layerProps}
-                data={waterObjectCollection}
-              />
-              <GeoMapLayerWithRoads {...layerProps} data={roadCollection} />
+              {waterObjectCollection ? (
+                <GeoMapLayerWithWaterObjects
+                  {...layerProps}
+                  data={waterObjectCollection}
+                />
+              ) : undefined}
+              {railwayCollection ? (
+                <GeoMapLayerWithRailways
+                  {...layerProps}
+                  data={railwayCollection}
+                />
+              ) : undefined}
+              {roadCollection ? (
+                <GeoMapLayerWithRoads {...layerProps} data={roadCollection} />
+              ) : undefined}
               <GeoMapLayerWithTerritoryExtent
                 {...layerProps}
                 data={territoryExtent}

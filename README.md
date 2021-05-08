@@ -269,8 +269,9 @@ Although some of the data sources are country-specific, parts of the repo can st
     Контуры водных объектов и дорог (опционально, понадобятся только для визуализации):
 
     ```sh
-    yarn exe src/commands/2-sources/osm/3-fetchWaterObjects.ts
+    yarn exe src/commands/2-sources/osm/3-fetchRailways.ts
     yarn exe src/commands/2-sources/osm/4-fetchRoads.ts
+    yarn exe src/commands/2-sources/osm/5-fetchWaterObjects.ts
     ```
 
 1.  **Скачать данные с Росреестра**

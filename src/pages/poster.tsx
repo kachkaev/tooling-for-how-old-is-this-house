@@ -5,9 +5,11 @@ import * as React from "react";
 
 import { getMixedPropertyVariantsFileName } from "../shared/output";
 import {
+  getFetchedOsmRailwaysFilePath,
   getFetchedOsmRoadsFilePath,
   getFetchedOsmWaterObjectsFilePath,
 } from "../shared/sources/osm";
+import { OsmFeatureCollection } from "../shared/sources/osm/types";
 import { getTerritoryExtent } from "../shared/territory";
 import { PosterProps } from "../ui/Poster";
 
@@ -22,15 +24,31 @@ const PosterPage: NextPage<PosterPageProps> = (props) => {
   return <Poster {...props} />;
 };
 
+const readOptionalOsmFeatureCollection = async <T,>(
+  filePath: string,
+): Promise<OsmFeatureCollection<T> | undefined> => {
+  try {
+    return await fs.readJson(filePath);
+  } catch {
+    return undefined;
+  }
+};
+
 export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
   return {
     props: {
       buildingCollection: await fs.readJson(getMixedPropertyVariantsFileName()),
-      waterObjectCollection: await fs.readJson(
+      territoryExtent: await getTerritoryExtent(),
+
+      railwayCollection: await readOptionalOsmFeatureCollection(
+        getFetchedOsmRailwaysFilePath(),
+      ),
+      roadCollection: await readOptionalOsmFeatureCollection(
+        getFetchedOsmRoadsFilePath(),
+      ),
+      waterObjectCollection: await readOptionalOsmFeatureCollection(
         getFetchedOsmWaterObjectsFilePath(),
       ),
-      roadCollection: await fs.readJson(getFetchedOsmRoadsFilePath()),
-      territoryExtent: await getTerritoryExtent(),
     },
   };
 };
