@@ -122,8 +122,6 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     ] = objectCenterFeature;
   }
 
-  const originalSpellingsSet = new Set<string>();
-
   const outputFeatures: OutputLayer["features"] = [];
   await processFiles({
     logger,
@@ -171,7 +169,6 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   return {
     type: "FeatureCollection",
     layerRole: "patch",
-    originalSpellings: [...originalSpellingsSet],
     features: _.sortBy(outputFeatures, (outputFeature) =>
       normalizeCnForSorting(outputFeature.properties.id),
     ),

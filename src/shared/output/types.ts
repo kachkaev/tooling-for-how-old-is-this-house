@@ -43,7 +43,6 @@ export type OutputLayer = turf.FeatureCollection<
 > & {
   knownAt?: string;
   layerRole: OutputLayerRole;
-  originalSpellings?: string[];
 };
 
 export type ConfiguredGeocodeAddress = (
