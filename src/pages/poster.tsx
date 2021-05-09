@@ -34,9 +34,15 @@ const readOptionalOsmFeatureCollection = async <T,>(
   }
 };
 
+// https://github.com/vercel/next.js/discussions/11209
+const removeUndefinedForNextJsSerializing = <T,>(props: T): T =>
+  Object.fromEntries(
+    Object.entries(props).filter(([, value]) => value !== undefined),
+  ) as T;
+
 export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
   return {
-    props: {
+    props: removeUndefinedForNextJsSerializing({
       buildingCollection: await fs.readJson(getMixedPropertyVariantsFileName()),
       territoryExtent: await getTerritoryExtent(),
 
@@ -49,7 +55,7 @@ export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
       waterObjectCollection: await readOptionalOsmFeatureCollection(
         getFetchedOsmWaterObjectsFilePath(),
       ),
-    },
+    }),
   };
 };
 
