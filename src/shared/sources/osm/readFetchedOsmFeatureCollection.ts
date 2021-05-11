@@ -1,3 +1,4 @@
+import { CommandError } from "@kachkaev/commands";
 import fs from "fs-extra";
 import path from "path";
 
@@ -72,15 +73,16 @@ export const readFetchedOsmFeatureCollection: ReadFetchedOsmFeatureCollection = 
       collectionName === "boundaries-for-regions" ||
       collectionName === "boundaries-for-settlements")
   ) {
-    throw new Error(
+    throw new CommandError(
       `Please generate ${filePath} by running a corresponding command.`,
     );
   }
 
   const fetchedAt = result?.fetchedAt;
 
+  // TODO: Remove after 2021-08-01. Related commit: 1b8504fd
   if (result && (!fetchedAt || fetchedAt < "2021-05-11T09:00:00Z")) {
-    throw new Error(
+    throw new CommandError(
       `Data in ${path.dirname(
         filePath,
       )} is out of sync with the latest tooling. Please delete this folder and re-run all commands for OSM source.`,
