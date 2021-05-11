@@ -91,6 +91,7 @@ export type ObjectExtentFeature = turf.Feature<
 
 export type CreationReasonForObjectInInfoPage =
   | "ccoInTile"
+  | "ccoInBlockList"
   | "gap"
   | "lotInTile";
 
@@ -217,3 +218,14 @@ export interface InfoPageObject {
 }
 
 export type InfoPageData = InfoPageObject[];
+
+export type RosreestrObjectByCn = Partial<
+  Record<
+    string,
+    | {
+        objectType: RosreestrObjectType;
+        center: ObjectCenterFeature;
+      }
+    | undefined
+  >
+>;

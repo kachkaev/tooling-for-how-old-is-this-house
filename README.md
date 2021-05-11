@@ -237,7 +237,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 Вот все шаги:
 
-1.  **Скачать и обработать данные с МинЖКХ**
+1.  **Собрать данные с МинЖКХ**
 
     ```sh
     yarn exe src/commands/2-sources/mingkh/1-fetchHouseLists.ts
@@ -257,7 +257,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
     ```
 
-1.  **Скачать данные с ОСМ**
+1.  **Собрать данные с ОСМ**
 
     Контуры зданий и административные границы:
 
@@ -275,31 +275,43 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/osm/6-fetchWaterObjects.ts
     ```
 
-1.  **Скачать данные с Росреестра**
+1.  **Собрать данные с Росреестра**
 
     Скачивание геопривязанных ОКС (объектов капитального строительства) и земельных участков:
 
     ```sh
-    yarn exe src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
-    yarn exe src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
+    yarn exe src/commands/2-sources/rosreestr/1.1-fetchTilesWithCcos.ts
+    yarn exe src/commands/2-sources/rosreestr/1.2-fetchTilesWithLots.ts
     ```
 
     Создание файла для анализа промежуточного результата (опционально):
 
     ```sh
-    yarn exe src/commands/2-sources/rosreestr/3-previewTileData.ts
+    yarn exe src/commands/2-sources/rosreestr/2-previewTileData.ts
     ```
+
+    Получение списков ОКС в кадастровых кварталах:
+
+    ```sh
+    yarn exe src/commands/2-sources/rosreestr/3-pickBlockFromTiles.ts
+    yarn exe src/commands/2-sources/rosreestr/4-fetchCcoListsInPickedBlocks.ts
+    ```
+
+    > ↑ В некоторых кадастровых кварталах существуют «острова» номеров без единой географической отметки.
+    > Такие «острова» не видно при сборе данных через тайлы.
+    > Получить список всех ОКС внутри квартала не даёт АПИ, однако сканирование того, что доступно, позволяет найти прячущиеся «острова».
+    > Это улучшает работу последующих команд.
 
     Подготовка к скачиванию деталей объектов:
 
     ```sh
-    yarn exe src/commands/2-sources/rosreestr/4-generateObjectInfoPages.ts
+    yarn exe src/commands/2-sources/rosreestr/5-generateObjectInfoPages.ts
     ```
 
     Скачивание деталей объектов из АПИ `fir_object`:
 
     ```sh
-    yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfosFromFirApi.ts
+    yarn exe src/commands/2-sources/rosreestr/6-fetchObjectInfosFromFirApi.ts
     ```
 
     > ↑ Эта команда поддерживает многозадачность.
@@ -308,7 +320,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     Скачивание деталей объектов АПИ ПКК, чтобы закрыть оставшиеся пробелы:
 
     ```sh
-    yarn exe src/commands/2-sources/rosreestr/6-fetchObjectInfosFromPkkApi.ts
+    yarn exe src/commands/2-sources/rosreestr/7-fetchObjectInfosFromPkkApi.ts
     ```
 
     > ↑ Эта команда не поддерживает многозадачность.
@@ -322,7 +334,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     Эта команда пока не доделана, потому что для Пензы было мало мало данных.
     -->
 
-1.  **Скачать данные с Викимапии**
+1.  **Собрать данные с Викимапии**
 
     Контуры объектов:
 

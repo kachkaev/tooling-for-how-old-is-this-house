@@ -1,6 +1,7 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
+import fs from "fs-extra";
 import _ from "lodash";
 
 import { writeFormattedJson } from "../../../shared/helpersForJson";
@@ -143,6 +144,13 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
     totalBlockCount += 1;
 
     for (let pageNumber = 0; pageNumber <= maxPageNumber; pageNumber += 1) {
+      const infoPageFilePath = getObjectInfoPageFilePath(block, pageNumber);
+      let existingInfoPageData: InfoPageData | undefined = undefined;
+      try {
+        existingInfoPageData = await fs.readJson(infoPageFilePath);
+      } catch {
+        // Noop (page is new)
+      }
       const infoPageData: InfoPageData = [];
       for (let index = 0; index < pageSize; index += 1) {
         if (index === 0 && pageNumber === 0) {
@@ -150,7 +158,11 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
         }
         const cn = `${block}:${pageNumber * pageSize + index}`;
         const objectType = objectByCn[cn]?.objectType;
-        const item: InfoPageObject = {
+        const existingItem = existingInfoPageData?.find(
+          (item) => item.cn === cn,
+        );
+
+        const newItem: InfoPageObject = {
           cn,
           creationReason:
             objectType === "cco"
@@ -161,16 +173,20 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
           firFetchedAt: null, // This line reduces git diffs data files
           pkkFetchedAt: null, // This line reduces git diffs data files
         };
-        infoPageData.push(item);
+
+        infoPageData.push(
+          existingItem && existingItem.creationReason !== "gap"
+            ? existingItem
+            : newItem,
+        );
       }
 
-      const infoPageFilePath = getObjectInfoPageFilePath(block, pageNumber);
       await writeFormattedJson(infoPageFilePath, infoPageData);
     }
     logger.log(chalk.magenta(`Pages total: ${maxPageNumber + 1}`));
   }
   logger.log(
-    `Requests: ${totalEstimatedRequestCount}/${objects.length}, block count: ${totalBlockCount}/${blockTuples.length}, page count: ${totalPageCount}`,
+    `Number of objects: ${objects.length}, block count: ${totalBlockCount}/${blockTuples.length}, page count: ${totalPageCount}, estimated number of API requests: ${totalEstimatedRequestCount}`,
   );
 };
 
