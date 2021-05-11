@@ -101,7 +101,8 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
       return undefined;
     }
 
-    const settlement = getSettlement(building);
+    const settlement =
+      building.properties["addr:city"] ?? getSettlement(building);
     if (!settlement) {
       logger?.log(
         chalk.yellow(
