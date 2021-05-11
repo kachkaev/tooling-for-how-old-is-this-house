@@ -1,5 +1,6 @@
 import * as turf from "@turf/turf";
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import _ from "lodash";
 import osmToGeojson from "osmtogeojson";
@@ -9,6 +10,18 @@ import { serializeTime } from "../../helpersForJson";
 import { OsmFeatureCollection, OsmFeatureProperties } from "./types";
 
 const extentPlaceholder = "{{extent}}";
+
+const axiosInstance = axios.create();
+
+axiosRetry(axiosInstance, {
+  retries: 10,
+  retryDelay: (retryCount) => 2000 + (retryCount ^ 1.5) * 1000,
+  retryCondition: (error) =>
+    !error.response?.status ||
+    error.response?.status === 429 ||
+    error.response?.status >= 500,
+  shouldResetTimeout: true,
+});
 
 export const fetchGeojsonFromOverpassApi = async ({
   acceptedGeometryTypes,
@@ -49,18 +62,11 @@ export const fetchGeojsonFromOverpassApi = async ({
 
   process.stdout.write(chalk.green("Calling Overpass API..."));
 
-  const response = await axios.post(
+  const response = await axiosInstance.post(
     "https://overpass-api.de/api/interpreter",
     processedQuery,
-    {
-      responseType: "json",
-      validateStatus: (status) => status === 200 || status === 429,
-    },
+    { responseType: "json" },
   );
-
-  if (response.status === 429) {
-    throw new Error("Too many requests. Please try again in a few minutes.");
-  }
 
   const osmData = response.data;
   process.stdout.write(" Done.\n");
