@@ -18,7 +18,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "settlement", normalizedValue: "поселение", gender: "n" },
 
   // Can be settlement or street
-  { designation: "place", normalizedValue: "поселок", gender: "n", aliases: ["пос", "п"] },
+  { designation: "place", normalizedValue: "поселок", gender: "n", aliases: ["пос", "п", "рп" /* рабочий поселок */] },
   { designation: "place", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
   
   { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н", 'р-он'] },
