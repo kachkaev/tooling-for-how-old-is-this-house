@@ -120,6 +120,15 @@ export const reportGeocodes = async ({
   }
 
   const existingDictionaryLookup = await loadGeocodeDictionaryLookup(logger);
+
+  if (logger) {
+    process.stdout.write(chalk.green("Writing changes to dictionaries..."));
+  }
+
+  let numberOfDictionariesCreated = 0;
+  let numberOfDictionariesUpdated = 0;
+  let numberOfDictionariesDeleted = 0;
+
   const allSliceIds = _.orderBy(
     _.uniq([
       ..._.keys(existingDictionaryLookup),
@@ -152,6 +161,7 @@ export const reportGeocodes = async ({
     const dictionaryFilePath = getDictionaryFilePath(sliceId);
     if (_.isEmpty(dictionary)) {
       await rmUp(dictionaryFilePath, { deleteInitial: true });
+      numberOfDictionariesDeleted += 1;
       continue;
     }
 
@@ -159,6 +169,18 @@ export const reportGeocodes = async ({
       continue;
     }
 
+    if (existingDictionaryLookup[sliceId]) {
+      numberOfDictionariesUpdated += 1;
+    } else {
+      numberOfDictionariesCreated += 1;
+    }
+
     await writeGeocodeDictionary(dictionaryFilePath, dictionary);
+  }
+
+  if (logger) {
+    process.stdout.write(
+      ` Dictionaries created: ${numberOfDictionariesCreated}, updated: ${numberOfDictionariesUpdated}, deleted: ${numberOfDictionariesDeleted}.\n`,
+    );
   }
 };

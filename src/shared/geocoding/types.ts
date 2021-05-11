@@ -31,7 +31,10 @@ export type GeocodeAddressRecord = Record<
   ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary
 >;
 export type GeocodeDictionary = Record<string, GeocodeAddressRecord>;
-export type GeocodeDictionaryLookup = Record<string, GeocodeDictionary>;
+export type GeocodeDictionaryLookup = Record<
+  string,
+  GeocodeDictionary | undefined
+>;
 
 export type GeocodeAddressResult =
   | { source: string; location: turf.Point; knownAt?: string }
