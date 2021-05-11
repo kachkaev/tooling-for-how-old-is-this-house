@@ -27,7 +27,10 @@ const generateGetIntersectedBoundaryName = ({
   >;
 }): IntersectorFunction => {
   const filteredBoundaryFeatures = boundaryFeatures.filter((feature) => {
-    return feature?.properties.name;
+    return (
+      feature.properties.name &&
+      !turf.booleanDisjoint(expectedBoundaryOfAllCheckedFeatures, feature)
+    );
   });
 
   if (filteredBoundaryFeatures.length === 1) {
