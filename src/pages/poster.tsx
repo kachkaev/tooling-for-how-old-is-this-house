@@ -4,12 +4,7 @@ import dynamic from "next/dynamic";
 import * as React from "react";
 
 import { getMixedPropertyVariantsFileName } from "../shared/output";
-import {
-  getFetchedOsmRailwaysFilePath,
-  getFetchedOsmRoadsFilePath,
-  getFetchedOsmWaterObjectsFilePath,
-} from "../shared/sources/osm";
-import { OsmFeatureCollection } from "../shared/sources/osm/types";
+import { readFetchedOsmFeatureCollection } from "../shared/sources/osm/readFetchedOsmFeatureCollection";
 import { getTerritoryExtent } from "../shared/territory";
 import { PosterProps } from "../ui/Poster";
 
@@ -24,16 +19,6 @@ const PosterPage: NextPage<PosterPageProps> = (props) => {
   return <Poster {...props} />;
 };
 
-const readOptionalOsmFeatureCollection = async <T,>(
-  filePath: string,
-): Promise<OsmFeatureCollection<T> | undefined> => {
-  try {
-    return await fs.readJson(filePath);
-  } catch {
-    return undefined;
-  }
-};
-
 // https://github.com/vercel/next.js/discussions/11209
 const removeUndefinedForNextJsSerializing = <T,>(props: T): T =>
   Object.fromEntries(
@@ -46,14 +31,10 @@ export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
       buildingCollection: await fs.readJson(getMixedPropertyVariantsFileName()),
       territoryExtent: await getTerritoryExtent(),
 
-      railwayCollection: await readOptionalOsmFeatureCollection(
-        getFetchedOsmRailwaysFilePath(),
-      ),
-      roadCollection: await readOptionalOsmFeatureCollection(
-        getFetchedOsmRoadsFilePath(),
-      ),
-      waterObjectCollection: await readOptionalOsmFeatureCollection(
-        getFetchedOsmWaterObjectsFilePath(),
+      railwayCollection: await readFetchedOsmFeatureCollection("railways"),
+      roadCollection: await readFetchedOsmFeatureCollection("roads"),
+      waterObjectCollection: await readFetchedOsmFeatureCollection(
+        "water-objects",
       ),
     }),
   };

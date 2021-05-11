@@ -1,6 +1,5 @@
 import * as turf from "@turf/turf";
 import chalk from "chalk";
-import fs from "fs-extra";
 import _ from "lodash";
 
 import { deepClean } from "../../deepClean";
@@ -10,12 +9,8 @@ import {
   OutputLayerProperties,
 } from "../../output";
 import { getTerritoryExtent } from "../../territory";
-import {
-  getFetchedOsmBoundariesForRegionsFilePath,
-  getFetchedOsmBoundariesForSettlementsFilePath,
-  getFetchedOsmBuildingsFilePath,
-} from "./helpersForPaths";
-import { OsmFeature, OsmFeatureCollection } from "./types";
+import { readFetchedOsmFeatureCollection } from "./readFetchedOsmFeatureCollection";
+import { OsmFeature } from "./types";
 
 type IntersectorFunction = (feature: turf.Feature) => string | undefined;
 const generateGetIntersectedBoundaryName = ({
@@ -67,17 +62,15 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
 }): Promise<OutputLayer> => {
   const territoryExtent = await getTerritoryExtent();
 
-  const buildingCollection = (await fs.readJson(
-    getFetchedOsmBuildingsFilePath(),
-  )) as OsmFeatureCollection;
+  const buildingCollection = await readFetchedOsmFeatureCollection("buildings");
 
-  const regionBoundaryCollection = (await fs.readJson(
-    getFetchedOsmBoundariesForRegionsFilePath(),
-  )) as OsmFeatureCollection;
+  const regionBoundaryCollection = await readFetchedOsmFeatureCollection(
+    "boundaries-for-regions",
+  );
 
-  const settlementBoundaryCollection = (await fs.readJson(
-    getFetchedOsmBoundariesForSettlementsFilePath(),
-  )) as OsmFeatureCollection;
+  const settlementBoundaryCollection = await readFetchedOsmFeatureCollection(
+    "boundaries-for-settlements",
+  );
 
   const getRegion = generateGetIntersectedBoundaryName({
     boundaryFeatures: regionBoundaryCollection.features,
