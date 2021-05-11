@@ -95,7 +95,9 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
     const region = getRegion(building);
     if (!region) {
       logger?.log(
-        chalk.yellow(`Unable to find region for ${building.properties.id}`),
+        chalk.yellow(
+          `Unable to find region for https://www.openstreetmap.org/${building.properties.id}`,
+        ),
       );
 
       return undefined;
@@ -106,7 +108,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
     if (!settlement) {
       logger?.log(
         chalk.yellow(
-          `Unable to find settlement (city / town / village) for ${building.properties.id}`,
+          `Unable to find settlement (city / town / village) for https://www.openstreetmap.org/${building.properties.id}`,
         ),
       );
 
