@@ -11,7 +11,8 @@ import {
 } from "../../output";
 import { getTerritoryExtent } from "../../territory";
 import {
-  getFetchedOsmBoundariesFilePath,
+  getFetchedOsmBoundariesForRegionsFilePath,
+  getFetchedOsmBoundariesForSettlementsFilePath,
   getFetchedOsmBuildingsFilePath,
 } from "./helpersForPaths";
 import { OsmFeature, OsmFeatureCollection } from "./types";
@@ -19,17 +20,15 @@ import { OsmFeature, OsmFeatureCollection } from "./types";
 type IntersectorFunction = (feature: turf.Feature) => string | undefined;
 const generateGetIntersectedBoundaryName = ({
   boundaryFeatures,
-  boundaryFeatureFilter,
   expectedBoundaryOfAllCheckedFeatures,
 }: {
   boundaryFeatures: OsmFeature[];
-  boundaryFeatureFilter: (feature: turf.Feature) => boolean;
   expectedBoundaryOfAllCheckedFeatures: turf.Feature<
     turf.Polygon | turf.MultiPolygon
   >;
 }): IntersectorFunction => {
   const filteredBoundaryFeatures = boundaryFeatures.filter((feature) => {
-    return boundaryFeatureFilter(feature) && feature?.properties.name;
+    return feature?.properties.name;
   });
 
   if (filteredBoundaryFeatures.length === 1) {
@@ -67,27 +66,26 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
   logger,
 }): Promise<OutputLayer> => {
   const territoryExtent = await getTerritoryExtent();
-  const fetchedOsmBuildingsFilePath = getFetchedOsmBuildingsFilePath();
-  const fetchedOsmBoundariesFilePath = getFetchedOsmBoundariesFilePath();
 
   const buildingCollection = (await fs.readJson(
-    fetchedOsmBuildingsFilePath,
+    getFetchedOsmBuildingsFilePath(),
   )) as OsmFeatureCollection;
 
-  const boundaryCollection = (await fs.readJson(
-    fetchedOsmBoundariesFilePath,
+  const regionBoundaryCollection = (await fs.readJson(
+    getFetchedOsmBoundariesForRegionsFilePath(),
+  )) as OsmFeatureCollection;
+
+  const settlementBoundaryCollection = (await fs.readJson(
+    getFetchedOsmBoundariesForSettlementsFilePath(),
   )) as OsmFeatureCollection;
 
   const getRegion = generateGetIntersectedBoundaryName({
-    boundaryFeatures: boundaryCollection.features,
-    boundaryFeatureFilter: (feature) =>
-      feature.properties?.["admin_level"] === "4",
+    boundaryFeatures: regionBoundaryCollection.features,
     expectedBoundaryOfAllCheckedFeatures: territoryExtent,
   });
 
   const getSettlement = generateGetIntersectedBoundaryName({
-    boundaryFeatures: boundaryCollection.features,
-    boundaryFeatureFilter: (feature) => feature.properties?.["place"],
+    boundaryFeatures: settlementBoundaryCollection.features,
     expectedBoundaryOfAllCheckedFeatures: territoryExtent,
   });
 

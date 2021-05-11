@@ -263,15 +263,16 @@ Although some of the data sources are country-specific, parts of the repo can st
 
     ```sh
     yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
-    yarn exe src/commands/2-sources/osm/2-fetchBoundaries.ts
+    yarn exe src/commands/2-sources/osm/2-fetchBoundariesForRegions.ts
+    yarn exe src/commands/2-sources/osm/3-fetchBoundariesForSettlements.ts
     ```
 
     Контуры водных объектов и дорог (опционально, понадобятся только для визуализации):
 
     ```sh
-    yarn exe src/commands/2-sources/osm/3-fetchRailways.ts
-    yarn exe src/commands/2-sources/osm/4-fetchRoads.ts
-    yarn exe src/commands/2-sources/osm/5-fetchWaterObjects.ts
+    yarn exe src/commands/2-sources/osm/4-fetchRailways.ts
+    yarn exe src/commands/2-sources/osm/5-fetchRoads.ts
+    yarn exe src/commands/2-sources/osm/6-fetchWaterObjects.ts
     ```
 
 1.  **Скачать данные с Росреестра**

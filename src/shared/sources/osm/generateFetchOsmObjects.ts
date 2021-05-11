@@ -3,27 +3,28 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import dedent from "dedent";
 
-import { createBboxFeature } from "../../helpersForGeometry";
 import { writeFormattedJson } from "../../helpersForJson";
 import { getTerritoryExtent } from "../../territory";
 import { fetchGeojsonFromOverpassApi } from "./fetchGeoJsonFromOverpassApi";
 
 export const generateFetchOsmObjects = ({
-  title,
   acceptedGeometryTypes,
-  selectors,
   filePath,
-  territoryExtentBboxBufferInMeters,
+  getExtent = () => getTerritoryExtent(),
+  needToTryAnotherExtentVersion,
+  selectors,
+  title,
 }: {
   acceptedGeometryTypes: turf.GeometryTypes[];
-  title: string;
-  selectors: string[];
   filePath: string;
-  territoryExtentBboxBufferInMeters?: number;
+  getExtent?: (extentVersion: number) => Promise<turf.Feature<turf.Polygon>>;
+  needToTryAnotherExtentVersion?: (
+    geojsonData: turf.FeatureCollection<turf.GeometryObject>,
+  ) => boolean;
+  selectors: string[];
+  title: string;
 }): Command => async ({ logger }) => {
   logger.log(chalk.bold(`sources/osm: fetch ${title}`));
-
-  const territoryExtent = await getTerritoryExtent();
 
   const query = dedent`
     [out:json][timeout:60];
@@ -40,18 +41,23 @@ export const generateFetchOsmObjects = ({
   logger.log(chalk.cyan(query));
   logger.log("");
 
-  const geojsonData = await fetchGeojsonFromOverpassApi({
-    logger,
-    acceptedGeometryTypes,
-    query,
-    extent: territoryExtentBboxBufferInMeters
-      ? createBboxFeature(territoryExtent, territoryExtentBboxBufferInMeters)
-      : territoryExtent,
-  });
+  for (let extentVersion = 0; ; extentVersion += 1) {
+    const geojsonData = await fetchGeojsonFromOverpassApi({
+      logger,
+      acceptedGeometryTypes,
+      query,
+      extent: await getExtent(extentVersion),
+    });
 
-  process.stdout.write(chalk.green("Saving..."));
+    if (needToTryAnotherExtentVersion?.(geojsonData)) {
+      logger.log("Need to try another extent version.");
+      continue;
+    }
 
-  await writeFormattedJson(filePath, geojsonData);
+    process.stdout.write(chalk.green("Saving..."));
+    await writeFormattedJson(filePath, geojsonData);
+    break;
+  }
 
   process.stdout.write(` Done: ${chalk.magenta(filePath)}\n`);
 };

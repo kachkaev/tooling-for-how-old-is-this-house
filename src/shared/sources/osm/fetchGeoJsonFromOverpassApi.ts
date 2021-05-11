@@ -6,6 +6,7 @@ import osmToGeojson from "osmtogeojson";
 
 import { filterFeaturesByGeometryType } from "../../helpersForGeometry";
 import { serializeTime } from "../../helpersForJson";
+import { OsmFeatureCollection, OsmFeatureProperties } from "./types";
 
 const extentPlaceholder = "{{extent}}";
 
@@ -19,7 +20,7 @@ export const fetchGeojsonFromOverpassApi = async ({
   logger?: Console;
   query: string;
   extent: turf.Feature<turf.Polygon>;
-}): Promise<turf.FeatureCollection<turf.GeometryObject>> => {
+}): Promise<OsmFeatureCollection<turf.GeometryObject>> => {
   process.stdout.write(chalk.green("Preparing to make Overpass API query..."));
 
   let processedQuery = query;
@@ -65,11 +66,14 @@ export const fetchGeojsonFromOverpassApi = async ({
   process.stdout.write(" Done.\n");
   process.stdout.write(chalk.green("Converting OSM data to geojson..."));
 
-  const geojsonData = osmToGeojson(
-    osmData,
-  ) as turf.FeatureCollection<turf.GeometryObject>;
+  const geojsonData = osmToGeojson(osmData) as turf.FeatureCollection<
+    turf.GeometryObject,
+    OsmFeatureProperties
+  >;
 
   process.stdout.write(" Done.\n");
+
+  process.stdout.write(chalk.green("Post-processing..."));
 
   if (acceptedGeometryTypes) {
     geojsonData.features = filterFeaturesByGeometryType({
@@ -78,15 +82,6 @@ export const fetchGeojsonFromOverpassApi = async ({
       logger,
     });
   }
-
-  process.stdout.write(chalk.green("Post-processing..."));
-
-  // Add metadata
-  (geojsonData as any).properties = {
-    copyright: "OpenStreetMap contributors",
-    fetchedAt: serializeTime(),
-    license: "ODbL",
-  };
 
   // Reorder features by id (helps reduce diffs following subsequent fetches)
   geojsonData.features = _.orderBy(geojsonData.features, (feature) => {
@@ -110,5 +105,11 @@ export const fetchGeojsonFromOverpassApi = async ({
 
   process.stdout.write(" Done.\n");
 
-  return geojsonData;
+  return {
+    type: "FeatureCollection",
+    copyright: "OpenStreetMap contributors",
+    fetchedAt: serializeTime(),
+    license: "ODbL",
+    features: geojsonData.features,
+  };
 };

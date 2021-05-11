@@ -13,6 +13,8 @@ export type OsmFeature<G = turf.Polygon | turf.MultiPolygon> = turf.Feature<
 export type OsmFeatureCollection<
   G = turf.Polygon | turf.MultiPolygon
 > = turf.FeatureCollection<G, OsmFeatureProperties> & {
+  copyright: "OpenStreetMap contributors";
+  license: "ODbL";
   fetchedAt: string;
 };
 

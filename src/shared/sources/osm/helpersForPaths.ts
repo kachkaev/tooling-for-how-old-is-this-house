@@ -11,8 +11,18 @@ export const getFetchedOsmBuildingsFilePath = (): string => {
   return path.resolve(getOsmDirPath(), "fetched-buildings.geojson");
 };
 
-export const getFetchedOsmBoundariesFilePath = (): string => {
-  return path.resolve(getOsmDirPath(), "fetched-boundaries.geojson");
+export const getFetchedOsmBoundariesForRegionsFilePath = (): string => {
+  return path.resolve(
+    getOsmDirPath(),
+    "fetched-boundaries-for-regions.geojson",
+  );
+};
+
+export const getFetchedOsmBoundariesForSettlementsFilePath = (): string => {
+  return path.resolve(
+    getOsmDirPath(),
+    "fetched-boundaries-for-settlements.geojson",
+  );
 };
 
 export const getFetchedOsmRailwaysFilePath = (): string => {
