@@ -70,7 +70,7 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
         if (objectWithSameCn.objectType === objectType) {
           throw new CommandError(
             `Found object ${objectType} with an already used cadastral number for the same object type: ${JSON.stringify(
-              objectFeature.type,
+              objectFeature,
             )}`,
           );
         }
