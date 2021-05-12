@@ -11,7 +11,6 @@ export const convertSectionToSemanticPart = (
       word.wordType === "designation"
         ? 0
         : word.wordType === "ordinalNumber" ||
-          word.wordType === "cardinalNumber" ||
           word.wordType === "designationAdjective"
         ? 2
         : 1,

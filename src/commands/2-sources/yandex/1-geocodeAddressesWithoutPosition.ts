@@ -93,12 +93,7 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
         normalizedAddress.includes(" участок ") ||
         normalizedAddress.includes(" гск ") ||
         normalizedAddress.includes(" гск, ") ||
-        normalizedAddress.includes(" проезд, ") ||
-        normalizedAddress.includes(" улица, ") ||
         normalizedAddress.includes(" станция ") ||
-        normalizedAddress.includes(" шоссе, ") ||
-        normalizedAddress.includes(" снт, ") ||
-        normalizedAddress.includes(" , 8 марта ") ||
         normalizedAddress.includes(" кооператив") ||
         normalizedAddress.includes("километр") ||
         normalizedAddress.includes("территория") ||

@@ -45,12 +45,14 @@ export const extractSections = (
     // prepare to close previous section
     // - after finding the second designation word (e.g. "улица" "тестовая" "дом")
     // - after finding a cardinal number following street or place (e.g. "улица" "тестовая" "10")
+    // - not after designation being the only word in the section
     if (
       (node.wordType === "designation" && currentDesignation) ||
       (node.wordType === "cardinalNumber" &&
         currentDesignation &&
         currentDesignation !== "house" &&
-        currentDesignation !== "housePart")
+        currentDesignation !== "housePart" &&
+        currentSectionWords.length > 1)
     ) {
       nodeIndex -= 1;
       forceClosePreviousSection = true;
