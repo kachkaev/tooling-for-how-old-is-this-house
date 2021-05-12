@@ -29,6 +29,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "гск", gender: "m", aliases: ["гк"] },
   { designation: "street", normalizedValue: "дорога", gender: "f", aliases: ["дор"] },
   { designation: "street", normalizedValue: "километр", gender: "m", aliases: ["км"] },
+  { designation: "street", normalizedValue: "кордон", gender: "m" },
   { designation: "street", normalizedValue: "набережная", gender: "f", aliases: ["наб"] },
   { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [] },
   { designation: "street", normalizedValue: "переулок", gender: "m", aliases: ["пер"] },

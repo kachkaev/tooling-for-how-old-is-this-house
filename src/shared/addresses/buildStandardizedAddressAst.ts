@@ -81,6 +81,18 @@ export const buildStandardizedAddressAst = (
       }
     }
 
+    // Stop if the only word in the section is designation (does not make sense)
+    if (section.words.length === 1 && section.designation) {
+      // Common special case: "территория гск", "территория снт" etc.
+      if (section.words[0].value === "территория") {
+        continue;
+      }
+
+      throw new AddressInterpretationError(
+        "Unexpected section only with designation",
+      );
+    }
+
     // Region
     if (section.designation === "region") {
       if (semanticPartLookup.region) {

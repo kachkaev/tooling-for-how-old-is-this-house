@@ -17,6 +17,7 @@ export const convertSectionToSemanticPart = (
     (word, index) => index,
   ]);
 
+  // Remove settlement designation (город пенза → пенза)
   const firstWord = orderedWords[0];
   if (firstWord.wordType === "designation") {
     const designationConfig = getDesignationConfig(firstWord);
