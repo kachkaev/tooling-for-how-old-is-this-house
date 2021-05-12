@@ -1,4 +1,8 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
+import {
+  autoStartCommandIfNeeded,
+  Command,
+  CommandError,
+} from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
@@ -55,18 +59,33 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
   ] as const) {
     for (const objectFeature of objectFeatures) {
       if (!objectFeature.properties?.cn) {
-        throw new Error(
+        throw new CommandError(
           `Found object ${objectType} without cn (cadastral number): ${JSON.stringify(
             objectFeature,
           )}`,
         );
       }
-      if (objectByCn[objectFeature.properties.cn]) {
-        throw new Error(
-          `Found object ${objectType} with an already used cn (cadastral number): ${JSON.stringify(
-            objectFeature,
-          )}`,
+      const objectWithSameCn = objectByCn[objectFeature.properties.cn];
+      if (objectWithSameCn) {
+        if (objectWithSameCn.objectType === objectType) {
+          throw new CommandError(
+            `Found object ${objectType} with an already used cadastral number for the same object type: ${JSON.stringify(
+              objectFeature.type,
+            )}`,
+          );
+        }
+
+        // Example: 72:17:1708003:561
+        logger.log(
+          chalk.yellow(
+            `Found object ${objectType} with an already used cadastral number for ${
+              objectWithSameCn.objectType
+            }: ${JSON.stringify(objectFeature)}. Ignoring lot.`,
+          ),
         );
+        if (objectWithSameCn.objectType === "cco") {
+          continue;
+        }
       }
       objectByCn[objectFeature.properties.cn] = {
         objectType,
