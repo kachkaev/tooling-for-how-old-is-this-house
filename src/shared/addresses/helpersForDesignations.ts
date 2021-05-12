@@ -34,7 +34,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "переулок", gender: "m", aliases: ["пер"] },
   { designation: "street", normalizedValue: "порядок", gender: "m" },
   { designation: "street", normalizedValue: "площадь", gender: "f", aliases: ["пл"] },
-  { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр"] },
+  { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр", "пр-д"] },
   { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-т", "пр-кт", "просп"] },
   { designation: "street", normalizedValue: "разъезд", gender: "m" },
   { designation: "street", normalizedValue: "снт", gender: "n", aliases: ["с/т", "сдт"] }, // садовое некоммерческое товарищество
