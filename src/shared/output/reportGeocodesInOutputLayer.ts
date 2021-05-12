@@ -31,7 +31,6 @@ export const reportGeocodesInOutputLayer = async ({
         coordinates: point.geometry.coordinates.map((coordinate) =>
           _.round(coordinate, 6),
         ) as [number, number],
-        knownAt: feature.properties.knownAt,
         weight: turf.area(feature),
       });
     } else {

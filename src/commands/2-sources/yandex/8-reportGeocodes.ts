@@ -48,15 +48,13 @@ export const reportGeocodes: Command = async ({ logger }) => {
       if (!coordinates || precision !== "exact") {
         reportedGeocodes.push({
           address: entry.normalizedAddress,
-          knownAt: entry.fetchedAt,
+        });
+      } else {
+        reportedGeocodes.push({
+          address: entry.normalizedAddress,
+          coordinates,
         });
       }
-
-      reportedGeocodes.push({
-        address: entry.normalizedAddress,
-        coordinates,
-        knownAt: entry.fetchedAt,
-      });
     },
   });
 

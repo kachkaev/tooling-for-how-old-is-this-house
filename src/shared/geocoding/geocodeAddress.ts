@@ -26,7 +26,6 @@ export const geocodeAddress = (
           type: "Point",
           coordinates: [sourceRecord[0], sourceRecord[1]],
         },
-        knownAt: sourceRecord[2],
       };
     }
   }
