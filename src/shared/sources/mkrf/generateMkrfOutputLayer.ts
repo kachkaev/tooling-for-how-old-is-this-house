@@ -85,7 +85,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
           point = turf.centerOfMass(additionalCoordinates).geometry;
         } catch {
           try {
-            point = turf.centroid(additionalCoordinates[0]).geometry;
+            point = turf.centroid(additionalCoordinates[0]!).geometry;
           } catch {
             // noop
           }
@@ -94,7 +94,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       }
 
       // additionalCoordinates can be in [lon,lat] instead of [lat,lon], so flipping if possible
-      if (point) {
+      if (point && point.coordinates[1] && point.coordinates[0]) {
         const distance = turf.distance(point, territoryCentroid);
         const flippedPoint: turf.Point = {
           type: "Point",

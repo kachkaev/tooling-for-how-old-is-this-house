@@ -40,7 +40,7 @@ export const buildStandardizedAddressAst = (
       sectionIndex === 0 &&
       !section.designation &&
       section.words.length === 1 &&
-      section.words[0].wordType === "cardinalNumber" &&
+      section.words[0]?.wordType === "cardinalNumber" &&
       sections[1]?.designation !== "street" &&
       sections[1]?.designation !== "place"
     ) {
@@ -52,8 +52,8 @@ export const buildStandardizedAddressAst = (
     if (
       section.designation === "country" ||
       (section.words.length === 1 &&
-        (section.words[0].value === "россия" ||
-          section.words[0].value === "рф"))
+        (section.words[0]?.value === "россия" ||
+          section.words[0]?.value === "рф"))
     ) {
       continue;
     }
@@ -84,12 +84,12 @@ export const buildStandardizedAddressAst = (
     // Stop if the only word in the section is designation (does not make sense)
     if (section.words.length === 1 && section.designation) {
       // Common special case: "территория гск", "территория снт" etc.
-      if (section.words[0].value === "территория") {
+      if (section.words[0]?.value === "территория") {
         continue;
       }
 
       throw new AddressInterpretationError(
-        `Unexpected section only with designation: ${section.words[0].value}`,
+        `Unexpected section only with designation: ${section.words[0]?.value}`,
       );
     }
 
@@ -162,8 +162,8 @@ export const buildStandardizedAddressAst = (
       sectionIndex += 1
     ) {
       if (
-        remainingSections[sectionIndex]?.index -
-          remainingSections[sectionIndex - 1]?.index !==
+        (remainingSections[sectionIndex]?.index ?? 0) -
+          (remainingSections[sectionIndex - 1]?.index ?? 0) !==
         1
       ) {
         throw new AddressInterpretationError(
@@ -199,9 +199,12 @@ export const buildStandardizedAddressAst = (
 
   // Add default region
   if (!semanticPartLookup.region && config.defaultRegion) {
-    semanticPartLookup.region = convertSectionToSemanticPart(
-      extractSections(buildCleanedAddressAst(config.defaultRegion))[0],
-    );
+    const regionSection = extractSections(
+      buildCleanedAddressAst(config.defaultRegion),
+    )[0];
+    if (regionSection) {
+      semanticPartLookup.region = convertSectionToSemanticPart(regionSection);
+    }
   }
 
   const foundSectionTypes = Object.keys(semanticPartLookup);

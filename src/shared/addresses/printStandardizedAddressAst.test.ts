@@ -9,7 +9,7 @@ describe("printStandardizedAddressAst", () => {
     ({ rawAddresses, expectedCleanedAddress, expectedStandardizedAddress }) => {
       if (expectedStandardizedAddress !== undefined) {
         const rawAddressesToUse = expectedCleanedAddress
-          ? [rawAddresses[0]]
+          ? rawAddresses.slice(0, 1)
           : rawAddresses;
 
         for (const rawAddress of rawAddressesToUse) {

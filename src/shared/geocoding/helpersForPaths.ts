@@ -68,7 +68,7 @@ export const deriveNormalizedAddressSliceId = (
       if (
         node.nodeType === "word" &&
         node.wordType === "unclassified" &&
-        node.value.length > 1
+        node.value[0] !== undefined
       ) {
         firstLetters.push(node.value[0]);
       }

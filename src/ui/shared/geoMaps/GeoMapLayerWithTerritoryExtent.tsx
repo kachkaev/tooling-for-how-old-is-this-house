@@ -33,7 +33,7 @@ export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapL
     ...data,
     geometry: {
       ...data.geometry,
-      coordinates: [[...data.geometry.coordinates[0]].reverse()],
+      coordinates: [[...data.geometry.coordinates[0]!].reverse()],
     },
   };
 
