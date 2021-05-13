@@ -89,7 +89,7 @@ export const buildStandardizedAddressAst = (
       }
 
       throw new AddressInterpretationError(
-        "Unexpected section only with designation",
+        `Unexpected section only with designation: ${section.words[0].value}`,
       );
     }
 

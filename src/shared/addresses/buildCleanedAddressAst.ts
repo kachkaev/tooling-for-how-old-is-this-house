@@ -1,3 +1,4 @@
+import { AddressInterpretationError } from "./AddressInterpretationError";
 import { extractTokens } from "./extractTokens";
 import {
   designationAdjectiveConfigLookup,
@@ -393,6 +394,29 @@ export const buildCleanedAddressAst = (
     }
     if (node.value.endsWith(".")) {
       node.value = node.value.slice(0, -1);
+    }
+  }
+
+  // Mark designation as an unclassified word if canBePartOfName and next to another designation word
+  for (let i = 1; i < nodes.length - 1; i += 1) {
+    const node1 = nodes[i - 1];
+    const node2 = nodes[i];
+    if (!isDesignation(node1) || !isDesignation(node2)) {
+      continue;
+    }
+
+    const designationConfig1 = designationConfigLookup[node1.value];
+    const designationConfig2 = designationConfigLookup[node2.value];
+    if (!designationConfig1 || !designationConfig2) {
+      throw new AddressInterpretationError(
+        "Unexpectedly undefined designation config (this is a bug)",
+      );
+    }
+
+    if (designationConfig1.canBePartOfName) {
+      (node1 as AddressNodeWithWord).wordType = "unclassified";
+    } else if (designationConfig2.canBePartOfName) {
+      (node2 as AddressNodeWithWord).wordType = "unclassified";
     }
   }
 
