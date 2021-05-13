@@ -48,7 +48,7 @@ export const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
 
 export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
   logger.log(
-    chalk.bold(`sources/yandex: geocoding addresses without position`),
+    chalk.bold(`sources/yandex: Geocoding addresses without position`),
   );
 
   const apiKey = cleanEnv({

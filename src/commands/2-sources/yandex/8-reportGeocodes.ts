@@ -15,7 +15,7 @@ import {
 } from "../../../shared/sources/yandex";
 
 export const reportGeocodes: Command = async ({ logger }) => {
-  logger.log(chalk.bold(`sources/yandex: report geocodes`));
+  logger.log(chalk.bold(`sources/yandex: Reporting geocodes`));
 
   const reportedGeocodes: ReportedGeocode[] = [];
 
@@ -23,7 +23,7 @@ export const reportGeocodes: Command = async ({ logger }) => {
     logger,
     fileSearchDirPath: getYandexGeocoderCacheDir(),
     fileSearchPattern: `**/*${getYandexGeocoderCacheEntryFileSuffix()}`,
-    filesNicknameToLog: "files in yandex geocoder cache",
+    filesNicknameToLog: "yandex geocoder cache entries",
     showFilePath: true,
     statusReportFrequency: 1000,
     processFile: async (filePath) => {

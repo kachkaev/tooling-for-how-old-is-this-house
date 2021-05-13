@@ -30,7 +30,7 @@ export const generateReportGeocodes = ({
   generateOutputLayer: GenerateOutputLayer;
 }): Command => {
   return async ({ logger }) => {
-    logger.log(chalk.bold(`sources/${source}: report geocodes`));
+    logger.log(chalk.bold(`sources/${source}: Reporting geocodes`));
 
     const outputLayer = await generateOutputLayer({ logger });
 
@@ -52,7 +52,7 @@ export const generateExtractOutputLayer = ({
   canUseCollectedGeocodes?: boolean;
 }): Command => {
   return async ({ logger }) => {
-    logger.log(chalk.bold(`sources/${source}: extract output layer`));
+    logger.log(chalk.bold(`sources/${source}: Extracting output layer`));
 
     let configuredGeocodeAddress:
       | ConfiguredGeocodeAddress
