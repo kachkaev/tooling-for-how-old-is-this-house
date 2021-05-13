@@ -36,6 +36,7 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
     logger,
     fileSearchDirPath: getWikimapiaObjectsDir(),
     fileSearchPattern: `**/*-${getWikimapiaObjectInfoFileSuffix()}`,
+    filesNicknameToLog: "wikimapia object info files",
     processFile: async (filePath) => {
       const objectInfoFile: WikimapiaObjectInfoFile = await fs.readJson(
         filePath,

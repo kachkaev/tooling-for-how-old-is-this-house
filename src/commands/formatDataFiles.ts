@@ -22,6 +22,7 @@ export const formatDataFiles: Command = async ({ logger }) => {
     fileSearchDirPath: customPath
       ? path.resolve(getTerritoryDirPath(), customPath)
       : getTerritoryDirPath(),
+    filesNicknameToLog: "files to format",
     showFilePath: true,
     statusReportFrequency: 500,
     processFile: async (filePath) => {

@@ -84,6 +84,7 @@ export const processRosreestrPages = async ({
     logger,
     fileSearchPattern: "**/page-*.json",
     fileSearchDirPath: getObjectInfoPagesDirPath(),
+    filesNicknameToLog: "rosreestr info pages",
     showFilePath: true,
     processFile: async (filePath, prefixLength) => {
       const prefix = " ".repeat(prefixLength + 1);

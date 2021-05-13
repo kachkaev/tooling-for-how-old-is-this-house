@@ -127,6 +127,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     logger,
     fileSearchDirPath: getObjectInfoPagesDirPath(),
     fileSearchPattern: "**/page-*.json",
+    filesNicknameToLog: "rosreestr info pages",
     processFile: async (filePath) => {
       const infoPageData: InfoPageData = await fs.readJson(filePath);
       for (const infoPageEntry of infoPageData) {

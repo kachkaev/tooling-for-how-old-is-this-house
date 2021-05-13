@@ -22,6 +22,7 @@ export const loadGeocodeDictionaryLookup = async (
     fileSearchDirPath: geocodeDictionariesDirPath,
     statusReportFrequency: 0,
     fileSearchPattern: `**/${getGeocodeDictionaryFileName()}`,
+    filesNicknameToLog: "geocode dictionaries",
     processFile: async (filePath) => {
       const dictionary: GeocodeDictionary = await fs.readJson(filePath);
       const relativeFilePath = path.relative(

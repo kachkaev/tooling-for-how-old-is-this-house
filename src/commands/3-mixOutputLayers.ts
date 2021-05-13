@@ -62,8 +62,6 @@ interface MixinLayer {
 export const mixOutputLayers: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing output layers"));
 
-  logger.log(chalk.green("Loading files..."));
-
   const baseLayers: BaseLayer[] = [];
   const patchLayers: MixinLayer[] = [];
 
@@ -79,6 +77,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
       `${relativeSourcesDirPath}/*/${getOutputLayerFileName()}`,
     ],
     fileSearchDirPath: getTerritoryDirPath(),
+    filesNicknameToLog: "output layers",
     showFilePath: true,
     processFile: async (filePath, prefixLength) => {
       const prefix = " ".repeat(prefixLength + 1);

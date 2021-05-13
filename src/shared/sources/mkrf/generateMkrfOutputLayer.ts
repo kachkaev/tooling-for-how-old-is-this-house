@@ -29,6 +29,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
     logger,
     fileSearchDirPath: getMkrfObjectDirPath(),
     fileSearchPattern: "*--info.json",
+    filesNicknameToLog: "mkrf object info files",
     processFile: async (filePath, prefixLength) => {
       const prefix = `${" ".repeat(prefixLength + 1)}`;
       const shouldNotProceedPrefix = chalk.gray(

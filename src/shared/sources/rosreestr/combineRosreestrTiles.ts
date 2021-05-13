@@ -36,6 +36,7 @@ export const combineRosreestrTiles = async ({
     logger,
     fileSearchPattern: `**/${getTileDataFileName()}`,
     fileSearchDirPath: getTilesDirPath(objectType),
+    filesNicknameToLog: "rosreestr tile data files",
     statusReportFrequency: 500,
     processFile: async (filePath) => {
       const tileData = (await fs.readJson(filePath)) as RosreestrTileData;

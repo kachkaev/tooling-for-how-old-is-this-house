@@ -8,6 +8,7 @@ export const processFiles = async ({
   logger,
   fileSearchPattern,
   fileSearchDirPath,
+  filesNicknameToLog = "files",
   processFile,
   showFilePath = false,
   statusReportFrequency = 1,
@@ -15,12 +16,13 @@ export const processFiles = async ({
   logger?: Console;
   fileSearchPattern: string | string[];
   fileSearchDirPath: string;
+  filesNicknameToLog?: string;
   processFile: (filePath: string, prefixLength: number) => void | Promise<void>;
   showFilePath?: boolean;
   statusReportFrequency?: number;
 }) => {
   if (logger) {
-    process.stdout.write(chalk.green("Listing files..."));
+    process.stdout.write(chalk.green(`Listing ${filesNicknameToLog}...`));
   }
   const rawGlobbyResults = await globby(fileSearchPattern, {
     cwd: fileSearchDirPath,
@@ -33,8 +35,8 @@ export const processFiles = async ({
   const numberOfFiles = globbyResults.length;
 
   if (logger) {
-    process.stdout.write(` Files found: ${numberOfFiles}.\n`);
-    process.stdout.write(chalk.green("Processing files..."));
+    process.stdout.write(` Found: ${numberOfFiles}.\n`);
+    process.stdout.write(chalk.green(`Processing ${filesNicknameToLog}...`));
     if (statusReportFrequency) {
       process.stdout.write("\n");
     }
