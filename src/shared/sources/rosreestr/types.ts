@@ -119,7 +119,8 @@ export interface SuccessfulFirObjectResponse {
   parcelData: {
     oksFlag: 0 | 1;
     oksType?: OksType;
-    oksYearBuilt?: string;
+    oksYearBuilt?: string; // ‘завершение строительства’
+    oksYearUsed?: string; // ‘ввод в эксплуатацию’
   };
   oldNumbers?: Record<string, unknown>;
 }

@@ -61,7 +61,8 @@ const extractPropertiesFromFirResponse = (
     return "notBuilding";
   }
 
-  const completionDates = firResponse.parcelData.oksYearBuilt;
+  const completionDates =
+    firResponse.parcelData.oksYearBuilt ?? firResponse.parcelData.oksYearUsed;
 
   return {
     id: cn,
