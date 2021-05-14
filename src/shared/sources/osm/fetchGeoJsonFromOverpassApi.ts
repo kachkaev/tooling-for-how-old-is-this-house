@@ -32,14 +32,18 @@ export const fetchGeojsonFromOverpassApi = async ({
   acceptedGeometryTypes?: turf.GeometryTypes[];
   logger?: Console;
   query: string;
-  extent: turf.Feature<turf.Polygon>;
+  extent?: turf.Feature<turf.Polygon>;
 }): Promise<OsmFeatureCollection<turf.GeometryObject>> => {
-  process.stdout.write(chalk.green("Preparing to make Overpass API query..."));
+  if (logger) {
+    process.stdout.write(
+      chalk.green("Preparing to make Overpass API query..."),
+    );
+  }
 
   let processedQuery = query;
   if (processedQuery.includes(extentPlaceholder)) {
-    if (!extent.geometry) {
-      throw new Error("Unexpected empty geometry in territoryExtent");
+    if (!extent?.geometry) {
+      throw new Error("Unexpected empty geometry in extent");
     }
 
     const pointsInOuterRing = (extent.geometry as turf.Polygon).coordinates[0];
@@ -58,9 +62,10 @@ export const fetchGeojsonFromOverpassApi = async ({
     );
   }
 
-  process.stdout.write(" Done.\n");
-
-  process.stdout.write(chalk.green("Calling Overpass API..."));
+  if (logger) {
+    process.stdout.write(" Done.\n");
+    process.stdout.write(chalk.green("Calling Overpass API..."));
+  }
 
   const response = await axiosInstance.post(
     "https://overpass-api.de/api/interpreter",
@@ -69,17 +74,21 @@ export const fetchGeojsonFromOverpassApi = async ({
   );
 
   const osmData = response.data;
-  process.stdout.write(" Done.\n");
-  process.stdout.write(chalk.green("Converting OSM data to geojson..."));
+
+  if (logger) {
+    process.stdout.write(" Done.\n");
+    process.stdout.write(chalk.green("Converting OSM data to geojson..."));
+  }
 
   const geojsonData = osmToGeojson(osmData) as turf.FeatureCollection<
     turf.GeometryObject,
     OsmFeatureProperties
   >;
 
-  process.stdout.write(" Done.\n");
-
-  process.stdout.write(chalk.green("Post-processing..."));
+  if (logger) {
+    process.stdout.write(" Done.\n");
+    process.stdout.write(chalk.green("Post-processing..."));
+  }
 
   if (acceptedGeometryTypes) {
     geojsonData.features = filterFeaturesByGeometryType({
@@ -109,7 +118,9 @@ export const fetchGeojsonFromOverpassApi = async ({
     delete feature.id;
   });
 
-  process.stdout.write(" Done.\n");
+  if (logger) {
+    process.stdout.write(" Done.\n");
+  }
 
   return {
     type: "FeatureCollection",

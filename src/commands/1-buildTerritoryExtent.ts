@@ -4,12 +4,13 @@ import {
   CommandError,
 } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
-import axios from "axios";
 import chalk from "chalk";
+import dedent from "dedent";
 import sortKeys from "sort-keys";
 
 import { multiUnion } from "../shared/helpersForGeometry";
 import { serializeTime, writeFormattedJson } from "../shared/helpersForJson";
+import { fetchGeojsonFromOverpassApi } from "../shared/sources/osm";
 import {
   getTerritoryConfig,
   getTerritoryExtentFilePath,
@@ -22,7 +23,7 @@ export const buildTerritoryExtent: Command = async ({ logger }) => {
   const territoryConfig = await getTerritoryConfig();
   const elementsToCombine = territoryConfig.extent?.elementsToCombine ?? [];
 
-  const elementGeometries: turf.Geometry[] = [];
+  const elementGeometries: turf.GeometryObject[] = [];
   for (const elementConfig of elementsToCombine) {
     process.stdout.write(
       `  ${elementsToCombine.indexOf(elementConfig) + 1}/${
@@ -30,37 +31,87 @@ export const buildTerritoryExtent: Command = async ({ logger }) => {
       }:`,
     );
 
-    if (elementConfig.type === "osmRelation") {
-      process.stdout.write(
-        chalk.green(` Fetching OSM relation ${elementConfig.relationId}...`),
-      );
+    if (
+      elementConfig.type === "osmRelation" ||
+      elementConfig.type === "osmWay"
+    ) {
+      let query: string;
 
-      // Not visiting this link first may result in an invalid json
-      await axios.get(
-        `https://polygons.openstreetmap.fr/?id=${elementConfig.relationId}`,
-      );
+      if (elementConfig.type === "osmRelation") {
+        if (!(elementConfig.relationId > 0)) {
+          process.stdout.write(
+            chalk.yellow(
+              ` Missing relationId (should be positive integer), skipping.\n`,
+            ),
+          );
+          continue;
+        }
 
-      const geoJson = (
-        await axios.get<turf.GeometryCollection>(
-          `https://polygons.openstreetmap.fr/get_geojson.py?id=${elementConfig.relationId}`,
-          { responseType: "json" },
-        )
-      ).data;
-      elementGeometries.push(...geoJson.geometries);
+        process.stdout.write(
+          chalk.green(` Fetching OSM relation ${elementConfig.relationId}...`),
+        );
+
+        query = dedent`
+          [out:json][timeout:25];
+          (
+            relation(id:${elementConfig.relationId});
+          );
+          out body;
+          >;
+          out skel qt;
+        `;
+      } else {
+        if (!(elementConfig.wayId > 0)) {
+          process.stdout.write(
+            chalk.yellow(
+              ` Missing wayId (should be positive integer), skipping.\n`,
+            ),
+          );
+          continue;
+        }
+
+        process.stdout.write(
+          chalk.green(` Fetching OSM way ${elementConfig.wayId}...`),
+        );
+
+        query = dedent`
+          [out:json][timeout:25];
+          (
+            way(id:${elementConfig.wayId});
+          );
+          out body;
+          >;
+          out skel qt;
+        `;
+      }
+
+      const geometryCollection = await fetchGeojsonFromOverpassApi({ query });
+
+      geometryCollection.features.forEach((feature) => {
+        const featureGeometry = feature.geometry as turf.Geometry;
+        if (featureGeometry.type === "Polygon") {
+          elementGeometries.push(feature.geometry);
+        }
+      });
       process.stdout.write(" Done.\n");
     } else {
       process.stdout.write(chalk.red(" Skipping due to unknown type.\n"));
     }
   }
-
-  process.stdout.write(chalk.green("Combining obtained elements..."));
-
   const featuresToUnion = elementGeometries
     .filter(
       (geometry): geometry is turf.Polygon | turf.MultiPolygon =>
         geometry.type === "Polygon" || geometry.type === "MultiPolygon",
     )
     .map((geometry) => turf.feature(geometry));
+
+  if (!featuresToUnion.length) {
+    throw new CommandError(
+      "Please configure territory-config.yml → extent → elementsToCombine so that the result contained at least one Polygon or MultiPolygon",
+    );
+  }
+
+  process.stdout.write(chalk.green("Combining obtained elements..."));
 
   let extent = multiUnion(featuresToUnion);
 

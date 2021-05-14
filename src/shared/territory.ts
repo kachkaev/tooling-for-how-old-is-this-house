@@ -33,7 +33,9 @@ export interface TerritoryConfig {
 
   extent?: {
     elementsToCombine?: Array<
-      { type: "osmRelation"; relationId: number } | { type: never }
+      | { type: "osmRelation"; relationId: number }
+      | { type: "osmWay"; wayId: number }
+      | { type: never }
     >;
   };
 
