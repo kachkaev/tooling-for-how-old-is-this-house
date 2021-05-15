@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import rmUp from "rm-up";
 import sleep from "sleep-promise";
 
+import { normalizeAddress } from "../../../shared/addresses";
 import { loadCombinedGeocodeDictionary } from "../../../shared/geocoding";
 import { processFiles } from "../../../shared/processFiles";
 import {
@@ -11,6 +12,7 @@ import {
   getYandexGeocoderCacheEntryFileSuffix,
   YandexGeocoderCacheEntry,
 } from "../../../shared/sources/yandex";
+import { getAddressNormalizationConfig } from "../../../shared/territory";
 
 export const deleteCacheEntriesForUnusedAddresses: Command = async ({
   logger,
@@ -19,8 +21,33 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
     chalk.bold(`sources/yandex: Deleting cache entries for unused addresses`),
   );
 
+  const addressNormalizationConfig = await getAddressNormalizationConfig();
   const combinedGeocodeDictionary = await loadCombinedGeocodeDictionary();
   const filePathsToDelete: string[] = [];
+
+  const needsDeleting = (cacheEntry: YandexGeocoderCacheEntry): boolean => {
+    const geocodeAddressRecord =
+      combinedGeocodeDictionary[cacheEntry.normalizedAddress];
+    if (!geocodeAddressRecord) {
+      return true;
+    }
+
+    if (
+      normalizeAddress(
+        cacheEntry.normalizedAddress,
+        addressNormalizationConfig,
+      ) !== cacheEntry.normalizedAddress
+    ) {
+      return true;
+    }
+
+    const geocodeSources = Object.keys(geocodeAddressRecord);
+    if (geocodeSources.length === 1 && geocodeSources[0] === "yandex") {
+      return true;
+    }
+
+    return false;
+  };
 
   await processFiles({
     logger,
@@ -30,8 +57,10 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
     showFilePath: true,
     statusReportFrequency: 1000,
     processFile: async (filePath) => {
-      const entry = (await fs.readJson(filePath)) as YandexGeocoderCacheEntry;
-      if (!combinedGeocodeDictionary[entry.normalizedAddress]) {
+      const cacheEntry = (await fs.readJson(
+        filePath,
+      )) as YandexGeocoderCacheEntry;
+      if (needsDeleting(cacheEntry)) {
         filePathsToDelete.push(filePath);
       }
     },
