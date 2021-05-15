@@ -89,6 +89,7 @@ export const combineRosreestrTiles = async ({
         rawObjectExtentFeatures.push(extent);
       });
     },
+    showFilePath: true,
   });
 
   if (logger) {
