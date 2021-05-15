@@ -84,33 +84,48 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
   });
   process.stdout.write(` Found ${normalizedAddresses.length}.\n`);
 
-  for (const normalizedAddress of normalizedAddresses) {
-    try {
-      // TODO: improve logic
-      if (
-        normalizedAddress.includes(" гараж ") ||
-        normalizedAddress.includes(" место ") ||
-        normalizedAddress.includes(" участок ") ||
-        normalizedAddress.includes(" гск ") ||
-        normalizedAddress.includes(" гск, ") ||
-        normalizedAddress.includes(" станция ") ||
-        normalizedAddress.includes(" кооператив") ||
-        normalizedAddress.includes("километр") ||
-        normalizedAddress.includes("территория") ||
-        normalizedAddress.includes(" снт ")
-      ) {
-        throw new Error("stop word");
-      }
-      buildStandardizedAddressAst(buildCleanedAddressAst(normalizedAddress));
-    } catch {
-      continue;
-    }
+  process.stdout.write(chalk.green("Filtering..."));
 
+  const filteredNormalizedAddresses = normalizedAddresses.filter(
+    (normalizedAddress) => {
+      try {
+        // TODO: improve logic
+        if (
+          normalizedAddress.includes(" гараж ") ||
+          normalizedAddress.includes(" место ") ||
+          normalizedAddress.includes(" участок ") ||
+          normalizedAddress.includes(" гск ") ||
+          normalizedAddress.includes(" гск, ") ||
+          normalizedAddress.includes(" станция ") ||
+          normalizedAddress.includes(" кооператив") ||
+          normalizedAddress.includes("километр") ||
+          normalizedAddress.includes("территория") ||
+          normalizedAddress.includes(" снт ")
+        ) {
+          throw new Error("stop word");
+        }
+        buildStandardizedAddressAst(buildCleanedAddressAst(normalizedAddress));
+      } catch {
+        return false;
+      }
+
+      return true;
+    },
+  );
+
+  process.stdout.write(
+    ` Found ${filteredNormalizedAddresses.length} that can be geocoded by Yandex.\n`,
+  );
+
+  let numberOfPreExistingCacheEntries = 0;
+  let numberOfUpdatedCacheEntries = 0;
+  for (const normalizedAddress of filteredNormalizedAddresses) {
     const cacheEntryFilePath = getYandexGeocoderCacheEntryFilePath(
       normalizedAddress,
     );
     if (await fs.pathExists(cacheEntryFilePath)) {
-      logger.log(`${chalk.gray(cacheEntryFilePath)} ${normalizedAddress}`);
+      numberOfPreExistingCacheEntries += 1;
+
       continue;
     }
 
@@ -126,6 +141,7 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
         data: apiResponse.data,
       };
       await writeFormattedJson(cacheEntryFilePath, cacheEntry);
+      numberOfUpdatedCacheEntries += 1;
       logger.log(`${chalk.magenta(cacheEntryFilePath)} ${normalizedAddress}`);
     } catch (e: unknown) {
       if ((e as AxiosError)?.response?.status === 403) {
@@ -140,7 +156,9 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
     }
   }
 
-  process.stdout.write(chalk.magenta(` Done.\n`));
+  logger.log(
+    `Done. Updated cache entries: ${numberOfUpdatedCacheEntries}, pre-existing cache entries: ${numberOfPreExistingCacheEntries}.`,
+  );
 };
 
 autoStartCommandIfNeeded(geocodeAddressesWithoutPosition, __filename);
