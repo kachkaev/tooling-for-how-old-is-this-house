@@ -51,30 +51,6 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
     chalk.bold(`sources/yandex: Geocoding addresses without position`),
   );
 
-  const apiKey = cleanEnv({
-    YANDEX_GEOCODER_API_KEY: envalid.str({
-      desc: "API key from https://developer.tech.yandex.ru (see README.md)",
-      example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    }),
-  }).YANDEX_GEOCODER_API_KEY;
-
-  const searchBbox = roughenBbox(
-    addBufferToBbox(turf.bbox(await getTerritoryExtent()), 100),
-    4,
-  );
-
-  // https://yandex.ru/dev/maps/geocoder/doc/desc/concepts/input_params.html
-  const sharedRequestParams = {
-    apikey: apiKey,
-    rspn: "1",
-    bbox: `${searchBbox[0]},${searchBbox[1]}~${searchBbox[2]},${searchBbox[3]}`,
-    kind: "house",
-    format: "json",
-    results: "1",
-  };
-
-  const axiosInstance = createAxiosInstanceForYandexGeocoder();
-
   process.stdout.write(
     chalk.green("Listing normalized addresses without position..."),
   );
@@ -116,6 +92,30 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
   process.stdout.write(
     ` Found ${filteredNormalizedAddresses.length} that can be geocoded by Yandex.\n`,
   );
+
+  const apiKey = cleanEnv({
+    YANDEX_GEOCODER_API_KEY: envalid.str({
+      desc: "API key from https://developer.tech.yandex.ru (see README.md)",
+      example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    }),
+  }).YANDEX_GEOCODER_API_KEY;
+
+  const searchBbox = roughenBbox(
+    addBufferToBbox(turf.bbox(await getTerritoryExtent()), 100),
+    4,
+  );
+
+  // https://yandex.ru/dev/maps/geocoder/doc/desc/concepts/input_params.html
+  const sharedRequestParams = {
+    apikey: apiKey,
+    rspn: "1",
+    bbox: `${searchBbox[0]},${searchBbox[1]}~${searchBbox[2]},${searchBbox[3]}`,
+    kind: "house",
+    format: "json",
+    results: "1",
+  };
+
+  const axiosInstance = createAxiosInstanceForYandexGeocoder();
 
   let numberOfPreExistingCacheEntries = 0;
   let numberOfUpdatedCacheEntries = 0;
