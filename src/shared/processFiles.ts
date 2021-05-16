@@ -55,7 +55,7 @@ export const processFiles = async ({
         index === numberOfFiles - 1);
 
     if (reportingStatus) {
-      logger?.log(`${progress}${chalk.green(filePath)}`);
+      logger?.log(`${progress} ${chalk.green(filePath)}`);
     }
 
     try {
