@@ -69,7 +69,7 @@ export const parseRawHouseInfos: Command = async ({ logger }) => {
       const yearMatch = rawInfo.match(
         /<dt>Год постройки<\/dt>\s*<dd>(.*)<\/dd>/,
       );
-      const year = deriveCompletionYearFromCompletionDates(yearMatch?.[0]);
+      const year = deriveCompletionYearFromCompletionDates(yearMatch?.[1]);
       if (year) {
         info.year = year;
       }
