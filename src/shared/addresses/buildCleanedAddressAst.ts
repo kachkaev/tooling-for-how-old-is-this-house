@@ -144,17 +144,6 @@ export const buildCleanedAddressAst = (
   const nodes: CleanedAddressNode[] = [];
   for (const [tokenType, tokenValue] of filteredTokens) {
     if (wordTokensSet.has(tokenType)) {
-      if (tokenType === "numberSequence") {
-        nodes.push({
-          nodeType: "word",
-          wordType: "cardinalNumber",
-          value: tokenValue,
-          number: parseInt(tokenValue),
-          ending: "",
-        });
-        continue;
-      }
-
       nodes.push({
         nodeType: "word",
         wordType: "unclassified",
@@ -173,11 +162,7 @@ export const buildCleanedAddressAst = (
   // Stitch [NN]-[WW] into a single token. Examples: '42 - А', "улица 30 - летия победы"
   for (let index = 0; index < nodes.length - 2; index += 1) {
     const node = nodes[index];
-    if (
-      !node ||
-      node.nodeType !== "word" ||
-      node.wordType !== "cardinalNumber"
-    ) {
+    if (!node || node.nodeType !== "word") {
       continue;
     }
 
@@ -207,7 +192,7 @@ export const buildCleanedAddressAst = (
     });
   }
 
-  // Find cardinal and ordinal numbers
+  // Find words that start with digits, treat all as unclassified numbers for now
   for (let index = 0; index < nodes.length; index += 1) {
     const node = nodes[index]!;
     if (node.nodeType !== "word" || node.wordType !== "unclassified") {
@@ -219,34 +204,16 @@ export const buildCleanedAddressAst = (
     }
     const [, rawNumber = "", ending = ""] = match;
     const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithNumber;
+    updatedNode.wordType = "unclassifiedNumber";
     updatedNode.number = parseInt(rawNumber);
-
-    const ordinalNumberEndingConfig = ordinalNumberEndingConfigLookup[ending];
-    // In a rare case, the address can finish with 42-Е, which is a cardinal number.
-    // We only make the number ordinal if it is not the last one
-    if (!nodes[index + 1]) {
-      const endingWithoutDash = ending.startsWith("-")
-        ? ending.slice(1)
-        : ending;
-      updatedNode.wordType = "cardinalNumber";
-      updatedNode.value = `${rawNumber}${endingWithoutDash}`;
-      updatedNode.ending = endingWithoutDash;
-    } else if (ordinalNumberEndingConfig) {
-      const normalizedEnding = ordinalNumberEndingConfig.normalizedValue;
-      updatedNode.wordType = "ordinalNumber";
-      updatedNode.value = `${rawNumber}${normalizedEnding}`;
-      updatedNode.ending = normalizedEnding;
-    } else {
-      updatedNode.wordType = "cardinalNumber";
-      updatedNode.value = `${rawNumber}${ending}`;
-      updatedNode.ending = ending;
-    }
+    updatedNode.value = `${rawNumber}${ending}`;
+    updatedNode.ending = ending;
   }
 
-  // Detach endings from cardinal numbers in cases like ‘10корп’ (but not 10-летия)
+  // Detach endings from unclassifiedNumber words in cases like ‘10корп’ (but not ‘10-летия’ or 10й)
   for (let index = nodes.length - 1; index >= 0; index -= 1) {
     const node = nodes[index]!;
-    if (node.nodeType !== "word" || node.wordType !== "cardinalNumber") {
+    if (node.nodeType !== "word" || node.wordType !== "unclassifiedNumber") {
       continue;
     }
     if (node.ending.length > 1 && node.ending[0] !== "-") {
@@ -260,12 +227,12 @@ export const buildCleanedAddressAst = (
     }
   }
 
-  // Attach ending to cardinal numbers ‘10 Б’
+  // Attach ending to numbers, e.g. ‘10 Б’
   for (let index = nodes.length - 2; index >= 0; index -= 1) {
     const node = nodes[index]!;
     if (
       node.nodeType !== "word" ||
-      node.wordType !== "cardinalNumber" ||
+      node.wordType !== "unclassifiedNumber" ||
       node.ending.length
     ) {
       continue;
@@ -284,7 +251,7 @@ export const buildCleanedAddressAst = (
     if (
       nextNode2 &&
       nextNode2.nodeType === "word" &&
-      nextNode2.wordType === "cardinalNumber"
+      nextNode2.wordType === "unclassifiedNumber"
     ) {
       continue;
     }
@@ -292,6 +259,37 @@ export const buildCleanedAddressAst = (
     nodes.splice(index + 1, 1);
     node.value += nextNode.value;
     node.ending = nextNode.value;
+  }
+
+  // Classify numbers
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index]!;
+    if (node.nodeType !== "word" || node.wordType !== "unclassifiedNumber") {
+      continue;
+    }
+
+    const endingStartsWithDash = node.ending?.startsWith("-");
+    const endingWithoutDash = endingStartsWithDash
+      ? node.ending.slice(1)
+      : node.ending;
+
+    const ordinalNumberEndingConfig =
+      ordinalNumberEndingConfigLookup[node.ending];
+
+    if (ordinalNumberEndingConfig) {
+      const normalizedEnding = ordinalNumberEndingConfig.normalizedValue;
+      node.wordType = "ordinalNumber";
+      node.value = `${node.number}${normalizedEnding}`;
+      node.ending = normalizedEnding;
+      continue;
+    }
+
+    if (endingWithoutDash.length < 2) {
+      node.wordType = "cardinalNumber";
+      node.value = `${node.number}${endingWithoutDash}`;
+      node.ending = endingWithoutDash;
+      continue;
+    }
   }
 
   // Convert dash into a comma if it is not between two cardinal numbers
@@ -478,6 +476,27 @@ export const buildCleanedAddressAst = (
         (node as AddressNodeWithWord).wordType = "unclassified";
       }
     }
+  }
+
+  // The address can finish with an ordinal number like 42-Е, which should be a cardinal number.
+  // We only make the ordinal number cardinal if it is the last one or is before ‘строение’ (last word).
+  for (let i = nodes.length - 1; i >= 0; i -= 1) {
+    const node = nodes[i];
+    if (node?.nodeType !== "word") {
+      break;
+    }
+
+    if (node.wordType === "designation" && node.value === "строение") {
+      continue;
+    }
+
+    if (node.wordType === "ordinalNumber" && node.ending.length === 2) {
+      node.wordType = "cardinalNumber";
+      node.ending = node.ending.slice(1);
+      node.value = `${node.number}${node.ending}`;
+    }
+
+    break;
   }
 
   return {

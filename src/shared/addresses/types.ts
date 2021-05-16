@@ -89,7 +89,8 @@ export interface AddressNodeWithApproximatePointer extends AddressWordBase {
 export interface AddressNodeWithNumber extends AddressWordBase {
   wordType:
     | "cardinalNumber" // 1, 42А
-    | "ordinalNumber"; // 1-я, 2-й
+    | "ordinalNumber" // 1-я, 2-й
+    | "unclassifiedNumber"; // 30-летия
   number: number;
   ending: string;
 }
