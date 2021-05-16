@@ -1,6 +1,8 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
+import _ from "lodash";
+import path from "path";
 import sortKeys from "sort-keys";
 
 import { deriveCompletionYearFromCompletionDates } from "../../../shared/completionDates";
@@ -9,32 +11,32 @@ import {
   serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
+import { processFiles } from "../../../shared/processFiles";
 import {
   getHouseFilePath,
+  getMingkhHousesDirPath,
   HouseInfo,
   HouseInfoFile,
-  loopThroughHouseLists,
-  loopThroughRowsInHouseList,
 } from "../../../shared/sources/mingkh";
 
 export const parseRawHouseInfos: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Parsing raw house infos"));
 
-  await loopThroughHouseLists(async ({ houseListFilePath }) => {
-    await loopThroughRowsInHouseList(houseListFilePath, async ({ houseId }) => {
-      const rawHouseInfoFilePath = getHouseFilePath(houseId, "raw-info.html");
+  let numberOfJsonsWritten = 0;
+  let numberOfJsonsSkipped = 0;
 
+  await processFiles({
+    fileSearchDirPath: getMingkhHousesDirPath(),
+    fileSearchPattern: "**/*-raw-info.html",
+    filesNicknameToLog: "raw house infos",
+    logger,
+    processFile: async (
+      rawHouseInfoFilePath,
+      prefixLength,
+      reportingStatus,
+    ) => {
+      const houseId = parseInt(path.basename(rawHouseInfoFilePath));
       const houseInfoFilePath = getHouseFilePath(houseId, "info.json");
-
-      if (await fs.pathExists(houseInfoFilePath)) {
-        process.stdout.write(
-          chalk.gray(` Skipped because file exists: ${houseInfoFilePath}\n`),
-        );
-
-        return;
-      }
-
-      process.stdout.write(` Parsing...`);
 
       const rawInfo = await fs.readFile(rawHouseInfoFilePath, "utf8");
 
@@ -109,13 +111,50 @@ export const parseRawHouseInfos: Command = async ({ logger }) => {
         data: sortKeys(info),
       };
 
-      await writeFormattedJson(houseInfoFilePath, houseInfoFileJson);
+      let needToWriteFile = true;
+      try {
+        const existingHouseInfoFileJson = await fs.readJson(houseInfoFilePath);
+        if (
+          _.isEqual(
+            _.omit(existingHouseInfoFileJson, "parsedAt"),
+            _.omit(houseInfoFileJson, "parsedAt"),
+          )
+        ) {
+          needToWriteFile = false;
+        }
+      } catch {
+        // Noop (new file)
+      }
 
-      process.stdout.write(
-        ` Result saved to ${chalk.magenta(houseInfoFilePath)}\n`,
-      );
-    });
+      if (!needToWriteFile) {
+        numberOfJsonsSkipped += 1;
+        if (reportingStatus) {
+          logger.log(
+            `${" ".repeat(prefixLength + 1)}${chalk.gray(
+              houseInfoFilePath,
+            )} (already up to date)`,
+          );
+        }
+
+        return;
+      }
+
+      await writeFormattedJson(houseInfoFilePath, houseInfoFileJson);
+      numberOfJsonsWritten += 1;
+
+      if (reportingStatus) {
+        logger.log(
+          `${" ".repeat(prefixLength + 1)}${chalk.magenta(houseInfoFilePath)}`,
+        );
+      }
+    },
+    showFilePath: true,
+    statusReportFrequency: 500,
   });
+
+  logger.log(
+    `Done. Number of JSON files written: ${numberOfJsonsWritten}, kept as is: ${numberOfJsonsSkipped}.`,
+  );
 };
 
 autoStartCommandIfNeeded(parseRawHouseInfos, __filename);

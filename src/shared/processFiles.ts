@@ -17,7 +17,11 @@ export const processFiles = async ({
   fileSearchPattern: string | string[];
   fileSearchDirPath: string;
   filesNicknameToLog?: string;
-  processFile: (filePath: string, prefixLength: number) => void | Promise<void>;
+  processFile: (
+    filePath: string,
+    prefixLength: number,
+    reportingStatus: boolean,
+  ) => void | Promise<void>;
   showFilePath?: boolean;
   statusReportFrequency?: number;
 }) => {
@@ -46,18 +50,20 @@ export const processFiles = async ({
     const filePath = globbyResults[index]!;
     const progress = generateProgress(index, numberOfFiles);
 
-    if (
+    const reportingStatus =
       statusReportFrequency !== 0 &&
       (statusReportFrequency === 1 || index !== 0) &&
-      ((index + 1) % statusReportFrequency === 0 || index === numberOfFiles - 1)
-    ) {
+      ((index + 1) % statusReportFrequency === 0 ||
+        index === numberOfFiles - 1);
+
+    if (reportingStatus) {
       logger?.log(
         `${progress}${showFilePath ? ` ${chalk.green(filePath)}` : ""}`,
       );
     }
 
     try {
-      await processFile(filePath, progress.length);
+      await processFile(filePath, progress.length, reportingStatus);
     } catch (e) {
       logger?.error(
         chalk.red(`Unexpected error while processing file ${filePath}`),
