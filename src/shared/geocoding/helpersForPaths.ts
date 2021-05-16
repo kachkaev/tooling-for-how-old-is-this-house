@@ -1,6 +1,7 @@
 import path from "path";
 
 import {
+  AddressNormalizationConfig,
   buildCleanedAddressAst,
   buildStandardizedAddressAst,
   printStandardizedAddressSection,
@@ -49,6 +50,7 @@ const createStandardizedSlice = (
  */
 export const deriveNormalizedAddressSliceId = (
   normalizedAddress: string,
+  addressNormalizationConfig: AddressNormalizationConfig,
 ): string => {
   const slices: Array<string | undefined> = [];
   const cleanedAddressAst = buildCleanedAddressAst(normalizedAddress);
@@ -56,6 +58,7 @@ export const deriveNormalizedAddressSliceId = (
   try {
     const standardizedAddressAst = buildStandardizedAddressAst(
       cleanedAddressAst,
+      addressNormalizationConfig,
     );
     slices.push("standardized");
     slices.push(createStandardizedSlice(standardizedAddressAst, "region"));

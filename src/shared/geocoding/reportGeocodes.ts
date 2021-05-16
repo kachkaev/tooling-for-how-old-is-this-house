@@ -127,7 +127,10 @@ export const reportGeocodes = async ({
 
   for (const normalizedAddress in sourceDictionary) {
     const addressRecord = sourceDictionary[normalizedAddress]!;
-    const sliceId = deriveNormalizedAddressSliceId(normalizedAddress);
+    const sliceId = deriveNormalizedAddressSliceId(
+      normalizedAddress,
+      addressNormalizationConfig,
+    );
     if (!sourceDictionaryLookup[sliceId]) {
       sourceDictionaryLookup[sliceId] = {};
     }

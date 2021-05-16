@@ -9,6 +9,7 @@ import { resolveRegionCode } from "./helpersForRegions";
 import { orderedSectionTypes } from "./helpersForStandardization";
 import {
   AddressNodeWithSemanticPart,
+  AddressNodeWithWord,
   AddressSection,
   BuildStandardizedAddressAstConfig,
   CleanedAddressAst,
@@ -18,7 +19,7 @@ import {
 
 export const buildStandardizedAddressAst = (
   cleanedAddressAst: CleanedAddressAst,
-  config: BuildStandardizedAddressAstConfig = {},
+  config: BuildStandardizedAddressAstConfig,
 ): StandardizedAddressAst => {
   const sections = extractSections(cleanedAddressAst);
 
@@ -201,26 +202,43 @@ export const buildStandardizedAddressAst = (
       }
     }
 
-    const orderedWords = _.flatMap(
-      remainingSections,
-      (section) => section.words,
-    );
-    if (
-      orderedWords[0]?.wordType === "designation" &&
-      getDesignationConfig(orderedWords[0]).designation === "house"
-    ) {
-      orderedWords.shift();
-    }
+    const orderedWords: AddressNodeWithWord[] = [];
+    let houseSectionAlreadyFound = false;
+    remainingSections.forEach((section) => {
+      let wordsToAdd = section.words;
+      const firstWordInSection = section.words[0];
 
-    // Remove second house number in corner buildings (if separated by slash)
-    if (
-      orderedWords[0]?.wordType === "cardinalNumber" &&
-      orderedWords[1]?.wordType === "cardinalNumber" &&
-      remainingSections[1]?.words[0] === orderedWords[1] &&
-      remainingSections[1]?.separatorBefore?.separatorType === "slash"
-    ) {
-      orderedWords.splice(1, 1);
-    }
+      // Remove house designation word
+      if (
+        firstWordInSection?.wordType === "designation" &&
+        getDesignationConfig(firstWordInSection).designation === "house"
+      ) {
+        wordsToAdd = wordsToAdd.slice(1);
+      }
+
+      const isHouseSection =
+        wordsToAdd.length === 1 && wordsToAdd[0]?.wordType === "cardinalNumber";
+
+      // Remove second house number in corner buildings (if separated by slash)
+      if (section.separatorBefore?.separatorType === "slash") {
+        if (isHouseSection && houseSectionAlreadyFound) {
+          return;
+        }
+        throw new AddressInterpretationError(
+          "Unexpected / not after another house number",
+        );
+      }
+
+      if (isHouseSection && houseSectionAlreadyFound) {
+        throw new AddressInterpretationError(
+          "Only one house number is supported",
+        );
+      }
+
+      houseSectionAlreadyFound = true;
+
+      orderedWords.push(...wordsToAdd);
+    });
 
     semanticPartLookup.building = {
       nodeType: "semanticPart",

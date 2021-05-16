@@ -49,7 +49,7 @@ const designationConfigs: DesignationConfig[]  = [
 
   { designation: "house", normalizedValue: "дом", gender: "m", aliases: ["д"] },
   { designation: "house", normalizedValue: "здание", gender: "n", aliases: ["зд"] },
-  { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["з/у", "уч", "уч-к"] },
+  { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["з/у", 'зу', "уч", "уч-к"] },
 
   { designation: "housePart", normalizedValue: "блок", gender: "m", aliases: ["бл"] },
   { designation: "housePart", normalizedValue: "гараж", gender: "m", aliases: ["бокс", "гар"] },

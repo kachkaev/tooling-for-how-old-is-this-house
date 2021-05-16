@@ -8,10 +8,6 @@ import fs from "fs-extra";
 import http from "http";
 import https from "https";
 
-import {
-  buildCleanedAddressAst,
-  buildStandardizedAddressAst,
-} from "../../../shared/addresses";
 import { cleanEnv } from "../../../shared/cleanEnv";
 import {
   listNormalizedAddressesWithoutPosition,
@@ -26,10 +22,14 @@ import {
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
 import {
+  addressIsWorthGeocodingWithYandex,
   getYandexGeocoderCacheEntryFilePath,
   YandexGeocoderCacheEntry,
 } from "../../../shared/sources/yandex";
-import { getTerritoryExtent } from "../../../shared/territory";
+import {
+  getAddressNormalizationConfig,
+  getTerritoryExtent,
+} from "../../../shared/territory";
 
 export const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
   const axiosInstance = axios.create({
@@ -62,31 +62,13 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
 
   process.stdout.write(chalk.green("Filtering..."));
 
+  const addressNormalizationConfig = await getAddressNormalizationConfig();
   const filteredNormalizedAddresses = normalizedAddresses.filter(
-    (normalizedAddress) => {
-      try {
-        // TODO: improve logic
-        if (
-          normalizedAddress.includes(" гараж ") ||
-          normalizedAddress.includes(" место ") ||
-          normalizedAddress.includes(" участок ") ||
-          normalizedAddress.includes(" гск ") ||
-          normalizedAddress.includes(" гск, ") ||
-          normalizedAddress.includes(" станция ") ||
-          normalizedAddress.includes(" кооператив") ||
-          normalizedAddress.includes("километр") ||
-          normalizedAddress.includes("территория") ||
-          normalizedAddress.includes(" снт ")
-        ) {
-          throw new Error("stop word");
-        }
-        buildStandardizedAddressAst(buildCleanedAddressAst(normalizedAddress));
-      } catch {
-        return false;
-      }
-
-      return true;
-    },
+    (normalizedAddress) =>
+      addressIsWorthGeocodingWithYandex(
+        normalizedAddress,
+        addressNormalizationConfig,
+      ),
   );
 
   process.stdout.write(

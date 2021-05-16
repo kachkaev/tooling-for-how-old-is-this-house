@@ -8,6 +8,7 @@ import { normalizeAddress } from "../../../shared/addresses";
 import { loadCombinedGeocodeDictionary } from "../../../shared/geocoding";
 import { processFiles } from "../../../shared/processFiles";
 import {
+  addressIsWorthKeepingInYandexCache,
   getYandexGeocoderCacheDir,
   getYandexGeocoderCacheEntryFileSuffix,
   YandexGeocoderCacheEntry,
@@ -36,11 +37,15 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
     }
 
     if (
-      assumeThatAllAddressesAutoEncodeWithoutProblems &&
-      normalizeAddress(
+      !addressIsWorthKeepingInYandexCache(
         cacheEntry.normalizedAddress,
         addressNormalizationConfig,
-      ) !== cacheEntry.normalizedAddress
+      ) ||
+      (assumeThatAllAddressesAutoEncodeWithoutProblems &&
+        normalizeAddress(
+          cacheEntry.normalizedAddress,
+          addressNormalizationConfig,
+        ) !== cacheEntry.normalizedAddress)
     ) {
       return true;
     }

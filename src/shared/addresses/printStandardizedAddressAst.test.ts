@@ -19,6 +19,7 @@ describe("printStandardizedAddressAst", () => {
                 printStandardizedAddressAst(
                   buildStandardizedAddressAst(
                     buildCleanedAddressAst(rawAddress),
+                    {},
                   ),
                 );
               }).toThrowError(AddressInterpretationError);
@@ -29,6 +30,7 @@ describe("printStandardizedAddressAst", () => {
                 printStandardizedAddressAst(
                   buildStandardizedAddressAst(
                     buildCleanedAddressAst(rawAddress),
+                    {},
                   ),
                 ),
               ).toEqual(expectedStandardizedAddress);
@@ -39,6 +41,7 @@ describe("printStandardizedAddressAst", () => {
                 printStandardizedAddressAst(
                   buildStandardizedAddressAst(
                     buildCleanedAddressAst(expectedStandardizedAddress),
+                    {},
                   ),
                 ),
               ).toEqual(expectedStandardizedAddress);

@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import _ from "lodash";
 
 import {
+  AddressNormalizationConfig,
   buildCleanedAddressAst,
   buildStandardizedAddressAst,
 } from "../../addresses";
@@ -13,7 +14,10 @@ import {
   OutputLayerProperties,
 } from "../../output";
 import { processFiles } from "../../processFiles";
-import { getTerritoryExtent } from "../../territory";
+import {
+  getAddressNormalizationConfig,
+  getTerritoryExtent,
+} from "../../territory";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
@@ -21,7 +25,8 @@ import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
 import { validateCyrillic } from "./validateCyrillic";
 
 const pickMostPromisingAddress = (
-  ...rawAddresses: Array<string | undefined>
+  rawAddresses: Array<string | undefined>,
+  addressNormalizationConfig: AddressNormalizationConfig,
 ): string | undefined => {
   const definedAddresses: string[] = rawAddresses.filter(
     (rawAddress): rawAddress is string =>
@@ -34,7 +39,10 @@ const pickMostPromisingAddress = (
 
   const standardizableAddresses = definedAddresses.filter((rawAddress) => {
     try {
-      buildStandardizedAddressAst(buildCleanedAddressAst(rawAddress));
+      buildStandardizedAddressAst(
+        buildCleanedAddressAst(rawAddress),
+        addressNormalizationConfig,
+      );
     } catch {
       return false;
     }
@@ -51,6 +59,7 @@ const pickMostPromisingAddress = (
 
 const extractPropertiesFromFirResponse = (
   infoPageObject: InfoPageObject,
+  addressNormalizationConfig: AddressNormalizationConfig,
 ): OutputLayerProperties | "notBuilding" | undefined => {
   const { cn, firResponse, firFetchedAt } = infoPageObject;
   if (typeof firResponse !== "object" || !firFetchedAt) {
@@ -69,8 +78,11 @@ const extractPropertiesFromFirResponse = (
     knownAt: firFetchedAt,
     completionDates,
     address: pickMostPromisingAddress(
-      firResponse.objectData.objectAddress?.mergedAddress,
-      firResponse.objectData.addressNote,
+      [
+        firResponse.objectData.objectAddress?.mergedAddress,
+        firResponse.objectData.addressNote,
+      ],
+      addressNormalizationConfig,
     ),
   };
 };
@@ -106,6 +118,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   geocodeAddress,
 }) => {
   const territoryExtent = await getTerritoryExtent();
+  const addressNormalizationConfig = await getAddressNormalizationConfig();
 
   const { objectCenterFeatures } = await combineRosreestrTiles({
     logger,
@@ -133,8 +146,10 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
       const infoPageData: InfoPageData = await fs.readJson(filePath);
       for (const infoPageEntry of infoPageData) {
         const outputLayerProperties =
-          extractPropertiesFromFirResponse(infoPageEntry) ??
-          extractPropertiesFromPkkResponse(infoPageEntry);
+          extractPropertiesFromFirResponse(
+            infoPageEntry,
+            addressNormalizationConfig,
+          ) ?? extractPropertiesFromPkkResponse(infoPageEntry);
 
         if (!outputLayerProperties) {
           continue;
@@ -147,9 +162,6 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
         const cn = infoPageEntry.cn;
         let geometry: turf.Point | undefined =
           objectCenterFeatureByCn[cn]?.geometry;
-        // if (geometry) {
-        //   cnsWithGeometrySet.add(cn);
-        // }
 
         if (!geometry && outputLayerProperties.address && geocodeAddress) {
           const geocodeResult = geocodeAddress(outputLayerProperties.address);

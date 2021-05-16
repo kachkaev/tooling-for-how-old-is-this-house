@@ -615,7 +615,11 @@ export const testCases: Array<{
     ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30-ЛЕТИЯ ПОБЕДЫ, ДОМ 1, 3, 5, 7, 7А",
-    expectedNormalizedAddress:
-      "область пензенская, заречный, проспект 30-летия победы, 1 3 5 7 7а",
+    expectedStandardizedAddress: null,
+  },
+  {
+    rawAddresses: ["г Пенза, ул Гагарина, д. 11Г (248)"],
+    expectedCleanedAddress: "ГОРОД ПЕНЗА, УЛИЦА ГАГАРИНА, ДОМ 11Г, 248",
+    expectedStandardizedAddress: null,
   },
 ];
