@@ -11,7 +11,9 @@ import {
 export const previewHouseInfos: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Previewing house infos as geojson"));
 
-  const houseInfoCollection = await generateMingkhHouseInfoCollection();
+  const houseInfoCollection = await generateMingkhHouseInfoCollection({
+    logger,
+  });
 
   const previewHouseInfosFilePath = path.resolve(
     getMingkhDirPath(),

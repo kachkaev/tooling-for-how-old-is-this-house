@@ -1,29 +1,30 @@
 import * as turf from "@turf/turf";
-import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
 
-import {
-  loopThroughHouseLists,
-  loopThroughRowsInHouseList,
-} from "./helpersForLists";
-import { getHouseFilePath } from "./helpersForPaths";
+import { processFiles } from "../../processFiles";
+import { getMingkhHousesDirPath } from "./helpersForPaths";
 import { HouseInfo, HouseInfoFile } from "./types";
 
 type FeatureProperties = Omit<HouseInfo, "centerPoint"> & { fetchedAt: string };
 
-export const generateMingkhHouseInfoCollection = async (): Promise<
+export const generateMingkhHouseInfoCollection = async ({
+  logger,
+}: {
+  logger?: Console;
+}): Promise<
   turf.FeatureCollection<turf.Point | undefined, FeatureProperties>
 > => {
   const features: Array<turf.Feature<turf.Point, FeatureProperties>> = [];
+  let numberOfSkippedFiles: number = 0;
 
-  await loopThroughHouseLists(async ({ houseListFilePath }) => {
-    await loopThroughRowsInHouseList(houseListFilePath, async ({ houseId }) => {
-      const houseInfoFilePath = getHouseFilePath(houseId, "info.json");
-
-      process.stdout.write(` Reading...`);
-
+  await processFiles({
+    fileSearchDirPath: getMingkhHousesDirPath(),
+    fileSearchPattern: "**/*-info.json",
+    filesNicknameToLog: "raw house infos",
+    logger,
+    processFile: async (houseInfoFilePath) => {
       const infoFile = (await fs.readJson(houseInfoFilePath)) as HouseInfoFile;
 
       const {
@@ -32,9 +33,7 @@ export const generateMingkhHouseInfoCollection = async (): Promise<
       } = infoFile;
 
       if (!centerPoint) {
-        process.stdout.write(
-          chalk.gray(` Skipping because centerPoint is missing\n`),
-        );
+        numberOfSkippedFiles += 1;
 
         return;
       }
@@ -49,9 +48,14 @@ export const generateMingkhHouseInfoCollection = async (): Promise<
       );
 
       features.push(feature);
-      process.stdout.write(` Done.\n`);
-    });
+    },
+    statusReportFrequency: 500,
+    showFilePath: true,
   });
+
+  logger?.log(
+    `Done. Number of skipped files because of no center point: ${numberOfSkippedFiles}.`,
+  );
 
   const houseInfoCollection = turf.featureCollection(
     _.orderBy(features, (feature) => feature.id),

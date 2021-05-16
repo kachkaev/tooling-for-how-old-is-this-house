@@ -72,14 +72,11 @@ export const generateExtractOutputLayer = ({
         );
     }
 
-    process.stdout.write(chalk.green(`Generating data...`));
-
     const outputLayer = await generateOutputLayer({
       logger,
       geocodeAddress: configuredGeocodeAddress,
     });
 
-    logger.log(` Done.`);
     process.stdout.write(chalk.green(`Adding derived properties...`));
 
     const outputLayerWithDerivedProperties: OutputLayer = {
