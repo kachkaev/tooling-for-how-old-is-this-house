@@ -72,12 +72,39 @@ export const buildStandardizedAddressAst = (
       const designationWordValue = section.words?.find(
         (word) => word.wordType === "designation",
       )?.value;
+
       if (
         designationWordValue === "гараж" ||
         designationWordValue === "квартира" ||
         designationWordValue === "сарай"
       ) {
         continue;
+      }
+
+      // Common special case: ‘стр’ (‘строение‘, can also mean ‘строящийся’)
+      if (designationWordValue === "строение") {
+        // If at the end of the address
+        // → ignore this section
+        if (
+          section.words.length === 1 &&
+          sectionIndex === sections.length - 1
+        ) {
+          continue;
+        }
+
+        // If there is no other section that can be treated as house
+        // → remove word
+        const sectionWithHouseNumber = remainingSections.find(
+          (section2) =>
+            section2.designation === "house" || !section.designation,
+        );
+        if (!sectionWithHouseNumber) {
+          remainingSections.push({
+            index: section.index,
+            words: section.words.filter((word) => word.value !== "строение"),
+          });
+          continue;
+        }
       }
     }
 

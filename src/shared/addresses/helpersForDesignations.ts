@@ -55,7 +55,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "housePart", normalizedValue: "квартира", gender: "m", aliases: ["кв"] },
   { designation: "housePart", normalizedValue: "корпус", gender: "m", aliases: ["к", "корп"] },
   { designation: "housePart", normalizedValue: "сарай", gender: "m", aliases: ["сар"] },
-  { designation: "housePart", normalizedValue: "строение", gender: "m", aliases: ["стр", "строен"] },
+  { designation: "housePart", normalizedValue: "строение", gender: "m", aliases: ["стр", "строен"] }, // has special cases in code for ‘стр’ as construction and for ‘строение’ as house number
 ];
 
 export const designationConfigLookup: Record<
