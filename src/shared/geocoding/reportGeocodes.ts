@@ -4,6 +4,7 @@ import rmUp from "rm-up";
 
 import { normalizeAddress } from "../addresses";
 import { getAddressNormalizationConfig } from "../territory";
+import { debugNormalizedAddressAutoencodingIfEnabled } from "./debugNormalizedAddressAutoencodingIfEnabled";
 import {
   deriveNormalizedAddressSliceId,
   getDictionaryFilePath,
@@ -64,12 +65,10 @@ const removeEmptyItems = (dictionary: GeocodeDictionary): GeocodeDictionary => {
 };
 
 export const reportGeocodes = async ({
-  assumeThatAllAddressesAreNormalized,
   logger,
   reportedGeocodes,
   source,
 }: {
-  assumeThatAllAddressesAreNormalized?: boolean;
   logger?: Console;
   reportedGeocodes: ReportedGeocode[];
   source: string;
@@ -84,20 +83,11 @@ export const reportGeocodes = async ({
       addressNormalizationConfig,
     );
 
-    if (
-      assumeThatAllAddressesAreNormalized &&
-      normalizedAddress !== reportedGeocode.address
-    ) {
-      logger?.log(
-        chalk.yellow(
-          "Normalized address has changed after normalization. Please rerun all reportGeocodes commands. If that does not help, please report a bug",
-        ),
-        "\n   ┌",
-        reportedGeocode.address,
-        "\n   └",
-        normalizedAddress,
-      );
-    }
+    debugNormalizedAddressAutoencodingIfEnabled({
+      normalizedAddress,
+      addressNormalizationConfig,
+      logger,
+    });
 
     if (!normalizedAddress) {
       logger?.log(

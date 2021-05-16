@@ -367,6 +367,27 @@ export const buildCleanedAddressAst = (
     if (!approximatePointerConfig) {
       continue;
     }
+
+    if (approximatePointerConfig.prepositionBefore) {
+      const prevNode = nodes[index - 1];
+      if (
+        prevNode?.nodeType !== "word" ||
+        prevNode.value !== approximatePointerConfig.prepositionBefore
+      ) {
+        continue;
+      }
+    }
+
+    if (approximatePointerConfig.prepositionAfter) {
+      const nextNode = nodes[index + 1];
+      if (
+        nextNode?.nodeType !== "word" ||
+        nextNode.value !== approximatePointerConfig.prepositionAfter
+      ) {
+        continue;
+      }
+    }
+
     const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithApproximatePointer;
     updatedNode.wordType = "approximatePointer";
     updatedNode.value = approximatePointerConfig.normalizedValue;
