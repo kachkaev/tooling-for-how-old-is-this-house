@@ -227,7 +227,7 @@ export const buildCleanedAddressAst = (
     }
   }
 
-  // Attach ending to numbers, e.g. ‘10 Б’
+  // Attach ending to numbers, e.g. ‘10 Б’ or ‘10 Б.’
   for (let index = nodes.length - 2; index >= 0; index -= 1) {
     const node = nodes[index]!;
     if (
@@ -239,11 +239,16 @@ export const buildCleanedAddressAst = (
     }
 
     const nextNode = nodes[index + 1]!;
-    if (
-      nextNode.nodeType !== "word" ||
-      nextNode.wordType !== "unclassified" ||
-      nextNode.value.length !== 1
-    ) {
+    if (nextNode.nodeType !== "word" || nextNode.wordType !== "unclassified") {
+      continue;
+    }
+
+    let ending = nextNode.value;
+    if (ending.length === 2 && ending[1] === ".") {
+      ending = ending.slice(0, 1);
+    }
+
+    if (ending.length > 1) {
       continue;
     }
 
@@ -257,8 +262,8 @@ export const buildCleanedAddressAst = (
     }
 
     nodes.splice(index + 1, 1);
-    node.value += nextNode.value;
-    node.ending = nextNode.value;
+    node.value += ending;
+    node.ending = ending;
   }
 
   // Classify numbers
