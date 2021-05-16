@@ -3,6 +3,8 @@ import { CommonUnclassifiedWordConfig } from "./types";
 
 const commonUnclassifiedWordConfigs: CommonUnclassifiedWordConfig[] = [
   { normalizedValue: "имени", aliases: ["им"], ignored: ["street"] },
+  { normalizedValue: "завод", aliases: ["з-д"] },
+  { normalizedValue: "завода", aliases: ["з-да"] },
 ];
 
 export const commonUnclassifiedWordConfigLookup: Record<
