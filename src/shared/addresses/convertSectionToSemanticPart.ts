@@ -1,12 +1,42 @@
 import _ from "lodash";
 
 import { getDesignationConfig } from "./helpersForDesignations";
-import { AddressNodeWithSemanticPart, AddressSection } from "./types";
+import {
+  AddressNodeWithDesignation,
+  AddressNodeWithSemanticPart,
+  AddressSection,
+} from "./types";
 
 export const convertSectionToSemanticPart = (
   addressSection: AddressSection,
 ): AddressNodeWithSemanticPart => {
-  const orderedWords = _.orderBy(addressSection.words, [
+  const designationWord = addressSection.words.find(
+    (word): word is AddressNodeWithDesignation =>
+      word.wordType === "designation",
+  );
+  const designationConfig =
+    designationWord && getDesignationConfig(designationWord);
+
+  const filteredWords = addressSection.words.filter((word) => {
+    // Ignore initials
+    if (word.wordType === "initial") {
+      return false;
+    }
+    if (designationConfig?.designation === "street") {
+      // Ignore ‘имени’
+      if (
+        word.value === "имени" ||
+        word.value === "им." ||
+        word.value === "им"
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  const orderedWords = _.orderBy(filteredWords, [
     (word) =>
       word.wordType === "designation"
         ? 0
@@ -20,8 +50,7 @@ export const convertSectionToSemanticPart = (
   // Remove settlement designation (город пенза → пенза)
   const firstWord = orderedWords[0];
   if (firstWord?.wordType === "designation") {
-    const designationConfig = getDesignationConfig(firstWord);
-    if (designationConfig.designation === "settlement") {
+    if (designationConfig?.designation === "settlement") {
       orderedWords.shift();
     }
   }

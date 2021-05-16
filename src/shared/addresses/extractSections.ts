@@ -88,11 +88,6 @@ export const extractSections = (
       );
     }
 
-    // Ignore initials
-    if (node.wordType === "initial") {
-      continue;
-    }
-
     // add word to current section
     currentSectionWords.push(node);
     if (node.wordType === "designation") {
