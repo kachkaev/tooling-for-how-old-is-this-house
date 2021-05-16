@@ -117,6 +117,7 @@ export interface AddressSection {
   index: number;
   designation?: Designation;
   words: AddressNodeWithWord[];
+  separatorBefore?: AddressNodeWithSeparator;
 }
 
 export type SemanticPartType = "region" | "settlement" | "street" | "building";

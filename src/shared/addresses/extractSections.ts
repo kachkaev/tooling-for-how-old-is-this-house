@@ -1,6 +1,7 @@
 import { AddressInterpretationError } from "./AddressInterpretationError";
 import { getDesignationConfig } from "./helpersForDesignations";
 import {
+  AddressNodeWithSeparator,
   AddressNodeWithWord,
   AddressSection,
   CleanedAddressAst,
@@ -28,6 +29,8 @@ export const extractSections = (
   let forceClosePreviousSection: boolean = false;
   let currentSectionWords: AddressNodeWithWord[] = [];
   let currentDesignation: Designation | undefined = undefined;
+  let lastUsedSeparator: AddressNodeWithSeparator | undefined = undefined;
+
   for (let nodeIndex = 0; nodeIndex <= nodes.length; nodeIndex += 1) {
     const node = nodes[nodeIndex];
 
@@ -43,7 +46,11 @@ export const extractSections = (
         index: sections.length,
         words: currentSectionWords,
         designation: currentDesignation,
+        separatorBefore: lastUsedSeparator,
       });
+
+      lastUsedSeparator = node?.nodeType === "separator" ? node : undefined;
+
       if (forceClosePreviousSection) {
         nodeIndex -= 1;
       }

@@ -210,10 +210,12 @@ export const buildStandardizedAddressAst = (
       orderedWords.shift();
     }
 
-    // Remove second addresses in corner buildings
+    // Remove second house number in corner buildings (if separated by slash)
     if (
       orderedWords[0]?.wordType === "cardinalNumber" &&
-      orderedWords[1]?.wordType === "cardinalNumber"
+      orderedWords[1]?.wordType === "cardinalNumber" &&
+      remainingSections[1]?.words[0] === orderedWords[1] &&
+      remainingSections[1]?.separatorBefore?.separatorType === "slash"
     ) {
       orderedWords.splice(1, 1);
     }
