@@ -1,3 +1,4 @@
+import { autoExtendAliases } from "./helpersForSpelling";
 import { AddressNodeWithDesignation, DesignationConfig } from "./types";
 
 // Related info: https://wiki.openstreetmap.org/wiki/RU:Россия/Соглашение_об_именовании_дорог
@@ -39,8 +40,8 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-т", "пр-кт", "просп"] },
   { designation: "street", normalizedValue: "разъезд", gender: "m" },
   { designation: "street", normalizedValue: "снт", gender: "n" }, // садовое некоммерческое товарищество
-  { designation: "street", normalizedValue: "ст", gender: "n", aliases: ["с/т", "сдт"] }, // садовое товарищество
   { designation: "street", normalizedValue: "совхоз", gender: "m", aliases: ["свх", "совх", "с/х"] },
+  { designation: "street", normalizedValue: "ст", gender: "n", aliases: ["с/т", "с/о", "сдт"] }, // садовое товарищество
   { designation: "street", normalizedValue: "станция", gender: "f" },
   { designation: "street", normalizedValue: "территория", gender: "f", aliases: ["тер"] },
   { designation: "street", normalizedValue: "тупик", gender: "m", aliases: ["туп"] },
@@ -69,11 +70,8 @@ const addToLookup = (alias: string, config: DesignationConfig) => {
 };
 
 designationConfigs.forEach((designationConfig) => {
-  addToLookup(designationConfig.normalizedValue, designationConfig);
-  addToLookup(`${designationConfig.normalizedValue}.`, designationConfig);
-  designationConfig.aliases?.forEach((alias) => {
+  autoExtendAliases(designationConfig).forEach((alias) => {
     addToLookup(alias, designationConfig);
-    addToLookup(`${alias}.`, designationConfig);
   });
 });
 
