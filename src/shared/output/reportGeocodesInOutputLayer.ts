@@ -1,5 +1,4 @@
 import * as turf from "@turf/turf";
-import _ from "lodash";
 
 import { ReportedGeocode, reportGeocodes } from "../geocoding";
 import { OutputLayer, OutputLayerGeometry } from "./types";
@@ -22,15 +21,14 @@ export const reportGeocodesInOutputLayer = async ({
     }
 
     if (feature.geometry) {
-      const point = turf.pointOnFeature(
-        feature as turf.Feature<OutputLayerGeometry>,
+      const point = turf.truncate(
+        turf.pointOnFeature(feature as turf.Feature<OutputLayerGeometry>),
+        { precision: 6 },
       );
 
       reportedGeocodes.push({
         address,
-        coordinates: point.geometry.coordinates.map((coordinate) =>
-          _.round(coordinate, 6),
-        ) as [number, number],
+        coordinates: point.geometry.coordinates as [number, number],
         weight: turf.area(feature),
       });
     } else {
