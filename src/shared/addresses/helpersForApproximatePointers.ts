@@ -7,6 +7,7 @@ const approximatePointerConfigs: ApproximatePointerConfig[] = [
   { normalizedValue: "микрорайоне", prepositionBefore: "в" },
   { normalizedValue: "направлении", prepositionBefore: "в" },
   { normalizedValue: "около" },
+  { normalizedValue: "по" }, // с ... по / по улице
   { normalizedValue: "районе", prepositionBefore: "в", aliases: ["р-не"] },
   { normalizedValue: "расстоянии", prepositionBefore: "на" },
   { normalizedValue: "рядом", prepositionAfter: "с" },
