@@ -1,11 +1,16 @@
 import { extractTokens } from "./extractTokens";
 import {
+  approximatePointerConfigLookup,
+  getApproximatePointerConfig,
+} from "./helpersForApproximatePointers";
+import {
   designationAdjectiveConfigLookup,
   isNormalizedDesignationAdjective,
 } from "./helpersForDesignationAdjectives";
 import { designationConfigLookup } from "./helpersForDesignations";
 import { ordinalNumberEndingConfigLookup } from "./helpersForOrdinalNumbers";
 import {
+  AddressNodeWithApproximatePointer,
   AddressNodeWithDesignation,
   AddressNodeWithNumber,
   AddressNodeWithUnclassifiedWord,
@@ -39,6 +44,11 @@ const isDesignation = (
   node?: CleanedAddressNode,
 ): node is AddressNodeWithDesignation =>
   !!node && node.nodeType === "word" && node.wordType === "designation";
+
+const isApproximatePointer = (
+  node?: CleanedAddressNode,
+): node is AddressNodeWithApproximatePointer =>
+  !!node && node.nodeType === "word" && node.wordType === "approximatePointer";
 
 const canBeInitial = (
   node?: CleanedAddressNode,
@@ -342,15 +352,43 @@ export const buildCleanedAddressAst = (
     updatedNode.value = designationConfig.normalizedValue;
   }
 
+  // Find approximate pointers
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index];
+    if (!isUnclassifiedWord(node)) {
+      continue;
+    }
+
+    const approximatePointerConfig = approximatePointerConfigLookup[node.value];
+    if (!approximatePointerConfig) {
+      continue;
+    }
+    const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithApproximatePointer;
+    updatedNode.wordType = "approximatePointer";
+    updatedNode.value = approximatePointerConfig.normalizedValue;
+  }
+
   // Find single initials (И.)
   for (let index = 0; index < nodes.length - 3; index += 1) {
     const node1 = nodes[index];
     const node2 = nodes[index + 1];
     const node3 = nodes[index + 2];
 
+    if (!canBeInitial(node2)) {
+      continue;
+    }
+
+    if (
+      (isApproximatePointer(node3) &&
+        getApproximatePointerConfig(node3).prepositionBefore === node2.value) ||
+      (isApproximatePointer(node1) &&
+        getApproximatePointerConfig(node1).prepositionAfter === node2.value)
+    ) {
+      continue;
+    }
+
     if (
       isDesignation(node1) &&
-      canBeInitial(node2) &&
       isUnclassifiedWord(node3) &&
       !canHaveDesignationAdjective(node3)
     ) {

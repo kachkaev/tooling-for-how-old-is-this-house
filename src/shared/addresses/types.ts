@@ -26,6 +26,12 @@ export interface DesignationAdjectiveConfig {
   normalizedValueByGender: Record<Gender, string>;
   aliases: Readonly<string[]>;
 }
+export interface ApproximatePointerConfig {
+  normalizedValue: string;
+  aliases?: Readonly<string[]>;
+  prepositionBefore?: string;
+  prepositionAfter?: string;
+}
 
 export interface OrdinalNumberEndingConfig {
   gender: Gender;
@@ -76,6 +82,10 @@ export interface AddressNodeWithDesignationAdjective extends AddressWordBase {
   wordType: "designationAdjective";
 }
 
+export interface AddressNodeWithApproximatePointer extends AddressWordBase {
+  wordType: "approximatePointer";
+}
+
 export interface AddressNodeWithNumber extends AddressWordBase {
   wordType:
     | "cardinalNumber" // 1, 42А
@@ -88,6 +98,7 @@ export type AddressNodeWithWord =
   | AddressNodeWithNumber
   | AddressNodeWithDesignation
   | AddressNodeWithDesignationAdjective
+  | AddressNodeWithApproximatePointer
   | AddressNodeWithInitial
   | AddressNodeWithUnclassifiedWord;
 

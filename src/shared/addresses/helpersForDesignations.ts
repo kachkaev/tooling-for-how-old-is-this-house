@@ -58,10 +58,7 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "housePart", normalizedValue: "строение", gender: "m", aliases: ["стр", "строен"] }, // has special cases in code for ‘стр’ as construction and for ‘строение’ as house number
 ];
 
-export const designationConfigLookup: Record<
-  string,
-  DesignationConfig | undefined
-> = {};
+export const designationConfigLookup: Record<string, DesignationConfig> = {};
 
 const addToLookup = (alias: string, config: DesignationConfig) => {
   if (designationConfigLookup[alias]) {

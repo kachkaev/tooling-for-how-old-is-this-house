@@ -96,7 +96,7 @@ export const buildStandardizedAddressAst = (
         // → remove word
         const sectionWithHouseNumber = remainingSections.find(
           (section2) =>
-            section2.designation === "house" || !section.designation,
+            section2.designation === "house" || !section2.designation,
         );
         if (!sectionWithHouseNumber) {
           remainingSections.push({

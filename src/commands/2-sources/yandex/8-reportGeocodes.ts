@@ -62,13 +62,14 @@ export const reportGeocodes: Command = async ({ logger }) => {
   process.stdout.write(
     chalk.green(
       `Saving ${reportedGeocodes.length} reported geocode${
-        reportedGeocodes.length > 1 ? "s" : "s"
+        reportedGeocodes.length > 1 ? "s" : ""
       }...`,
     ),
   );
 
   await importedReportGeocodes({
     reportedGeocodes,
+    logger,
     source: "yandex",
   });
 

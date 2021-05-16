@@ -7,6 +7,18 @@ import {
   Designation,
 } from "./types";
 
+const isSpecificDesignation = (
+  node: AddressNodeWithWord,
+  designations: Designation[],
+): boolean => {
+  if (node.wordType !== "designation") {
+    return false;
+  }
+  const { designation } = getDesignationConfig(node);
+
+  return designations.includes(designation);
+};
+
 export const extractSections = (
   cleanedAddressAst: CleanedAddressAst,
 ): AddressSection[] => {
@@ -42,21 +54,31 @@ export const extractSections = (
       continue;
     }
 
-    // prepare to close previous section
-    // - after finding the second designation word (e.g. "улица" "тестовая" "дом")
-    // - after finding a cardinal number following street or place (e.g. "улица" "тестовая" "10")
-    // - not after designation being the only word in the section
+    // Prepare to close previous section
     if (
+      // - after finding the second designation word (e.g. "улица" "тестовая" "дом")
       (node.wordType === "designation" && currentDesignation) ||
+      // Before house and house parts
+      (currentSectionWords.length > 0 &&
+        isSpecificDesignation(node, ["house", "housePart"])) ||
+      // - after finding a cardinal number following street or place (e.g. "улица" "тестовая" "10")
       (node.wordType === "cardinalNumber" &&
         currentDesignation &&
         currentDesignation !== "house" &&
         currentDesignation !== "housePart" &&
+        // but not after designation being the only word in the section
         currentSectionWords.length > 1)
     ) {
       nodeIndex -= 1;
       forceClosePreviousSection = true;
       continue;
+    }
+
+    // Give up if the address includes approximate referencing (e.g. ‘в районе’)
+    if (node.wordType === "approximatePointer") {
+      throw new AddressInterpretationError(
+        "Unable to extract sections due to approximate referencing",
+      );
     }
 
     // add word to current section
