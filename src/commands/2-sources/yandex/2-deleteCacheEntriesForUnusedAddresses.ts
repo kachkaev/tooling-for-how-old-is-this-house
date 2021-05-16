@@ -63,7 +63,6 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
     fileSearchDirPath: getYandexGeocoderCacheDir(),
     fileSearchPattern: `**/*${getYandexGeocoderCacheEntryFileSuffix()}`,
     filesNicknameToLog: "yandex geocoder cache entries",
-    showFilePath: true,
     statusReportFrequency: 1000,
     processFile: async (filePath) => {
       const cacheEntry = (await fs.readJson(

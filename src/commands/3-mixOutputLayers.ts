@@ -78,7 +78,6 @@ export const mixOutputLayers: Command = async ({ logger }) => {
     ],
     fileSearchDirPath: getTerritoryDirPath(),
     filesNicknameToLog: "output layers",
-    showFilePath: true,
     processFile: async (filePath, prefixLength) => {
       const prefix = " ".repeat(prefixLength + 1);
 

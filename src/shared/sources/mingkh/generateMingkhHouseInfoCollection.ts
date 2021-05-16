@@ -50,7 +50,6 @@ export const generateMingkhHouseInfoCollection = async ({
       features.push(feature);
     },
     statusReportFrequency: 500,
-    showFilePath: true,
   });
 
   logger?.log(

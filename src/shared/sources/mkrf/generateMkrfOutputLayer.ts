@@ -155,7 +155,6 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       );
       logger?.log("");
     },
-    showFilePath: true,
   });
 
   return {

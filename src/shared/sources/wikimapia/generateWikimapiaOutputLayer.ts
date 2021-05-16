@@ -45,7 +45,6 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
       objectInfoFileById[`${objectInfoFile.data.wikimapiaId}`] = objectInfoFile;
     },
     statusReportFrequency: 1000,
-    showFilePath: true,
   });
 
   const { objectExtentFeatures } = await combineWikimapiaTiles({ logger });

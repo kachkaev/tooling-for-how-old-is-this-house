@@ -24,7 +24,6 @@ export const reportGeocodes: Command = async ({ logger }) => {
     fileSearchDirPath: getYandexGeocoderCacheDir(),
     fileSearchPattern: `**/*${getYandexGeocoderCacheEntryFileSuffix()}`,
     filesNicknameToLog: "yandex geocoder cache entries",
-    showFilePath: true,
     statusReportFrequency: 1000,
     processFile: async (filePath) => {
       const entry = (await fs.readJson(filePath)) as YandexGeocoderCacheEntry;

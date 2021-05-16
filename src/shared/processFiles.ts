@@ -10,7 +10,6 @@ export const processFiles = async ({
   fileSearchDirPath,
   filesNicknameToLog = "files",
   processFile,
-  showFilePath = false,
   statusReportFrequency = 1,
 }: {
   logger?: Console;
@@ -22,7 +21,6 @@ export const processFiles = async ({
     prefixLength: number,
     reportingStatus: boolean,
   ) => void | Promise<void>;
-  showFilePath?: boolean;
   statusReportFrequency?: number;
 }) => {
   if (logger) {
@@ -57,9 +55,7 @@ export const processFiles = async ({
         index === numberOfFiles - 1);
 
     if (reportingStatus) {
-      logger?.log(
-        `${progress}${showFilePath ? ` ${chalk.green(filePath)}` : ""}`,
-      );
+      logger?.log(`${progress}${chalk.green(filePath)}`);
     }
 
     try {

@@ -148,7 +148,6 @@ export const parseRawHouseInfos: Command = async ({ logger }) => {
         );
       }
     },
-    showFilePath: true,
     statusReportFrequency: 500,
   });
 

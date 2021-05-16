@@ -35,7 +35,6 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
     fileSearchPattern: `**/*--${getWikimapiaRawObjectInfoFileSuffix()}`,
     fileSearchDirPath: getWikimapiaObjectsDir(),
     filesNicknameToLog: "htmls with wikimapia objects",
-    showFilePath: true,
     processFile: async (filePath, prefixLength) => {
       const outputFilePath = filePath.replace(
         `--${getWikimapiaRawObjectInfoFileSuffix()}`,

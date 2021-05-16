@@ -177,7 +177,6 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
       }
     },
     statusReportFrequency: 1000,
-    showFilePath: true,
   });
 
   return {

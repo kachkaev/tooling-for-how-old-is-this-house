@@ -23,7 +23,6 @@ export const formatDataFiles: Command = async ({ logger }) => {
       ? path.resolve(getTerritoryDirPath(), customPath)
       : getTerritoryDirPath(),
     filesNicknameToLog: "files to format",
-    showFilePath: true,
     statusReportFrequency: 500,
     processFile: async (filePath) => {
       const originalJson = await fs.readFile(filePath, "utf8");
