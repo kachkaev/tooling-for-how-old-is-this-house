@@ -319,7 +319,7 @@ export const testCases: Array<{
   },
   {
     rawAddresses: ['г.Пенза, с/т«труД" ,10/12,сарай_10а'],
-    expectedCleanedAddress: "ГОРОД ПЕНЗА, СНТ ТРУД, 10/12, САРАЙ 10А",
+    expectedCleanedAddress: "ГОРОД ПЕНЗА, СТ ТРУД, 10/12, САРАЙ 10А",
     expectedTokens: [
       ["protoWord", "г."],
       ["letterSequence", "пенза"],
@@ -346,7 +346,7 @@ export const testCases: Array<{
       "2–й  с\\т Такой–то д42", // n-dashes
       "2−й  с\\т Такой−то д42", // minuses
     ],
-    expectedCleanedAddress: "2-Й СНТ ТАКОЙ-ТО ДОМ 42",
+    expectedCleanedAddress: "2-Й СТ ТАКОЙ-ТО ДОМ 42",
     expectedTokens: [
       ["protoWord", "2-й"], // hyphen
       ["spacing", "  "],
