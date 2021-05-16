@@ -39,6 +39,12 @@ export interface OrdinalNumberEndingConfig {
   aliases: string[];
 }
 
+export interface CommonUnclassifiedWordConfig {
+  normalizedValue: string;
+  aliases?: string[];
+  ignored?: true | Designation[];
+}
+
 type GenericAddressToken<T extends string> = [type: T, value: string];
 
 export type AtomicAddressTokenType =

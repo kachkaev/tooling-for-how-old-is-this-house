@@ -3,6 +3,7 @@ import {
   approximatePointerConfigLookup,
   getApproximatePointerConfig,
 } from "./helpersForApproximatePointers";
+import { commonUnclassifiedWordConfigLookup } from "./helpersForCommonUnclassifiedWords";
 import {
   designationAdjectiveConfigLookup,
   isNormalizedDesignationAdjective,
@@ -427,11 +428,20 @@ export const buildCleanedAddressAst = (
       ];
   }
 
-  // Remove . at the end of unclassified words
+  // Process unclassified words
   for (const node of nodes) {
     if (!isUnclassifiedWord(node)) {
       continue;
     }
+    // If it is a commonly known word, replace with normalized spelling
+    const commonUnclassifiedWordConfig =
+      commonUnclassifiedWordConfigLookup[node.value];
+    if (commonUnclassifiedWordConfig) {
+      node.value = commonUnclassifiedWordConfig.normalizedValue;
+      continue;
+    }
+
+    // Remove . at the end
     if (node.value.endsWith(".")) {
       node.value = node.value.slice(0, -1);
     }

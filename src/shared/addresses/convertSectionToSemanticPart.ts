@@ -1,5 +1,6 @@
 import _ from "lodash";
 
+import { commonUnclassifiedWordConfigLookup } from "./helpersForCommonUnclassifiedWords";
 import { getDesignationConfig } from "./helpersForDesignations";
 import {
   AddressNodeWithDesignation,
@@ -22,14 +23,20 @@ export const convertSectionToSemanticPart = (
     if (word.wordType === "initial") {
       return false;
     }
-    if (designationConfig?.designation === "street") {
-      // Ignore ‘имени’
-      if (
-        word.value === "имени" ||
-        word.value === "им." ||
-        word.value === "им"
-      ) {
-        return false;
+    // Ignore common unclassified words if applicable
+    if (word.wordType === "unclassified") {
+      const commonUnclassifiedWordConfig =
+        commonUnclassifiedWordConfigLookup[word.value];
+      if (commonUnclassifiedWordConfig) {
+        if (
+          commonUnclassifiedWordConfig.ignored === true ||
+          (designationConfig &&
+            commonUnclassifiedWordConfig.ignored?.includes(
+              designationConfig?.designation,
+            ))
+        ) {
+          return false;
+        }
       }
     }
 
