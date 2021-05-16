@@ -14,6 +14,9 @@ import {
 } from "../../../shared/sources/yandex";
 import { getAddressNormalizationConfig } from "../../../shared/territory";
 
+// TODO: Switch to true after fixing address handling
+const assumeThatAllAddressesAutoEncodeWithoutProblems = false;
+
 export const deleteCacheEntriesForUnusedAddresses: Command = async ({
   logger,
 }) => {
@@ -33,6 +36,7 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
     }
 
     if (
+      assumeThatAllAddressesAutoEncodeWithoutProblems &&
       normalizeAddress(
         cacheEntry.normalizedAddress,
         addressNormalizationConfig,

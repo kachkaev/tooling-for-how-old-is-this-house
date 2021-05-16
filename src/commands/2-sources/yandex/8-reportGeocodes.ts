@@ -68,6 +68,7 @@ export const reportGeocodes: Command = async ({ logger }) => {
   );
 
   await importedReportGeocodes({
+    assumeThatAllAddressesAreNormalized: true,
     reportedGeocodes,
     logger,
     source: "yandex",

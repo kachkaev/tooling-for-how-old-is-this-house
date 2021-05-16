@@ -64,10 +64,12 @@ const removeEmptyItems = (dictionary: GeocodeDictionary): GeocodeDictionary => {
 };
 
 export const reportGeocodes = async ({
+  assumeThatAllAddressesAreNormalized,
   logger,
   reportedGeocodes,
   source,
 }: {
+  assumeThatAllAddressesAreNormalized?: boolean;
   logger?: Console;
   reportedGeocodes: ReportedGeocode[];
   source: string;
@@ -81,6 +83,21 @@ export const reportGeocodes = async ({
       reportedGeocode.address,
       addressNormalizationConfig,
     );
+
+    if (
+      assumeThatAllAddressesAreNormalized &&
+      normalizedAddress !== reportedGeocode.address
+    ) {
+      logger?.log(
+        chalk.yellow(
+          "Normalized address has changed after normalization. Please rerun all reportGeocodes commands. If that does not help, please report a bug",
+        ),
+        "\n   ┌",
+        reportedGeocode.address,
+        "\n   └",
+        normalizedAddress,
+      );
+    }
 
     if (!normalizedAddress) {
       logger?.log(
