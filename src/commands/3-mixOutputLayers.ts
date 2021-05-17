@@ -31,7 +31,7 @@ import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
 import { processTiles } from "../shared/tiles";
 
-const bufferSizeInMeters = 5;
+const bufferSizeInMeters = 7;
 const tileZoom = 15;
 
 type BaseLayerFeature = turf.Feature<
@@ -168,6 +168,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
   const territoryExtent = await getTerritoryExtent();
   await processTiles({
     territoryExtent,
+    preserveOutput: false,
     initialZoom: tileZoom,
     maxAllowedZoom: tileZoom,
     logger,
