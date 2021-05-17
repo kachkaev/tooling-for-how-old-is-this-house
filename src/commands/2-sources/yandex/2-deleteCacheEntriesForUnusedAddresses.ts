@@ -6,6 +6,7 @@ import sleep from "sleep-promise";
 
 import { normalizeAddress } from "../../../shared/addresses";
 import { loadCombinedGeocodeDictionary } from "../../../shared/geocoding";
+import { eraseLastLineInOutput } from "../../../shared/helpersForCommands";
 import { processFiles } from "../../../shared/processFiles";
 import {
   addressIsWorthKeepingInYandexCache,
@@ -89,8 +90,7 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
   for (let ttl = 10; ttl >= 0; ttl -= 1) {
     logger.log(chalk.gray(ttl));
     await sleep(1000);
-    process.stdout.moveCursor?.(0, -1);
-    process.stdout.clearScreenDown?.();
+    eraseLastLineInOutput(logger);
   }
 
   process.stdout.write(chalk.green(`Deleting...`));
