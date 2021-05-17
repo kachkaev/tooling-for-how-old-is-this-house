@@ -8,7 +8,10 @@ import {
   designationAdjectiveConfigLookup,
   isNormalizedDesignationAdjective,
 } from "./helpersForDesignationAdjectives";
-import { designationConfigLookup } from "./helpersForDesignations";
+import {
+  designationConfigLookup,
+  getDesignationConfig,
+} from "./helpersForDesignations";
 import { ordinalNumberEndingConfigLookup } from "./helpersForOrdinalNumbers";
 import {
   AddressNodeWithApproximatePointer,
@@ -514,25 +517,40 @@ export const buildCleanedAddressAst = (
     }
   }
 
-  // The address can finish with an ordinal number like 42-Е, which should be a cardinal number.
-  // We only make the ordinal number cardinal if it is the last one or is before ‘строение’ (last word).
-  for (let i = nodes.length - 1; i >= 0; i -= 1) {
+  // The address can contain an ordinal number like 42-Е, which should be a cardinal number.
+  // We only make the ordinal number cardinal if
+  // - it is surrounded by separators
+  // - comes after house designation
+  // - comes before ‘строение’
+  for (let i = 0; i < nodes.length; i += 1) {
     const node = nodes[i];
-    if (node?.nodeType !== "word") {
-      break;
-    }
 
-    if (node.wordType === "designation" && node.value === "строение") {
+    if (
+      node?.nodeType !== "word" ||
+      node.wordType !== "ordinalNumber" ||
+      node.ending.length !== 2
+    ) {
       continue;
     }
 
-    if (node.wordType === "ordinalNumber" && node.ending.length === 2) {
-      node.wordType = "cardinalNumber";
-      node.ending = node.ending.slice(1);
-      node.value = `${node.number}${node.ending}`;
+    const prevNode = nodes[i - 1];
+    if (
+      prevNode?.nodeType === "word" &&
+      (!isDesignation(prevNode) ||
+        (getDesignationConfig(prevNode).designation !== "house" &&
+          prevNode.value !== "строение"))
+    ) {
+      continue;
     }
 
-    break;
+    const nextNode = nodes[i + 1];
+    if (nextNode?.nodeType === "word" && nextNode.value !== "строение") {
+      continue;
+    }
+
+    node.wordType = "cardinalNumber";
+    node.ending = node.ending.slice(1);
+    node.value = `${node.number}${node.ending}`;
   }
 
   return {

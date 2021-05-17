@@ -1,3 +1,4 @@
+import { autoExtendAliases } from "./helpersForSpelling";
 import {
   AddressNodeWithApproximatePointer,
   ApproximatePointerConfig,
@@ -7,7 +8,7 @@ import {
 const approximatePointerConfigs: ApproximatePointerConfig[] = [
   { normalizedValue: "блокпост" }, // без названия
   { normalizedValue: "б/н", aliases: ["бн"] }, // без названия
-  { normalizedValue: "километр", prepositionBefore: "км" },
+  { normalizedValue: "километр", aliases: ["км"] },
   { normalizedValue: "микрорайоне", prepositionBefore: "в" },
   { normalizedValue: "направлении", prepositionBefore: "в" },
   { normalizedValue: "около" },
@@ -58,11 +59,7 @@ const addToLookup = (alias: string, config: ApproximatePointerConfig) => {
 };
 
 approximatePointerConfigs.forEach((approximatePointerConfig) => {
-  addToLookup(
-    approximatePointerConfig.normalizedValue,
-    approximatePointerConfig,
-  );
-  approximatePointerConfig.aliases?.forEach((alias) => {
+  autoExtendAliases(approximatePointerConfig).forEach((alias) => {
     addToLookup(alias, approximatePointerConfig);
   });
 });

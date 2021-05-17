@@ -22,14 +22,12 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "place", normalizedValue: "поселок", gender: "n", aliases: ["пос", "п", "рп" /* рабочий поселок */] },
   { designation: "place", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
   
-  { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н", 'р-он'] },
+  { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н", "р-он"] },
   { designation: "district", normalizedValue: "микрорайон", gender: "m", aliases: ["мкр", "м-н"] },
   
   { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв", "б-р"] },
   { designation: "street", normalizedValue: "городок", gender: "m", aliases: [] },
-  { designation: "street", normalizedValue: "гск", gender: "m", aliases: ["гк"] },
-  { designation: "street", normalizedValue: "дорога", gender: "f", aliases: ["дор"], canBePartOfName: true },
-  { designation: "street", normalizedValue: "километр", gender: "m", aliases: ["км"] },
+  { designation: "street", normalizedValue: "дорога", gender: "f", aliases: ["дор", "автодорога", "а/д"], canBePartOfName: true }, 
   { designation: "street", normalizedValue: "кордон", gender: "m" },
   { designation: "street", normalizedValue: "набережная", gender: "f", aliases: ["наб"], canBePartOfName: true },
   { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [] },
@@ -50,7 +48,7 @@ const designationConfigs: DesignationConfig[]  = [
 
   { designation: "house", normalizedValue: "дом", gender: "m", aliases: ["д"] },
   { designation: "house", normalizedValue: "здание", gender: "n", aliases: ["зд"] },
-  { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["з/у", 'зу', "уч", "уч-к"] },
+  { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["з/у", "зу", "уч", "уч-к"] },
 
   { designation: "housePart", normalizedValue: "блок", gender: "m", aliases: ["бл"] },
   { designation: "housePart", normalizedValue: "гараж", gender: "m", aliases: ["бокс", "гар"] },

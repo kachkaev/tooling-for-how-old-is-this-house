@@ -213,6 +213,16 @@ export const buildStandardizedAddressAst = (
         firstWordInSection?.wordType === "designation" &&
         getDesignationConfig(firstWordInSection).designation === "house"
       ) {
+        // if designation is not followed by a number, fail (e.g. typos like ‘уч. Мясницкая’)
+        const nextWord = wordsToAdd[1];
+        if (
+          nextWord?.nodeType !== "word" ||
+          nextWord?.wordType !== "cardinalNumber"
+        ) {
+          throw new AddressInterpretationError(
+            `Expected cardinal number after ${firstWordInSection?.value}, got ${nextWord?.value}`,
+          );
+        }
         wordsToAdd = wordsToAdd.slice(1);
       }
 

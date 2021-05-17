@@ -30,13 +30,9 @@ export const debugNormalizedAddressAutoencodingIfEnabled = ({
 
   if (normalizedAddress !== renormalizedAddress) {
     logger.log(
-      chalk.yellow(
+      `\n${chalk.yellow(
         "Normalized address has changed after normalization. Please report a bug.",
-      ),
-      "\n   ┌",
-      normalizedAddress,
-      "\n   └",
-      renormalizedAddress,
+      )}\n   ┌ ${normalizedAddress}\n   └ ${renormalizedAddress}`,
     );
   }
 };

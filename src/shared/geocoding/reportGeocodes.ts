@@ -73,6 +73,10 @@ export const reportGeocodes = async ({
   reportedGeocodes: ReportedGeocode[];
   source: string;
 }): Promise<void> => {
+  if (logger) {
+    process.stdout.write(chalk.green("Preparing to report geocodes..."));
+  }
+
   const addressNormalizationConfig = await getAddressNormalizationConfig();
   const sourceDictionary: GeocodeDictionary = {};
   const weightDictionary: Record<string, number> = {};
@@ -125,6 +129,10 @@ export const reportGeocodes = async ({
       sourceDictionaryLookup[sliceId] = {};
     }
     sourceDictionaryLookup[sliceId]![normalizedAddress] = addressRecord;
+  }
+
+  if (logger) {
+    process.stdout.write(` Done.\n`);
   }
 
   const existingDictionaryLookup = await loadGeocodeDictionaryLookup(logger);

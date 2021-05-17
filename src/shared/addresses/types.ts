@@ -43,6 +43,7 @@ export interface CommonUnclassifiedWordConfig {
   normalizedValue: string;
   aliases?: string[];
   ignored?: true | Designation[];
+  canBeInStandardizedAddress?: boolean;
 }
 
 type GenericAddressToken<T extends string> = [type: T, value: string];

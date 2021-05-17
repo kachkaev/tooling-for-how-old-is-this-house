@@ -1,10 +1,14 @@
 import { autoExtendAliases } from "./helpersForSpelling";
 import { CommonUnclassifiedWordConfig } from "./types";
 
+// prettier-ignore
 const commonUnclassifiedWordConfigs: CommonUnclassifiedWordConfig[] = [
   { normalizedValue: "имени", aliases: ["им"], ignored: ["street"] },
   { normalizedValue: "завод", aliases: ["з-д"] },
   { normalizedValue: "завода", aliases: ["з-да"] },
+  { normalizedValue: "гск", aliases: ["гк"], canBeInStandardizedAddress: false },
+  { normalizedValue: "гаражный", canBeInStandardizedAddress: false },
+  { normalizedValue: "кооператив", canBeInStandardizedAddress: false },
 ];
 
 export const commonUnclassifiedWordConfigLookup: Record<
