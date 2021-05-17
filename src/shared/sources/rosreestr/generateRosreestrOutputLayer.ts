@@ -66,7 +66,10 @@ const extractPropertiesFromFirResponse = (
     return;
   }
 
-  if (firResponse.parcelData.oksType !== "building") {
+  if (
+    firResponse.parcelData.oksType !== "building" ||
+    firResponse.parcelData.dateRemove /* снят с учёта */
+  ) {
     return "notBuilding";
   }
 

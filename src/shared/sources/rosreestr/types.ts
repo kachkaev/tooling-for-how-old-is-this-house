@@ -117,6 +117,9 @@ export interface SuccessfulFirObjectResponse {
     };
   };
   parcelData: {
+    dateCost?: string;
+    dateCreate?: string;
+    dateRemove?: string;
     oksFlag: 0 | 1;
     oksType?: OksType;
     oksYearBuilt?: string; // ‘завершение строительства’
