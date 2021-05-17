@@ -28,12 +28,12 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв", "б-р"] },
   { designation: "street", normalizedValue: "городок", gender: "m", aliases: [] },
   { designation: "street", normalizedValue: "дорога", gender: "f", aliases: ["дор", "автодорога", "а/д"], canBePartOfName: true }, 
-  { designation: "street", normalizedValue: "кордон", gender: "m" },
+  { designation: "street", normalizedValue: "кордон", gender: "m", canBePartOfName: true },
   { designation: "street", normalizedValue: "набережная", gender: "f", aliases: ["наб"], canBePartOfName: true },
-  { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [] },
+  { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [], canBePartOfName: true  },
   { designation: "street", normalizedValue: "переулок", gender: "m", aliases: ["пер"] },
-  { designation: "street", normalizedValue: "порядок", gender: "m", canBePartOfName: true },
   { designation: "street", normalizedValue: "площадь", gender: "f", aliases: ["пл"] },
+  { designation: "street", normalizedValue: "порядок", gender: "m", canBePartOfName: true },
   { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр", "пр-д"] },
   { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-т", "пр-кт", "просп"] },
   { designation: "street", normalizedValue: "разъезд", gender: "m" },
@@ -54,8 +54,8 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "housePart", normalizedValue: "гараж", gender: "m", aliases: ["бокс", "гар"] },
   { designation: "housePart", normalizedValue: "квартира", gender: "m", aliases: ["кв"] },
   { designation: "housePart", normalizedValue: "корпус", gender: "m", aliases: ["к", "корп"] },
-  { designation: "housePart", normalizedValue: "сарай", gender: "m", aliases: ["сар"] },
   { designation: "housePart", normalizedValue: "погреб", gender: "m" },
+  { designation: "housePart", normalizedValue: "сарай", gender: "m", aliases: ["сар"] },
   { designation: "housePart", normalizedValue: "строение", gender: "m", aliases: ["стр", "строен"] }, // has special cases in code for ‘стр’ as construction and for ‘строение’ as house number
 ];
 
