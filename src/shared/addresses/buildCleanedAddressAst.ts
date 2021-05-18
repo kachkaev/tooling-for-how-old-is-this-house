@@ -12,7 +12,10 @@ import {
   designationConfigLookup,
   getDesignationConfig,
 } from "./helpersForDesignations";
-import { ordinalNumberEndingConfigLookup } from "./helpersForOrdinalNumbers";
+import {
+  ordinalNumberEndingConfigLookup,
+  ordinalNumberTextualNotationConfigLookup,
+} from "./helpersForOrdinalNumbers";
 import {
   AddressNodeWithApproximatePointer,
   AddressNodeWithDesignation,
@@ -196,6 +199,25 @@ export const buildCleanedAddressAst = (
     });
   }
 
+  // Replace ordinal number textual notations (e.g. первый → 1-й) {
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index];
+    if (node?.nodeType !== "word" || node.wordType !== "unclassified") {
+      continue;
+    }
+    const ordinalNumberTextualNotationConfig =
+      ordinalNumberTextualNotationConfigLookup[node.value];
+
+    if (
+      !ordinalNumberTextualNotationConfig ||
+      ordinalNumberTextualNotationConfig.normalizedValue === node.value
+    ) {
+      continue;
+    }
+
+    node.value = ordinalNumberTextualNotationConfig.normalizedValue;
+  }
+
   // Find words that start with digits, treat all as unclassified numbers for now
   for (let index = 0; index < nodes.length; index += 1) {
     const node = nodes[index]!;
@@ -272,8 +294,8 @@ export const buildCleanedAddressAst = (
 
   // Classify numbers
   for (let index = 0; index < nodes.length; index += 1) {
-    const node = nodes[index]!;
-    if (node.nodeType !== "word" || node.wordType !== "unclassifiedNumber") {
+    const node = nodes[index];
+    if (node?.nodeType !== "word" || node.wordType !== "unclassifiedNumber") {
       continue;
     }
 

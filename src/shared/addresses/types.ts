@@ -37,6 +37,11 @@ export interface OrdinalNumberEndingConfig {
   aliases: string[];
 }
 
+export interface OrdinalNumberTextualNotationConfig {
+  normalizedValue: string;
+  aliases: string[];
+}
+
 export interface CommonUnclassifiedWordConfig {
   normalizedValue: string;
   aliases?: string[];
