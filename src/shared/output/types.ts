@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import * as turf from "@turf/turf";
 
 import { GeocodeAddressResult } from "../geocoding";
@@ -103,4 +104,30 @@ export type MixedPropertyVariantsFeature = turf.Feature<
 export type MixedPropertyVariantsFeatureCollection = turf.FeatureCollection<
   OutputGeometry,
   MixedPropertyVariantsFeatureProperties
+>;
+
+// upload
+
+export type UploadFeatureProperties = {
+  fid: number;
+  r_adress?: string;
+  r_architec?: string;
+  r_copyrigh?: string;
+  r_name?: string;
+  r_photo_ur?: string;
+  r_style?: string;
+  r_url?: string;
+  r_wikipedi?: string;
+  r_year_int?: number;
+  r_years_st?: string;
+};
+
+export type UploadFeature = turf.Feature<
+  OutputGeometry,
+  UploadFeatureProperties
+>;
+
+export type UploadFeatureCollection = turf.FeatureCollection<
+  OutputGeometry,
+  UploadFeatureProperties
 >;
