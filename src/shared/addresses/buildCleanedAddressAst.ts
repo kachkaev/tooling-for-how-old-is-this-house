@@ -346,7 +346,12 @@ export const buildCleanedAddressAst = (
     }
 
     const prevNode = nodes[index - 1];
-    if (isDesignation(prevNode) && canBeInitial(node)) {
+    const nextNode = nodes[index + 1];
+    if (
+      isDesignation(prevNode) &&
+      canBeInitial(node) &&
+      isUnclassifiedWord(nextNode)
+    ) {
       continue;
     }
 

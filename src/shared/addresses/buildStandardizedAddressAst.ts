@@ -180,7 +180,8 @@ export const buildStandardizedAddressAst = (
     if (section.designation === "street") {
       if (semanticPartLookup.street) {
         // Skip
-        // TODO: handle case of corner buildings
+        // TODO: better handle case of corner buildings
+        continue;
       }
 
       semanticPartLookup.street = convertSectionToSemanticPart(section);
