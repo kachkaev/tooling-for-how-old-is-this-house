@@ -4,7 +4,7 @@ import rmUp from "rm-up";
 
 import { normalizeAddress } from "../addresses";
 import { getAddressNormalizationConfig } from "../territory";
-import { debugNormalizedAddressAutoencodingIfEnabled } from "./debugNormalizedAddressAutoencodingIfEnabled";
+import { debugAddressNormalizationIfEnabled } from "./debugAddressNormalizationIfEnabled";
 import {
   deriveNormalizedAddressSliceId,
   getDictionaryFilePath,
@@ -87,7 +87,8 @@ export const reportGeocodes = async ({
       addressNormalizationConfig,
     );
 
-    debugNormalizedAddressAutoencodingIfEnabled({
+    debugAddressNormalizationIfEnabled({
+      address: reportedGeocode.address,
       normalizedAddress,
       addressNormalizationConfig,
       logger,

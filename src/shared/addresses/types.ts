@@ -16,10 +16,8 @@ export interface DesignationConfig {
   aliases?: Readonly<string[]>;
   designation: Designation;
   gender: Gender;
-  /**
-   * True for dual-use designation words: ‘набережная реки такой-то’, but ‘улица набережная’
-   */
   canBePartOfName?: boolean;
+  canBeSkippedIfAloneInSection?: boolean;
 }
 
 export interface DesignationAdjectiveConfig {
