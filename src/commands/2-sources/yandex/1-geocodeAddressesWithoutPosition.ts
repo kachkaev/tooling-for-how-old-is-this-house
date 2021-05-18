@@ -132,8 +132,9 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
             "Looks like you’ve reached your API key limits. Try again tomorrow!",
           ),
         );
+      } else {
+        logger.log(e);
       }
-      logger.log(e);
       break;
     }
   }
