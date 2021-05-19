@@ -369,12 +369,13 @@ export const buildCleanedAddressAst = (
 
     const prevNode = nodes[index - 1];
     const nextNode = nodes[index + 1];
-    if (
-      isDesignation(prevNode) &&
-      canBeInitial(node) &&
-      isUnclassifiedWord(nextNode)
-    ) {
-      continue;
+    if (isDesignation(prevNode)) {
+      if (canBeInitial(node) && isUnclassifiedWord(nextNode)) {
+        continue;
+      }
+      if (getDesignationConfig(prevNode).designation === "housePart") {
+        continue;
+      }
     }
 
     const designationConfig = designationConfigLookup[node.value];
@@ -442,11 +443,14 @@ export const buildCleanedAddressAst = (
       continue;
     }
 
-    if (
-      isDesignation(node1) &&
-      isUnclassifiedWord(node3) &&
-      !canHaveDesignationAdjective(node3)
-    ) {
+    if (isDesignation(node1)) {
+      if (!isUnclassifiedWord(node3) || canHaveDesignationAdjective(node3)) {
+        continue;
+      }
+      if (getDesignationConfig(node1).designation === "housePart") {
+        continue;
+      }
+
       (node2 as AddressNodeWithWord).wordType = "initial";
       node2.value = `${node2.value[0]}.`;
     }
@@ -464,15 +468,16 @@ export const buildCleanedAddressAst = (
       continue;
     }
 
+    const designationConfig = findRelevantDesignation(nodes, node);
+    if (!designationConfig || designationConfig.designation === "housePart") {
+      continue;
+    }
+
     (node as AddressNodeWithWord).wordType = "designationAdjective";
     if (isNormalizedDesignationAdjective(node.value)) {
       continue;
     }
 
-    const designationConfig = findRelevantDesignation(nodes, node);
-    if (!designationConfig) {
-      continue;
-    }
     node.value =
       designationAdjectiveConfig.normalizedValueByGender[
         designationConfig.gender

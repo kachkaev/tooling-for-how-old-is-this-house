@@ -19,7 +19,7 @@ export const designationAdjectiveConfigs: DesignationAdjectiveConfig[] = [
     },
   },
   {
-    aliases: ["б", "бол"],
+    aliases: ["б", "бол", "больш"],
     normalizedValueByGender: {
       f: "большая",
       m: "большой",
