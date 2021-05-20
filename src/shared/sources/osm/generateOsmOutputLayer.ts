@@ -10,7 +10,7 @@ import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-} from "../../output";
+} from "../../outputLayers";
 import { getTerritoryExtent } from "../../territory";
 import { getOsmDirPath } from "./helpersForPaths";
 import { readFetchedOsmFeatureCollection } from "./readFetchedOsmFeatureCollection";

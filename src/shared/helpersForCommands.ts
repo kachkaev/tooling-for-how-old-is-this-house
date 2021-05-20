@@ -13,7 +13,7 @@ import {
   getOutputLayerFileName,
   OutputLayer,
   reportGeocodesInOutputLayer,
-} from "./output";
+} from "./outputLayers";
 import { getAddressNormalizationConfig } from "./territory";
 
 export const generateProgress = (index: number, total: number) => {

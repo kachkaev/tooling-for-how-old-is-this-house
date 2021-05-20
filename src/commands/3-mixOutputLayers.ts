@@ -19,14 +19,16 @@ import {
 import { writeFormattedJson } from "../shared/helpersForJson";
 import { getSourcesDirPath } from "../shared/helpersForPaths";
 import {
-  getMixedOutputLayersFileName,
   getOutputLayerFileName,
-  MixedOutputLayersFeature,
   OutputLayer,
   OutputLayerFeatureWithGeometry,
   OutputLayerProperties,
-  PropertyLookupVariant,
-} from "../shared/output";
+} from "../shared/outputLayers";
+import {
+  getMixedOutputLayersFileName,
+  MixedOutputLayersFeature,
+  PropertyVariantLookup,
+} from "../shared/outputMixing";
 import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
 import { processTiles } from "../shared/tiles";
@@ -221,7 +223,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
       for (const filteredBaseLayer of filteredBaseLayers) {
         for (const baseLayerFeature of filteredBaseLayer.features) {
-          const propertiesVariants: PropertyLookupVariant[] = [
+          const propertiesVariants: PropertyVariantLookup[] = [
             {
               ...baseLayerFeature.properties,
               source: filteredBaseLayer.source,

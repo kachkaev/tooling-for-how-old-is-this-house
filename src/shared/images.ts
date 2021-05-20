@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 import path from "path";
 import puppeteer, { Browser } from "puppeteer";
 
-import { getOutputDirPath } from "./output";
+import { getOutputDirPath } from "./outputMixing";
 
 export const getImageDirPath = (): string =>
   path.resolve(getOutputDirPath(), "images");

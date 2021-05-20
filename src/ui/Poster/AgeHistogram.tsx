@@ -9,7 +9,7 @@ import { mapCompletionYearToColor } from "../../shared/completionDates";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../../shared/output";
+} from "../../shared/outputMixing";
 import { pointsInMm } from "../shared/printing";
 
 const Wrapper = styled.div`

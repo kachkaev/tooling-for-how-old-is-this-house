@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 import * as React from "react";
 import styled from "styled-components";
 
-import { MixedPropertyVariantsFeatureCollection } from "../../shared/output";
+import { MixedPropertyVariantsFeatureCollection } from "../../shared/outputMixing";
 import {
   OsmFeatureCollection,
   OsmRailwayGeometry,

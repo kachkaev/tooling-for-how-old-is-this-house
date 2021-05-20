@@ -2,8 +2,6 @@ import path from "path";
 
 import { getTerritoryDirPath } from "../territory";
 
-export const getOutputLayerFileName = (): string => "output-layer.geojson";
-
 export const getOutputDirPath = (): string =>
   path.resolve(getTerritoryDirPath(), "output");
 
