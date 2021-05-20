@@ -1,5 +1,14 @@
 export type Gender = "f" | "m" | "n";
 
+export interface ProtoWordConfig {
+  normalizedValue?: string;
+  aliases?: Readonly<string[]>;
+}
+
+export interface WordConfig extends ProtoWordConfig {
+  normalizedValue: string;
+}
+
 export type Designation =
   | "country"
   | "region"
@@ -11,40 +20,28 @@ export type Designation =
   | "house"
   | "housePart";
 
-export interface DesignationConfig {
-  normalizedValue: string;
-  aliases?: Readonly<string[]>;
+export interface DesignationConfig extends WordConfig {
   designation: Designation;
   gender: Gender;
   canBePartOfName?: boolean;
   canBeSkippedIfAloneInSection?: boolean;
 }
 
-export interface DesignationAdjectiveConfig {
+export interface DesignationAdjectiveConfig extends ProtoWordConfig {
   normalizedValueByGender: Record<Gender, string>;
-  aliases: Readonly<string[]>;
 }
-export interface ApproximatePointerConfig {
-  normalizedValue: string;
-  aliases?: Readonly<string[]>;
+export interface ApproximatePointerConfig extends WordConfig {
   prepositionBefore?: string;
   prepositionAfter?: string;
 }
 
-export interface OrdinalNumberEndingConfig {
+export interface OrdinalNumberEndingConfig extends WordConfig {
   gender: Gender;
-  normalizedValue: string;
-  aliases: string[];
 }
 
-export interface OrdinalNumberTextualNotationConfig {
-  normalizedValue: string;
-  aliases: string[];
-}
+export type OrdinalNumberTextualNotationConfig = WordConfig;
 
-export interface CommonUnclassifiedWordConfig {
-  normalizedValue: string;
-  aliases?: string[];
+export interface CommonUnclassifiedWordConfig extends WordConfig {
   ignored?: true | Designation[];
   canBeInStandardizedAddress?: boolean;
 }

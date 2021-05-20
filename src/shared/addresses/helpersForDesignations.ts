@@ -1,4 +1,4 @@
-import { autoExtendAliases } from "./helpersForSpelling";
+import { generateWordConfigLookup } from "./helpersForWords";
 import { AddressNodeWithDesignation, DesignationConfig } from "./types";
 
 // Related info: https://wiki.openstreetmap.org/wiki/RU:Россия/Соглашение_об_именовании_дорог
@@ -61,19 +61,9 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "housePart", normalizedValue: "строение", gender: "m", aliases: ["стр", "строен"] }, // has special cases in code for ‘стр’ as construction and for ‘строение’ as house number
 ];
 
-export const designationConfigLookup: Record<string, DesignationConfig> = {};
-
-const addToLookup = (alias: string, config: DesignationConfig) => {
-  if (designationConfigLookup[alias]) {
-    throw new Error(`Duplicate entry in designationConfigLookup for ${alias}`);
-  }
-  designationConfigLookup[alias] = config;
-};
-
-designationConfigs.forEach((designationConfig) => {
-  autoExtendAliases(designationConfig).forEach((alias) => {
-    addToLookup(alias, designationConfig);
-  });
+export const designationConfigLookup = generateWordConfigLookup({
+  wordConfigs: designationConfigs,
+  wordConfigsTitle: "designationConfigs",
 });
 
 export const getDesignationConfig = (

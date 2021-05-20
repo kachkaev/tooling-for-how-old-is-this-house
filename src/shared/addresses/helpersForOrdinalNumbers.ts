@@ -1,3 +1,4 @@
+import { generateWordConfigLookup } from "./helpersForWords";
 import {
   OrdinalNumberEndingConfig,
   OrdinalNumberTextualNotationConfig,
@@ -56,47 +57,14 @@ export const ordinalNumberTextualNotationConfigs: OrdinalNumberTextualNotationCo
   { normalizedValue: "10-е", aliases: ["десятое"] },
 ];
 
-export const ordinalNumberEndingConfigLookup: Record<
-  string,
-  OrdinalNumberEndingConfig
-> = {};
-
-const addToLookup = (alias: string, config: OrdinalNumberEndingConfig) => {
-  if (ordinalNumberEndingConfigLookup[alias]) {
-    throw new Error(
-      `Duplicate entry in ordinalNumberEndingConfigLookup for ${alias}`,
-    );
-  }
-  ordinalNumberEndingConfigLookup[alias] = config;
-};
-
-ordinalNumberEndingConfigs.forEach((config) => {
-  addToLookup(config.normalizedValue, config);
-  config.aliases.forEach((alias) => {
-    addToLookup(alias, config);
-  });
+export const ordinalNumberEndingConfigLookup = generateWordConfigLookup({
+  wordConfigs: ordinalNumberEndingConfigs,
+  wordConfigsTitle: "ordinalNumberEndingConfigs",
 });
 
-export const ordinalNumberTextualNotationConfigLookup: Record<
-  string,
-  OrdinalNumberTextualNotationConfig
-> = {};
-
-const addToLookup2 = (
-  alias: string,
-  config: OrdinalNumberTextualNotationConfig,
-) => {
-  if (ordinalNumberEndingConfigLookup[alias]) {
-    throw new Error(
-      `Duplicate entry in ordinalNumberTextualNotationConfigLookup for ${alias}`,
-    );
-  }
-  ordinalNumberTextualNotationConfigLookup[alias] = config;
-};
-
-ordinalNumberTextualNotationConfigs.forEach((config) => {
-  addToLookup2(config.normalizedValue, config);
-  config.aliases.forEach((alias) => {
-    addToLookup2(alias, config);
-  });
-});
+export const ordinalNumberTextualNotationConfigLookup = generateWordConfigLookup(
+  {
+    wordConfigs: ordinalNumberTextualNotationConfigs,
+    wordConfigsTitle: "ordinalNumberTextualNotationConfigs",
+  },
+);
