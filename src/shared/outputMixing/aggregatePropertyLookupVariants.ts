@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import { deriveCompletionYearFromCompletionDates } from "../completionDates";
 import { generateFilterPropertyVariantLookup } from "./generateFilterPropertyVariantLookup";
 import { PropertyVariantLookup, PropertyVariantLookupAggregate } from "./types";
@@ -14,9 +16,11 @@ export const aggregatePropertyVariantLookups = (
   );
 
   // TODO: order variants by priority
-  const preFilteredPropertyVariantLookups = propertyVariantLookups.filter(
-    (propertyVariantLookup) =>
+  const preFilteredPropertyVariantLookups = _.orderBy(
+    propertyVariantLookups.filter((propertyVariantLookup) =>
       filterPropertyVariantLookup(propertyVariantLookup),
+    ),
+    (propertyVariantLookup) => propertyVariantLookup.source,
   );
 
   // Pick completion dates

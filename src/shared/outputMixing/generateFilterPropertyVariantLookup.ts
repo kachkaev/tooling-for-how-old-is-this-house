@@ -31,13 +31,10 @@ export const generateFilterPropertyVariantLookup = (
 
   const dataToIgnoreSelectors = parseDataToIgnore(dataToIgnore, logger);
 
-  const result: FilterPropertyVariantLookup = (
-    propertyVariantLookup,
-    propertyName,
-  ) => {
-    for (const selector of dataToIgnoreSelectors) {
+  return (propertyVariantLookup, propertyName) =>
+    !dataToIgnoreSelectors.some((selector) => {
       if (propertyVariantLookup.source !== selector.source) {
-        continue;
+        return false;
       }
 
       const idMatches =
@@ -45,16 +42,10 @@ export const generateFilterPropertyVariantLookup = (
 
       const propertyMatches =
         !selector.property ||
-        (propertyName &&
-          propertyVariantLookup[propertyName] === selector.property);
+        (propertyName && propertyName === selector.property);
 
       if (idMatches && propertyMatches) {
-        return false;
+        return true;
       }
-    }
-
-    return true;
-  };
-
-  return result;
+    });
 };
