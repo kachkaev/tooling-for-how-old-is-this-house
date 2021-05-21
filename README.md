@@ -506,7 +506,7 @@ yarn exe src/commands/9-makePoster.ts
       },
       "properties": {
         "dataToIgnore": "mkrf",
-        "description": "ул. Тестовая 42 отмечен как памятник, а это уже небоскрёб"
+        "privateNotes": "ул. Тестовая 42 отмечен как памятник, а это уже небоскрёб"
       }
     }
   ]
