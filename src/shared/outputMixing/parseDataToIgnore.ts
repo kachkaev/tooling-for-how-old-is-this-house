@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 import { ParsedDataToIgnoreSelector } from "./types";
 
 const treatAsteriskAsUndefined = (
@@ -23,7 +25,9 @@ export const parseDataToIgnore = (
         .map((value) => value.trim());
 
       if (!source) {
-        logger?.log(`Unexpected empty value for source in ${dataToIgnore}`);
+        logger?.log(
+          chalk.yellow(`Unexpected empty value for source in ${dataToIgnore}`),
+        );
 
         return undefined;
       }

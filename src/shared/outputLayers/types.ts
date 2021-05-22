@@ -11,6 +11,8 @@ export interface OutputLayerProperties {
   dataToIgnore?: string;
   completionDates?: string;
   derivedCompletionYear?: number;
+  /** This field contains number of square meters occupied by the building, as per docs (not geometry) */
+  documentedBuildArea?: number;
   /** This field is present if coordinates are coming from another source via geocoding */
   externalGeometrySource?: string;
   floorCount?: number;
