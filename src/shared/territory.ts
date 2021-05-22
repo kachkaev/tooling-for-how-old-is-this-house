@@ -52,6 +52,9 @@ export interface TerritoryConfig {
     mkrf?: {
       fallbackAddressSelectorsForObjectsWithoutGeometry?: string[] | string[][];
     };
+    rosreestr?: {
+      handpickedCnsForPageInfos?: string[];
+    };
   };
   addressNormalization?: {
     defaultRegion?: string;

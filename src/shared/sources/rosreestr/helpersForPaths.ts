@@ -36,12 +36,12 @@ export const getObjectInfoPagesDirPath = () => {
 };
 
 export const getObjectInfoPageFilePath = (
-  block: string,
+  blockCn: string,
   pageNumber: number,
 ) => {
   return path.resolve(
     getObjectInfoPagesDirPath(),
-    block.replace(/:/g, "/"),
+    blockCn.replace(/:/g, "/"),
     `page-${`${pageNumber}`.padStart(3, "0")}.json`,
   );
 };

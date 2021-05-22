@@ -92,6 +92,7 @@ export type ObjectExtentFeature = turf.Feature<
 export type CreationReasonForObjectInInfoPage =
   | "ccoInTile"
   | "gap"
+  | "handpicked"
   | "lotInTile";
 
 export type EdgeCaseResponseInInfoPage = "flat" | "lot" | "notOks" | "void";
