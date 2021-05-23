@@ -101,6 +101,19 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
         info.photos = photoInfos;
       }
 
+      // extract completion dates
+      info.completionDates = rawInfo.match(
+        /lng=1">строение ([^<]*)<\/strong>/,
+      )?.[1];
+      if (!info.completionDates) {
+        const descr = rawInfo.match(
+          /<meta name="description" content="(.*)"/,
+        )?.[1];
+        if (descr) {
+          info.completionDates = descr.match(/остроен.? в ([^.,]*)/)?.[1];
+        }
+      }
+
       const objectInfoFileJson: WikimapiaObjectInfoFile = {
         fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),
         parsedAt: serializeTime(),
