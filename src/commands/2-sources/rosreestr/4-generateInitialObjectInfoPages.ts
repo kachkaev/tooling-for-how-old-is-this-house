@@ -28,7 +28,7 @@ import {
 const minNumberOfObjectsPerBlock = 5;
 const minPercentageOutsideTerritoryExtent = 25;
 
-const gethandpickedCnsForPageInfos = async (
+const getHandpickedCnsForPageInfos = async (
   logger: Console | undefined,
 ): Promise<string[]> => {
   const handpickedCnsForPageInfos = (await getTerritoryConfig()).sources
@@ -55,8 +55,10 @@ const gethandpickedCnsForPageInfos = async (
   }
 };
 
-export const generateObjectInfoPages: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/rosreestr: Generating object info pages"));
+export const generateInitialObjectInfoPages: Command = async ({ logger }) => {
+  logger.log(
+    chalk.bold("sources/rosreestr: Generating initial object info pages"),
+  );
 
   logger.log(chalk.green("Loading CCOs from tiles..."));
   const { objectCenterFeatures: ccoFeatures } = await combineRosreestrTiles({
@@ -126,7 +128,7 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
   }
 
   // Index handpicked CNs defined in territory-config.yml
-  const handpickedCnsForPageInfos = await gethandpickedCnsForPageInfos(logger);
+  const handpickedCnsForPageInfos = await getHandpickedCnsForPageInfos(logger);
   for (const objectCn of handpickedCnsForPageInfos) {
     if (ccoFeatureByCn[objectCn]) {
       logger.log(
@@ -324,4 +326,4 @@ export const generateObjectInfoPages: Command = async ({ logger }) => {
   `);
 };
 
-autoStartCommandIfNeeded(generateObjectInfoPages, __filename);
+autoStartCommandIfNeeded(generateInitialObjectInfoPages, __filename);

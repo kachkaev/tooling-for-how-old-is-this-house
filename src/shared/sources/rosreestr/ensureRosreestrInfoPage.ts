@@ -16,7 +16,7 @@ export const ensureRosreestrInfoPage = async ({
 }: {
   blockCn: string;
   pageNumber: number;
-  creationReasonByObjectCn: Record<string, CreationReasonForObjectInInfoPage>;
+  creationReasonByObjectCn?: Record<string, CreationReasonForObjectInInfoPage>;
 }): Promise<boolean> => {
   const infoPageFilePath = getObjectInfoPageFilePath(blockCn, pageNumber);
 
@@ -41,7 +41,7 @@ export const ensureRosreestrInfoPage = async ({
     const objectCn = `${blockCn}:${
       pageNumber * rosreestrObjectInfoPageSize + index
     }`;
-    const creationReason = creationReasonByObjectCn[objectCn] ?? "gap";
+    const creationReason = creationReasonByObjectCn?.[objectCn] ?? "gap";
 
     const existingInfoPageObject = existingInfoPageObjectByCn[objectCn];
     if (existingInfoPageObject) {

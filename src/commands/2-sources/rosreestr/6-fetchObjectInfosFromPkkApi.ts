@@ -108,11 +108,11 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
 
       await sleep(env.DELAY); // Protection against 403
 
-      return {
+      return sortKeys({
         ...infoPageObject,
         pkkFetchedAt: serializeTime(),
         pkkResponse,
-      };
+      });
     },
   });
 };

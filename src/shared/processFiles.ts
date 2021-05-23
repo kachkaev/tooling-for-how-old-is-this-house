@@ -1,8 +1,7 @@
 import chalk from "chalk";
-import globby from "globby";
-import _ from "lodash";
 
 import { generateProgress } from "./helpersForCommands";
+import { listFilePaths } from "./listFilePaths";
 
 export const processFiles = async ({
   logger,
@@ -23,21 +22,16 @@ export const processFiles = async ({
   ) => void | Promise<void>;
   statusReportFrequency?: number;
 }) => {
-  if (logger) {
-    process.stdout.write(chalk.green(`Listing ${filesNicknameToLog}...`));
-  }
-  const rawGlobbyResults = await globby(fileSearchPattern, {
-    cwd: fileSearchDirPath,
-    absolute: true,
-    onlyFiles: true,
+  const filePaths = await listFilePaths({
+    filesNicknameToLog,
+    fileSearchPattern,
+    fileSearchDirPath,
+    logger,
   });
-  const globbyResults = _.sortBy(rawGlobbyResults);
 
-  // const numberOfFiles = Math.min(globbyResults.length, 60);
-  const numberOfFiles = globbyResults.length;
+  const numberOfFiles = filePaths.length;
 
   if (logger) {
-    process.stdout.write(` Found: ${numberOfFiles}.\n`);
     process.stdout.write(chalk.green(`Processing ${filesNicknameToLog}...`));
     if (statusReportFrequency) {
       process.stdout.write("\n");
@@ -45,7 +39,7 @@ export const processFiles = async ({
   }
 
   for (let index = 0; index < numberOfFiles; index += 1) {
-    const filePath = globbyResults[index]!;
+    const filePath = filePaths[index]!;
     const progress = generateProgress(index, numberOfFiles);
 
     const reportingStatus =

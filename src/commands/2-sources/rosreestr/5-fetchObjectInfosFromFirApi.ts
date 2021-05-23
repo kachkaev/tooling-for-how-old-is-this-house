@@ -76,11 +76,11 @@ export const fetchObjectInfosFromFirApi: Command = async ({ logger }) => {
         ),
       );
 
-      return {
+      return sortKeys({
         ...infoPageObject,
         firFetchedAt: serializeTime(),
         firResponse,
-      };
+      });
     },
   });
 };
