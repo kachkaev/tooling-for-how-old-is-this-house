@@ -534,6 +534,7 @@ yarn exe src/commands/9-makePoster.ts
 {
   "type": "FeatureCollection",
   "layerRole": "patch",
+  "privateNote": "Слой с заплатками (в этом месте может быть любая заметка)",
   "features": [
     {
       "type": "Feature",
@@ -543,7 +544,7 @@ yarn exe src/commands/9-makePoster.ts
       },
       "properties": {
         "dataToIgnore": "mkrf",
-        "privateNotes": "ул. Тестовая 42 отмечен как памятник, а это уже небоскрёб"
+        "privateNote": "ул. Тестовая 42 отмечен как памятник, а это уже небоскрёб"
       }
     }
   ]
