@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import { ParsedDataToIgnoreSelector } from "./types";
+import { ParsedDataToOmitSelector } from "./types";
 
 const treatAsteriskAsUndefined = (
   value: string | undefined,
@@ -12,21 +12,21 @@ const treatAsteriskAsUndefined = (
   return value;
 };
 
-export const parseDataToIgnore = (
-  dataToIgnore: string,
+export const parseDataToOmit = (
+  dataToOmit: string,
   logger?: Console,
-): ParsedDataToIgnoreSelector[] => {
-  const slices = dataToIgnore.split(",").map((slice) => slice.trim());
+): ParsedDataToOmitSelector[] => {
+  const slices = dataToOmit.split(",").map((slice) => slice.trim());
 
   return slices
-    .map<ParsedDataToIgnoreSelector | undefined>((slice) => {
+    .map<ParsedDataToOmitSelector | undefined>((slice) => {
       const [source, rawId, rawPropertyName] = slice
         .split("|")
         .map((value) => value.trim());
 
       if (!source) {
         logger?.log(
-          chalk.yellow(`Unexpected empty value for source in ${dataToIgnore}`),
+          chalk.yellow(`Unexpected empty value for source in ${dataToOmit}`),
         );
 
         return undefined;
@@ -38,5 +38,5 @@ export const parseDataToIgnore = (
         property: treatAsteriskAsUndefined(rawPropertyName),
       };
     })
-    .filter((result): result is ParsedDataToIgnoreSelector => Boolean(result));
+    .filter((result): result is ParsedDataToOmitSelector => Boolean(result));
 };

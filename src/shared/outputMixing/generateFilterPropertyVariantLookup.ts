@@ -1,4 +1,4 @@
-import { parseDataToIgnore } from "./parseDataToIgnore";
+import { parseDataToOmit } from "./parseDataToOmit";
 import { PropertyVariantLookup } from "./types";
 
 type FilterPropertyVariantLookup = (
@@ -10,29 +10,29 @@ export const generateFilterPropertyVariantLookup = (
   propertyVariantLookups: PropertyVariantLookup[],
   logger?: Console,
 ): FilterPropertyVariantLookup => {
-  const lookupsWithDataToIgnore = propertyVariantLookups.filter(
-    (propertyVariantLookup) => propertyVariantLookup.dataToIgnore,
+  const lookupsWithDataToOmit = propertyVariantLookups.filter(
+    (propertyVariantLookup) => propertyVariantLookup.dataToOmit,
   );
-  const dataToIgnore = lookupsWithDataToIgnore[0]?.dataToIgnore;
+  const dataToOmit = lookupsWithDataToOmit[0]?.dataToOmit;
 
-  if (!dataToIgnore) {
+  if (!dataToOmit) {
     return () => true;
   }
 
-  if (lookupsWithDataToIgnore.length > 1 && logger) {
+  if (lookupsWithDataToOmit.length > 1 && logger) {
     const serializedValues = propertyVariantLookups
-      .map((propertyVariantLookup) => `"${propertyVariantLookup.dataToIgnore}"`)
+      .map((propertyVariantLookup) => `"${propertyVariantLookup.dataToOmit}"`)
       .join(", ");
 
     logger?.log(
-      `Expected only one properties variant with dataToIgnore, found ${lookupsWithDataToIgnore.length}: ${serializedValues}. Using the first one.`,
+      `Expected only one properties variant with dataToOmit, found ${lookupsWithDataToOmit.length}: ${serializedValues}. Using the first one.`,
     );
   }
 
-  const dataToIgnoreSelectors = parseDataToIgnore(dataToIgnore, logger);
+  const dataToOmitSelectors = parseDataToOmit(dataToOmit, logger);
 
   return (propertyVariantLookup, propertyName) =>
-    !dataToIgnoreSelectors.some((selector) => {
+    !dataToOmitSelectors.some((selector) => {
       if (propertyVariantLookup.source !== selector.source) {
         return false;
       }

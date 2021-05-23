@@ -8,7 +8,7 @@ export interface OutputLayerProperties {
   address?: string;
   buildingType?: string;
   /** Special field that is only applicable to layers in "manual" source */
-  dataToIgnore?: string;
+  dataToOmit?: string;
   completionDates?: string;
   derivedCompletionYear?: number;
   /** This field contains number of square meters occupied by the building, as per docs (not geometry) */

@@ -543,7 +543,7 @@ yarn exe src/commands/9-makePoster.ts
         "coordinates": [12.345678, 12.345678]
       },
       "properties": {
-        "dataToIgnore": "mkrf",
+        "dataToOmit": "mkrf",
         "privateNote": "ул. Тестовая 42 отмечен как памятник, а это уже небоскрёб"
       }
     }
@@ -551,18 +551,18 @@ yarn exe src/commands/9-makePoster.ts
 }
 ```
 
-Благодаря `"dataToIgnore": "mkrf"`, характеристики здания по версии Минкульта будут исключены из финального набора данных.
+Благодаря `"dataToOmit": "mkrf"`, характеристики здания по версии Минкульта будут исключены из финального набора данных.
 Чтобы исправить другие случае неправильной склейки, можно добавить больше объектов `Feature` в этот же файл.
 
 Кроме названия игнорируемого источника, можно указывать идентификатор объекта и конкретной характеристики через разделитель `|`.
 Также разрешается перечислять несколько правил через запятую:
 
 ```json
-"dataToIgnore": "mkrf"
-"dataToIgnore": "mkrf|id12345"
-"dataToIgnore": "mkrf|id12345|completionDates"
-"dataToIgnore": "mkrf|*|completionDates"
-"dataToIgnore": "mkrf|id12345,mingkh|*|completionDates"
+"dataToOmit": "mkrf"
+"dataToOmit": "mkrf|id12345"
+"dataToOmit": "mkrf|id12345|completionDates"
+"dataToOmit": "mkrf|*|completionDates"
+"dataToOmit": "mkrf|id12345,mingkh|*|completionDates"
 ```
 
 После обновления файлов `/path/to/data/territories/TERRITORY_NAME/sources/manual/*.geojson`, следует повторить шаг «Склеить слои».
