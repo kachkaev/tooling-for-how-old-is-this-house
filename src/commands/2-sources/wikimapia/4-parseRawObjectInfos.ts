@@ -1,8 +1,10 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
+import _ from "lodash";
 import sortKeys from "sort-keys";
 
+import { deepClean } from "../../../shared/deepClean";
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
   serializeTime,
@@ -17,6 +19,44 @@ import {
   WikimapiaObjectInfoFile,
   WikimapiaObjectPhotoInfo,
 } from "../../../shared/sources/wikimapia";
+
+const cleanCompletionDatesMatch = (match?: string): string | undefined => {
+  const result = (match ?? "")
+    .toLowerCase()
+    .replace(/(годах?|году|годов|гг)\.?/, "")
+    .replace(/([^\d])г/, "$1")
+    .replace(/^(\d+)-х/, "$1-е") // “2010-е”, but “начало 2010-х”
+    .replace(/-?го века/, "-й век")
+    .replace(/начале/, "начало")
+    .replace(/середине/, "середина")
+    .replace(/конце/, "конец")
+    .trim();
+
+  return result && result.length < 20 ? result : undefined;
+};
+
+const extractCompletionDatesFromTags = (
+  rawInfo: string,
+): string | undefined => {
+  const completionDatesMatch = rawInfo.match(
+    /lng=1">строение ([^<]*)<\/strong>/,
+  )?.[1];
+
+  return cleanCompletionDatesMatch(completionDatesMatch);
+};
+
+const extractCompletionDatesFromDescription = (
+  rawInfo: string,
+): string | undefined => {
+  const descriptionContentMatch =
+    rawInfo.match(/<meta name="description" content="(.*)"/)?.[1] ?? "";
+
+  const completionDatesMatch = descriptionContentMatch.match(
+    /остроен.? в ([^.,]*)/,
+  )?.[1];
+
+  return cleanCompletionDatesMatch(completionDatesMatch);
+};
 
 export const parseRawObjectInfos: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikimapia: Parsing raw object infos"));
@@ -41,12 +81,6 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
         `--${getWikimapiaObjectInfoFileSuffix()}`,
       );
 
-      if (await fs.pathExists(outputFilePath)) {
-        logOutputFileName(outputFilePath, prefixLength, "alreadyUpToDate");
-
-        return;
-      }
-
       const wikimapiaIdInFilePath = parseInt(
         filePath.match(/(\d+)--/)?.[1] ?? "0",
       );
@@ -61,7 +95,7 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
         wikimapiaId: wikimapiaIdInFilePath,
       };
 
-      // extract photos
+      // Extract photos
       const photoInfos: WikimapiaObjectPhotoInfo[] = [];
       const photoMatches = rawInfo.matchAll(
         /<div itemscope itemtype="http:\/\/schema.org\/ImageObject" style="display:inline">\n([^]*?)<\/div>/g,
@@ -101,24 +135,34 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
         info.photos = photoInfos;
       }
 
-      // extract completion dates
-      info.completionDates = rawInfo.match(
-        /lng=1">строение ([^<]*)<\/strong>/,
-      )?.[1];
-      if (!info.completionDates) {
-        const descr = rawInfo.match(
-          /<meta name="description" content="(.*)"/,
-        )?.[1];
-        if (descr) {
-          info.completionDates = descr.match(/остроен.? в ([^.,]*)/)?.[1];
-        }
-      }
+      // Extract completion dates
+      info.completionDates =
+        extractCompletionDatesFromTags(rawInfo) ??
+        extractCompletionDatesFromDescription(rawInfo);
 
       const objectInfoFileJson: WikimapiaObjectInfoFile = {
         fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),
         parsedAt: serializeTime(),
-        data: sortKeys(info, { deep: true }),
+        data: sortKeys(deepClean(info), { deep: true }),
       };
+
+      try {
+        const existingObjectInfoFileJson = (await fs.readJson(
+          outputFilePath,
+        )) as WikimapiaObjectInfoFile;
+        if (
+          _.isEqual(
+            _.omit(objectInfoFileJson.data, "parsedAt"),
+            _.omit(existingObjectInfoFileJson.data, "parsedAt"),
+          )
+        ) {
+          logOutputFileName(outputFilePath, prefixLength, "alreadyUpToDate");
+
+          return;
+        }
+      } catch {
+        // noop (file does not exist)
+      }
 
       await writeFormattedJson(outputFilePath, objectInfoFileJson);
       logOutputFileName(outputFilePath, prefixLength, "modified");
