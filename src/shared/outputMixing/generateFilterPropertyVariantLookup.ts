@@ -1,10 +1,5 @@
 import { parseDataToOmit } from "./parseDataToOmit";
-import { PropertyVariantLookup } from "./types";
-
-type FilterPropertyVariantLookup = (
-  propertyVariantLookup: PropertyVariantLookup,
-  propertyName?: keyof PropertyVariantLookup,
-) => boolean;
+import { FilterPropertyVariantLookup, PropertyVariantLookup } from "./types";
 
 export const generateFilterPropertyVariantLookup = (
   propertyVariantLookups: PropertyVariantLookup[],

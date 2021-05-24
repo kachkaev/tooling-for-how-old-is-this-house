@@ -27,7 +27,6 @@ import {
 import {
   getMixedOutputLayersFilePath,
   MixedOutputLayersFeature,
-  parseDataToOmit,
   PropertyVariantLookup,
 } from "../shared/outputMixing";
 import { processFiles } from "../shared/processFiles";
@@ -262,38 +261,6 @@ export const mixOutputLayers: Command = async ({ logger }) => {
           }
 
           const geometrySource = filteredBaseLayer.source;
-          const geometryFeatureId = baseLayerFeature.properties.id;
-
-          const geometryNeedsToBeIgnored = propertiesVariants.some(
-            (propertyVariant) => {
-              if (!propertyVariant.dataToOmit) {
-                return false;
-              }
-
-              const dataToOmitSelectors = parseDataToOmit(
-                propertyVariant.dataToOmit,
-                logger,
-              );
-
-              return dataToOmitSelectors.some((dataToOmitSelector) => {
-                if (
-                  dataToOmitSelector.source !== geometrySource ||
-                  dataToOmitSelector.property
-                ) {
-                  return false;
-                }
-
-                return (
-                  !dataToOmitSelector.id ||
-                  dataToOmitSelector.id === geometryFeatureId
-                );
-              });
-            },
-          );
-
-          if (geometryNeedsToBeIgnored) {
-            continue;
-          }
 
           mixedFeatures.push(
             turf.feature(baseLayerFeature.geometry, {

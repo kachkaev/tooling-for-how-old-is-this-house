@@ -1,4 +1,4 @@
 export * from "./aggregatePropertyLookupVariants";
-export * from "./parseDataToOmit";
+export * from "./generateFilterPropertyVariantLookup";
 export * from "./helpersForPaths";
 export * from "./types";

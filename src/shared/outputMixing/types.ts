@@ -8,6 +8,11 @@ export interface PropertyVariantLookup extends OutputLayerProperties {
   distance: number; // distance to geometry in meters
 }
 
+export type FilterPropertyVariantLookup = (
+  propertyVariantLookup: PropertyVariantLookup,
+  propertyName?: keyof PropertyVariantLookup,
+) => boolean;
+
 export interface ParsedDataToOmitSelector {
   source: string;
   id?: string;
