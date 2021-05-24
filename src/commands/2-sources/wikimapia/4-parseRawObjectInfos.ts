@@ -6,6 +6,7 @@ import sortKeys from "sort-keys";
 
 import { buildCleanedAddressAst } from "../../../shared/addresses";
 import { deepClean } from "../../../shared/deepClean";
+import { fixQuotes } from "../../../shared/fixQuotes";
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
   serializeTime,
@@ -20,30 +21,6 @@ import {
   WikimapiaObjectInfoFile,
   WikimapiaObjectPhotoInfo,
 } from "../../../shared/sources/wikimapia";
-
-const fixQuotes = (input: string): string => {
-  return input
-    .replace(/''/g, "'")
-    .replace(
-      /"|'|“|”|‘|’|„|“/g,
-      (match: string, charIndex: number, partiallyProcessedInput: string) => {
-        const prevChar = partiallyProcessedInput[charIndex - 1];
-        const nextChar = partiallyProcessedInput[charIndex + 1];
-        const prevCharIsLetter = Boolean(prevChar?.match(/\p{L}/u));
-        const nextCharIsLetter = Boolean(nextChar?.match(/\p{L}/u));
-
-        if (!prevCharIsLetter && nextCharIsLetter) {
-          return "«";
-        }
-
-        if (prevCharIsLetter && !nextCharIsLetter) {
-          return "»";
-        }
-
-        return match;
-      },
-    );
-};
 
 const cleanCompletionDatesMatch = (match?: string): string | undefined => {
   const result = (match ?? "")
