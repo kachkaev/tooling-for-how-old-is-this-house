@@ -47,5 +47,13 @@ export const aggregatePropertyVariantLookups = (
     }
   }
 
+  // Pick name
+  for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
+    if (propertyVariantLookup.name) {
+      result.name = propertyVariantLookup.name;
+      break;
+    }
+  }
+
   return result;
 };

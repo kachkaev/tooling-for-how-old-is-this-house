@@ -140,6 +140,11 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
         extractCompletionDatesFromTags(rawInfo) ??
         extractCompletionDatesFromDescription(rawInfo);
 
+      // Extract title
+      info.name = rawInfo.match(
+        /<meta property="og:title" {2}content="(.*) - Wikimapia"/,
+      )?.[1];
+
       const objectInfoFileJson: WikimapiaObjectInfoFile = {
         fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),
         parsedAt: serializeTime(),
