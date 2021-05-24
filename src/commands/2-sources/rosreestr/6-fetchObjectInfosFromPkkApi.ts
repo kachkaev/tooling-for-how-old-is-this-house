@@ -43,7 +43,9 @@ const checkIfNeedsProcessing = (infoPageObject: InfoPageObject): boolean => {
       return false;
     }
 
-    if (firResponse.objectData.objectName?.toLowerCase()?.includes("гараж")) {
+    const normalizedObjectName =
+      firResponse.objectData.objectName?.toLowerCase() ?? "";
+    if (normalizedObjectName.match(/гараж|сарай|садов/)) {
       return false;
     }
 
