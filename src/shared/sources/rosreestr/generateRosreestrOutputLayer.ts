@@ -148,19 +148,25 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     processFile: async (filePath) => {
       const infoPageData: InfoPageData = await fs.readJson(filePath);
       for (const infoPageEntry of infoPageData) {
-        const outputLayerProperties =
+        const propertiesVariants = [
           extractPropertiesFromFirResponse(
             infoPageEntry,
             addressNormalizationConfig,
-          ) ?? extractPropertiesFromPkkResponse(infoPageEntry);
+          ),
+          extractPropertiesFromPkkResponse(infoPageEntry),
+        ]
+          .filter((variant) => typeof variant === "object")
+          .map((variant) => deepClean(variant))
+          .reverse();
 
-        if (!outputLayerProperties) {
+        if (!propertiesVariants.length) {
           continue;
         }
 
-        if (outputLayerProperties === "notBuilding") {
-          continue;
-        }
+        const outputLayerProperties: OutputLayerProperties = Object.assign(
+          {},
+          ...propertiesVariants,
+        );
 
         const cn = infoPageEntry.cn;
         let geometry: turf.Point | undefined =
