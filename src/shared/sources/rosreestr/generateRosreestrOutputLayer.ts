@@ -19,6 +19,10 @@ import {
   getTerritoryExtent,
 } from "../../territory";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
+import {
+  checkIfFirResponseContainsExistingBuilding,
+  extractCompletionDatesFromFirResponse,
+} from "./helpersForApiResponses";
 import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
@@ -66,15 +70,11 @@ const extractPropertiesFromFirResponse = (
     return;
   }
 
-  if (
-    firResponse.parcelData.oksType !== "building" ||
-    firResponse.parcelData.dateRemove /* снят с учёта */
-  ) {
+  if (!checkIfFirResponseContainsExistingBuilding(firResponse)) {
     return "notBuilding";
   }
 
-  const completionDates =
-    firResponse.parcelData.oksYearBuilt ?? firResponse.parcelData.oksYearUsed;
+  const completionDates = extractCompletionDatesFromFirResponse(firResponse);
 
   return {
     id: cn,

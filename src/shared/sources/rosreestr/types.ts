@@ -116,6 +116,7 @@ export interface SuccessfulFirObjectResponse {
       addressNote?: string;
       mergedAddress?: string;
     };
+    objectName?: string;
   };
   parcelData: {
     dateCost?: string;

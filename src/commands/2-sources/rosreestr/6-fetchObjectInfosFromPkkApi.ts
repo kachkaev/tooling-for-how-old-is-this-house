@@ -9,14 +9,49 @@ import { cleanEnv } from "../../../shared/cleanEnv";
 import { deepClean } from "../../../shared/deepClean";
 import { serializeTime } from "../../../shared/helpersForJson";
 import {
+  checkIfFirResponseContainsExistingBuilding,
   compressRosreestrCenter,
   compressRosreestrExtent,
   convertCnToId,
+  extractCompletionDatesFromFirResponse,
   fetchJsonFromRosreestr,
+  InfoPageObject,
   PkkFeatureResponse,
   PkkResponseInInfoPageResponse,
   processRosreestrPages,
 } from "../../../shared/sources/rosreestr";
+
+const checkIfNeedsProcessing = (infoPageObject: InfoPageObject): boolean => {
+  if (
+    infoPageObject.creationReason === "lotInTile" ||
+    infoPageObject.pkkResponse
+  ) {
+    return false;
+  }
+
+  // Responses in PKK and FIR API may vary.
+  // If FIR API does not report completion dates, the value might still be found via PKK API.
+  // Example: 58:29:1007003:5108
+  const firResponse = infoPageObject.firResponse;
+  if (typeof firResponse === "object") {
+    if (!checkIfFirResponseContainsExistingBuilding(firResponse)) {
+      return false;
+    }
+    const completionDates = extractCompletionDatesFromFirResponse(firResponse);
+
+    if (completionDates) {
+      return false;
+    }
+
+    if (firResponse.objectData.objectName?.toLowerCase()?.includes("гараж")) {
+      return false;
+    }
+
+    return true;
+  }
+
+  return firResponse === "void";
+};
 
 const processRawPkkFeatureResponse = (
   rawApiResponse: AxiosResponse<unknown>,
@@ -90,11 +125,7 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
     includeObjectsAroundAnchors: env.RANGE,
     includeObjectsAroundEnds: env.RANGE,
     processObject: async (infoPageObject) => {
-      if (
-        infoPageObject.creationReason === "lotInTile" ||
-        infoPageObject.firResponse !== "void" ||
-        infoPageObject.pkkResponse
-      ) {
+      if (!checkIfNeedsProcessing(infoPageObject)) {
         return infoPageObject;
       }
 
