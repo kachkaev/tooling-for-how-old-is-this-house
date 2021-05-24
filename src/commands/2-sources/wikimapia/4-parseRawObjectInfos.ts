@@ -22,25 +22,27 @@ import {
 } from "../../../shared/sources/wikimapia";
 
 const fixQuotes = (input: string): string => {
-  return input.replace(
-    /"|''|“|“|”|‘|’/g,
-    (match, charIndex, partiallyProcessedInput) => {
-      const prevChar = partiallyProcessedInput[charIndex - 1];
-      const nextChar = partiallyProcessedInput[charIndex + 1];
-      const prevCharIsLetter = Boolean(prevChar && prevChar.match(/\p{L}/u));
-      const nextCharIsLetter = Boolean(nextChar && nextChar.match(/\p{L}/u));
+  return input
+    .replace(/''/g, "'")
+    .replace(
+      /"|'|“|”|‘|’|„|“/g,
+      (match: string, charIndex: number, partiallyProcessedInput: string) => {
+        const prevChar = partiallyProcessedInput[charIndex - 1];
+        const nextChar = partiallyProcessedInput[charIndex + 1];
+        const prevCharIsLetter = Boolean(prevChar?.match(/\p{L}/u));
+        const nextCharIsLetter = Boolean(nextChar?.match(/\p{L}/u));
 
-      if (!prevCharIsLetter && nextCharIsLetter) {
-        return "«";
-      }
+        if (!prevCharIsLetter && nextCharIsLetter) {
+          return "«";
+        }
 
-      if (prevCharIsLetter && !nextCharIsLetter) {
-        return "»";
-      }
+        if (prevCharIsLetter && !nextCharIsLetter) {
+          return "»";
+        }
 
-      return match;
-    },
-  );
+        return match;
+      },
+    );
 };
 
 const cleanCompletionDatesMatch = (match?: string): string | undefined => {
