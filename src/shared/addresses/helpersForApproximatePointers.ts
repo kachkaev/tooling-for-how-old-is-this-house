@@ -1,4 +1,4 @@
-import { autoExtendAliases } from "./helpersForSpelling";
+import { generateWordConfigLookup } from "./helpersForWords";
 import {
   AddressNodeWithApproximatePointer,
   ApproximatePointerConfig,
@@ -44,24 +44,9 @@ const approximatePointerConfigs: ApproximatePointerConfig[] = [
   { normalizedValue: "югозапад", aliases: ['юго-запад'], prepositionBefore: "на", prepositionAfter: 'от' },
 ];
 
-export const approximatePointerConfigLookup: Record<
-  string,
-  ApproximatePointerConfig
-> = {};
-
-const addToLookup = (alias: string, config: ApproximatePointerConfig) => {
-  if (approximatePointerConfigLookup[alias]) {
-    throw new Error(
-      `Duplicate entry in approximatePointerConfigLookup for ${alias}`,
-    );
-  }
-  approximatePointerConfigLookup[alias] = config;
-};
-
-approximatePointerConfigs.forEach((approximatePointerConfig) => {
-  autoExtendAliases(approximatePointerConfig).forEach((alias) => {
-    addToLookup(alias, approximatePointerConfig);
-  });
+export const approximatePointerConfigLookup = generateWordConfigLookup({
+  wordConfigs: approximatePointerConfigs,
+  wordConfigsTitle: "approximatePointerConfigs",
 });
 
 export const getApproximatePointerConfig = (

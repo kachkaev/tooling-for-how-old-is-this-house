@@ -10,21 +10,26 @@ const debuggingEnabled = cleanEnv({
   }),
 }).DEBUG_NORMALIZED_ADDRESS_AUTOENCODING;
 
-export const debugNormalizedAddressAutoencodingIfEnabled = ({
-  normalizedAddress,
+export const debugAddressNormalizationIfEnabled = ({
+  address,
   addressNormalizationConfig,
   logger,
+  normalizedAddress,
 }: {
-  normalizedAddress?: string;
+  address?: string;
   addressNormalizationConfig: AddressNormalizationConfig;
   logger?: Console;
+  normalizedAddress?: string;
 }) => {
-  if (!debuggingEnabled || !normalizedAddress || !logger) {
+  if (!debuggingEnabled || !address || !logger) {
     return;
   }
 
+  const actualNormalizedAddress =
+    normalizedAddress ?? normalizeAddress(address, addressNormalizationConfig);
+
   const renormalizedAddress = normalizeAddress(
-    normalizedAddress,
+    actualNormalizedAddress,
     addressNormalizationConfig,
   );
 
@@ -32,7 +37,7 @@ export const debugNormalizedAddressAutoencodingIfEnabled = ({
     logger.log(
       `\n${chalk.yellow(
         "Normalized address has changed after normalization. Please report a bug.",
-      )}\n   ┌ ${normalizedAddress}\n   └ ${renormalizedAddress}`,
+      )}\n   ┌ ${address}\n   ├ ${normalizedAddress}\n   └ ${renormalizedAddress}`,
     );
   }
 };

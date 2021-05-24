@@ -4,7 +4,7 @@ import { mapCompletionYearToColor } from "../../../shared/completionDates";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../../../shared/output";
+} from "../../../shared/outputMixing";
 import { GeoMapLayer } from "./GeoMapLayer";
 import { FitExtent } from "./types";
 

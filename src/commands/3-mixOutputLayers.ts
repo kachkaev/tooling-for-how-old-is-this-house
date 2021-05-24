@@ -19,19 +19,22 @@ import {
 import { writeFormattedJson } from "../shared/helpersForJson";
 import { getSourcesDirPath } from "../shared/helpersForPaths";
 import {
-  getMixedOutputLayersFileName,
   getOutputLayerFileName,
-  MixedOutputLayersFeature,
   OutputLayer,
   OutputLayerFeatureWithGeometry,
   OutputLayerProperties,
-  PropertyLookupVariant,
-} from "../shared/output";
+} from "../shared/outputLayers";
+import {
+  getMixedOutputLayersFileName,
+  MixedOutputLayersFeature,
+  parseDataToOmit,
+  PropertyVariantLookup,
+} from "../shared/outputMixing";
 import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
 import { processTiles } from "../shared/tiles";
 
-const bufferSizeInMeters = 5;
+const bufferSizeInMeters = 7;
 const tileZoom = 15;
 
 type BaseLayerFeature = turf.Feature<
@@ -168,6 +171,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
   const territoryExtent = await getTerritoryExtent();
   await processTiles({
     territoryExtent,
+    preserveOutput: false,
     initialZoom: tileZoom,
     maxAllowedZoom: tileZoom,
     logger,
@@ -220,7 +224,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
       for (const filteredBaseLayer of filteredBaseLayers) {
         for (const baseLayerFeature of filteredBaseLayer.features) {
-          const propertiesVariants: PropertyLookupVariant[] = [
+          const propertiesVariants: PropertyVariantLookup[] = [
             {
               ...baseLayerFeature.properties,
               source: filteredBaseLayer.source,
@@ -257,9 +261,43 @@ export const mixOutputLayers: Command = async ({ logger }) => {
             }
           }
 
+          const geometrySource = filteredBaseLayer.source;
+          const geometryFeatureId = baseLayerFeature.properties.id;
+
+          const geometryNeedsToBeIgnored = propertiesVariants.some(
+            (propertyVariant) => {
+              if (!propertyVariant.dataToOmit) {
+                return false;
+              }
+
+              const dataToOmitSelectors = parseDataToOmit(
+                propertyVariant.dataToOmit,
+                logger,
+              );
+
+              return dataToOmitSelectors.some((dataToOmitSelector) => {
+                if (
+                  dataToOmitSelector.source !== geometrySource ||
+                  dataToOmitSelector.property
+                ) {
+                  return false;
+                }
+
+                return (
+                  !dataToOmitSelector.id ||
+                  dataToOmitSelector.id === geometryFeatureId
+                );
+              });
+            },
+          );
+
+          if (geometryNeedsToBeIgnored) {
+            continue;
+          }
+
           mixedFeatures.push(
             turf.feature(baseLayerFeature.geometry, {
-              geometrySource: filteredBaseLayer.source,
+              geometrySource,
               variants: propertiesVariants,
             }),
           );

@@ -1,4 +1,4 @@
-import { autoExtendAliases } from "./helpersForSpelling";
+import { generateWordConfigLookup } from "./helpersForWords";
 import { AddressNodeWithDesignation, DesignationConfig } from "./types";
 
 // Related info: https://wiki.openstreetmap.org/wiki/RU:Россия/Соглашение_об_именовании_дорог
@@ -28,20 +28,20 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв", "б-р"] },
   { designation: "street", normalizedValue: "городок", gender: "m", aliases: [] },
   { designation: "street", normalizedValue: "дорога", gender: "f", aliases: ["дор", "автодорога", "а/д"], canBePartOfName: true }, 
-  { designation: "street", normalizedValue: "кордон", gender: "m" },
+  { designation: "street", normalizedValue: "кордон", gender: "m", canBePartOfName: true },
   { designation: "street", normalizedValue: "набережная", gender: "f", aliases: ["наб"], canBePartOfName: true },
-  { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [] },
+  { designation: "street", normalizedValue: "овраг", gender: "m", aliases: [], canBePartOfName: true  },
   { designation: "street", normalizedValue: "переулок", gender: "m", aliases: ["пер"] },
-  { designation: "street", normalizedValue: "порядок", gender: "m", canBePartOfName: true },
   { designation: "street", normalizedValue: "площадь", gender: "f", aliases: ["пл"] },
+  { designation: "street", normalizedValue: "порядок", gender: "m", canBePartOfName: true },
   { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр", "пр-д"] },
   { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-т", "пр-кт", "просп"] },
   { designation: "street", normalizedValue: "разъезд", gender: "m" },
   { designation: "street", normalizedValue: "снт", gender: "n" }, // садовое некоммерческое товарищество
   { designation: "street", normalizedValue: "совхоз", gender: "m", aliases: ["свх", "совх", "с/х"] },
-  { designation: "street", normalizedValue: "ст", gender: "n", aliases: ["с/т", "с/о", "сдт"] }, // садовое товарищество
+  { designation: "street", normalizedValue: "ст", gender: "n", aliases: ["с/т", "с/о", "сдт", 'ал', 'аал'], canBeSkippedIfAloneInSection: true }, // садовое товарищество
   { designation: "street", normalizedValue: "станция", gender: "f" },
-  { designation: "street", normalizedValue: "территория", gender: "f", aliases: ["тер"] },
+  { designation: "street", normalizedValue: "территория", gender: "f", aliases: ["тер"], canBeSkippedIfAloneInSection: true },
   { designation: "street", normalizedValue: "тупик", gender: "m", aliases: ["туп"] },
   { designation: "street", normalizedValue: "улица", gender: "f", aliases: ["ул"] },
   { designation: "street", normalizedValue: "шоссе", gender: "n", aliases: ["ш"] },
@@ -54,23 +54,16 @@ const designationConfigs: DesignationConfig[]  = [
   { designation: "housePart", normalizedValue: "гараж", gender: "m", aliases: ["бокс", "гар"] },
   { designation: "housePart", normalizedValue: "квартира", gender: "m", aliases: ["кв"] },
   { designation: "housePart", normalizedValue: "корпус", gender: "m", aliases: ["к", "корп"] },
+  { designation: "housePart", normalizedValue: "литер", gender: "f", aliases: ["литера", "лит"] },
+  { designation: "housePart", normalizedValue: "место", gender: "n" },
+  { designation: "housePart", normalizedValue: "погреб", gender: "m" },
   { designation: "housePart", normalizedValue: "сарай", gender: "m", aliases: ["сар"] },
   { designation: "housePart", normalizedValue: "строение", gender: "m", aliases: ["стр", "строен"] }, // has special cases in code for ‘стр’ as construction and for ‘строение’ as house number
 ];
 
-export const designationConfigLookup: Record<string, DesignationConfig> = {};
-
-const addToLookup = (alias: string, config: DesignationConfig) => {
-  if (designationConfigLookup[alias]) {
-    throw new Error(`Duplicate entry in designationConfigLookup for ${alias}`);
-  }
-  designationConfigLookup[alias] = config;
-};
-
-designationConfigs.forEach((designationConfig) => {
-  autoExtendAliases(designationConfig).forEach((alias) => {
-    addToLookup(alias, designationConfig);
-  });
+export const designationConfigLookup = generateWordConfigLookup({
+  wordConfigs: designationConfigs,
+  wordConfigsTitle: "designationConfigs",
 });
 
 export const getDesignationConfig = (

@@ -3,6 +3,8 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
 
+import { eraseLastLineInOutput } from "./helpersForCommands";
+
 export type Tile = [x: number, y: number, zoom: number];
 
 export const stringifyTile = (tile: Tile): string =>
@@ -32,6 +34,7 @@ export type ProcessTile = (
 
 export const processTiles = async ({
   territoryExtent,
+  preserveOutput = true,
   initialZoom,
   maxAllowedZoom,
   processTile,
@@ -42,6 +45,7 @@ export const processTiles = async ({
   maxAllowedZoom: number;
   processTile: ProcessTile;
   logger: Console;
+  preserveOutput?: boolean;
 }) => {
   const territoryBbox = turf.bbox(territoryExtent);
   const bottomLeftTile = tilebelt.pointToTile(
@@ -65,12 +69,16 @@ export const processTiles = async ({
   let tiles = initialTiles;
   let nextZoomTiles: Tile[];
   for (let zoom = initialZoom; zoom <= maxAllowedZoom; zoom += 1) {
-    logger.log(chalk.green(`Zoom level: ${zoom}`));
+    const titleMessage = chalk.green(
+      `Processing tiles at zoom level ${zoom}...`,
+    );
+    logger.log(titleMessage);
     nextZoomTiles = [];
     const orderedTiles = _.orderBy(tiles, [
       (tile) => tile[1], // y
       (tile) => tile[0], // x
     ]);
+    let firstTileHasBeenProcessed = false;
     for (const tile of orderedTiles) {
       if (
         !turf.intersect(
@@ -85,6 +93,10 @@ export const processTiles = async ({
       if (tileStatus === "needsSplitting") {
         nextZoomTiles.push(...(tilebelt.getChildren(tile) as Tile[]));
       }
+      if (!preserveOutput && firstTileHasBeenProcessed) {
+        eraseLastLineInOutput(logger);
+      }
+      firstTileHasBeenProcessed = true;
       logger.log(
         (cacheStatus === "used" ? chalk.gray : chalk.magenta)(
           `  [${tile.join(", ")}]:${
@@ -92,6 +104,15 @@ export const processTiles = async ({
           } - ${_.lowerCase(tileStatus)}`,
         ),
       );
+    }
+    if (!preserveOutput) {
+      if (firstTileHasBeenProcessed) {
+        eraseLastLineInOutput(logger);
+      }
+      eraseLastLineInOutput(logger);
+      logger.log(`${titleMessage} Done.`);
+    } else {
+      logger.log(`Done with zoom level ${zoom}.`);
     }
 
     tiles = nextZoomTiles;

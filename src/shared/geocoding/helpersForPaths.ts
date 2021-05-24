@@ -71,13 +71,14 @@ export const deriveNormalizedAddressSliceId = (
       if (
         node.nodeType === "word" &&
         node.wordType === "unclassified" &&
-        node.value[0] !== undefined
+        node.value[0] !== undefined &&
+        node.value[1] !== undefined
       ) {
         firstLetters.push(node.value[0]);
       }
     });
 
-    slices.push(firstLetters.length ? firstLetters.join("-") : "-");
+    slices.push(firstLetters.length ? firstLetters.slice(0, 3).join("-") : "-");
   }
 
   return slices

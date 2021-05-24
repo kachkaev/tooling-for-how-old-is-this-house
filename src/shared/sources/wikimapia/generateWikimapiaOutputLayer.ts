@@ -7,7 +7,7 @@ import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-} from "../../output";
+} from "../../outputLayers";
 import { processFiles } from "../../processFiles";
 import { combineWikimapiaTiles } from "./combineWikimapiaTiles";
 import {
@@ -21,10 +21,6 @@ const maxAreaInMeters = 50000;
 const maxPerimeterInMeters = 2000;
 const maxPerimeterToAreaSqrtRatio = 20;
 
-/**
- * Wikimapia data is only useful for adding photos to buildings in other layers.
- * Thus, only objects with photos are included in the result.
- */
 export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
   logger,
 }) => {
@@ -57,12 +53,6 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
       continue;
     }
 
-    const photos = objectInfoFile.data.photos;
-
-    if (!photos?.length) {
-      continue;
-    }
-
     const areaInMeters = turf.area(objectFeature);
     if (areaInMeters > maxAreaInMeters || areaInMeters < minAreaInMeters) {
       continue;
@@ -80,15 +70,20 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
       continue;
     }
 
-    const mostRecentPhotoInfo = photos[photos.length - 1]!;
+    const photos = objectInfoFile.data.photos;
+    const mostRecentPhotoInfo = photos ? photos[photos.length - 1] : undefined;
 
     // Combined properties
     const outputLayerProperties: OutputLayerProperties = {
       id,
-      photoUrl: mostRecentPhotoInfo.url,
-      photoAuthorName: mostRecentPhotoInfo.userName,
-      photoAuthorUrl: `https://wikimapia.org/user/${mostRecentPhotoInfo.userId}`,
+      photoUrl: mostRecentPhotoInfo?.url,
+      photoAuthorName: mostRecentPhotoInfo?.userName,
+      photoAuthorUrl: mostRecentPhotoInfo
+        ? `https://wikimapia.org/user/${mostRecentPhotoInfo.userId}`
+        : undefined,
       knownAt: objectInfoFile.fetchedAt,
+      completionDates: objectInfoFile.data.completionDates,
+      name: objectInfoFile.data.name,
     };
 
     outputFeatures.push(

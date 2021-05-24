@@ -1,3 +1,15 @@
+export const isValidObjectCn = (cn?: unknown): cn is string => {
+  if (typeof cn !== "string") {
+    return false;
+  }
+
+  if (!cn.match(/^\d{2}:\d{2}:\d{7}:\d{1,5}$/)) {
+    return false;
+  }
+
+  return true;
+};
+
 /**
  * Returns a chunk of a cadastral number
  *

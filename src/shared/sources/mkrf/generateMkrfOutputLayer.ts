@@ -8,7 +8,7 @@ import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-} from "../../output";
+} from "../../outputLayers";
 import { processFiles } from "../../processFiles";
 import { getTerritoryExtent } from "../../territory";
 import { getMkrfObjectDirPath } from "./helpersForPaths";

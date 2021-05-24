@@ -12,13 +12,17 @@ import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-} from "../../output";
+} from "../../outputLayers";
 import { processFiles } from "../../processFiles";
 import {
   getAddressNormalizationConfig,
   getTerritoryExtent,
 } from "../../territory";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
+import {
+  checkIfFirResponseContainsExistingBuilding,
+  extractCompletionDatesFromFirResponse,
+} from "./helpersForApiResponses";
 import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
@@ -66,12 +70,11 @@ const extractPropertiesFromFirResponse = (
     return;
   }
 
-  if (firResponse.parcelData.oksType !== "building") {
+  if (!checkIfFirResponseContainsExistingBuilding(firResponse)) {
     return "notBuilding";
   }
 
-  const completionDates =
-    firResponse.parcelData.oksYearBuilt ?? firResponse.parcelData.oksYearUsed;
+  const completionDates = extractCompletionDatesFromFirResponse(firResponse);
 
   return {
     id: cn,
@@ -145,19 +148,25 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     processFile: async (filePath) => {
       const infoPageData: InfoPageData = await fs.readJson(filePath);
       for (const infoPageEntry of infoPageData) {
-        const outputLayerProperties =
+        const propertiesVariants = [
           extractPropertiesFromFirResponse(
             infoPageEntry,
             addressNormalizationConfig,
-          ) ?? extractPropertiesFromPkkResponse(infoPageEntry);
+          ),
+          extractPropertiesFromPkkResponse(infoPageEntry),
+        ]
+          .filter((variant) => typeof variant === "object")
+          .map((variant) => deepClean(variant))
+          .reverse();
 
-        if (!outputLayerProperties) {
+        if (!propertiesVariants.length) {
           continue;
         }
 
-        if (outputLayerProperties === "notBuilding") {
-          continue;
-        }
+        const outputLayerProperties: OutputLayerProperties = Object.assign(
+          {},
+          ...propertiesVariants,
+        );
 
         const cn = infoPageEntry.cn;
         let geometry: turf.Point | undefined =

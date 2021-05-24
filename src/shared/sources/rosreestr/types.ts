@@ -92,6 +92,7 @@ export type ObjectExtentFeature = turf.Feature<
 export type CreationReasonForObjectInInfoPage =
   | "ccoInTile"
   | "gap"
+  | "handpicked"
   | "lotInTile";
 
 export type EdgeCaseResponseInInfoPage = "flat" | "lot" | "notOks" | "void";
@@ -115,8 +116,12 @@ export interface SuccessfulFirObjectResponse {
       addressNote?: string;
       mergedAddress?: string;
     };
+    objectName?: string;
   };
   parcelData: {
+    dateCost?: string;
+    dateCreate?: string;
+    dateRemove?: string;
     oksFlag: 0 | 1;
     oksType?: OksType;
     oksYearBuilt?: string; // ‘завершение строительства’

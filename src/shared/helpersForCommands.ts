@@ -13,7 +13,7 @@ import {
   getOutputLayerFileName,
   OutputLayer,
   reportGeocodesInOutputLayer,
-} from "./output";
+} from "./outputLayers";
 import { getAddressNormalizationConfig } from "./territory";
 
 export const generateProgress = (index: number, total: number) => {
@@ -108,4 +108,11 @@ export const generateExtractOutputLayer = ({
 
     logger.log(` Result saved to ${chalk.magenta(outputLayerFilePath)}`);
   };
+};
+
+export const eraseLastLineInOutput = (logger: Console) => {
+  if (logger) {
+    process.stdout.moveCursor?.(0, -1);
+    process.stdout.clearScreenDown?.();
+  }
 };
