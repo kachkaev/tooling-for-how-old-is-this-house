@@ -83,6 +83,7 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
         : undefined,
       knownAt: objectInfoFile.fetchedAt,
       completionDates: objectInfoFile.data.completionDates,
+      name: objectInfoFile.data.name,
     };
 
     outputFeatures.push(
