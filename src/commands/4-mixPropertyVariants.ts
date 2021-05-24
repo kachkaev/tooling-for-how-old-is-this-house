@@ -8,8 +8,8 @@ import { deepClean } from "../shared/deepClean";
 import { writeFormattedJson } from "../shared/helpersForJson";
 import {
   aggregatePropertyVariantLookups,
-  getMixedOutputLayersFileName,
-  getMixedPropertyVariantsFileName,
+  getMixedOutputLayersFilePath,
+  getMixedPropertyVariantsFilePath,
   MixedOutputLayersFeatureCollection,
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureProperties,
@@ -19,7 +19,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing property variants"));
 
   process.stdout.write(chalk.green("Loading mixed output layers..."));
-  const inputFileName = getMixedOutputLayersFileName();
+  const inputFileName = getMixedOutputLayersFilePath();
   const inputFeatureCollection = (await fs.readJson(
     inputFileName,
   )) as MixedOutputLayersFeatureCollection;
@@ -46,7 +46,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
   process.stdout.write(` Done.\n`);
   process.stdout.write(chalk.green(`Saving...`));
 
-  const resultFileName = getMixedPropertyVariantsFileName();
+  const resultFileName = getMixedPropertyVariantsFilePath();
   const outputFeatureCollection = turf.featureCollection(outputFeatures);
   await writeFormattedJson(resultFileName, outputFeatureCollection);
 

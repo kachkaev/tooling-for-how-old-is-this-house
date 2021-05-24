@@ -25,7 +25,7 @@ import {
   OutputLayerProperties,
 } from "../shared/outputLayers";
 import {
-  getMixedOutputLayersFileName,
+  getMixedOutputLayersFilePath,
   MixedOutputLayersFeature,
   parseDataToOmit,
   PropertyVariantLookup,
@@ -316,7 +316,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
   process.stdout.write(chalk.green(`Saving...`));
 
-  const resultFileName = getMixedOutputLayersFileName();
+  const resultFileName = getMixedOutputLayersFilePath();
   const mixedFeatureCollection = turf.featureCollection(mixedFeatures);
   await writeFormattedJson(resultFileName, mixedFeatureCollection);
 

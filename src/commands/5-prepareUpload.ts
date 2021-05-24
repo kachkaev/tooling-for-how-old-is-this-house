@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
@@ -9,12 +8,13 @@ import { deepClean } from "../shared/deepClean";
 import { writeFormattedJson } from "../shared/helpersForJson";
 import { OutputGeometry } from "../shared/outputLayers";
 import {
-  getMixedPropertyVariantsFileName,
-  getUploadFileName,
+  getMixedPropertyVariantsFilePath,
+  getUploadFilePath,
   MixedPropertyVariantsFeatureCollection,
 } from "../shared/outputMixing";
 
-type UploadFeatureProperties = {
+interface UploadFeatureProperties {
+  /* eslint-disable @typescript-eslint/naming-convention */
   fid: number;
   r_adress?: string;
   r_architec?: string;
@@ -26,15 +26,16 @@ type UploadFeatureProperties = {
   r_wikipedi?: string;
   r_year_int?: number;
   r_years_st?: string;
-};
+  /* eslint-enable @typescript-eslint/naming-convention */
+}
 
 type UploadFeature = turf.Feature<OutputGeometry, UploadFeatureProperties>;
 
 export const prepareUpload: Command = async ({ logger }) => {
-  logger.log(chalk.bold("Prepare upload file"));
+  logger.log(chalk.bold("Preparing upload file"));
 
   process.stdout.write(chalk.green("Loading mixed property variants..."));
-  const inputFileName = getMixedPropertyVariantsFileName();
+  const inputFileName = getMixedPropertyVariantsFilePath();
   const inputFeatureCollection = (await fs.readJson(
     inputFileName,
   )) as MixedPropertyVariantsFeatureCollection;
@@ -45,11 +46,13 @@ export const prepareUpload: Command = async ({ logger }) => {
   const outputFeatures: UploadFeature[] = [];
   for (const inputFeature of inputFeatureCollection.features) {
     const outputFeatureProperties: UploadFeatureProperties = {
+      /* eslint-disable @typescript-eslint/naming-convention */
       fid: outputFeatures.length + 1,
       r_adress: inputFeature.properties.address,
       r_year_int: inputFeature.properties.derivedCompletionYear,
       r_years_st: inputFeature.properties.completionDates,
       r_name: inputFeature.properties.name,
+      /* eslint-enable @typescript-eslint/naming-convention */
     };
     outputFeatures.push(
       turf.feature(
@@ -62,11 +65,11 @@ export const prepareUpload: Command = async ({ logger }) => {
   process.stdout.write(` Done.\n`);
   process.stdout.write(chalk.green(`Saving...`));
 
-  const resultFileName = getUploadFileName();
+  const resultFilePath = getUploadFilePath();
   const outputFeatureCollection = turf.featureCollection(outputFeatures);
-  await writeFormattedJson(resultFileName, outputFeatureCollection);
+  await writeFormattedJson(resultFilePath, outputFeatureCollection);
 
-  logger.log(` Result saved to ${chalk.magenta(resultFileName)}`);
+  logger.log(` Result saved to ${chalk.magenta(resultFilePath)}`);
 };
 
 autoStartCommandIfNeeded(prepareUpload, __filename);

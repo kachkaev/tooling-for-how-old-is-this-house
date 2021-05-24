@@ -477,7 +477,6 @@ Although some of the data sources are country-specific, parts of the repo can st
     Эта команда подгоняет склеенный набор данных под формат сайта [how-old-is-this.house](https://how-old-is-this.house).
 
     ```sh
-    ## 🚧 Эта команда пока что не реализована
     yarn exe src/commands/5-prepareUpload.ts
     ```
 

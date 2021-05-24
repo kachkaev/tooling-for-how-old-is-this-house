@@ -3,7 +3,7 @@ import { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import { getMixedPropertyVariantsFileName } from "../shared/outputMixing";
+import { getMixedPropertyVariantsFilePath } from "../shared/outputMixing";
 import { readFetchedOsmFeatureCollection } from "../shared/sources/osm/readFetchedOsmFeatureCollection";
 import { getTerritoryExtent } from "../shared/territory";
 import { PosterProps } from "../ui/Poster";
@@ -28,7 +28,7 @@ const removeUndefinedForNextJsSerializing = <T,>(props: T): T =>
 export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
   return {
     props: removeUndefinedForNextJsSerializing({
-      buildingCollection: await fs.readJson(getMixedPropertyVariantsFileName()),
+      buildingCollection: await fs.readJson(getMixedPropertyVariantsFilePath()),
       territoryExtent: await getTerritoryExtent(),
 
       railwayCollection: await readFetchedOsmFeatureCollection("railways"),
