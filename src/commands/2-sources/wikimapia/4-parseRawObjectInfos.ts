@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
 
+import { buildCleanedAddressAst } from "../../../shared/addresses";
 import { deepClean } from "../../../shared/deepClean";
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
@@ -19,6 +20,28 @@ import {
   WikimapiaObjectInfoFile,
   WikimapiaObjectPhotoInfo,
 } from "../../../shared/sources/wikimapia";
+
+const fixQuotes = (input: string): string => {
+  return input.replace(
+    /"|''|“|“|”|‘|’/g,
+    (match, charIndex, partiallyProcessedInput) => {
+      const prevChar = partiallyProcessedInput[charIndex - 1];
+      const nextChar = partiallyProcessedInput[charIndex + 1];
+      const prevCharIsLetter = Boolean(prevChar && prevChar.match(/\p{L}/u));
+      const nextCharIsLetter = Boolean(nextChar && nextChar.match(/\p{L}/u));
+
+      if (!prevCharIsLetter && nextCharIsLetter) {
+        return "«";
+      }
+
+      if (prevCharIsLetter && !nextCharIsLetter) {
+        return "»";
+      }
+
+      return match;
+    },
+  );
+};
 
 const cleanCompletionDatesMatch = (match?: string): string | undefined => {
   const result = (match ?? "")
@@ -43,6 +66,36 @@ const extractCompletionDatesFromTags = (
   )?.[1];
 
   return cleanCompletionDatesMatch(completionDatesMatch);
+};
+
+const extractName = (rawInfo: string) => {
+  const result = (
+    rawInfo.match(
+      /<meta property="og:title" {2}content="(.*) - Wikimapia"/,
+    )?.[1] ?? ""
+  ).trim();
+
+  if (!result) {
+    return undefined;
+  }
+
+  // Ignore trivial names referring to building address (e.g. “ул. Такая-то, 10”)
+  const cleanedAddressAst = buildCleanedAddressAst(result);
+  const indexOfDesignation = cleanedAddressAst.children.findIndex(
+    (node) => node.nodeType === "word" && node.wordType === "designation",
+  );
+  const indexOfCardinalNumber = cleanedAddressAst.children.findIndex(
+    (node) => node.nodeType === "word" && node.wordType === "cardinalNumber",
+  );
+  if (
+    indexOfDesignation >= 0 &&
+    indexOfCardinalNumber >= 0 &&
+    indexOfCardinalNumber > indexOfDesignation
+  ) {
+    return undefined;
+  }
+
+  return fixQuotes(result);
 };
 
 const extractCompletionDatesFromDescription = (
@@ -141,9 +194,7 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
         extractCompletionDatesFromDescription(rawInfo);
 
       // Extract title
-      info.name = rawInfo.match(
-        /<meta property="og:title" {2}content="(.*) - Wikimapia"/,
-      )?.[1];
+      info.name = extractName(rawInfo);
 
       const objectInfoFileJson: WikimapiaObjectInfoFile = {
         fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),
