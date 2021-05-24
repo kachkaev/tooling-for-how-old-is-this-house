@@ -35,7 +35,6 @@ export type MixedOutputLayersFeatureCollection = turf.FeatureCollection<
 
 export interface PropertyVariantLookupAggregate {
   id?: string;
-  name?: string;
 
   address?: string;
   addressSource?: string;
@@ -48,6 +47,9 @@ export interface PropertyVariantLookupAggregate {
 
   floorCount?: number;
   floorCountSource?: string;
+
+  name?: string;
+  nameSource?: string;
 
   photoAuthorName?: string;
   photoAuthorUrl?: string;

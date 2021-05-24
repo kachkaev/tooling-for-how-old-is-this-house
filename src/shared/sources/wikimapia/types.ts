@@ -45,9 +45,10 @@ export interface WikimapiaObjectPhotoInfo {
 
 export interface WikimapiaObjectInfo {
   wikimapiaId: number;
-  photos?: WikimapiaObjectPhotoInfo[];
+
   completionDates?: string;
   name?: string;
+  photos?: WikimapiaObjectPhotoInfo[];
 }
 
 export interface WikimapiaObjectInfoFile {

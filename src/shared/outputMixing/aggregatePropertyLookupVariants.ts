@@ -51,6 +51,7 @@ export const aggregatePropertyVariantLookups = (
   for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
     if (propertyVariantLookup.name) {
       result.name = propertyVariantLookup.name;
+      result.nameSource = propertyVariantLookup.source;
       break;
     }
   }
