@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import * as turf from "@turf/turf";
 
 import { GeocodeAddressResult } from "../geocoding";
