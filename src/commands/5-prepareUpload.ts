@@ -14,18 +14,20 @@ import {
 } from "../shared/outputMixing";
 
 interface UploadFeatureProperties {
-  /* eslint-disable @typescript-eslint/naming-convention */
   fid: number;
+
+  /* eslint-disable @typescript-eslint/naming-convention */
+  /** Using ‘adress’ instead of ‘address’ for consistency with first uploaded cities */
   r_adress?: string;
-  r_architec?: string;
-  r_copyrigh?: string;
+  r_architect?: string;
+  r_copyright?: string;
   r_name?: string;
-  r_photo_ur?: string;
+  r_photo_url?: string;
   r_style?: string;
   r_url?: string;
-  r_wikipedi?: string;
+  r_wikipedia?: string;
   r_year_int?: number;
-  r_years_st?: string;
+  r_years_str?: string;
   /* eslint-enable @typescript-eslint/naming-convention */
 }
 
@@ -46,12 +48,16 @@ export const prepareUpload: Command = async ({ logger }) => {
   const outputFeatures: UploadFeature[] = [];
   for (const inputFeature of inputFeatureCollection.features) {
     const outputFeatureProperties: UploadFeatureProperties = {
-      /* eslint-disable @typescript-eslint/naming-convention */
       fid: outputFeatures.length + 1,
+
+      /* eslint-disable @typescript-eslint/naming-convention */
       r_adress: inputFeature.properties.address,
-      r_year_int: inputFeature.properties.derivedCompletionYear,
-      r_years_st: inputFeature.properties.completionDates,
       r_name: inputFeature.properties.name,
+      r_photo_url: inputFeature.properties.photoUrl,
+      r_url: inputFeature.properties.url,
+      r_wikipedia: inputFeature.properties.wikipediaUrl,
+      r_year_int: inputFeature.properties.derivedCompletionYear,
+      r_years_str: inputFeature.properties.completionDates,
       /* eslint-enable @typescript-eslint/naming-convention */
     };
     outputFeatures.push(
