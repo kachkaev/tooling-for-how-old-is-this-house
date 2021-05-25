@@ -28,8 +28,8 @@ Although some of the data sources are country-specific, parts of the repo can st
 | **[МинЖКХ](https://mingkh.ru)**           | 3️⃣ | ⏳ 📍 | 2️⃣ |
 | **[Минкульт](https://opendata.mkrf.ru)**  | 1️⃣ | ⏳ 📍 | 1️⃣ | 1️⃣ |   | 1️⃣ |
 | **[ОСМ](https://www.openstreetmap.org)**  | 2️⃣ | 1️⃣ 🟥 | 4️⃣ | 2️⃣ | 1️⃣ |
-| **[Росреестр](https://rosreestr.gov.ru)** | 4️⃣ | ⏳ 📍 | 3️⃣ |
-| **[Викимапия](https://wikimapia.org)**    | 🗑 | ⏳ 🟥 | 5️⃣ | 🗑 | 🗑 | 2️⃣ |
+| **[Росреестр](https://rosreestr.gov.ru)** | 4️⃣ | ⏳ 📍 | 3️⃣ | 🗑
+| **[Викимапия](https://wikimapia.org)**    | 🗑 | ⏳ 🟥 | 5️⃣ | 3️⃣ | 🗑 | 2️⃣ |
 
 <!-- prettier-ignore-end -->
 

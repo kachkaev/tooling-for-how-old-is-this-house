@@ -14,6 +14,25 @@ import { getTerritoryExtent } from "../../territory";
 import { getMkrfObjectDirPath } from "./helpersForPaths";
 import { MkrfObjectFile } from "./types";
 
+const extractName = (nativeName: string | undefined): string | undefined => {
+  const trimmedName = (nativeName ?? "").trim();
+  if (!trimmedName.length) {
+    return undefined;
+  }
+
+  const lowerCaseName = trimmedName.toLowerCase();
+
+  if (lowerCaseName === "дом") {
+    return undefined;
+  }
+
+  if (lowerCaseName.includes("дом") && lowerCaseName.includes("жилой")) {
+    return undefined;
+  }
+
+  return trimmedName;
+};
+
 const acceptedTypologies = ["памятник градостроительства и архитектуры"];
 const isTypologyExpected = (typologyValue: string) =>
   acceptedTypologies.includes(typologyValue);
@@ -139,14 +158,17 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
 
       const completionDates = objectFile?.data.general.createDate;
 
+      const name = extractName(objectFile?.nativeName);
+
       // Combined properties
       const outputLayerProperties: OutputLayerProperties = {
         id: objectFile.nativeId,
-        name: objectFile?.data?.nativeName,
+
+        address,
         completionDates,
         externalGeometrySource,
         knownAt: serializeTime(objectFile.modified),
-        address,
+        name,
         photoUrl: objectFile.data?.general?.photo?.url,
       };
 

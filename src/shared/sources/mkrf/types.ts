@@ -19,8 +19,8 @@ export interface MkrfObjectData {
       typologies?: Array<{ type: string; value: string }>;
       isActual: boolean;
     };
-    nativeName: string;
   };
+  nativeName: string;
 }
 
 export interface MkrfObjectFile extends MkrfObjectData {
