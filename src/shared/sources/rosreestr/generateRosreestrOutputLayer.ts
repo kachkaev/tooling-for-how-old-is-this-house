@@ -28,6 +28,31 @@ import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject, ObjectCenterFeature } from "./types";
 import { validateCyrillic } from "./validateCyrillic";
 
+export const calculateFloorCounts = (
+  rawFloorCountTotal: string | undefined,
+  rawFloorCountBelowGround: string | undefined,
+): {
+  floorCountAboveGround?: number | undefined;
+  floorCountBelowGround?: number | undefined;
+} => {
+  const floorCountsTotal = rawFloorCountTotal?.split("-") ?? []; // Needed to support "1-2"
+  const floorCountTotal = parseInt(
+    floorCountsTotal[floorCountsTotal.length - 1] ?? "",
+  );
+  const floorCountBelowGround = parseInt(
+    (rawFloorCountBelowGround === "-" ? "0" : rawFloorCountBelowGround) ?? "",
+  );
+
+  if (!isFinite(floorCountTotal)) {
+    return {};
+  }
+
+  return {
+    floorCountAboveGround: floorCountTotal - (floorCountBelowGround || 0),
+    floorCountBelowGround,
+  };
+};
+
 const pickMostPromisingAddress = (
   rawAddresses: Array<string | undefined>,
   addressNormalizationConfig: AddressNormalizationConfig,
@@ -87,6 +112,10 @@ const extractPropertiesFromFirResponse = (
       ],
       addressNormalizationConfig,
     ),
+    ...calculateFloorCounts(
+      firResponse.parcelData.oksFloors,
+      firResponse.parcelData.oksUFloors,
+    ),
   };
 };
 
@@ -113,6 +142,10 @@ const extractPropertiesFromPkkResponse = (
     knownAt: pkkFetchedAt,
     address: pkkResponse.attrs.address,
     completionDates,
+    ...calculateFloorCounts(
+      pkkResponse.attrs.floors,
+      pkkResponse.attrs.underground_floors,
+    ),
   };
 };
 

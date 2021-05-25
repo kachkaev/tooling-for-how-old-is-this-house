@@ -50,7 +50,8 @@ export interface PropertyVariantLookupAggregate {
   completionDates?: string;
   completionDatesSource?: string;
 
-  floorCount?: number;
+  floorCountAboveGround?: number;
+  floorCountBelowGround?: number;
   floorCountSource?: string;
 
   name?: string;

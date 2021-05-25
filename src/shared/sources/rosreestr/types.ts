@@ -123,7 +123,10 @@ export interface SuccessfulFirObjectResponse {
     dateCreate?: string;
     dateRemove?: string;
     oksFlag: 0 | 1;
+    oksFloors?: string;
     oksType?: OksType;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    oksUFloors?: string;
     oksYearBuilt?: string; // ‘завершение строительства’
     oksYearUsed?: string; // ‘ввод в эксплуатацию’
   };

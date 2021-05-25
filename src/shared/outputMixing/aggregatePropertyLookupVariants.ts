@@ -21,6 +21,15 @@ export const aggregatePropertyVariantLookups = (
     (propertyVariantLookup) => propertyVariantLookup.source,
   );
 
+  // Pick address
+  for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
+    if (propertyVariantLookup.address) {
+      result.address = propertyVariantLookup.address;
+      result.addressSource = propertyVariantLookup.source;
+      break;
+    }
+  }
+
   // Pick completion dates
   for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
     if (propertyVariantLookup.completionDates) {
@@ -36,11 +45,14 @@ export const aggregatePropertyVariantLookups = (
     }
   }
 
-  // Pick address
+  // Pick floor count
   for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
-    if (propertyVariantLookup.address) {
-      result.address = propertyVariantLookup.address;
-      result.addressSource = propertyVariantLookup.source;
+    if (propertyVariantLookup.floorCountAboveGround) {
+      result.floorCountAboveGround =
+        propertyVariantLookup.floorCountAboveGround;
+      result.floorCountBelowGround =
+        propertyVariantLookup.floorCountBelowGround;
+      result.floorCountSource = propertyVariantLookup.source;
       break;
     }
   }

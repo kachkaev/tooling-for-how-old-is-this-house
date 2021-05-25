@@ -15,7 +15,8 @@ export interface OutputLayerProperties {
   documentedBuildArea?: number;
   /** This field is present if coordinates are coming from another source via geocoding */
   externalGeometrySource?: string;
-  floorCount?: number;
+  floorCountAboveGround?: number;
+  floorCountBelowGround?: number;
   id: string;
   knownAt: string;
   name?: string;

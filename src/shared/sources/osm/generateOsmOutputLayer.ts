@@ -36,6 +36,22 @@ const buildWikipediaUrl = (
   return `https://${languageSubdomain}.wikipedia.org/wiki/${articleSlug}`;
 };
 
+const deriveFloorCouuntAboveGroundFromBuildingTag = (
+  buildingType: string | undefined,
+): number | undefined => {
+  switch (buildingType) {
+    case "container":
+    case "garage":
+    case "garages":
+    case "kiosk":
+    case "service":
+    case "shed":
+      return 1;
+  }
+
+  return undefined;
+};
+
 type IntersectorFunction = (feature: turf.Feature) => string | undefined;
 const generateGetIntersectedBoundaryName = ({
   boundaryFeatures,
@@ -166,6 +182,16 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
           ? buildingTagValue
           : undefined;
 
+      const floorCountAboveGround =
+        parseInt(building.properties["building:levels"] ?? "") ||
+        deriveFloorCouuntAboveGroundFromBuildingTag(
+          building.properties["building"],
+        ) ||
+        undefined;
+      const floorCountBelowGround =
+        parseInt(building.properties["building:levels:underground"] ?? "") ||
+        undefined;
+
       const url =
         building.properties["contact:website"] ??
         building.properties["website"];
@@ -178,6 +204,8 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         address: generateAddress(building),
         buildingType,
         completionDates: building.properties["start_date"],
+        floorCountAboveGround,
+        floorCountBelowGround,
         id: building.properties.id,
         knownAt: buildingCollection.fetchedAt,
         name: building.properties["name"],
