@@ -21,6 +21,7 @@ interface UploadFeatureProperties {
   r_adress?: string;
   r_architect?: string;
   r_copyright?: string;
+  r_floors?: number;
   r_name?: string;
   r_photo_url?: string;
   r_style?: string;
@@ -52,6 +53,7 @@ export const prepareUpload: Command = async ({ logger }) => {
 
       /* eslint-disable @typescript-eslint/naming-convention */
       r_adress: inputFeature.properties.address,
+      r_floors: inputFeature.properties.floorCountAboveGround,
       r_name: inputFeature.properties.name,
       r_photo_url: inputFeature.properties.photoUrl,
       r_url: inputFeature.properties.url,
