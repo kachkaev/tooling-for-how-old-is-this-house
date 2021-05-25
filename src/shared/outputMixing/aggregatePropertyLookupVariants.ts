@@ -54,6 +54,17 @@ export const aggregatePropertyVariantLookups = (
     }
   }
 
+  // Pick photo
+  for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
+    if (propertyVariantLookup.photoUrl) {
+      result.photoAuthorName = propertyVariantLookup.photoAuthorName;
+      result.photoAuthorUrl = propertyVariantLookup.photoAuthorUrl;
+      result.photoUrl = propertyVariantLookup.photoUrl;
+      result.photoSource = propertyVariantLookup.source;
+      break;
+    }
+  }
+
   // Pick url
   for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
     if (propertyVariantLookup.url) {
