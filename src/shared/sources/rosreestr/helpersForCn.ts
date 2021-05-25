@@ -3,7 +3,7 @@ export const isValidObjectCn = (cn?: unknown): cn is string => {
     return false;
   }
 
-  if (!cn.match(/^\d{2}:\d{2}:\d{7}:\d{1,5}$/)) {
+  if (!cn.match(/^\d{2}:\d{2}:\d{6,7}:\d{1,5}$/)) {
     return false;
   }
 
