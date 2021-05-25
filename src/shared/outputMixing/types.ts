@@ -61,13 +61,16 @@ export interface PropertyVariantLookupAggregate {
   photoSource?: string;
   photoUrl?: string;
 
+  url?: string;
+  urlSource?: string;
+
   wikipediaUrl?: string;
   wikipediaUrlSource?: string;
 
-  /** The value is derived from completionDates and is stored to simplify data visualization */
-  derivedCompletionYear?: number;
   /** The value is derived from address. TODO: replace address normalization with beautification */
   derivedBeautifiedAddress?: string;
+  /** The value is derived from completionDates and is stored to simplify data visualization */
+  derivedCompletionYear?: number;
 }
 
 export interface MixedPropertyVariantsFeatureProperties

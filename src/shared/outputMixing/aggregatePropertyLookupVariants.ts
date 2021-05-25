@@ -54,5 +54,23 @@ export const aggregatePropertyVariantLookups = (
     }
   }
 
+  // Pick url
+  for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
+    if (propertyVariantLookup.url) {
+      result.url = propertyVariantLookup.url;
+      result.urlSource = propertyVariantLookup.source;
+      break;
+    }
+  }
+
+  // Pick wikipedia url
+  for (const propertyVariantLookup of preFilteredPropertyVariantLookups) {
+    if (propertyVariantLookup.wikipediaUrl) {
+      result.wikipediaUrl = propertyVariantLookup.wikipediaUrl;
+      result.wikipediaUrlSource = propertyVariantLookup.source;
+      break;
+    }
+  }
+
   return result;
 };

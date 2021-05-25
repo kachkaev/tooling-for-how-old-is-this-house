@@ -16,6 +16,26 @@ import { getOsmDirPath } from "./helpersForPaths";
 import { readFetchedOsmFeatureCollection } from "./readFetchedOsmFeatureCollection";
 import { OsmFeature } from "./types";
 
+const buildWikipediaUrl = (
+  wikipediaTagValue: string | undefined,
+  defaultLanguageSubdomain = "ru",
+): string | undefined => {
+  if (!wikipediaTagValue) {
+    return undefined;
+  }
+
+  let articleName = wikipediaTagValue;
+  let languageSubdomain = defaultLanguageSubdomain;
+  if (wikipediaTagValue[2] === ":") {
+    articleName = wikipediaTagValue.slice(3);
+    languageSubdomain = wikipediaTagValue.slice(0, 2);
+  }
+
+  const articleSlug = articleName.replace(/ /g, "_");
+
+  return `https://${languageSubdomain}.wikipedia.org/wiki/${articleSlug}`;
+};
+
 type IntersectorFunction = (feature: turf.Feature) => string | undefined;
 const generateGetIntersectedBoundaryName = ({
   boundaryFeatures,
@@ -146,12 +166,23 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
           ? buildingTagValue
           : undefined;
 
+      const url =
+        building.properties["contact:website"] ??
+        building.properties["website"];
+
+      const wikipediaUrl = buildWikipediaUrl(
+        building.properties["wikipedia"] ?? building.properties["wikipedia:ru"],
+      );
+
       const outputLayerProperties: OutputLayerProperties = {
-        id: building.properties.id,
+        address: generateAddress(building),
         buildingType,
         completionDates: building.properties["start_date"],
-        address: generateAddress(building),
+        id: building.properties.id,
         knownAt: buildingCollection.fetchedAt,
+        name: building.properties["name"],
+        url,
+        wikipediaUrl,
       };
 
       return turf.feature(building.geometry, deepClean(outputLayerProperties));

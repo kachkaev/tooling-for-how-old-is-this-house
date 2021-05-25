@@ -7,9 +7,9 @@ export type OutputLayerRole = "base" | "patch";
 export interface OutputLayerProperties {
   address?: string;
   buildingType?: string;
-  /** Special field that is only applicable to layers in "manual" source */
-  dataToOmit?: string;
   completionDates?: string;
+  /** Special field that is only relevant to layers in "manual" source. @see README.md */
+  dataToOmit?: string;
   derivedCompletionYear?: number;
   /** This field contains number of square meters occupied by the building, as per docs (not geometry) */
   documentedBuildArea?: number;
