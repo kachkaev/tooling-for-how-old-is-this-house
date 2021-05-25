@@ -1,6 +1,6 @@
 import { serializeTime } from "./helpersForJson";
 
-describe("serializeTime()", () => {
+describe("serializeTime", () => {
   it("parses RFC2822", () => {
     expect(serializeTime("Fri, 26 Feb 2021 08:20:27 GMT")).toEqual(
       "2021-02-26T08:20:27Z",
