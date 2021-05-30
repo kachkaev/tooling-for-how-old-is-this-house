@@ -8,12 +8,12 @@ export interface OutputLayerProperties {
   address?: string;
   buildingType?: string;
   completionDates?: string;
-  /** Special field that is only relevant to layers in "manual" source. @see README.md */
+  /** Only relevant to layers in "manual" sourc. @see README.md */
   dataToOmit?: string;
   derivedCompletionYear?: number;
-  /** This field contains number of square meters occupied by the building, as per docs (not geometry) */
+  /** Number of square meters occupied by the building, as per docs (not geometry) */
   documentedBuildArea?: number;
-  /** This field is present if coordinates are coming from another source via geocoding */
+  /** Present if coordinates are coming from another source via geocoding */
   externalGeometrySource?: string;
   floorCountAboveGround?: number;
   floorCountBelowGround?: number;

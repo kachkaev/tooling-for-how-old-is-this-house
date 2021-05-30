@@ -22,6 +22,7 @@ import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import {
   checkIfFirResponseContainsExistingBuilding,
   extractCompletionDatesFromFirResponse,
+  extractDocumentedBuildAreaFromFirResponse,
 } from "./helpersForApiResponses";
 import { normalizeCnForSorting } from "./helpersForCn";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
@@ -99,12 +100,11 @@ const extractPropertiesFromFirResponse = (
     return "notBuilding";
   }
 
-  const completionDates = extractCompletionDatesFromFirResponse(firResponse);
-
   return {
     id: cn,
     knownAt: firFetchedAt,
-    completionDates,
+    completionDates: extractCompletionDatesFromFirResponse(firResponse),
+    documentedBuildArea: extractDocumentedBuildAreaFromFirResponse(firResponse),
     address: pickMostPromisingAddress(
       [
         firResponse.objectData.objectAddress?.mergedAddress,
@@ -127,25 +127,28 @@ const extractPropertiesFromPkkResponse = (
     return;
   }
 
-  if (pkkResponse.attrs.oks_type !== "building") {
+  const attrs = pkkResponse.attrs;
+  if (attrs.oks_type !== "building") {
     return "notBuilding";
   }
 
   const completionDates =
-    pkkResponse.attrs.year_built ||
-    (pkkResponse.attrs.year_used
-      ? `${pkkResponse.attrs.year_used}`
-      : undefined);
+    attrs.year_built || (attrs.year_used ? `${attrs.year_used}` : undefined);
+
+  const documentedBuildArea =
+    attrs.area_dev_unit === "055"
+      ? attrs.area_dev
+      : attrs.area_unit === "055" && attrs.floors === "1"
+      ? attrs.area_value
+      : undefined;
 
   return {
     id: cn,
     knownAt: pkkFetchedAt,
-    address: pkkResponse.attrs.address,
+    documentedBuildArea,
+    address: attrs.address,
     completionDates,
-    ...calculateFloorCounts(
-      pkkResponse.attrs.floors,
-      pkkResponse.attrs.underground_floors,
-    ),
+    ...calculateFloorCounts(attrs.floors, attrs.underground_floors),
   };
 };
 
@@ -181,7 +184,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     processFile: async (filePath) => {
       const infoPageData: InfoPageData = await fs.readJson(filePath);
       for (const infoPageEntry of infoPageData) {
-        const propertiesVariants = [
+        const propertyVariants = [
           extractPropertiesFromFirResponse(
             infoPageEntry,
             addressNormalizationConfig,
@@ -192,13 +195,13 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
           .map((variant) => deepClean(variant))
           .reverse();
 
-        if (!propertiesVariants.length) {
+        if (!propertyVariants.length) {
           continue;
         }
 
         const outputLayerProperties: OutputLayerProperties = Object.assign(
           {},
-          ...propertiesVariants,
+          ...propertyVariants,
         );
 
         const cn = infoPageEntry.cn;

@@ -33,12 +33,15 @@ import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
 import { processTiles } from "../shared/tiles";
 
-const bufferSizeInMeters = 7;
+const bufferSizeInMeters = 10;
 const tileZoom = 15;
 
+interface BaseLayerProperties extends OutputLayerProperties {
+  id: string;
+}
 type BaseLayerFeature = turf.Feature<
   turf.Polygon | turf.MultiPolygon,
-  OutputLayerProperties & { id: string }
+  BaseLayerProperties
 > & {
   bbox: turf.BBox;
   bboxCenter: [x: number, y: number];
@@ -51,15 +54,19 @@ interface BaseLayer {
   hash: string;
 }
 
-type MixinLayerFeature = turf.Feature<
+interface PatchLayerFeatureProperties extends BaseLayerProperties {
+  derivedBuildArea?: number;
+}
+
+type PatchLayerFeature = turf.Feature<
   turf.Point,
-  OutputLayerProperties & { id: string }
+  PatchLayerFeatureProperties
 > & {
   bbox?: never;
 };
 
-interface MixinLayer {
-  features: MixinLayerFeature[];
+interface PatchLayer {
+  features: PatchLayerFeature[];
   source: string;
   hash: string;
 }
@@ -83,7 +90,7 @@ const ensureUniqueIdProperty = (
   properties: OutputLayerProperties,
   source: string,
   logger: Console,
-): OutputLayerProperties & { id: string } => {
+): BaseLayerProperties => {
   let id = `${properties.id || generateId()}`;
   while (usedIds.has(buildGlobalFeatureId(source, id))) {
     logger.log(
@@ -103,7 +110,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing output layers"));
 
   const baseLayers: BaseLayer[] = [];
-  const patchLayers: MixinLayer[] = [];
+  const patchLayers: PatchLayer[] = [];
 
   const relativeSourcesDirPath = path.relative(
     getTerritoryDirPath(),
@@ -185,16 +192,22 @@ export const mixOutputLayers: Command = async ({ logger }) => {
           hash: `${knownAt ?? totalFeatureCount}`,
         });
       } else {
-        const features = outputLayer.features
-          .filter((feature) => feature.geometry)
-          .map((feature) => ({
-            geometry: turf.pointOnFeature(feature as turf.Feature).geometry,
-            properties: ensureUniqueIdProperty(
-              feature.properties,
-              source,
-              logger,
-            ),
-          })) as MixinLayerFeature[];
+        const features: PatchLayerFeature[] = [];
+        outputLayer.features.forEach((feature) => {
+          const geometry = feature.geometry;
+          if (!geometry) {
+            return;
+          }
+
+          features.push({
+            type: "Feature",
+            geometry: turf.pointOnFeature(geometry).geometry,
+            properties: {
+              ...ensureUniqueIdProperty(feature.properties, source, logger),
+              derivedBuildArea: Math.round(turf.area(geometry)) || undefined,
+            },
+          });
+        });
 
         logPickedFeatures("convertible to points", features.length);
 
@@ -257,7 +270,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
 
       const originalMixedFeatureCount = mixedFeatures.length;
 
-      const filteredMixinLayers: MixinLayer[] = patchLayers.map(
+      const filteredMixinLayers: PatchLayer[] = patchLayers.map(
         (mixinLayer) => ({
           ...mixinLayer,
           features: mixinLayer.features.filter((feature) =>
@@ -274,8 +287,9 @@ export const mixOutputLayers: Command = async ({ logger }) => {
           const propertiesVariants: PropertyVariant[] = [
             {
               ...baseLayerFeature.properties,
-              source: filteredBaseLayer.source,
+              derivedBuildArea: Math.round(turf.area(baseLayerFeature)),
               distance: 0,
+              source: filteredBaseLayer.source,
             },
           ];
 

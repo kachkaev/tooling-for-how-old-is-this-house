@@ -108,7 +108,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
   }
 
   process.stdout.write(chalk.green("Finding geometry to omit..."));
-  const featuresToOmit = new Set<MixedOutputLayersFeature>();
+  const inputFeaturesToOmit = new Set<MixedOutputLayersFeature>();
 
   for (const variantInfo of Object.values(variantInfoLookup)) {
     if (!variantInfo.parsedDataToOmitSelectors) {
@@ -122,21 +122,24 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
           parentFeature.properties.geometryId,
         )
       ) {
-        featuresToOmit.add(parentFeature);
+        inputFeaturesToOmit.add(parentFeature);
       }
     }
   }
 
-  process.stdout.write(` Features omitted: ${featuresToOmit.size}.\n`);
+  process.stdout.write(` Features omitted: ${inputFeaturesToOmit.size}.\n`);
 
   process.stdout.write(
     chalk.green("Assigning property variants to features..."),
   );
 
-  const featureByPropertyVariant: Record<string, MixedOutputLayersFeature> = {};
+  const inputFeatureByPropertyVariant: Record<
+    string,
+    MixedOutputLayersFeature
+  > = {};
   for (const [variantId, variantInfo] of Object.entries(variantInfoLookup)) {
     const instancesWithoutOmittedFeatures = variantInfo.instances.filter(
-      (instance) => !featuresToOmit.has(instance.parentFeature),
+      (instance) => !inputFeaturesToOmit.has(instance.parentFeature),
     );
 
     const instancesOrderedByDistance = _.orderBy(
@@ -145,7 +148,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
     );
 
     if (instancesOrderedByDistance[0]) {
-      featureByPropertyVariant[variantId] =
+      inputFeatureByPropertyVariant[variantId] =
         instancesOrderedByDistance[0].parentFeature;
     }
   }
@@ -154,12 +157,12 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
   process.stdout.write(chalk.green("Mixing property variants..."));
 
   const outputFeatures: MixedPropertyVariantsFeature[] = [];
-  for (const feature of inputFeatureCollection.features) {
-    if (featuresToOmit.has(feature)) {
+  for (const inputFeature of inputFeatureCollection.features) {
+    if (inputFeaturesToOmit.has(inputFeature)) {
       continue;
     }
 
-    const allPropertyVariants = feature.properties.variants;
+    const allPropertyVariants = inputFeature.properties.variants;
     const propertyVariants: PropertyVariant[] = [];
     const dataToOmitSelectors: DataToOmitSelector[] = [];
 
@@ -169,7 +172,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
         propertyVariant.id,
       );
 
-      if (featureByPropertyVariant[globalVariantId] !== feature) {
+      if (inputFeatureByPropertyVariant[globalVariantId] !== inputFeature) {
         return;
       }
 
@@ -187,11 +190,12 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
 
     outputFeatures.push(
       turf.feature(
-        feature.geometry,
+        inputFeature.geometry,
         createMixedPropertyVariants({
           dataToOmitSelectors,
-          geometryId: feature.properties.geometryId,
-          geometrySource: feature.properties.geometrySource,
+          geometryArea: turf.area(inputFeature),
+          geometryId: inputFeature.properties.geometryId,
+          geometrySource: inputFeature.properties.geometrySource,
           propertyVariants,
         }),
       ),

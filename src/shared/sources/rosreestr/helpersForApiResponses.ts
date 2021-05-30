@@ -31,6 +31,19 @@ export const extractCompletionDatesFromFirResponse = (
   return result;
 };
 
+export const extractDocumentedBuildAreaFromFirResponse = (
+  firResponse: SuccessfulFirObjectResponse,
+): number | undefined => {
+  if (
+    firResponse.parcelData.areaUnit === "055" &&
+    firResponse.parcelData.oksFloors === "1"
+  ) {
+    return firResponse.parcelData.areaValue;
+  }
+
+  return undefined;
+};
+
 export const checkIfFirResponseContainsExistingBuilding = (
   firResponse: SuccessfulFirObjectResponse,
 ): boolean =>

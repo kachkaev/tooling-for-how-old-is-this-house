@@ -11,13 +11,23 @@ import {
   PropertyVariant,
 } from "./types";
 
+const calculatePercentageDifference = (a: number, b: number): number => {
+  if (b > a) {
+    return (b / a - 1) * 100;
+  }
+
+  return (a / b - 1) * 100;
+};
+
 export const createMixedPropertyVariants = ({
   dataToOmitSelectors,
+  geometryArea,
   geometryId,
   geometrySource,
   propertyVariants,
 }: {
   dataToOmitSelectors: DataToOmitSelector[];
+  geometryArea: number;
   geometryId: string;
   geometrySource: string;
   propertyVariants: PropertyVariant[];
@@ -40,9 +50,23 @@ export const createMixedPropertyVariants = ({
 
   // TODO: order variants by priority
   const preFilteredPropertyVariants = _.orderBy(
-    propertyVariants.filter((propertyVariant) =>
-      filterPropertyVariant(propertyVariant),
-    ),
+    propertyVariants.filter((propertyVariant) => {
+      if (!filterPropertyVariant(propertyVariant)) {
+        return false;
+      }
+
+      const buildArea =
+        propertyVariant.derivedBuildArea ?? propertyVariant.documentedBuildArea;
+
+      if (
+        buildArea &&
+        calculatePercentageDifference(buildArea, geometryArea) > 100
+      ) {
+        return false;
+      }
+
+      return true;
+    }),
     (propertyVariant) => propertyVariant.source,
   );
 

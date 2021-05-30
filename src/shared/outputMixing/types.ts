@@ -6,7 +6,10 @@ import { OutputGeometry } from "../outputLayers/types";
 export interface PropertyVariant extends OutputLayerProperties {
   id: string;
   source: string;
-  distance: number; // distance to geometry in meters
+  /** Build area as derived from geometry (if geometry is polygon / multipolygon) */
+  derivedBuildArea?: number;
+  /** Distance to geometry in meters */
+  distance: number;
 }
 
 export interface FilterPropertyVariant {
