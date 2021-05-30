@@ -3,17 +3,20 @@ import * as turf from "@turf/turf";
 import { OutputLayerProperties } from "../outputLayers";
 import { OutputGeometry } from "../outputLayers/types";
 
-export interface PropertyVariantLookup extends OutputLayerProperties {
+export interface PropertyVariant extends OutputLayerProperties {
+  id: string;
   source: string;
   distance: number; // distance to geometry in meters
 }
 
-export type FilterPropertyVariantLookup = (
-  propertyVariantLookup: PropertyVariantLookup,
-  propertyName?: keyof PropertyVariantLookup,
-) => boolean;
+export interface FilterPropertyVariant {
+  (
+    propertyVariant: PropertyVariant,
+    propertyName?: keyof PropertyVariant,
+  ): boolean;
+}
 
-export interface ParsedDataToOmitSelector {
+export interface DataToOmitSelector {
   source: string;
   id?: string;
   property?: string;
@@ -23,7 +26,8 @@ export interface ParsedDataToOmitSelector {
 
 export interface MixedOutputLayersFeatureProperties {
   geometrySource: string;
-  variants: PropertyVariantLookup[];
+  geometryId: string;
+  variants: PropertyVariant[];
 }
 
 export type MixedOutputLayersFeature = turf.Feature<
@@ -36,11 +40,9 @@ export type MixedOutputLayersFeatureCollection = turf.FeatureCollection<
   MixedOutputLayersFeatureProperties
 >;
 
-// mixed property variants
+// property variant mixing
 
-export interface PropertyVariantLookupAggregate {
-  id?: string;
-
+export interface MixedPropertyVariants {
   address?: string;
   addressSource?: string;
 
@@ -53,6 +55,9 @@ export interface PropertyVariantLookupAggregate {
   floorCountAboveGround?: number;
   floorCountBelowGround?: number;
   floorCountSource?: string;
+
+  geometryId: string;
+  geometrySource: string;
 
   name?: string;
   nameSource?: string;
@@ -74,17 +79,12 @@ export interface PropertyVariantLookupAggregate {
   derivedCompletionYear?: number;
 }
 
-export interface MixedPropertyVariantsFeatureProperties
-  extends PropertyVariantLookupAggregate {
-  geometrySource: string;
-}
-
 export type MixedPropertyVariantsFeature = turf.Feature<
   OutputGeometry,
-  MixedPropertyVariantsFeatureProperties
+  MixedPropertyVariants
 >;
 
 export type MixedPropertyVariantsFeatureCollection = turf.FeatureCollection<
   OutputGeometry,
-  MixedPropertyVariantsFeatureProperties
+  MixedPropertyVariants
 >;

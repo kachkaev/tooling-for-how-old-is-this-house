@@ -225,7 +225,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     type: "FeatureCollection",
     layerRole: "patch",
     features: _.sortBy(outputFeatures, (outputFeature) =>
-      normalizeCnForSorting(outputFeature.properties.id),
+      normalizeCnForSorting(outputFeature.properties.id ?? ""),
     ),
   };
 };

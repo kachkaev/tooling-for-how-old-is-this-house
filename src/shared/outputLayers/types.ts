@@ -17,7 +17,7 @@ export interface OutputLayerProperties {
   externalGeometrySource?: string;
   floorCountAboveGround?: number;
   floorCountBelowGround?: number;
-  id: string;
+  id?: string;
   knownAt: string;
   name?: string;
   photoAuthorName?: string;
