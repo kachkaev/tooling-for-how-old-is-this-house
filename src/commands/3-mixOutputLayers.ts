@@ -106,6 +106,9 @@ const ensureUniqueIdProperty = (
   return { ...properties, id };
 };
 
+const generateCommentWithMixedFeatures = (count: number) =>
+  `mixed features: ${count.toString().padStart(3, " ")}`;
+
 export const mixOutputLayers: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing output layers"));
 
@@ -264,7 +267,7 @@ export const mixOutputLayers: Command = async ({ logger }) => {
         return {
           cacheStatus: "used",
           tileStatus: "complete",
-          comment: "mixed features: 0",
+          comment: generateCommentWithMixedFeatures(0),
         };
       }
 
@@ -339,9 +342,9 @@ export const mixOutputLayers: Command = async ({ logger }) => {
       return {
         cacheStatus: "notUsed",
         tileStatus: "complete",
-        comment: `mixed features: ${
-          mixedFeatures.length - originalMixedFeatureCount
-        }`,
+        comment: generateCommentWithMixedFeatures(
+          mixedFeatures.length - originalMixedFeatureCount,
+        ),
       };
     },
   });

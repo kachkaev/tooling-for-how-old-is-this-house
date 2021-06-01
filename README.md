@@ -468,7 +468,6 @@ Although some of the data sources are country-specific, parts of the repo can st
     Выбор финальных характеристик объектов из нескольких вариантов:
 
     ```sh
-    ## 🚧 Логика смешивания данных пока что реализована грубо
     yarn exe src/commands/4-mixPropertyVariants.ts
     ```
 

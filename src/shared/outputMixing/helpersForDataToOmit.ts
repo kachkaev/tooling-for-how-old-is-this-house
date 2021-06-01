@@ -1,4 +1,4 @@
-import { DataToOmitSelector } from "./types";
+import { DataToOmitSelector, PropertyNameInDataToOmitSelector } from "./types";
 
 const treatAsteriskAsUndefined = (
   value: string | undefined,
@@ -9,6 +9,31 @@ const treatAsteriskAsUndefined = (
 
   return value;
 };
+
+const propertyNameInDataToOmitSelectorLookup: Record<
+  PropertyNameInDataToOmitSelector,
+  true
+> = {
+  address: true,
+  buildingType: true,
+  completionDates: true,
+  documentedBuildArea: true,
+  floorCount: true,
+  name: true,
+  photo: true,
+  source: true,
+  url: true,
+  wikipediaUrl: true,
+};
+
+const propertyNamesInDataToOmitSelector = Object.keys(
+  propertyNameInDataToOmitSelectorLookup,
+) as PropertyNameInDataToOmitSelector[];
+
+const isValidPropertyNameInDataToOmitSelector = (
+  propertyName: string,
+): propertyName is PropertyNameInDataToOmitSelector =>
+  (propertyNamesInDataToOmitSelector as string[]).includes(propertyName);
 
 export const parseDataToOmit = (
   dataToOmit: string | undefined,
@@ -26,7 +51,17 @@ export const parseDataToOmit = (
         .map((value) => value.trim());
 
       if (!source) {
-        reportIssue(`Unexpected empty value for source in ${dataToOmit}`);
+        reportIssue(`Unexpected empty value for source in "${dataToOmit}"`);
+
+        return undefined;
+      }
+
+      const propertyName = treatAsteriskAsUndefined(rawPropertyName);
+      if (
+        typeof propertyName === "string" &&
+        !isValidPropertyNameInDataToOmitSelector(propertyName)
+      ) {
+        reportIssue(`Unexpected property ${propertyName} in "${dataToOmit}"`);
 
         return undefined;
       }
@@ -34,7 +69,7 @@ export const parseDataToOmit = (
       return {
         source,
         id: treatAsteriskAsUndefined(rawId),
-        property: treatAsteriskAsUndefined(rawPropertyName),
+        propertyName,
       };
     })
     .filter((result): result is DataToOmitSelector => Boolean(result));
@@ -44,7 +79,7 @@ export const matchDataToOmitSelectors = (
   dataToOmitSelectors: DataToOmitSelector[],
   source: string,
   id: string,
-  propertyName?: string,
+  propertyNames?: PropertyNameInDataToOmitSelector[],
 ) =>
   dataToOmitSelectors.some((selector) => {
     if (source !== selector.source) {
@@ -54,8 +89,7 @@ export const matchDataToOmitSelectors = (
     const idMatches = !selector.id || id === selector.id;
 
     const propertyMatches =
-      !selector.property ||
-      (propertyName && propertyName === selector.property);
+      !selector.property || propertyNames?.includes(selector.property);
 
     if (idMatches && propertyMatches) {
       return true;

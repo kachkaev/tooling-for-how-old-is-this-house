@@ -12,17 +12,43 @@ export interface PropertyVariant extends OutputLayerProperties {
   distance: number;
 }
 
-export interface FilterPropertyVariant {
-  (
-    propertyVariant: PropertyVariant,
-    propertyName?: keyof PropertyVariant,
-  ): boolean;
-}
+export type PropertyNameInDataToOmitSelector =
+  | Exclude<
+      keyof PropertyVariant,
+      | "dataToOmit"
+      | "id"
+      | "derivedBuildArea"
+      | "derivedCompletionYear"
+      | "distance"
+      | "externalGeometrySource"
+      | "floorCountAboveGround"
+      | "floorCountBelowGround"
+      | "knownAt"
+      | "photoAuthorName"
+      | "photoAuthorUrl"
+      | "photoUrl"
+    >
+  | "photo"
+  | "floorCount";
 
 export interface DataToOmitSelector {
   source: string;
   id?: string;
-  property?: string;
+  property?: PropertyNameInDataToOmitSelector;
+}
+
+export interface ListRelevantPropertyVariants {
+  (propertyNames: PropertyNameInDataToOmitSelector[]): PropertyVariant[];
+}
+
+export interface PickFromPropertyVariants<
+  PropertiesToPick extends keyof MixedPropertyVariants
+> {
+  (payload: {
+    listRelevantPropertyVariants: ListRelevantPropertyVariants;
+    logger: Console;
+    targetBuildArea: number;
+  }): Pick<MixedPropertyVariants, PropertiesToPick> | undefined;
 }
 
 // mixed output layers

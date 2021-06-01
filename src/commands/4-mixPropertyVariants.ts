@@ -3,19 +3,29 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
+import sortKeys from "sort-keys";
 
+import { deepClean } from "../shared/deepClean";
 import { writeFormattedJson } from "../shared/helpersForJson";
 import {
   buildGlobalFeatureOrVariantId,
-  createMixedPropertyVariants,
   DataToOmitSelector,
   getMixedOutputLayersFilePath,
   getMixedPropertyVariantsFilePath,
+  ListRelevantPropertyVariants,
   matchDataToOmitSelectors,
   MixedOutputLayersFeature,
   MixedOutputLayersFeatureCollection,
+  MixedPropertyVariants,
   MixedPropertyVariantsFeature,
   parseDataToOmit,
+  pickAddress,
+  pickCompletionDates,
+  pickFloorCount,
+  pickName,
+  pickPhoto,
+  pickUrl,
+  pickWikipediaUrl,
   PropertyVariant,
 } from "../shared/outputMixing";
 
@@ -188,16 +198,44 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
       }
     });
 
+    const listRelevantPropertyVariants: ListRelevantPropertyVariants = (
+      propertyNames,
+    ) =>
+      propertyVariants.filter(
+        (propertyVariant) =>
+          !matchDataToOmitSelectors(
+            dataToOmitSelectors,
+            propertyVariant.source,
+            propertyVariant.id,
+            propertyNames,
+          ) &&
+          propertyNames.some(
+            (propertyName) => (propertyName as string) in propertyVariant,
+          ),
+      );
+
+    const payloadForPick = {
+      listRelevantPropertyVariants,
+      logger,
+      targetBuildArea: turf.area(inputFeature),
+    };
+
+    const mixedPropertyVariants: MixedPropertyVariants = {
+      geometryId: inputFeature.properties.geometryId,
+      geometrySource: inputFeature.properties.geometrySource,
+      ...pickAddress(payloadForPick),
+      ...pickCompletionDates(payloadForPick),
+      ...pickFloorCount(payloadForPick),
+      ...pickName(payloadForPick),
+      ...pickPhoto(payloadForPick),
+      ...pickUrl(payloadForPick),
+      ...pickWikipediaUrl(payloadForPick),
+    };
+
     outputFeatures.push(
       turf.feature(
         inputFeature.geometry,
-        createMixedPropertyVariants({
-          dataToOmitSelectors,
-          geometryArea: turf.area(inputFeature),
-          geometryId: inputFeature.properties.geometryId,
-          geometrySource: inputFeature.properties.geometrySource,
-          propertyVariants,
-        }),
+        deepClean(sortKeys(mixedPropertyVariants)),
       ),
     );
   }
