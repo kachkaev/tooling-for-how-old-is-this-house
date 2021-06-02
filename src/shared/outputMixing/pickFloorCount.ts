@@ -8,7 +8,7 @@ export const pickFloorCount: PickFromPropertyVariants<
     listRelevantPropertyVariants,
     logger,
     prioritizedSources: ["manual", "rosreestr", "mingkh", "osm"],
-    propertyNamesThatShouldNotBeOmitted: ["floorCount"],
+    propertySelectors: ["floorCount"],
     targetBuildArea,
   });
 

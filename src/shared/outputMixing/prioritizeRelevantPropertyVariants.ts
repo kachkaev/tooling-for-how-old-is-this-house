@@ -4,7 +4,7 @@ import _ from "lodash";
 import { buildGlobalFeatureOrVariantId } from "./helpersForProperties";
 import {
   ListRelevantPropertyVariants,
-  PropertyNameInDataToOmitSelector,
+  PropertySelector,
   PropertyVariant,
 } from "./types";
 
@@ -22,17 +22,17 @@ export const prioritizeRelevantPropertyVariants = ({
   listRelevantPropertyVariants,
   logger,
   prioritizedSources,
-  propertyNamesThatShouldNotBeOmitted,
+  propertySelectors,
   targetBuildArea,
 }: {
   listRelevantPropertyVariants: ListRelevantPropertyVariants;
   logger: Console;
   prioritizedSources: string[];
-  propertyNamesThatShouldNotBeOmitted: PropertyNameInDataToOmitSelector[];
+  propertySelectors: PropertySelector[];
   targetBuildArea: number;
 }): PropertyVariant[] => {
   const relevantPropertyVariants = listRelevantPropertyVariants(
-    propertyNamesThatShouldNotBeOmitted,
+    propertySelectors,
   );
 
   const unrecognizedSourcesSet = new Set<string>();
@@ -67,15 +67,12 @@ export const prioritizeRelevantPropertyVariants = ({
 
   const unrecognizedSources = _.orderBy([...unrecognizedSourcesSet]);
   for (const unrecognizedSource of unrecognizedSources) {
-    const warningHash = JSON.stringify([
-      unrecognizedSource,
-      propertyNamesThatShouldNotBeOmitted,
-    ]);
+    const warningHash = JSON.stringify([unrecognizedSource, propertySelectors]);
     if (!alreadyLoggedWarningsSet.has(warningHash)) {
       alreadyLoggedWarningsSet.add(warningHash);
       logger.log(
         chalk.yellow(
-          `Unexpected to find source "${unrecognizedSource}" when picking "${propertyNamesThatShouldNotBeOmitted.join(
+          `Unexpected to find source "${unrecognizedSource}" when picking "${propertySelectors.join(
             '", "',
           )}". Please add it to a corresponding src/shared/outputMixing/pick*.ts file to ensure the right priority.`,
         ),

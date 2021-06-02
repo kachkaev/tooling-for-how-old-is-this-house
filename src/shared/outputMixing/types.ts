@@ -12,7 +12,10 @@ export interface PropertyVariant extends OutputLayerProperties {
   distance: number;
 }
 
-export type PropertyNameInDataToOmitSelector =
+/**
+ * Used in data to omit field & when picking property variants
+ */
+export type PropertySelector =
   | Exclude<
       keyof PropertyVariant,
       | "dataToOmit"
@@ -34,11 +37,11 @@ export type PropertyNameInDataToOmitSelector =
 export interface DataToOmitSelector {
   source: string;
   id?: string;
-  property?: PropertyNameInDataToOmitSelector;
+  propertySelector?: PropertySelector;
 }
 
 export interface ListRelevantPropertyVariants {
-  (propertyNames: PropertyNameInDataToOmitSelector[]): PropertyVariant[];
+  (propertyNames: PropertySelector[]): PropertyVariant[];
 }
 
 export interface PickFromPropertyVariants<

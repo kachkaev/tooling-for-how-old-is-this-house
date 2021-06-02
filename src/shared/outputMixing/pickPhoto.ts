@@ -8,7 +8,7 @@ export const pickPhoto: PickFromPropertyVariants<
     listRelevantPropertyVariants,
     logger,
     prioritizedSources: ["manual", "mkrf", "wikimapia"],
-    propertyNamesThatShouldNotBeOmitted: ["photo"],
+    propertySelectors: ["photo"],
     targetBuildArea,
   });
 

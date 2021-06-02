@@ -10,7 +10,7 @@ export const pickUrl: PickFromPropertyVariants<"url" | "urlSource"> = ({
     listRelevantPropertyVariants,
     logger,
     prioritizedSources: ["manual", "osm"],
-    propertyNamesThatShouldNotBeOmitted: ["url"],
+    propertySelectors: ["url"],
     targetBuildArea,
   });
 

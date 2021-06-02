@@ -199,20 +199,25 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
     });
 
     const listRelevantPropertyVariants: ListRelevantPropertyVariants = (
-      propertyNames,
+      propertySelectors,
     ) =>
-      propertyVariants.filter(
-        (propertyVariant) =>
+      propertyVariants.filter((propertyVariant) => {
+        const propertyNames = Object.keys(propertyVariant);
+
+        return (
           !matchDataToOmitSelectors(
             dataToOmitSelectors,
             propertyVariant.source,
             propertyVariant.id,
-            propertyNames,
+            propertySelectors,
           ) &&
-          propertyNames.some(
-            (propertyName) => (propertyName as string) in propertyVariant,
-          ),
-      );
+          propertyNames.some((propertyName) =>
+            propertySelectors.some((propertyNameThatShouldNotBeOmitted) =>
+              propertyName.startsWith(propertyNameThatShouldNotBeOmitted),
+            ),
+          )
+        );
+      });
 
     const payloadForPick = {
       listRelevantPropertyVariants,

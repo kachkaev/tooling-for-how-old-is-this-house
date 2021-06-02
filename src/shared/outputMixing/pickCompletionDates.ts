@@ -16,7 +16,7 @@ export const pickCompletionDates: PickFromPropertyVariants<
       "osm",
       "wikimapia",
     ],
-    propertyNamesThatShouldNotBeOmitted: ["completionDates"],
+    propertySelectors: ["completionDates"],
     targetBuildArea,
   });
 

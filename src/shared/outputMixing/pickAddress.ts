@@ -8,7 +8,7 @@ export const pickAddress: PickFromPropertyVariants<
     listRelevantPropertyVariants,
     logger,
     prioritizedSources: ["manual", "mkrf", "osm", "mingkh", "rosreestr"],
-    propertyNamesThatShouldNotBeOmitted: ["address"],
+    propertySelectors: ["address"],
     targetBuildArea,
   });
 

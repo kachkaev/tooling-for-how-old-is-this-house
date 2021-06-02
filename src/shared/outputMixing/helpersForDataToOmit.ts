@@ -1,4 +1,4 @@
-import { DataToOmitSelector, PropertyNameInDataToOmitSelector } from "./types";
+import { DataToOmitSelector, PropertySelector } from "./types";
 
 const treatAsteriskAsUndefined = (
   value: string | undefined,
@@ -10,10 +10,7 @@ const treatAsteriskAsUndefined = (
   return value;
 };
 
-const propertyNameInDataToOmitSelectorLookup: Record<
-  PropertyNameInDataToOmitSelector,
-  true
-> = {
+const knownPropertySelectorLookup: Record<PropertySelector, true> = {
   address: true,
   buildingType: true,
   completionDates: true,
@@ -26,14 +23,14 @@ const propertyNameInDataToOmitSelectorLookup: Record<
   wikipediaUrl: true,
 };
 
-const propertyNamesInDataToOmitSelector = Object.keys(
-  propertyNameInDataToOmitSelectorLookup,
-) as PropertyNameInDataToOmitSelector[];
+const knownPropertySelectors = Object.keys(
+  knownPropertySelectorLookup,
+) as PropertySelector[];
 
-const isValidPropertyNameInDataToOmitSelector = (
-  propertyName: string,
-): propertyName is PropertyNameInDataToOmitSelector =>
-  (propertyNamesInDataToOmitSelector as string[]).includes(propertyName);
+const isValidPropertySelector = (
+  propertySelector: string,
+): propertySelector is PropertySelector =>
+  knownPropertySelectors.includes(propertySelector as PropertySelector);
 
 export const parseDataToOmit = (
   dataToOmit: string | undefined,
@@ -56,12 +53,16 @@ export const parseDataToOmit = (
         return undefined;
       }
 
-      const propertyName = treatAsteriskAsUndefined(rawPropertyName);
+      const propertySelector = treatAsteriskAsUndefined(rawPropertyName);
       if (
-        typeof propertyName === "string" &&
-        !isValidPropertyNameInDataToOmitSelector(propertyName)
+        typeof propertySelector === "string" &&
+        !isValidPropertySelector(propertySelector)
       ) {
-        reportIssue(`Unexpected property ${propertyName} in "${dataToOmit}"`);
+        reportIssue(
+          `Unexpected property selector "${propertySelector}" in "${dataToOmit}". Expected: "${knownPropertySelectors.join(
+            '", "',
+          )}".`,
+        );
 
         return undefined;
       }
@@ -69,7 +70,7 @@ export const parseDataToOmit = (
       return {
         source,
         id: treatAsteriskAsUndefined(rawId),
-        propertyName,
+        propertyName: propertySelector,
       };
     })
     .filter((result): result is DataToOmitSelector => Boolean(result));
@@ -79,7 +80,7 @@ export const matchDataToOmitSelectors = (
   dataToOmitSelectors: DataToOmitSelector[],
   source: string,
   id: string,
-  propertyNames?: PropertyNameInDataToOmitSelector[],
+  propertySelectors?: PropertySelector[],
 ) =>
   dataToOmitSelectors.some((selector) => {
     if (source !== selector.source) {
@@ -89,7 +90,8 @@ export const matchDataToOmitSelectors = (
     const idMatches = !selector.id || id === selector.id;
 
     const propertyMatches =
-      !selector.property || propertyNames?.includes(selector.property);
+      !selector.propertySelector ||
+      propertySelectors?.includes(selector.propertySelector);
 
     if (idMatches && propertyMatches) {
       return true;

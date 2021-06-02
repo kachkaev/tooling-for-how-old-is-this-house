@@ -8,7 +8,7 @@ export const pickWikipediaUrl: PickFromPropertyVariants<
     listRelevantPropertyVariants,
     logger,
     prioritizedSources: ["manual", "osm"],
-    propertyNamesThatShouldNotBeOmitted: ["wikipediaUrl"],
+    propertySelectors: ["wikipediaUrl"],
     targetBuildArea,
   });
 

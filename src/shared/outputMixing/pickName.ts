@@ -10,7 +10,7 @@ export const pickName: PickFromPropertyVariants<"name" | "nameSource"> = ({
     listRelevantPropertyVariants,
     logger,
     prioritizedSources: ["manual", "mkrf", "osm", "wikimapia"],
-    propertyNamesThatShouldNotBeOmitted: ["name"],
+    propertySelectors: ["name"],
     targetBuildArea,
   });
 
