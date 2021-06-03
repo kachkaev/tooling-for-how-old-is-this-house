@@ -1,5 +1,11 @@
+import {
+  buildCleanedAddressAst,
+  buildStandardizedAddressAst,
+} from "../addresses";
 import { prioritizeRelevantPropertyVariants } from "./prioritizeRelevantPropertyVariants";
-import { PickFromPropertyVariants } from "./types";
+import { MixedPropertyVariants, PickFromPropertyVariants } from "./types";
+
+type Result = Pick<MixedPropertyVariants, "address" | "addressSource">;
 
 export const pickAddress: PickFromPropertyVariants<
   "address" | "addressSource"
@@ -12,17 +18,27 @@ export const pickAddress: PickFromPropertyVariants<
     targetBuildArea,
   });
 
-  // TODO: Take into account address syntax
-  // TODO: Generate derived beautified address
+  const fallbackResult: Result | undefined = undefined;
 
   for (const propertyVariant of propertyVariants) {
     if (propertyVariant.address) {
-      return {
+      const result: Result = {
         address: propertyVariant.address,
         addressSource: propertyVariant.source,
       };
+
+      try {
+        buildStandardizedAddressAst(
+          buildCleanedAddressAst(propertyVariant.address),
+          {},
+        );
+
+        return result;
+      } catch {
+        // noop (continue)
+      }
     }
   }
 
-  return undefined;
+  return fallbackResult;
 };

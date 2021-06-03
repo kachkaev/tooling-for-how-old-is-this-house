@@ -246,6 +246,9 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
   }
 
   process.stdout.write(` Done.\n`);
+
+  // TODO: Generate derived beautified address
+
   process.stdout.write(chalk.green(`Saving...`));
 
   const resultFileName = getMixedPropertyVariantsFilePath();
