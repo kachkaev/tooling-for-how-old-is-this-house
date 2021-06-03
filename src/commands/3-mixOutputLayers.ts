@@ -33,7 +33,7 @@ import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
 import { processTiles } from "../shared/tiles";
 
-const bufferSizeInMeters = 10;
+const bufferSizeInMeters = 7;
 const tileZoom = 15;
 
 interface BaseLayerProperties extends OutputLayerProperties {
