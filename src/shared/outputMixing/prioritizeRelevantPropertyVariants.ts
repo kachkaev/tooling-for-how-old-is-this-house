@@ -61,7 +61,8 @@ export const prioritizeRelevantPropertyVariants = ({
       return sourceIndex;
     },
 
-    // Within each group, order by id for consistency
+    // Within each group, order by build area DESC and then id for consistency
+    ({ derivedBuildArea }) => (derivedBuildArea ? -derivedBuildArea : 0),
     ({ source, id }) => buildGlobalFeatureOrVariantId(source, id),
   ]);
 
