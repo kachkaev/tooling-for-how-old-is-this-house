@@ -54,7 +54,7 @@ const testCaseGroups: TestCaseGroup[] = [
     ],
   },
   {
-    title: "cross-pollination",
+    title: "interdependency",
     addressNormalizationConfig: {},
     testCases: [
       {
@@ -91,7 +91,7 @@ const testCaseGroups: TestCaseGroup[] = [
     ],
   },
   {
-    title: "caps",
+    title: "capitalization",
     addressNormalizationConfig: {},
     testCases: [
       {
@@ -119,6 +119,10 @@ const testCaseGroups: TestCaseGroup[] = [
         expectedBeautifiedAddress:
           "Пензенская область, Тестовск, улица Тестов, 2",
       },
+      {
+        rawAddress: "ГОРОД, Область, БОЛ. УЛИца Тестов, 1",
+        expectedBeautifiedAddress: "город, область, Большая улица Тестов, 1",
+      },
     ],
   },
   {
@@ -134,6 +138,16 @@ const testCaseGroups: TestCaseGroup[] = [
         rawAddress: "Пензенская обл, Поселок Тестовый, проспект потемнкина, 1",
         expectedBeautifiedAddress:
           "Пензенская область, посёлок Тестовый, проспект Потёмнкина, 1",
+      },
+    ],
+  },
+  {
+    title: "designation special cases",
+    addressNormalizationConfig: {},
+    testCases: [
+      {
+        rawAddress: 'Пензенская область, Пенза, с/т "Тестовое", 1',
+        expectedBeautifiedAddress: "Пензенская область, Пенза, С/Т Тестовое, 1",
       },
     ],
   },

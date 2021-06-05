@@ -171,11 +171,8 @@ export const createBeautifyAddress = (
   }
 
   for (const { normalizedValue, beautifiedValue } of designationConfigs) {
-    if (beautifiedValue) {
-      spellingLookup[simplifySpelling(beautifiedValue)] = beautifiedValue;
-    } else {
-      spellingLookup[simplifySpelling(normalizedValue)] = normalizedValue;
-    }
+    spellingLookup[simplifySpelling(normalizedValue)] =
+      beautifiedValue ?? normalizedValue;
   }
 
   if (addressNormalizationConfig.canonicalSpellings instanceof Array) {
