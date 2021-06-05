@@ -4,7 +4,6 @@ import fs from "fs-extra";
 import rmUp from "rm-up";
 import sleep from "sleep-promise";
 
-import { normalizeAddress } from "../../../shared/addresses";
 import { loadCombinedGeocodeDictionary } from "../../../shared/geocoding";
 import { eraseLastLineInOutput } from "../../../shared/helpersForCommands";
 import { processFiles } from "../../../shared/processFiles";
@@ -15,9 +14,6 @@ import {
   YandexGeocoderCacheEntry,
 } from "../../../shared/sources/yandex";
 import { getAddressNormalizationConfig } from "../../../shared/territory";
-
-// TODO: Switch to true after fixing address handling
-const assumeThatAllAddressesAutoEncodeWithoutProblems = false;
 
 export const deleteCacheEntriesForUnusedAddresses: Command = async ({
   logger,
@@ -41,12 +37,7 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
       !addressIsWorthKeepingInYandexCache(
         cacheEntry.normalizedAddress,
         addressNormalizationConfig,
-      ) ||
-      (assumeThatAllAddressesAutoEncodeWithoutProblems &&
-        normalizeAddress(
-          cacheEntry.normalizedAddress,
-          addressNormalizationConfig,
-        ) !== cacheEntry.normalizedAddress)
+      )
     ) {
       return true;
     }

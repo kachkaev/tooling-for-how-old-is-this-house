@@ -1,53 +1,61 @@
 import {
   AddressNormalizationConfig,
   buildCleanedAddressAst,
-  buildStandardizedAddressAst,
+  normalizeAddress,
 } from "../../addresses";
 
-export const addressIsWorthKeepingInYandexCache = (
+export const addressIsGoodEnough = (
   normalizedAddress: string,
   addressNormalizationConfig: AddressNormalizationConfig,
+  pickedStopWords: string[],
 ): boolean => {
-  try {
-    // TODO: improve logic
-    if (
-      normalizedAddress.includes(" гараж ") ||
-      normalizedAddress.includes(" место ") ||
-      normalizedAddress.includes(" участок ") ||
-      normalizedAddress.includes(" гск ") ||
-      normalizedAddress.includes(" гск, ") ||
-      normalizedAddress.includes(" кооператив") ||
-      normalizedAddress.includes("километр") ||
-      normalizedAddress.includes("территория") ||
-      normalizedAddress.includes(" блок ")
-    ) {
-      throw new Error("stop word");
-    }
-    buildStandardizedAddressAst(
-      buildCleanedAddressAst(normalizedAddress),
-      addressNormalizationConfig,
-    );
-  } catch {
+  const cleanedAddressAst = buildCleanedAddressAst(normalizedAddress);
+
+  if (
+    cleanedAddressAst.children.some(
+      (node) =>
+        node.nodeType === "word" && pickedStopWords.includes(node.value),
+    )
+  ) {
+    return false;
+  }
+
+  const autoencodedAddress = normalizeAddress(
+    normalizedAddress,
+    addressNormalizationConfig,
+  );
+  if (
+    !autoencodedAddress ||
+    autoencodedAddress?.toLowerCase() !== autoencodedAddress
+  ) {
     return false;
   }
 
   return true;
 };
 
+const stopWords = [
+  //
+  "блок",
+  "гараж",
+  "место",
+  "погреб",
+  "сарай",
+  "участок",
+];
+export const addressIsWorthKeepingInYandexCache = (
+  normalizedAddress: string,
+  addressNormalizationConfig: AddressNormalizationConfig,
+): boolean =>
+  addressIsGoodEnough(normalizedAddress, addressNormalizationConfig, stopWords);
+
+const extendedStopWords = [...stopWords, "ст", "снт"];
 export const addressIsWorthGeocodingWithYandex = (
   normalizedAddress: string,
   addressNormalizationConfig: AddressNormalizationConfig,
-): boolean => {
-  if (
-    !addressIsWorthKeepingInYandexCache(
-      normalizedAddress,
-      addressNormalizationConfig,
-    )
-  ) {
-    return false;
-  }
-
-  return (
-    !normalizedAddress.includes(" ст ") && !normalizedAddress.includes(" снт ")
+): boolean =>
+  addressIsGoodEnough(
+    normalizedAddress,
+    addressNormalizationConfig,
+    extendedStopWords,
   );
-};

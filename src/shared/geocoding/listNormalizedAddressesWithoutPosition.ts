@@ -11,8 +11,13 @@ export const listNormalizedAddressesWithoutPosition = ({
 
   Object.entries(combinedGeocodeDictionary).forEach(
     ([normalizedAddress, recordForAddress]) => {
+      const recordEntries = Object.entries(recordForAddress);
+      const recordEntriesWithoutIgnoredSources = recordEntries.filter(
+        ([source]) => !sourcesToIgnore || !sourcesToIgnore.includes(source),
+      );
       if (
-        !Object.entries(recordForAddress).find(
+        recordEntriesWithoutIgnoredSources.length &&
+        !recordEntriesWithoutIgnoredSources.find(
           ([source, recordForSource]) =>
             !sourcesToIgnore?.includes(source) && recordForSource.length > 0,
         )
