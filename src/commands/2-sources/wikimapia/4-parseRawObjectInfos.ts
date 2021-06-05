@@ -60,6 +60,15 @@ const extractName = (rawInfo: string) => {
 
   // Ignore trivial names referring to building address (e.g. “ул. Такая-то, 10”)
   const cleanedAddressAst = buildCleanedAddressAst(result);
+
+  if (
+    !cleanedAddressAst.children.some(
+      (node) => node.nodeType === "word" && node.wordType === "unclassified",
+    )
+  ) {
+    return undefined;
+  }
+
   const indexOfDesignation = cleanedAddressAst.children.findIndex(
     (node) => node.nodeType === "word" && node.wordType === "designation",
   );
