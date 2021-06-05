@@ -130,8 +130,6 @@ export interface AddressSection {
   separatorBefore?: AddressNodeWithSeparator;
 }
 
-export type SemanticPartType = "region" | "settlement" | "street" | "building";
-
 export interface AddressNodeWithSemanticPart {
   nodeType: "semanticPart";
   orderedWords: AddressNodeWithWord[];
@@ -139,7 +137,11 @@ export interface AddressNodeWithSemanticPart {
 
 export interface StandardizedAddressAst {
   nodeType: "standardizedAddress";
-  semanticPartLookup: Record<SemanticPartType, AddressNodeWithSemanticPart>;
+  region: AddressNodeWithSemanticPart;
+  settlement: AddressNodeWithSemanticPart;
+  streets: [AddressNodeWithSemanticPart, ...AddressNodeWithSemanticPart[]];
+  houses: [AddressNodeWithSemanticPart, ...AddressNodeWithSemanticPart[]];
+  housePart: AddressNodeWithSemanticPart | undefined;
 }
 
 export interface BuildStandardizedAddressAstConfig {
@@ -147,12 +149,12 @@ export interface BuildStandardizedAddressAstConfig {
   canonicalSpellings?: string[];
 }
 
-export interface FinalizeWordSpelling {
-  (word: AddressNodeWithWord): string;
+export interface PostProcessWordsInStandardizedAddressSection {
+  (words: AddressNodeWithWord[]): AddressNodeWithWord[];
 }
 
-export interface ReorderWordsInSection {
-  (words: AddressNodeWithWord[]): AddressNodeWithWord[];
+export interface FinalizeWordSpelling {
+  (word: AddressNodeWithWord): string;
 }
 
 export type AddressNormalizationConfig = BuildStandardizedAddressAstConfig;

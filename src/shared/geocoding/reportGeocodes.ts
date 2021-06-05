@@ -2,7 +2,7 @@ import chalk from "chalk";
 import _ from "lodash";
 import rmUp from "rm-up";
 
-import { normalizeAddress } from "../addresses";
+import { normalizeAddressAtomically } from "../addresses";
 import { getAddressNormalizationConfig } from "../territory";
 import { debugAddressNormalizationIfEnabled } from "./debugAddressNormalizationIfEnabled";
 import {
@@ -10,6 +10,7 @@ import {
   getDictionaryFilePath,
 } from "./helpersForPaths";
 import { loadGeocodeDictionaryLookup } from "./loadGeocodeDictionaryLookup";
+import { postProcessWordsInStandardizedAddressSection } from "./postProcessWordsInStandardizedAddressSection";
 import {
   EmptyGeocodeInDictionary,
   GeocodeDictionary,
@@ -82,19 +83,13 @@ export const reportGeocodes = async ({
   const weightDictionary: Record<string, number> = {};
 
   for (const reportedGeocode of reportedGeocodes) {
-    const normalizedAddress = normalizeAddress(
+    const normalizedAddresses = normalizeAddressAtomically(
       reportedGeocode.address,
       addressNormalizationConfig,
+      postProcessWordsInStandardizedAddressSection,
     );
 
-    debugAddressNormalizationIfEnabled({
-      address: reportedGeocode.address,
-      normalizedAddress,
-      addressNormalizationConfig,
-      logger,
-    });
-
-    if (!normalizedAddress) {
+    if (!normalizedAddresses.length) {
       logger?.log(
         chalk.yellow(
           `Skipping "${reportedGeocode.address}" (normalized address is empty)`,
@@ -103,19 +98,31 @@ export const reportGeocodes = async ({
       continue;
     }
 
-    const existingWeight = weightDictionary[normalizedAddress];
-    const reportedWeight =
-      "weight" in reportedGeocode ? reportedGeocode.weight : -1;
-    if (typeof existingWeight === "number" && existingWeight > reportedWeight) {
-      continue;
-    }
+    for (const normalizedAddress of normalizedAddresses) {
+      debugAddressNormalizationIfEnabled({
+        address: reportedGeocode.address,
+        normalizedAddress,
+        addressNormalizationConfig,
+        logger,
+      });
 
-    const geocode: ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary =
-      "coordinates" in reportedGeocode && reportedGeocode.coordinates
-        ? reportedGeocode.coordinates
-        : [];
-    sourceDictionary[normalizedAddress] = { [source]: geocode };
-    weightDictionary[normalizedAddress] = reportedWeight;
+      const existingWeight = weightDictionary[normalizedAddress];
+      const reportedWeight =
+        "weight" in reportedGeocode ? reportedGeocode.weight : -1;
+      if (
+        typeof existingWeight === "number" &&
+        existingWeight > reportedWeight
+      ) {
+        continue;
+      }
+
+      const geocode: ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary =
+        "coordinates" in reportedGeocode && reportedGeocode.coordinates
+          ? reportedGeocode.coordinates
+          : [];
+      sourceDictionary[normalizedAddress] = { [source]: geocode };
+      weightDictionary[normalizedAddress] = reportedWeight;
+    }
   }
 
   const sourceDictionaryLookup: GeocodeDictionaryLookup = {};

@@ -1,4 +1,8 @@
-import { AddressNormalizationConfig, normalizeAddress } from "../addresses";
+import {
+  AddressNormalizationConfig,
+  normalizeAddressAtomically,
+} from "../addresses";
+import { postProcessWordsInStandardizedAddressSection } from "./postProcessWordsInStandardizedAddressSection";
 import { GeocodeAddressResult, GeocodeDictionary } from "./types";
 
 export const geocodeAddress = (
@@ -7,26 +11,29 @@ export const geocodeAddress = (
   combinedGeocodeDictionary: GeocodeDictionary,
   sourcesInPriorityOrder: string[],
 ): GeocodeAddressResult => {
-  const normalizedAddress = normalizeAddress(
+  const normalizedAddresses = normalizeAddressAtomically(
     address,
     addressNormalizationConfig,
+    postProcessWordsInStandardizedAddressSection,
   );
 
-  const addressRecord = combinedGeocodeDictionary[normalizedAddress ?? ""];
-  if (!addressRecord) {
-    return undefined;
-  }
+  for (const normalizedAddress of normalizedAddresses) {
+    const addressRecord = combinedGeocodeDictionary[normalizedAddress ?? ""];
+    if (!addressRecord) {
+      return undefined;
+    }
 
-  for (const source of sourcesInPriorityOrder) {
-    const sourceRecord = addressRecord[source];
-    if (sourceRecord && sourceRecord.length) {
-      return {
-        source,
-        location: {
-          type: "Point",
-          coordinates: [sourceRecord[0], sourceRecord[1]],
-        },
-      };
+    for (const source of sourcesInPriorityOrder) {
+      const sourceRecord = addressRecord[source];
+      if (sourceRecord && sourceRecord.length) {
+        return {
+          source,
+          location: {
+            type: "Point",
+            coordinates: [sourceRecord[0], sourceRecord[1]],
+          },
+        };
+      }
     }
   }
 

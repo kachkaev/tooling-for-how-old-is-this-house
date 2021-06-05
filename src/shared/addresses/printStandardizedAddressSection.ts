@@ -1,15 +1,15 @@
 import {
   AddressNodeWithSemanticPart,
   FinalizeWordSpelling,
-  ReorderWordsInSection,
+  PostProcessWordsInStandardizedAddressSection,
 } from "./types";
 
 export const printStandardizedAddressSection = (
   astNode: AddressNodeWithSemanticPart,
-  reorderWordsInSection: ReorderWordsInSection,
+  postProcessWordsInStandardizedAddressSection: PostProcessWordsInStandardizedAddressSection,
   finalizeWordSpelling: FinalizeWordSpelling,
 ): string => {
-  return reorderWordsInSection(astNode.orderedWords)
+  return postProcessWordsInStandardizedAddressSection(astNode.orderedWords)
     .map((wordNode) => finalizeWordSpelling(wordNode))
     .join(" ");
 };

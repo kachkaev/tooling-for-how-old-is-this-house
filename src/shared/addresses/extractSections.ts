@@ -1,4 +1,5 @@
 import { AddressInterpretationError } from "./AddressInterpretationError";
+import { commonUnclassifiedWordConfigLookup } from "./helpersForCommonUnclassifiedWords";
 import { getDesignationConfig } from "./helpersForDesignations";
 import {
   AddressNodeWithSeparator,
@@ -79,6 +80,18 @@ export const extractSections = (
       nodeIndex -= 1;
       forceClosePreviousSection = true;
       continue;
+    }
+
+    // Give up after seeing a word that cannot be in standardized address
+    if (node.wordType === "unclassified") {
+      const commonUnclassifiedWordConfig =
+        commonUnclassifiedWordConfigLookup[node.value];
+
+      if (commonUnclassifiedWordConfig?.canBeInStandardizedAddress === false) {
+        throw new AddressInterpretationError(
+          `Encountered a word that can’t be in standardized address: ${node.value}`,
+        );
+      }
     }
 
     // Give up if the address includes approximate referencing (e.g. ‘в районе’)

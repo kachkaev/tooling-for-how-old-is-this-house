@@ -6,6 +6,13 @@ describe("normalizeAddress", () => {
     expect(normalizeAddress(undefined, {})).toEqual(undefined);
   });
 
+  it(`returns undefined for punctuation only`, () => {
+    expect(normalizeAddress("-", {})).toEqual(undefined);
+    expect(normalizeAddress("  ", {})).toEqual(undefined);
+    expect(normalizeAddress("  - ", {})).toEqual(undefined);
+    expect(normalizeAddress("  / -. ", {})).toEqual(undefined);
+  });
+
   testCases.forEach(
     ({ rawAddresses, expectedCleanedAddress, expectedNormalizedAddress }) => {
       if (expectedNormalizedAddress) {

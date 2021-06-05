@@ -1,18 +1,19 @@
 import { AddressInterpretationError } from "./AddressInterpretationError";
 import { buildCleanedAddressAst } from "./buildCleanedAddressAst";
 import { buildStandardizedAddressAst } from "./buildStandardizedAddressAst";
+import { checkIfCleanedAddressAstIsEmpty } from "./helpersForNormalization";
 import { printCleanedAddressAst } from "./printCleanedAddressAst";
 import { printStandardizedAddressAst } from "./printStandardizedAddressAst";
 import {
   AddressNormalizationConfig,
   FinalizeWordSpelling,
-  ReorderWordsInSection,
+  PostProcessWordsInStandardizedAddressSection,
 } from "./types";
 
 export const normalizeAddress = (
   rawAddress: string | undefined,
   config: AddressNormalizationConfig,
-  reorderWordsInSection?: ReorderWordsInSection,
+  postProcessWordsInStandardizedAddressSection?: PostProcessWordsInStandardizedAddressSection,
   finalizeWordSpelling?: FinalizeWordSpelling,
 ): string | undefined => {
   if (!rawAddress || rawAddress.trim().length === 0) {
@@ -21,8 +22,7 @@ export const normalizeAddress = (
 
   const cleanedAddressAst = buildCleanedAddressAst(rawAddress);
 
-  // Check for empty addresses (only separators, e.g. "-")
-  if (!cleanedAddressAst.children.some((node) => node.nodeType === "word")) {
+  if (checkIfCleanedAddressAstIsEmpty(cleanedAddressAst)) {
     return undefined;
   }
 
@@ -34,7 +34,7 @@ export const normalizeAddress = (
 
     return printStandardizedAddressAst(
       standardizedAddressAst,
-      reorderWordsInSection,
+      postProcessWordsInStandardizedAddressSection,
       finalizeWordSpelling,
     );
   } catch (e: unknown) {

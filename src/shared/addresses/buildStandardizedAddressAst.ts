@@ -1,19 +1,14 @@
-import _ from "lodash";
-
 import { AddressInterpretationError } from "./AddressInterpretationError";
 import { buildCleanedAddressAst } from "./buildCleanedAddressAst";
 import { convertSectionToSemanticPart } from "./convertSectionToSemanticPart";
 import { extractSections } from "./extractSections";
 import { getDesignationConfig } from "./helpersForDesignations";
 import { resolveRegionCode } from "./helpersForRegions";
-import { orderedSectionTypes } from "./helpersForStandardization";
 import {
-  AddressNodeWithSemanticPart,
   AddressNodeWithWord,
   AddressSection,
   BuildStandardizedAddressAstConfig,
   CleanedAddressAst,
-  SemanticPartType,
   StandardizedAddressAst,
 } from "./types";
 
@@ -23,11 +18,14 @@ export const buildStandardizedAddressAst = (
 ): StandardizedAddressAst => {
   const sections = extractSections(cleanedAddressAst);
 
-  const semanticPartLookup: Partial<
-    Record<SemanticPartType, AddressNodeWithSemanticPart>
-  > = {};
+  let region: StandardizedAddressAst["region"] | undefined = undefined;
+  let settlement: StandardizedAddressAst["settlement"] | undefined = undefined;
+  let streets: StandardizedAddressAst["streets"] | undefined = undefined;
+  let houses: StandardizedAddressAst["houses"] | undefined = undefined;
+  let housePart: StandardizedAddressAst["housePart"] | undefined = undefined;
 
-  const remainingSections: AddressSection[] = [];
+  const houseSections: AddressSection[] = [];
+  const housePartSections: AddressSection[] = [];
 
   for (
     let sectionIndex = 0;
@@ -45,7 +43,7 @@ export const buildStandardizedAddressAst = (
       sections[1]?.designation !== "street" &&
       sections[1]?.designation !== "place"
     ) {
-      semanticPartLookup.region = resolveRegionCode(section.words[0].value);
+      region = resolveRegionCode(section.words[0].value);
       continue;
     }
 
@@ -68,7 +66,7 @@ export const buildStandardizedAddressAst = (
       continue;
     }
 
-    // Ignore insignificant building parts
+    // Ignore insignificant house parts
     if (section.designation === "housePart") {
       const designationWordValue = section.words?.find(
         (word) => word.wordType === "designation",
@@ -95,12 +93,8 @@ export const buildStandardizedAddressAst = (
 
         // If there is no other section that can be treated as house
         // → remove word
-        const sectionWithHouseNumber = remainingSections.find(
-          (section2) =>
-            section2.designation === "house" || !section2.designation,
-        );
-        if (!sectionWithHouseNumber) {
-          remainingSections.push({
+        if (!houseSections.length) {
+          houseSections.push({
             index: section.index,
             words: section.words.filter((word) => word.value !== "строение"),
           });
@@ -130,23 +124,23 @@ export const buildStandardizedAddressAst = (
 
     // Region
     if (section.designation === "region") {
-      if (semanticPartLookup.region) {
+      if (region) {
         throw new AddressInterpretationError(
           "Did not expect more than one region",
         );
       }
-      semanticPartLookup.region = convertSectionToSemanticPart(section);
+      region = convertSectionToSemanticPart(section);
       continue;
     }
 
     // Settlement (designation is explicit)
     if (section.designation === "settlement") {
-      if (semanticPartLookup.settlement) {
+      if (settlement) {
         throw new AddressInterpretationError(
           "Did not expect more than one settlement",
         );
       }
-      semanticPartLookup.settlement = convertSectionToSemanticPart(section);
+      settlement = convertSectionToSemanticPart(section);
       continue;
     }
 
@@ -155,139 +149,203 @@ export const buildStandardizedAddressAst = (
       !section.designation &&
       !section.words.find((word) => word.wordType === "cardinalNumber")
     ) {
-      if (semanticPartLookup.settlement) {
+      if (settlement) {
         throw new AddressInterpretationError(
           "Did not expect more than one settlement",
         );
       }
-      semanticPartLookup.settlement = convertSectionToSemanticPart(section);
+      settlement = convertSectionToSemanticPart(section);
       continue;
     }
 
     // Place (settlement or street)
     if (section.designation === "place") {
-      if (!semanticPartLookup.settlement) {
-        semanticPartLookup.settlement = convertSectionToSemanticPart(section);
-      } else if (!semanticPartLookup.street) {
-        semanticPartLookup.street = convertSectionToSemanticPart(section);
+      if (!settlement) {
+        settlement = convertSectionToSemanticPart(section);
+      } else if (!streets) {
+        streets = [convertSectionToSemanticPart(section)];
       } else {
-        // Skip (case of corner buildings)
+        streets.push(convertSectionToSemanticPart(section));
       }
       continue;
     }
 
     // Street
     if (section.designation === "street") {
-      if (semanticPartLookup.street) {
-        // Skip
-        // TODO: better handle case of corner buildings
+      if (streets) {
+        streets.push(convertSectionToSemanticPart(section));
         continue;
       }
 
-      semanticPartLookup.street = convertSectionToSemanticPart(section);
+      streets = [convertSectionToSemanticPart(section)];
       continue;
     }
 
-    remainingSections.push(section);
+    // House
+    if (
+      section.designation === "house" ||
+      (!section.designation && section.words.length === 1)
+    ) {
+      houseSections.push(section);
+      continue;
+    }
+
+    // Rest (house part)
+    housePartSections.push(section);
   }
 
-  // Assemble building part out of the remaining sections
-  if (remainingSections.length) {
-    // Ensure the remaining sections are subsequent (e.g. __x__xx_ is not OK)
+  let prevHouseSection: AddressSection | undefined = undefined;
+  for (const houseSection of houseSections) {
+    let wordsToAdd = [...houseSection.words];
+    const firstWordInSection = houseSection.words[0];
+
+    // Remove house designation word
+    if (
+      firstWordInSection?.wordType === "designation" &&
+      getDesignationConfig(firstWordInSection).designation === "house"
+    ) {
+      // if designation is not followed by a number, fail (e.g. typos like ‘уч. Мясницкая’)
+      const nextWord = wordsToAdd[1];
+      if (
+        nextWord?.nodeType !== "word" ||
+        nextWord?.wordType !== "cardinalNumber"
+      ) {
+        throw new AddressInterpretationError(
+          `Expected cardinal number after ${firstWordInSection?.value}, got ${nextWord?.value}`,
+        );
+      }
+      wordsToAdd = wordsToAdd.slice(1);
+    }
+
+    const [firstWord, ...otherWords] = wordsToAdd;
+    if (!firstWord || otherWords.length) {
+      throw new AddressInterpretationError(
+        `Expected house section to consist of one word, got ${wordsToAdd.length}`,
+      );
+    }
+
+    const separatedBySlash =
+      houseSection.separatorBefore?.separatorType === "slash";
+    const followsAnotherHouseSection =
+      prevHouseSection?.index === houseSection.index - 1;
+
+    if (separatedBySlash && !followsAnotherHouseSection) {
+      throw new AddressInterpretationError(
+        "Expected slash after another house number",
+      );
+    }
+    if (!separatedBySlash && followsAnotherHouseSection) {
+      throw new AddressInterpretationError(
+        "Expected slash between subsequent house numbers",
+      );
+    }
+
+    prevHouseSection = houseSection;
+
+    if (!houses) {
+      houses = [
+        {
+          nodeType: "semanticPart",
+          orderedWords: [firstWord],
+        },
+      ];
+    } else {
+      houses.push({
+        nodeType: "semanticPart",
+        orderedWords: [firstWord],
+      });
+    }
+  }
+
+  // Assemble housePart out of the remaining sections
+  if (housePartSections.length) {
+    // Ensure the sections are subsequent (e.g. __x__xx_ is not OK)
     for (
       let sectionIndex = 1;
-      sectionIndex < remainingSections.length;
+      sectionIndex < housePartSections.length;
       sectionIndex += 1
     ) {
       if (
-        (remainingSections[sectionIndex]?.index ?? 0) -
-          (remainingSections[sectionIndex - 1]?.index ?? 0) !==
+        (housePartSections[sectionIndex]?.index ?? 0) -
+          (housePartSections[sectionIndex - 1]?.index ?? 0) !==
         1
       ) {
         throw new AddressInterpretationError(
-          "Expected remaining sections to be subsequent",
+          "Expected house part sections to be subsequent",
         );
       }
     }
 
-    const orderedWords: AddressNodeWithWord[] = [];
-    let houseSectionAlreadyFound = false;
-    remainingSections.forEach((section) => {
-      let wordsToAdd = section.words;
-      const firstWordInSection = section.words[0];
+    // Ensure firstSection follows the last house section
+    if (
+      (housePartSections[0]?.index ?? 0) - 1 !==
+      (houseSections[houseSections.length - 1]?.index ?? 0)
+    ) {
+      throw new AddressInterpretationError(
+        "Expected house part sections to be after house sections",
+      );
+    }
 
-      // Remove house designation word
-      if (
-        firstWordInSection?.wordType === "designation" &&
-        getDesignationConfig(firstWordInSection).designation === "house"
-      ) {
-        // if designation is not followed by a number, fail (e.g. typos like ‘уч. Мясницкая’)
-        const nextWord = wordsToAdd[1];
-        if (
-          nextWord?.nodeType !== "word" ||
-          nextWord?.wordType !== "cardinalNumber"
-        ) {
-          throw new AddressInterpretationError(
-            `Expected cardinal number after ${firstWordInSection?.value}, got ${nextWord?.value}`,
-          );
-        }
-        wordsToAdd = wordsToAdd.slice(1);
-      }
-
-      const isHouseSection =
-        wordsToAdd.length === 1 && wordsToAdd[0]?.wordType === "cardinalNumber";
-
-      // Remove second house number in corner buildings (if separated by slash)
-      if (section.separatorBefore?.separatorType === "slash") {
-        if (isHouseSection && houseSectionAlreadyFound) {
-          return;
-        }
-        throw new AddressInterpretationError(
-          "Unexpected / not after another house number",
-        );
-      }
-
-      if (isHouseSection && houseSectionAlreadyFound) {
-        throw new AddressInterpretationError(
-          "Only one house number is supported",
-        );
-      }
-
-      houseSectionAlreadyFound = true;
-
-      orderedWords.push(...wordsToAdd);
+    const wordsInHousePart: AddressNodeWithWord[] = [];
+    housePartSections.forEach((section) => {
+      const wordsToAdd = section.words;
+      wordsInHousePart.push(...wordsToAdd);
     });
 
-    semanticPartLookup.building = {
-      nodeType: "semanticPart",
-      orderedWords,
-    };
+    if (
+      wordsInHousePart.some(
+        (wordToAdd) =>
+          wordToAdd.wordType !== "designation" &&
+          wordToAdd.wordType !== "cardinalNumber" &&
+          !(
+            wordToAdd.wordType === "unclassified" &&
+            wordToAdd.value.length === 1
+          ),
+      )
+    ) {
+      throw new AddressInterpretationError(
+        "Expected house part sections only contain designations, numbers or single letters",
+      );
+    }
+
+    if (wordsInHousePart.length) {
+      housePart = {
+        nodeType: "semanticPart",
+        orderedWords: wordsInHousePart,
+      };
+    }
   }
 
   // Add default region
-  if (!semanticPartLookup.region && config.defaultRegion) {
+  if (!region && config.defaultRegion) {
     const regionSection = extractSections(
       buildCleanedAddressAst(config.defaultRegion),
     )[0];
     if (regionSection) {
-      semanticPartLookup.region = convertSectionToSemanticPart(regionSection);
+      region = convertSectionToSemanticPart(regionSection);
     }
   }
 
-  const foundSectionTypes = Object.keys(semanticPartLookup);
-  if (foundSectionTypes.length < orderedSectionTypes.length) {
-    throw new AddressInterpretationError(
-      `Missing ${_.difference(orderedSectionTypes, foundSectionTypes).join(
-        ", ",
-      )}`,
-    );
+  if (!region) {
+    throw new AddressInterpretationError(`Missing region`);
+  }
+
+  if (!settlement) {
+    throw new AddressInterpretationError(`Missing settlement`);
+  }
+  if (!streets) {
+    throw new AddressInterpretationError(`Missing streets`);
+  }
+  if (!houses) {
+    throw new AddressInterpretationError(`Missing houses`);
   }
 
   return {
     nodeType: "standardizedAddress",
-    semanticPartLookup: semanticPartLookup as Record<
-      SemanticPartType,
-      AddressNodeWithSemanticPart
-    >,
+    region,
+    settlement,
+    streets,
+    houses,
+    housePart,
   };
 };

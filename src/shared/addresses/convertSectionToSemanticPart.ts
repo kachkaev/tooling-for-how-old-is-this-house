@@ -1,6 +1,5 @@
 import _ from "lodash";
 
-import { AddressInterpretationError } from "./AddressInterpretationError";
 import { commonUnclassifiedWordConfigLookup } from "./helpersForCommonUnclassifiedWords";
 import { getDesignationConfig } from "./helpersForDesignations";
 import {
@@ -19,25 +18,13 @@ export const convertSectionToSemanticPart = (
   const designationConfig =
     designationWord && getDesignationConfig(designationWord);
 
+  // Ignore common unclassified words if applicable
   const filteredWords = addressSection.words.filter((word) => {
-    // Ignore initials
-    if (word.wordType === "initial") {
-      return false;
-    }
-    // Handle common unclassified words
     if (word.wordType === "unclassified") {
       const commonUnclassifiedWordConfig =
         commonUnclassifiedWordConfigLookup[word.value];
 
-      // Stop if canBeInStandardizedAddress
       if (commonUnclassifiedWordConfig) {
-        if (commonUnclassifiedWordConfig.canBeInStandardizedAddress === false) {
-          throw new AddressInterpretationError(
-            `Encountered a word that can’t be in standardized address: ${word.value}`,
-          );
-        }
-
-        // Ignore common unclassified words if applicable
         if (
           commonUnclassifiedWordConfig.ignored === true ||
           (designationConfig &&

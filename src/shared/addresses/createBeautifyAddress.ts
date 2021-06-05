@@ -12,7 +12,7 @@ import {
   AddressNodeWithWord,
   AddressNormalizationConfig,
   FinalizeWordSpelling,
-  ReorderWordsInSection,
+  PostProcessWordsInStandardizedAddressSection,
 } from "./types";
 
 const orderForStandardName = ({ wordType }: AddressNodeWithWord): number => {
@@ -43,7 +43,9 @@ const orderForAdjectiveLikeName = ({
   }
 };
 
-const reorderWordsInSection: ReorderWordsInSection = (words) => {
+const postProcessWordsInStandardizedAddressSection: PostProcessWordsInStandardizedAddressSection = (
+  words,
+) => {
   let designationGoesBeforeName = false;
   for (const word of words) {
     if (word.wordType === "designation") {
@@ -214,7 +216,7 @@ export const createBeautifyAddress = (
     normalizeAddress(
       address,
       addressNormalizationConfig,
-      reorderWordsInSection,
+      postProcessWordsInStandardizedAddressSection,
       finalizeWordSpelling,
     );
 };

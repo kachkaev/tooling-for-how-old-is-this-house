@@ -1,26 +1,42 @@
-import { orderedSectionTypes } from "./helpersForStandardization";
 import { printStandardizedAddressSection } from "./printStandardizedAddressSection";
 import {
+  AddressNodeWithSemanticPart,
   FinalizeWordSpelling,
-  ReorderWordsInSection,
+  PostProcessWordsInStandardizedAddressSection,
   StandardizedAddressAst,
 } from "./types";
 
 export const printStandardizedAddressAst = (
   standardizedAddressAst: StandardizedAddressAst,
-  reorderWordsInSection: ReorderWordsInSection = (words) => words,
+  postProcessWordsInStandardizedAddressSection: PostProcessWordsInStandardizedAddressSection = (
+    words,
+  ) => words,
   finalizeWordSpelling: FinalizeWordSpelling = (word) => word.value,
 ): string => {
-  const printedSections: string[] = [];
-  for (const sectionType of orderedSectionTypes) {
-    printedSections.push(
-      printStandardizedAddressSection(
-        standardizedAddressAst.semanticPartLookup[sectionType],
-        reorderWordsInSection,
-        finalizeWordSpelling,
-      ),
-    );
+  const printableParts: Array<string | AddressNodeWithSemanticPart> = [];
+
+  printableParts.push(standardizedAddressAst.region);
+  printableParts.push(", ", standardizedAddressAst.settlement);
+
+  standardizedAddressAst.streets.forEach((semanticPart, index) => {
+    printableParts.push(index === 0 ? ", " : " / ", semanticPart);
+  });
+  standardizedAddressAst.houses.forEach((semanticPart, index) => {
+    printableParts.push(index === 0 ? ", " : "/", semanticPart);
+  });
+  if (standardizedAddressAst.housePart) {
+    printableParts.push(" ", standardizedAddressAst.housePart);
   }
 
-  return printedSections.join(", ");
+  return printableParts
+    .map((part) =>
+      typeof part === "string"
+        ? part
+        : printStandardizedAddressSection(
+            part,
+            postProcessWordsInStandardizedAddressSection,
+            finalizeWordSpelling,
+          ),
+    )
+    .join("");
 };

@@ -1,13 +1,13 @@
 import path from "path";
 
 import {
+  AddressNodeWithSemanticPart,
   AddressNormalizationConfig,
   buildCleanedAddressAst,
   buildStandardizedAddressAst,
   printStandardizedAddressSection,
-  SemanticPartType,
-  StandardizedAddressAst,
 } from "../addresses";
+import { AddressInterpretationError } from "../addresses/AddressInterpretationError";
 import { getTerritoryDirPath } from "../territory";
 
 export const getGeocodeDictionariesDirPath = () => {
@@ -25,19 +25,13 @@ export const getDictionaryFilePath = (sliceId: string) => {
 };
 
 const createStandardizedSlice = (
-  standardizedAddressAst: StandardizedAddressAst,
-  sectionType: SemanticPartType,
+  semanticPart: AddressNodeWithSemanticPart,
 ): string | undefined => {
-  const sectionNode = standardizedAddressAst.semanticPartLookup[sectionType];
-  if (sectionNode) {
-    return printStandardizedAddressSection(
-      sectionNode,
-      (words) => words,
-      (word) => word.value,
-    );
-  }
-
-  return undefined;
+  return printStandardizedAddressSection(
+    semanticPart,
+    (words) => words,
+    (word) => word.value,
+  );
 };
 
 /**
@@ -64,11 +58,26 @@ export const deriveNormalizedAddressSliceId = (
       cleanedAddressAst,
       addressNormalizationConfig,
     );
+
+    if (standardizedAddressAst.streets.length > 1) {
+      throw new AddressInterpretationError(
+        `Unexpected more than one street in "${normalizedAddress}"`,
+      );
+    }
+    if (standardizedAddressAst.houses.length > 1) {
+      throw new AddressInterpretationError(
+        `Unexpected more than one house "${normalizedAddress}"`,
+      );
+    }
+
     slices.push("standardized");
-    slices.push(createStandardizedSlice(standardizedAddressAst, "region"));
-    slices.push(createStandardizedSlice(standardizedAddressAst, "settlement"));
-    slices.push(createStandardizedSlice(standardizedAddressAst, "street"));
-  } catch {
+    slices.push(createStandardizedSlice(standardizedAddressAst.region));
+    slices.push(createStandardizedSlice(standardizedAddressAst.settlement));
+    slices.push(createStandardizedSlice(standardizedAddressAst.streets[0]));
+  } catch (e: unknown) {
+    if (!(e instanceof AddressInterpretationError)) {
+      throw e;
+    }
     slices.push("cleaned");
     const firstLetters: string[] = [];
     cleanedAddressAst.children.forEach((node) => {

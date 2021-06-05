@@ -6,6 +6,7 @@ const commonUnclassifiedWordConfigs: CommonUnclassifiedWordConfig[] = [
   { normalizedValue: "имени", aliases: ["им"], ignored: ["street"] },
   { normalizedValue: "завод", aliases: ["з-д"] },
   { normalizedValue: "завода", aliases: ["з-да"] },
+  { normalizedValue: "вч", aliases: ["в/ч"], canBeInStandardizedAddress: false },
   { normalizedValue: "гск", aliases: ["гк"], canBeInStandardizedAddress: false },
   { normalizedValue: "гаражный", canBeInStandardizedAddress: false },
   { normalizedValue: "кооператив", canBeInStandardizedAddress: false },
