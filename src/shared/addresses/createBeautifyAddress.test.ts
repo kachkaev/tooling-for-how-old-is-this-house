@@ -151,6 +151,20 @@ const testCaseGroups: TestCaseGroup[] = [
       },
     ],
   },
+  {
+    title: "address normalization config",
+    addressNormalizationConfig: {
+      canonicalSpellings: ["ОЛОЛО", "Потёмнкина"],
+      defaultRegion: "Пензенская область",
+    },
+    testCases: [
+      {
+        rawAddress: "Поселок ололо, проспект потемнкина, 1",
+        expectedBeautifiedAddress:
+          "Пензенская область, посёлок ОЛОЛО, проспект Потёмнкина, 1",
+      },
+    ],
+  },
 ];
 
 describe("createBeautifyAddress", () => {

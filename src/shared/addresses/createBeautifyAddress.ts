@@ -5,6 +5,7 @@ import {
   designationConfigs,
   getDesignationConfig,
 } from "./helpersForDesignations";
+import { rawRegions } from "./helpersForRegions";
 import { simplifySpelling } from "./helpersForWords";
 import { normalizeAddress } from "./normalizeAddress";
 import {
@@ -127,7 +128,12 @@ export const createBeautifyAddress = (
   const letterCasingLookup: Record<string, LetterCasing> = {};
   const spellingLookup: Record<string, string> = {};
 
-  for (const knownAddress of knownAddresses) {
+  const allKnownAddresses = [...knownAddresses];
+  for (const rawRegion of rawRegions) {
+    allKnownAddresses.push(rawRegion[1]);
+  }
+
+  for (const knownAddress of allKnownAddresses) {
     const addressTokens = extractAtomicTokens(knownAddress);
     const letterSequences = addressTokens
       .filter(

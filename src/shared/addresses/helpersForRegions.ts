@@ -7,7 +7,7 @@ import { AddressNodeWithSemanticPart } from "./types";
 // https://ru.wikipedia.org/wiki/Коды_субъектов_Российской_Федерации
 type RawRegion = [gibddCode: string, rawName: string];
 
-const rawRegions: RawRegion[] = [
+export const rawRegions: RawRegion[] = [
   ["01", "Республика Адыгея"],
   ["02", "Республика Башкортостан"],
   ["03", "Республика Бурятия"],
@@ -93,10 +93,7 @@ const rawRegions: RawRegion[] = [
   ["95", "Чеченская Республика"],
 ];
 
-export const regionByCode: Record<
-  string,
-  AddressNodeWithSemanticPart | undefined
-> = {};
+export const regionByCode: Record<string, AddressNodeWithSemanticPart> = {};
 
 rawRegions.forEach(([code, rawName]) => {
   const section = extractSections(buildCleanedAddressAst(rawName))[0];
