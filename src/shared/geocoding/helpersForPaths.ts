@@ -30,7 +30,11 @@ const createStandardizedSlice = (
 ): string | undefined => {
   const sectionNode = standardizedAddressAst.semanticPartLookup[sectionType];
   if (sectionNode) {
-    return printStandardizedAddressSection(sectionNode);
+    return printStandardizedAddressSection(
+      sectionNode,
+      (words) => words,
+      (word) => word.value,
+    );
   }
 
   return undefined;

@@ -1,7 +1,9 @@
-import { CleanedAddressAst } from "./types";
+import { CleanedAddressAst, FinalizeWordSpelling } from "./types";
 
 export const printCleanedAddressAst = (
   cleanedAddressAst: CleanedAddressAst,
+  finalizeWordSpelling: FinalizeWordSpelling = (word) =>
+    word.value.toUpperCase(),
 ): string => {
   const chunks: string[] = [];
 
@@ -11,7 +13,7 @@ export const printCleanedAddressAst = (
     const nextNode = nodes[index + 1];
 
     if (node.nodeType === "word") {
-      chunks.push(node.value);
+      chunks.push(finalizeWordSpelling(node));
       if (nextNode?.nodeType === "word") {
         chunks.push(" ");
       }
@@ -29,5 +31,5 @@ export const printCleanedAddressAst = (
     }
   }
 
-  return chunks.join("").toUpperCase();
+  return chunks.join("");
 };

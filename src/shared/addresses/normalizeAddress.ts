@@ -3,11 +3,17 @@ import { buildCleanedAddressAst } from "./buildCleanedAddressAst";
 import { buildStandardizedAddressAst } from "./buildStandardizedAddressAst";
 import { printCleanedAddressAst } from "./printCleanedAddressAst";
 import { printStandardizedAddressAst } from "./printStandardizedAddressAst";
-import { AddressNormalizationConfig } from "./types";
+import {
+  AddressNormalizationConfig,
+  FinalizeWordSpelling,
+  ReorderWordsInSection,
+} from "./types";
 
 export const normalizeAddress = (
   rawAddress: string | undefined,
   config: AddressNormalizationConfig,
+  reorderWordsInSection?: ReorderWordsInSection,
+  finalizeWordSpelling?: FinalizeWordSpelling,
 ): string | undefined => {
   if (!rawAddress || rawAddress.trim().length === 0) {
     return undefined;
@@ -26,10 +32,14 @@ export const normalizeAddress = (
       config,
     );
 
-    return printStandardizedAddressAst(standardizedAddressAst);
+    return printStandardizedAddressAst(
+      standardizedAddressAst,
+      reorderWordsInSection,
+      finalizeWordSpelling,
+    );
   } catch (e: unknown) {
     if (e instanceof AddressInterpretationError) {
-      return printCleanedAddressAst(cleanedAddressAst);
+      return printCleanedAddressAst(cleanedAddressAst, finalizeWordSpelling);
     }
     throw e;
   }

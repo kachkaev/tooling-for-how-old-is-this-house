@@ -2,6 +2,7 @@ export type Gender = "f" | "m" | "n";
 
 export interface ProtoWordConfig {
   normalizedValue?: string;
+  beautifiedValue?: string;
   aliases?: Readonly<string[]>;
 }
 
@@ -25,6 +26,7 @@ export interface DesignationConfig extends WordConfig {
   gender: Gender;
   canBePartOfName?: boolean;
   canBeSkippedIfAloneInSection?: boolean;
+  alwaysGoesBeforeName?: boolean;
 }
 
 export interface DesignationAdjectiveConfig extends ProtoWordConfig {
@@ -142,6 +144,15 @@ export interface StandardizedAddressAst {
 
 export interface BuildStandardizedAddressAstConfig {
   defaultRegion?: string;
+  canonicalSpellings?: string[];
+}
+
+export interface FinalizeWordSpelling {
+  (word: AddressNodeWithWord): string;
+}
+
+export interface ReorderWordsInSection {
+  (words: AddressNodeWithWord[]): AddressNodeWithWord[];
 }
 
 export type AddressNormalizationConfig = BuildStandardizedAddressAstConfig;

@@ -5,7 +5,10 @@ import fs from "fs-extra";
 import { load } from "js-yaml";
 import path from "path";
 
-import { AddressNormalizationConfig } from "./addresses";
+import {
+  AddressNormalizationConfig,
+  BuildStandardizedAddressAstConfig,
+} from "./addresses";
 import { cleanEnv } from "./cleanEnv";
 
 export type TerritoryExtent = turf.Feature<turf.Polygon>;
@@ -56,9 +59,7 @@ export interface TerritoryConfig {
       handpickedCnsForPageInfos?: string[];
     };
   };
-  addressNormalization?: {
-    defaultRegion?: string;
-  };
+  addressNormalization?: BuildStandardizedAddressAstConfig;
 }
 
 export const getTerritoryConfigFilePath = (): string =>

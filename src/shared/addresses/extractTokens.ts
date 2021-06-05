@@ -1,8 +1,12 @@
 import { extractAtomicTokens } from "./extractAtomicTokens";
+import { simplifySpelling } from "./helpersForWords";
 import { AddressToken } from "./types";
 
 export const extractTokens = (rawAddress: string): AddressToken[] => {
-  const atomicTokens = extractAtomicTokens(rawAddress);
+  const atomicTokens = extractAtomicTokens(rawAddress).map(
+    ([tokenType, tokenValue]) =>
+      [tokenType, simplifySpelling(tokenValue)] as AddressToken,
+  );
 
   const result: AddressToken[] = [];
   let wordIsOpen = false;

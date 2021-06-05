@@ -52,7 +52,9 @@ export const prepareUpload: Command = async ({ logger }) => {
       fid: outputFeatures.length + 1,
 
       /* eslint-disable @typescript-eslint/naming-convention */
-      r_adress: inputFeature.properties.address,
+      r_adress:
+        inputFeature.properties.derivedBeautifiedAddress ??
+        inputFeature.properties.address,
       r_floors: inputFeature.properties.floorCountAboveGround,
       r_name: inputFeature.properties.name,
       r_photo_url: inputFeature.properties.photoUrl,

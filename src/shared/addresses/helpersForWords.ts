@@ -66,3 +66,6 @@ export const generateWordConfigLookup = <C extends Partial<WordConfig>>({
 
   return wordLookup;
 };
+
+export const simplifySpelling = (letterSequence: string) =>
+  letterSequence.toLowerCase().replace("ё", "е");

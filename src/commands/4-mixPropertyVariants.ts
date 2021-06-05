@@ -5,6 +5,7 @@ import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
 
+import { createBeautifyAddress } from "../shared/addresses";
 import { deepClean } from "../shared/deepClean";
 import { writeFormattedJson } from "../shared/helpersForJson";
 import {
@@ -28,6 +29,7 @@ import {
   pickWikipediaUrl,
   PropertyVariant,
 } from "../shared/outputMixing";
+import { getAddressNormalizationConfig } from "../shared/territory";
 
 interface VariantInfoInstance {
   variant: PropertyVariant;
@@ -246,9 +248,33 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
   }
 
   process.stdout.write(` Done.\n`);
+  process.stdout.write(chalk.green(`Beautifying picked addresses...`));
 
-  // TODO: Generate derived beautified address
+  const knownAddresses: string[] = [];
+  for (const outputFeature of outputFeatures) {
+    const address = outputFeature.properties.address;
+    if (address) {
+      knownAddresses.push(address);
+    }
+  }
 
+  const addressNormalizationConfig = await getAddressNormalizationConfig();
+
+  const beautifyAddress = createBeautifyAddress(
+    knownAddresses,
+    addressNormalizationConfig,
+  );
+
+  for (const outputFeature of outputFeatures) {
+    const address = outputFeature.properties.address;
+    if (address) {
+      outputFeature.properties.derivedBeautifiedAddress = beautifyAddress(
+        address,
+      );
+    }
+  }
+
+  process.stdout.write(` Done.\n`);
   process.stdout.write(chalk.green(`Saving...`));
 
   const resultFileName = getMixedPropertyVariantsFilePath();

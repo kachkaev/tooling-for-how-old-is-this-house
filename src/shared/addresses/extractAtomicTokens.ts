@@ -21,11 +21,8 @@ const multiCharTokens: Array<
   ],
 ];
 
-export const extractAtomicTokens = (
-  rawAddress: string,
-): AtomicAddressToken[] => {
+export const extractAtomicTokens = (address: string): AtomicAddressToken[] => {
   const result: AtomicAddressToken[] = [];
-  const address = rawAddress.toLowerCase().replace("ё", "е");
   for (let index = 0; index < address.length; index += 1) {
     const char = address[index]!;
     switch (char) {
@@ -67,6 +64,7 @@ export const extractAtomicTokens = (
 
       case "№":
       case "n":
+      case "N":
       case "#":
         result.push(["numberSign", char]);
         continue;
