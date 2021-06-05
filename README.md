@@ -542,7 +542,7 @@ yarn exe src/commands/9-makePoster.ts
       },
       "properties": {
         "dataToOmit": "mkrf",
-        "privateNote": "ул. Тестовая 42 отмечен как памятник, а это уже небоскрёб"
+        "privateNote": "ул. Тестовая 42 отмечен как памятник архитектуры, а это уже небоскрёб"
       }
     }
   ]
