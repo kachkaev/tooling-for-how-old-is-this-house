@@ -259,17 +259,45 @@ export const buildStandardizedAddressAst = (
 
   // Assemble housePart out of the remaining sections
   if (housePartSections.length) {
-    // Ensure the sections are subsequent (e.g. __x__xx_ is not OK)
     for (
-      let sectionIndex = 1;
+      let sectionIndex = 0;
       sectionIndex < housePartSections.length;
       sectionIndex += 1
     ) {
-      if (
-        (housePartSections[sectionIndex]?.index ?? 0) -
-          (housePartSections[sectionIndex - 1]?.index ?? 0) !==
-        1
-      ) {
+      const section = housePartSections[sectionIndex];
+      const prevSection = housePartSections[sectionIndex - 1];
+
+      if (!section) {
+        throw new Error("Unexpected empty section in a loop");
+      }
+
+      const cardinalNumberNodes = section.words.filter(
+        (word) => word.wordType === "cardinalNumber",
+      );
+
+      // Ensure section does not start with a number (could be the case of enumeration like "сарай 1, 2 и 3")
+      if (section.words[0] === cardinalNumberNodes[0]) {
+        throw new AddressInterpretationError(
+          "Unexpected cardinal number in house part section",
+        );
+      }
+
+      // Ensure section does not contain more than one cardinal number (could be the case of enumeration like "сарай 1, 2 3")
+      if (cardinalNumberNodes.length > 2) {
+        throw new AddressInterpretationError(
+          "Unexpected multiple cardinal numbers in house part section",
+        );
+      }
+
+      // Ensure section does not start with an unclassified word (e.g. "Б 42")
+      if (section.words[0]?.wordType === "unclassified") {
+        throw new AddressInterpretationError(
+          "Unexpected unclassified word at the beginning of the section",
+        );
+      }
+
+      // Ensure the sections are subsequent (e.g. __x__xx_ is not OK)
+      if (prevSection && section.index - prevSection.index !== 1) {
         throw new AddressInterpretationError(
           "Expected house part sections to be subsequent",
         );

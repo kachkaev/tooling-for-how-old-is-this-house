@@ -783,10 +783,14 @@ export const testCases: Array<{
       "область пензенская, пенза, улица курская большая, 61 литер б 5",
   },
   {
+    rawAddresses: ["Пензенская область, г. Пенза, ул. Рябова, д. 4Б, лит. Н"],
+    expectedStandardizedAddress:
+      "область пензенская, пенза, улица рябова, 4б литер н",
+  },
+  {
     rawAddresses: [
       "Пензенская область, г. Пенза, ул. Рябова, д. 4Б, лит. Н,Н1",
     ],
-    expectedStandardizedAddress:
-      "область пензенская, пенза, улица рябова, 4б литер н н 1",
+    expectedStandardizedAddress: null,
   },
 ];

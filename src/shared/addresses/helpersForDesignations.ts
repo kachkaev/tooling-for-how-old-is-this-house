@@ -34,7 +34,7 @@ export const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "переулок", gender: "m", aliases: ["пер"] },
   { designation: "street", normalizedValue: "площадь", gender: "f", aliases: ["пл"] },
   { designation: "street", normalizedValue: "порядок", gender: "m", canBePartOfName: true },
-  { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр", "пр-д"] },
+  { designation: "street", normalizedValue: "проезд", gender: "m", aliases: ["пр", "пр-д", "пр-зд", "прзд"] },
   { designation: "street", normalizedValue: "проспект", gender: "m", aliases: ["пр-т", "пр-кт", "просп"] },
   { designation: "street", normalizedValue: "разъезд", gender: "m" },
   { designation: "street", normalizedValue: "снт", gender: "n", beautifiedValue: "СНТ", alwaysGoesBeforeName: true }, // садовое некоммерческое товарищество
@@ -46,7 +46,7 @@ export const designationConfigs: DesignationConfig[]  = [
   { designation: "street", normalizedValue: "улица", gender: "f", aliases: ["ул"] },
   { designation: "street", normalizedValue: "шоссе", gender: "n", aliases: ["ш"] },
 
-  { designation: "house", normalizedValue: "дом", gender: "m", aliases: ["д"] },
+  { designation: "house", normalizedValue: "дом", gender: "m", aliases: ["д", "домовл", "домовладение"] },
   { designation: "house", normalizedValue: "здание", gender: "n", aliases: ["зд"] },
   { designation: "house", normalizedValue: "участок", gender: "m", aliases: ["з/у", "зу", "уч", "уч-к"] },
 
