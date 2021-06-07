@@ -70,7 +70,7 @@ const postProcessWordsInStandardizedAddressSection: PostProcessWordsInStandardiz
         wordType === "unclassified" &&
         (value.endsWith("ья") ||
           value.endsWith("ая") ||
-          value.endsWith("ой") ||
+          (value.endsWith("ой") && !value.endsWith("ской")) || // "Кривой переулок" vs "переулок Космодемьянской"
           value.endsWith("ий") ||
           value.endsWith("ый") ||
           value.endsWith("ое") ||
@@ -192,8 +192,12 @@ export const createBeautifyAddress = (
   }
 
   const finalizeWordSpelling: FinalizeWordSpelling = ({ value, wordType }) => {
-    // "42а" → "42А", "а." → "А."
-    if (wordType === "cardinalNumber" || wordType === "initial") {
+    // "42а" → "42А", "а." → "А.", "а" → "А"
+    if (
+      wordType === "cardinalNumber" ||
+      wordType === "initial" ||
+      (wordType === "unclassified" && value.length === 1)
+    ) {
       return value.toUpperCase();
     }
 

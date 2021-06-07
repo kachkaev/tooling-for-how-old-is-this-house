@@ -169,7 +169,21 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
       return undefined;
     }
 
-    return [region, settlement, streetOrPlace, houseNumber].join(", ");
+    const streetOrPlace2 =
+      building.properties["addr2:street"] ??
+      building.properties["addr:street2"];
+    const fullStreetOrPlace = streetOrPlace2
+      ? `${streetOrPlace.split("/")[0]} / ${streetOrPlace2}`
+      : streetOrPlace;
+
+    const houseNumber2 =
+      building.properties["addr2:housenumber"] ??
+      building.properties["addr:housenumber2"];
+    const fullHouseNumber = houseNumber2
+      ? `${houseNumber.split("/")[0]}/${houseNumber2}`
+      : houseNumber;
+
+    return [region, settlement, fullStreetOrPlace, fullHouseNumber].join(", ");
   };
 
   const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(

@@ -12,7 +12,7 @@ export const designationConfigs: DesignationConfig[]  = [
   { designation: "region", normalizedValue: "область", gender: "f", aliases: ["обл"] },
   { designation: "region", normalizedValue: "республика", gender: "f", aliases: ["респ"] },
 
-  { designation: "county", normalizedValue: "сельсовет", gender: "f" },
+  { designation: "county", normalizedValue: "сельсовет", gender: "f", aliases: ["с/c"] },
 
   { designation: "settlement", normalizedValue: "город", gender: "m", aliases: ["г", "гор"], alwaysGoesBeforeName: true },
   { designation: "settlement", normalizedValue: "село", gender: "n", aliases: ["с"], alwaysGoesBeforeName: true },
@@ -23,7 +23,7 @@ export const designationConfigs: DesignationConfig[]  = [
   { designation: "place", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
   
   { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н", "р-он"] },
-  { designation: "district", normalizedValue: "микрорайон", gender: "m", aliases: ["мкр", "м-н"] },
+  { designation: "district", normalizedValue: "микрорайон", gender: "m", aliases: ["мкр", "м-н", "мкр-н"] },
   
   { designation: "street", normalizedValue: "бульвар", gender: "m", aliases: ["бульв", "б-р"] },
   { designation: "street", normalizedValue: "городок", gender: "m" },
