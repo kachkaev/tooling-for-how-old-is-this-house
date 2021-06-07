@@ -89,13 +89,24 @@ type LetterCasing = "allUpper" | "allLower" | "firstUpper";
 const deriveLetterCasing = (
   letterSequence: string,
 ): LetterCasing | undefined => {
-  if (letterSequence.toLowerCase() === letterSequence) {
+  const letterSequenceWithoutLeadingDash =
+    letterSequence[0] === "-" ? letterSequence.slice(1) : letterSequence;
+  if (
+    letterSequenceWithoutLeadingDash.toLowerCase() ===
+    letterSequenceWithoutLeadingDash
+  ) {
     return "allLower";
   }
-  if (letterSequence.toUpperCase() === letterSequence) {
+  if (
+    letterSequenceWithoutLeadingDash.toUpperCase() ===
+    letterSequenceWithoutLeadingDash
+  ) {
     return "allUpper";
   }
-  if (_.capitalize(letterSequence) === letterSequence) {
+  if (
+    _.capitalize(letterSequenceWithoutLeadingDash) ===
+    letterSequenceWithoutLeadingDash
+  ) {
     return "firstUpper";
   }
 
@@ -137,12 +148,21 @@ export const createBeautifyAddress = (
 
   for (const knownAddress of allKnownAddresses) {
     const addressTokens = extractAtomicTokens(knownAddress);
-    const letterSequences = addressTokens
-      .filter(
-        ([tokenType, tokenValue]) =>
-          tokenType === "letterSequence" && tokenValue.length > 1,
-      )
-      .map(([, tokenValue]) => tokenValue);
+
+    // Letter sequences are prefixed with "-" if this token precedes. This helps format complex words like "Салтыкова-Щедрина", "Ново-гражданская"
+    const letterSequences: string[] = [];
+    for (let index = 0; index < addressTokens.length; index += 1) {
+      const token = addressTokens[index];
+      const prevToken = addressTokens[index - 1];
+      if (token?.[0] !== "letterSequence" || token?.[1].length < 2) {
+        continue;
+      }
+      if (prevToken?.[1] === "-") {
+        letterSequences.push(`-${token[1]}`);
+      } else {
+        letterSequences.push(token[1]);
+      }
+    }
 
     const numberOfUpperCaseLetterSequences = letterSequences.filter(
       (value) => value.toUpperCase() === value,
@@ -208,9 +228,9 @@ export const createBeautifyAddress = (
     // "Салтыкова-Щедрина"
     if (wordType === "unclassified") {
       return value
-        .split("-")
+        .split(/(?=-)/g) // https://stackoverflow.com/a/25221523/1818285
         .map((valueChunk) => spellingLookup[valueChunk] ?? valueChunk)
-        .join("-");
+        .join("");
     }
 
     return spellingLookup[value] ?? value;
