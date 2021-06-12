@@ -34,6 +34,14 @@ export const buildStandardizedAddressAst = (
   ) {
     const section = sections[sectionIndex]!;
 
+    // Ignore post code
+    if (
+      section.words.length === 1 &&
+      section.words?.[0]?.wordType === "postCode"
+    ) {
+      continue;
+    }
+
     // Special case: cardinal number in first section is region code, if not followed by street / place
     if (
       sectionIndex === 0 &&

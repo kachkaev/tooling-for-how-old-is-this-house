@@ -222,6 +222,11 @@ export const buildCleanedAddressAst = (
       continue;
     }
 
+    if (!node.ending && node.number >= 100000 && node.number < 1000000) {
+      node.wordType = "postCode";
+      continue;
+    }
+
     const endingStartsWithDash = node.ending?.startsWith("-");
     const endingWithoutDash = endingStartsWithDash
       ? node.ending.slice(1)

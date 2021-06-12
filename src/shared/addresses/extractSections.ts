@@ -64,6 +64,10 @@ export const extractSections = (
 
     // Prepare to close previous section
     if (
+      // - before or after post code
+      (node.wordType === "postCode" && currentSectionWords.length > 0) ||
+      currentSectionWords[currentSectionWords.length - 1]?.wordType ===
+        "postCode" ||
       // - after finding the second designation word (e.g. "улица" "тестовая" "дом")
       (node.wordType === "designation" && currentDesignation) ||
       // Before house and house parts
