@@ -1,4 +1,5 @@
 import {
+  AddressHandlingConfig,
   buildCleanedAddressAst,
   buildStandardizedAddressAst,
 } from "../addresses";
@@ -8,8 +9,16 @@ import { MixedPropertyVariants, PickFromPropertyVariants } from "./types";
 type Result = Pick<MixedPropertyVariants, "address" | "addressSource">;
 
 export const pickAddress: PickFromPropertyVariants<
-  "address" | "addressSource"
-> = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
+  "address" | "addressSource",
+  {
+    addressHandlingConfig: AddressHandlingConfig;
+  }
+> = ({
+  addressHandlingConfig,
+  listRelevantPropertyVariants,
+  logger,
+  targetBuildArea,
+}) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     listRelevantPropertyVariants,
     logger,
@@ -29,8 +38,11 @@ export const pickAddress: PickFromPropertyVariants<
 
       try {
         buildStandardizedAddressAst(
-          buildCleanedAddressAst(propertyVariant.address),
-          {},
+          buildCleanedAddressAst(
+            propertyVariant.address,
+            addressHandlingConfig,
+          ),
+          addressHandlingConfig,
         );
 
         return result;

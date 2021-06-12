@@ -6,7 +6,12 @@ import { testCases } from "./testHelpers/testCases";
 
 describe("printStandardizedAddressAst", () => {
   testCases.forEach(
-    ({ rawAddresses, expectedCleanedAddress, expectedStandardizedAddress }) => {
+    ({
+      addressHandlingConfig = {},
+      rawAddresses,
+      expectedCleanedAddress,
+      expectedStandardizedAddress,
+    }) => {
       if (expectedStandardizedAddress !== undefined) {
         const rawAddressesToUse = expectedCleanedAddress
           ? rawAddresses.slice(0, 1)
@@ -18,7 +23,7 @@ describe("printStandardizedAddressAst", () => {
               expect(() => {
                 printStandardizedAddressAst(
                   buildStandardizedAddressAst(
-                    buildCleanedAddressAst(rawAddress),
+                    buildCleanedAddressAst(rawAddress, addressHandlingConfig),
                     {},
                   ),
                 );
@@ -29,7 +34,7 @@ describe("printStandardizedAddressAst", () => {
               expect(
                 printStandardizedAddressAst(
                   buildStandardizedAddressAst(
-                    buildCleanedAddressAst(rawAddress),
+                    buildCleanedAddressAst(rawAddress, addressHandlingConfig),
                     {},
                   ),
                 ),
@@ -40,7 +45,10 @@ describe("printStandardizedAddressAst", () => {
               expect(
                 printStandardizedAddressAst(
                   buildStandardizedAddressAst(
-                    buildCleanedAddressAst(expectedStandardizedAddress),
+                    buildCleanedAddressAst(
+                      expectedStandardizedAddress,
+                      addressHandlingConfig,
+                    ),
                     {},
                   ),
                 ),

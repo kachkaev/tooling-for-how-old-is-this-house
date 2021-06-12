@@ -3,7 +3,7 @@ import _ from "lodash";
 import rmUp from "rm-up";
 
 import { normalizeAddressAtomically } from "../addresses";
-import { getAddressNormalizationConfig } from "../territory";
+import { getTerritoryAddressHandlingConfig } from "../territory";
 import { debugAddressNormalizationIfEnabled } from "./debugAddressNormalizationIfEnabled";
 import {
   deriveNormalizedAddressSliceId,
@@ -78,14 +78,14 @@ export const reportGeocodes = async ({
     process.stdout.write(chalk.green("Preparing to report geocodes..."));
   }
 
-  const addressNormalizationConfig = await getAddressNormalizationConfig();
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
   const sourceDictionary: GeocodeDictionary = {};
   const weightDictionary: Record<string, number> = {};
 
   for (const reportedGeocode of reportedGeocodes) {
     const normalizedAddresses = normalizeAddressAtomically(
       reportedGeocode.address,
-      addressNormalizationConfig,
+      addressHandlingConfig,
       postProcessWordsInStandardizedAddressSection,
     );
 
@@ -102,7 +102,7 @@ export const reportGeocodes = async ({
       debugAddressNormalizationIfEnabled({
         address: reportedGeocode.address,
         normalizedAddress,
-        addressNormalizationConfig,
+        addressNormalizationConfig: addressHandlingConfig,
         logger,
       });
 
@@ -131,7 +131,7 @@ export const reportGeocodes = async ({
     const addressRecord = sourceDictionary[normalizedAddress]!;
     const sliceId = deriveNormalizedAddressSliceId(
       normalizedAddress,
-      addressNormalizationConfig,
+      addressHandlingConfig,
     );
     if (!sourceDictionaryLookup[sliceId]) {
       sourceDictionaryLookup[sliceId] = {};

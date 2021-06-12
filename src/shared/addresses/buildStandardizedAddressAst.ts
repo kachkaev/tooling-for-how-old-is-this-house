@@ -7,14 +7,14 @@ import { resolveRegionCode } from "./helpersForRegions";
 import {
   AddressNodeWithWord,
   AddressSection,
-  BuildStandardizedAddressAstConfig,
+  AddressStandardizationConfig,
   CleanedAddressAst,
   StandardizedAddressAst,
 } from "./types";
 
 export const buildStandardizedAddressAst = (
   cleanedAddressAst: CleanedAddressAst,
-  config: BuildStandardizedAddressAstConfig,
+  config: AddressStandardizationConfig,
 ): StandardizedAddressAst => {
   const sections = extractSections(cleanedAddressAst);
 
@@ -44,16 +44,6 @@ export const buildStandardizedAddressAst = (
       sections[1]?.designation !== "place"
     ) {
       region = resolveRegionCode(section.words[0].value);
-      continue;
-    }
-
-    // Ignore country (assume Russia)
-    if (
-      section.designation === "country" ||
-      (section.words.length === 1 &&
-        (section.words[0]?.value === "россия" ||
-          section.words[0]?.value === "рф"))
-    ) {
       continue;
     }
 
@@ -347,7 +337,7 @@ export const buildStandardizedAddressAst = (
   // Add default region
   if (!region && config.defaultRegion) {
     const regionSection = extractSections(
-      buildCleanedAddressAst(config.defaultRegion),
+      buildCleanedAddressAst(config.defaultRegion, {}),
     )[0];
     if (regionSection) {
       region = convertSectionToSemanticPart(regionSection);

@@ -20,7 +20,7 @@ export const normalizeAddress = (
     return undefined;
   }
 
-  const cleanedAddressAst = buildCleanedAddressAst(rawAddress);
+  const cleanedAddressAst = buildCleanedAddressAst(rawAddress, config);
 
   if (checkIfCleanedAddressAstIsEmpty(cleanedAddressAst)) {
     return undefined;

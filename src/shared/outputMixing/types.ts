@@ -45,13 +45,16 @@ export interface ListRelevantPropertyVariants {
 }
 
 export interface PickFromPropertyVariants<
-  PropertiesToPick extends keyof MixedPropertyVariants
+  PropertiesToPick extends keyof MixedPropertyVariants,
+  ExtraPayload extends Record<string, unknown> = Record<string, unknown>
 > {
-  (payload: {
-    listRelevantPropertyVariants: ListRelevantPropertyVariants;
-    logger: Console;
-    targetBuildArea: number;
-  }): Pick<MixedPropertyVariants, PropertiesToPick> | undefined;
+  (
+    payload: {
+      listRelevantPropertyVariants: ListRelevantPropertyVariants;
+      logger: Console;
+      targetBuildArea: number;
+    } & ExtraPayload,
+  ): Pick<MixedPropertyVariants, PropertiesToPick> | undefined;
 }
 
 // mixed output layers

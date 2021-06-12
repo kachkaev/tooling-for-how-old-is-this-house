@@ -4,7 +4,10 @@ import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
 
-import { buildCleanedAddressAst } from "../../../shared/addresses";
+import {
+  AddressHandlingConfig,
+  buildCleanedAddressAst,
+} from "../../../shared/addresses";
 import { deepClean } from "../../../shared/deepClean";
 import { fixQuotes } from "../../../shared/fixQuotes";
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
@@ -21,6 +24,7 @@ import {
   WikimapiaObjectInfoFile,
   WikimapiaObjectPhotoInfo,
 } from "../../../shared/sources/wikimapia";
+import { getTerritoryAddressHandlingConfig } from "../../../shared/territory";
 
 const cleanCompletionDatesMatch = (match?: string): string | undefined => {
   const result = (match ?? "")
@@ -47,7 +51,10 @@ const extractCompletionDatesFromTags = (
   return cleanCompletionDatesMatch(completionDatesMatch);
 };
 
-const extractName = (rawInfo: string) => {
+const extractName = (
+  rawInfo: string,
+  addressHandlingConfig: AddressHandlingConfig,
+) => {
   const result = (
     rawInfo.match(
       /<meta property="og:title" {2}content="(.*) - Wikimapia"/,
@@ -59,7 +66,10 @@ const extractName = (rawInfo: string) => {
   }
 
   // Ignore trivial names referring to building address (e.g. “ул. Такая-то, 10”)
-  const cleanedAddressAst = buildCleanedAddressAst(result);
+  const cleanedAddressAst = buildCleanedAddressAst(
+    result,
+    addressHandlingConfig,
+  );
 
   if (
     !cleanedAddressAst.children.some(
@@ -110,6 +120,8 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
     const color = status === "modified" ? chalk.magenta : chalk.gray;
     logger.log(`${" ".repeat(prefixLength - 1)}↳ ${color(outputFilePath)}`);
   };
+
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
 
   await processFiles({
     logger,
@@ -182,7 +194,7 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
         extractCompletionDatesFromDescription(rawInfo);
 
       // Extract title
-      info.name = extractName(rawInfo);
+      info.name = extractName(rawInfo, addressHandlingConfig);
 
       const objectInfoFileJson: WikimapiaObjectInfoFile = {
         fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),

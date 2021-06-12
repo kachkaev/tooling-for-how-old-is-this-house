@@ -8,10 +8,10 @@ export interface ProtoWordConfig {
 
 export interface WordConfig extends ProtoWordConfig {
   normalizedValue: string;
+  wordReplacements?: Readonly<string[]>;
 }
 
 export type Designation =
-  | "country"
   | "region"
   | "county"
   | "settlement"
@@ -123,6 +123,27 @@ export interface CleanedAddressAst {
   children: CleanedAddressNode[];
 }
 
+export interface WordReplacementConfig {
+  detached?: boolean;
+  from: string | string[];
+  to: string;
+}
+
+export interface WordReplacementDirective {
+  detached: boolean;
+  from: AddressNodeWithUnclassifiedWord[];
+  to: AddressNodeWithUnclassifiedWord[];
+}
+
+export interface WordReplacementDirectiveTree {
+  directive?: WordReplacementDirective;
+  subtreeByWordValue: Record<string, WordReplacementDirectiveTree>;
+}
+
+export interface AddressCleaningConfig {
+  wordReplacementDirectiveTree?: WordReplacementDirectiveTree;
+}
+
 export interface AddressSection {
   index: number;
   designation?: Designation;
@@ -144,9 +165,8 @@ export interface StandardizedAddressAst {
   housePart: AddressNodeWithSemanticPart | undefined;
 }
 
-export interface BuildStandardizedAddressAstConfig {
+export interface AddressStandardizationConfig {
   defaultRegion?: string;
-  canonicalSpellings?: string[];
 }
 
 export interface PostProcessWordsInStandardizedAddressSection {
@@ -157,4 +177,19 @@ export interface FinalizeWordSpelling {
   (word: AddressNodeWithWord): string;
 }
 
-export type AddressNormalizationConfig = BuildStandardizedAddressAstConfig;
+export interface AddressNormalizationConfig
+  extends AddressCleaningConfig,
+    AddressStandardizationConfig {}
+
+export interface AddressBeautificationConfig
+  extends AddressNormalizationConfig {
+  canonicalSpellings?: string[];
+}
+
+export interface RawAddressHandlingConfig {
+  canonicalSpellings?: string[];
+  defaultRegion?: string;
+  wordReplacements?: WordReplacementConfig[];
+}
+
+export type AddressHandlingConfig = AddressBeautificationConfig;

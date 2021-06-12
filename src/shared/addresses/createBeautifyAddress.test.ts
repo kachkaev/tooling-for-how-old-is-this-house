@@ -1,9 +1,10 @@
 import { createBeautifyAddress } from "./createBeautifyAddress";
-import { AddressNormalizationConfig } from "./types";
+import { compileAddressHandlingConfig } from "./helpersForWordReplacements";
+import { RawAddressHandlingConfig } from "./types";
 
 interface TestCaseGroup {
   title: string;
-  addressNormalizationConfig: AddressNormalizationConfig;
+  rawAddressHandlingConfig: RawAddressHandlingConfig;
   testCases: Array<{
     rawAddress: string;
     expectedBeautifiedAddress: string;
@@ -13,7 +14,7 @@ interface TestCaseGroup {
 const testCaseGroups: TestCaseGroup[] = [
   {
     title: "order of words",
-    addressNormalizationConfig: {},
+    rawAddressHandlingConfig: {},
     testCases: [
       {
         rawAddress: "область пензенская, Тестовск, наб. реки Мойки, 1",
@@ -55,7 +56,7 @@ const testCaseGroups: TestCaseGroup[] = [
   },
   {
     title: "interdependency",
-    addressNormalizationConfig: {},
+    rawAddressHandlingConfig: {},
     testCases: [
       {
         rawAddress: "Пензенская обл, Тестовск, Такая-то улица 1",
@@ -71,7 +72,7 @@ const testCaseGroups: TestCaseGroup[] = [
   },
   {
     title: "words with dashes",
-    addressNormalizationConfig: {},
+    rawAddressHandlingConfig: {},
     testCases: [
       {
         rawAddress: "Пензенская обл, Тестовск, улица Салтыкова-Щедрина 1",
@@ -102,7 +103,7 @@ const testCaseGroups: TestCaseGroup[] = [
   },
   {
     title: "capitalization",
-    addressNormalizationConfig: {},
+    rawAddressHandlingConfig: {},
     testCases: [
       {
         rawAddress: "Пензенская обл, Тестовск, Улица 10-ЛЕТИЯ ОЛОЛО 1",
@@ -137,7 +138,7 @@ const testCaseGroups: TestCaseGroup[] = [
   },
   {
     title: "special letters",
-    addressNormalizationConfig: {},
+    rawAddressHandlingConfig: {},
     testCases: [
       {
         rawAddress: "Пензенская обл, поселок Тестовый, проспект Потёмнкина, 1",
@@ -153,7 +154,7 @@ const testCaseGroups: TestCaseGroup[] = [
   },
   {
     title: "designation special cases",
-    addressNormalizationConfig: {},
+    rawAddressHandlingConfig: {},
     testCases: [
       {
         rawAddress: 'Пензенская область, Пенза, с/т "Тестовое", 1',
@@ -163,7 +164,7 @@ const testCaseGroups: TestCaseGroup[] = [
   },
   {
     title: "address normalization config",
-    addressNormalizationConfig: {
+    rawAddressHandlingConfig: {
       canonicalSpellings: ["ОЛОЛО", "Потёмнкина"],
       defaultRegion: "Пензенская область",
     },
@@ -178,11 +179,16 @@ const testCaseGroups: TestCaseGroup[] = [
 ];
 
 describe("createBeautifyAddress", () => {
-  testCaseGroups.forEach(({ testCases, title, addressNormalizationConfig }) => {
+  testCaseGroups.forEach(({ testCases, title, rawAddressHandlingConfig }) => {
     const knownAddresses = testCases.map((testCase) => testCase.rawAddress);
+
+    const addressHandlingConfig = compileAddressHandlingConfig(
+      rawAddressHandlingConfig,
+    );
+
     const beautifyAddress = createBeautifyAddress(
       knownAddresses,
-      addressNormalizationConfig,
+      addressHandlingConfig,
     );
 
     describe(`test case group: ${title}`, () => {

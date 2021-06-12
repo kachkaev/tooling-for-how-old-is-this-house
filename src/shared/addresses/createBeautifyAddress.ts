@@ -5,12 +5,12 @@ import {
   designationConfigs,
   getDesignationConfig,
 } from "./helpersForDesignations";
-import { rawRegions } from "./helpersForRegions";
+import { regionConfigs } from "./helpersForRegions";
 import { simplifySpelling } from "./helpersForWords";
 import { normalizeAddress } from "./normalizeAddress";
 import {
+  AddressBeautificationConfig,
   AddressNodeWithWord,
-  AddressNormalizationConfig,
   FinalizeWordSpelling,
   PostProcessWordsInStandardizedAddressSection,
 } from "./types";
@@ -136,14 +136,14 @@ const checkIfsimplifySpellingDistortsCharacters = (letterSequence: string) => {
 };
 export const createBeautifyAddress = (
   knownAddresses: readonly string[],
-  addressNormalizationConfig: AddressNormalizationConfig,
+  addressBeautificationConfig: AddressBeautificationConfig,
 ): ((rawAddress: string | undefined) => string | undefined) => {
   const letterCasingLookup: Record<string, LetterCasing> = {};
   const spellingLookup: Record<string, string> = {};
 
   const allKnownAddresses = [...knownAddresses];
-  for (const rawRegion of rawRegions) {
-    allKnownAddresses.push(rawRegion[1]);
+  for (const regionConfig of regionConfigs) {
+    allKnownAddresses.push(regionConfig.canonicalName);
   }
 
   for (const knownAddress of allKnownAddresses) {
@@ -203,8 +203,8 @@ export const createBeautifyAddress = (
       beautifiedValue ?? normalizedValue;
   }
 
-  if (addressNormalizationConfig.canonicalSpellings instanceof Array) {
-    for (const canonicalSpelling of addressNormalizationConfig.canonicalSpellings) {
+  if (addressBeautificationConfig.canonicalSpellings instanceof Array) {
+    for (const canonicalSpelling of addressBeautificationConfig.canonicalSpellings) {
       if (typeof canonicalSpelling === "string") {
         spellingLookup[simplifySpelling(canonicalSpelling)] = canonicalSpelling;
       }
@@ -239,7 +239,7 @@ export const createBeautifyAddress = (
   return (address: string | undefined) =>
     normalizeAddress(
       address,
-      addressNormalizationConfig,
+      addressBeautificationConfig,
       postProcessWordsInStandardizedAddressSection,
       finalizeWordSpelling,
     );

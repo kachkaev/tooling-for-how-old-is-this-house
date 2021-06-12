@@ -1,16 +1,18 @@
 import { generateWordConfigLookup } from "./helpersForWords";
-import { AddressNodeWithDesignation, DesignationConfig } from "./types";
+import {
+  AddressNodeWithDesignation,
+  DesignationConfig,
+  WordReplacementConfig,
+} from "./types";
 
 // Related info: https://wiki.openstreetmap.org/wiki/RU:Россия/Соглашение_об_именовании_дорог
 
 // prettier-ignore
 export const designationConfigs: DesignationConfig[]  = [
-  { designation: "country", normalizedValue: "федерация", gender: "f" },
-
-  // TODO: add more regions based on federal division of Russia
   { designation: "region", normalizedValue: "край", gender: "m" },
   { designation: "region", normalizedValue: "область", gender: "f", aliases: ["обл"] },
   { designation: "region", normalizedValue: "республика", gender: "f", aliases: ["респ"] },
+  { designation: "region", normalizedValue: "а/о", gender: "f", beautifiedValue: "А/О" },
 
   { designation: "county", normalizedValue: "сельсовет", gender: "f", aliases: ["с/c"] },
 
@@ -19,8 +21,9 @@ export const designationConfigs: DesignationConfig[]  = [
   { designation: "settlement", normalizedValue: "поселение", gender: "n", alwaysGoesBeforeName: true },
 
   // Can be settlement or street
-  { designation: "place", normalizedValue: "поселок", gender: "n", aliases: ["пос", "п", "рп" /* рабочий поселок */], beautifiedValue: 'посёлок', alwaysGoesBeforeName: true },
   { designation: "place", normalizedValue: "лесничество", gender: "n", aliases: ["лес-во", "лесн-во"] },
+  { designation: "place", normalizedValue: "поселок", gender: "m", aliases: ["пос", "п"], beautifiedValue: "посёлок", alwaysGoesBeforeName: true },
+  { designation: "place", normalizedValue: "рп", gender: "m", aliases: ['р/п'], wordReplacements: ["рабочий поселок", "р. п."], beautifiedValue: "Р/П", alwaysGoesBeforeName: true },
   
   { designation: "district", normalizedValue: "район", gender: "m", aliases: ["р-н", "р-он"] },
   { designation: "district", normalizedValue: "микрорайон", gender: "m", aliases: ["мкр", "м-н", "мкр-н"] },
@@ -78,3 +81,25 @@ export const getDesignationConfig = (
 
   return designationConfig;
 };
+
+export const wordReplacementConfigsForDesignations = designationConfigs.flatMap(
+  (designationConfig) =>
+    (designationConfig.wordReplacements ?? []).map<WordReplacementConfig>(
+      (wordReplacement) => ({
+        from: wordReplacement,
+        to: designationConfig.normalizedValue,
+      }),
+    ),
+);
+
+wordReplacementConfigsForDesignations.push(
+  {
+    from: ["российская федерация"],
+    to: "",
+  },
+  {
+    detached: true,
+    from: ["россия", "рф"],
+    to: "",
+  },
+);

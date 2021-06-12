@@ -51,7 +51,10 @@ export const deriveNormalizedAddressSliceId = (
   addressNormalizationConfig: AddressNormalizationConfig,
 ): string => {
   const slices: Array<string | undefined> = [];
-  const cleanedAddressAst = buildCleanedAddressAst(normalizedAddress);
+  const cleanedAddressAst = buildCleanedAddressAst(
+    normalizedAddress,
+    addressNormalizationConfig,
+  );
 
   try {
     const standardizedAddressAst = buildStandardizedAddressAst(

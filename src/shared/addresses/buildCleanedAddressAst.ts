@@ -1,4 +1,4 @@
-import { extractTokens } from "./extractTokens";
+import { extractUnclassifiedWordsWithPunctuation } from "./extractUnclassifiedWordsWithPunctuation";
 import {
   approximatePointerConfigLookup,
   getApproximatePointerConfig,
@@ -16,31 +16,18 @@ import {
   ordinalNumberEndingConfigLookup,
   ordinalNumberTextualNotationConfigLookup,
 } from "./helpersForOrdinalNumbers";
+import { replaceWords } from "./replaceWords";
 import {
+  AddressCleaningConfig,
   AddressNodeWithApproximatePointer,
   AddressNodeWithDesignation,
   AddressNodeWithNumber,
   AddressNodeWithUnclassifiedWord,
   AddressNodeWithWord,
-  AddressToken,
-  AddressTokenType,
   CleanedAddressAst,
   CleanedAddressNode,
   DesignationConfig,
 } from "./types";
-
-const wordTokensSet = new Set<AddressTokenType>([
-  "letterSequence",
-  "numberSequence",
-  "protoWord",
-]);
-
-const separatorTokensSet = new Set<AddressTokenType>([
-  "bracket",
-  "comma",
-  "dash",
-  "slash",
-]);
 
 const isUnclassifiedWord = (
   node?: CleanedAddressNode,
@@ -100,104 +87,40 @@ const findRelevantDesignation = (
   return undefined;
 };
 
+const removeRedundantSeparators = (
+  nodes: CleanedAddressNode[],
+): CleanedAddressNode[] => {
+  const resultingNodes: CleanedAddressNode[] = [...nodes];
+  while (resultingNodes[0]?.nodeType === "separator") {
+    resultingNodes.shift();
+  }
+  while (resultingNodes[resultingNodes.length - 1]?.nodeType === "separator") {
+    resultingNodes.pop();
+  }
+
+  for (let index = resultingNodes.length - 1; index >= 0; index -= 1) {
+    if (
+      resultingNodes[index]?.nodeType === "separator" &&
+      resultingNodes[index - 1]?.nodeType === "separator"
+    ) {
+      resultingNodes.splice(index, 1);
+    }
+  }
+
+  return resultingNodes;
+};
+
 export const buildCleanedAddressAst = (
   rawAddress: string,
+  config: AddressCleaningConfig,
 ): CleanedAddressAst => {
-  const tokens = extractTokens(rawAddress);
+  const nodesBeforeReplacements = extractUnclassifiedWordsWithPunctuation(
+    rawAddress,
+  );
 
-  // Filter tokens, combine and reduce the variety of separators
-  const filteredTokens: AddressToken[] = [];
-  for (const [tokenType, tokenValue] of tokens) {
-    if (wordTokensSet.has(tokenType)) {
-      filteredTokens.push([tokenType, tokenValue]);
-
-      continue;
-    }
-
-    if (separatorTokensSet.has(tokenType)) {
-      const lastFilteredToken = filteredTokens[filteredTokens.length - 1];
-
-      // Combine separators
-      if (lastFilteredToken && separatorTokensSet.has(lastFilteredToken[0])) {
-        lastFilteredToken[0] = "comma";
-        lastFilteredToken[1] = ",";
-
-        continue;
-      }
-
-      // treat brackets as commas
-      if ([tokenType, tokenValue][0] === "bracket") {
-        filteredTokens.push(["comma", ","]);
-
-        continue;
-      }
-
-      filteredTokens.push([tokenType, tokenValue]);
-    }
-  }
-
-  // Trim separators
-  while (filteredTokens[0] && separatorTokensSet.has(filteredTokens[0]![0])) {
-    filteredTokens.shift();
-  }
-  while (
-    filteredTokens[filteredTokens.length - 1] &&
-    separatorTokensSet.has(filteredTokens[filteredTokens.length - 1]![0])
-  ) {
-    filteredTokens.pop();
-  }
-
-  // Generate initial nodes
-  const nodes: CleanedAddressNode[] = [];
-  for (const [tokenType, tokenValue] of filteredTokens) {
-    if (wordTokensSet.has(tokenType)) {
-      nodes.push({
-        nodeType: "word",
-        wordType: "unclassified",
-        value: tokenValue,
-      });
-      continue;
-    }
-
-    nodes.push({
-      nodeType: "separator",
-      separatorType:
-        tokenType === "slash" || tokenType === "dash" ? tokenType : "comma",
-    });
-  }
-
-  // Stitch [NN]-[WW] into a single token. Examples: '42 - А', "улица 30 - летия победы"
-  for (let index = 0; index < nodes.length - 2; index += 1) {
-    const node = nodes[index];
-    if (!node || node.nodeType !== "word") {
-      continue;
-    }
-
-    const node2 = nodes[index + 1];
-    if (
-      !node2 ||
-      node2.nodeType !== "separator" ||
-      node2.separatorType !== "dash"
-    ) {
-      continue;
-    }
-
-    const node3 = nodes[index + 2];
-    if (
-      !node3 ||
-      node3.nodeType !== "word" ||
-      node3.wordType !== "unclassified" ||
-      node3.value.match(/\d/)
-    ) {
-      continue;
-    }
-
-    nodes.splice(index, 3, {
-      nodeType: "word",
-      wordType: "unclassified",
-      value: `${node.value}-${node3.value}`,
-    });
-  }
+  const [...nodes]: CleanedAddressNode[] = removeRedundantSeparators(
+    replaceWords(nodesBeforeReplacements, config.wordReplacementDirectiveTree),
+  );
 
   // Replace ordinal number textual notations (e.g. первый → 1-й) {
   for (let index = 0; index < nodes.length; index += 1) {

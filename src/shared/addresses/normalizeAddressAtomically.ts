@@ -50,7 +50,7 @@ export const normalizeAddressAtomically = (
     return [];
   }
 
-  const cleanedAddressAst = buildCleanedAddressAst(rawAddress);
+  const cleanedAddressAst = buildCleanedAddressAst(rawAddress, config);
 
   if (checkIfCleanedAddressAstIsEmpty(cleanedAddressAst)) {
     return [];

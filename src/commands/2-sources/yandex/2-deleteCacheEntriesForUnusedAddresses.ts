@@ -13,7 +13,7 @@ import {
   getYandexGeocoderCacheEntryFileSuffix,
   YandexGeocoderCacheEntry,
 } from "../../../shared/sources/yandex";
-import { getAddressNormalizationConfig } from "../../../shared/territory";
+import { getTerritoryAddressHandlingConfig } from "../../../shared/territory";
 
 export const deleteCacheEntriesForUnusedAddresses: Command = async ({
   logger,
@@ -22,7 +22,7 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
     chalk.bold(`sources/yandex: Deleting cache entries for unused addresses`),
   );
 
-  const addressNormalizationConfig = await getAddressNormalizationConfig();
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
   const combinedGeocodeDictionary = await loadCombinedGeocodeDictionary();
   const filePathsToDelete: string[] = [];
 
@@ -36,7 +36,7 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
     if (
       !addressIsWorthKeepingInYandexCache(
         cacheEntry.normalizedAddress,
-        addressNormalizationConfig,
+        addressHandlingConfig,
       )
     ) {
       return true;

@@ -29,7 +29,7 @@ import {
   pickWikipediaUrl,
   PropertyVariant,
 } from "../shared/outputMixing";
-import { getAddressNormalizationConfig } from "../shared/territory";
+import { getTerritoryAddressHandlingConfig } from "../shared/territory";
 
 interface VariantInfoInstance {
   variant: PropertyVariant;
@@ -168,6 +168,8 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
   process.stdout.write(` Done.\n`);
   process.stdout.write(chalk.green("Mixing property variants..."));
 
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
+
   const outputFeatures: MixedPropertyVariantsFeature[] = [];
   for (const inputFeature of inputFeatureCollection.features) {
     if (inputFeaturesToOmit.has(inputFeature)) {
@@ -230,7 +232,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
     const mixedPropertyVariants: MixedPropertyVariants = {
       geometryId: inputFeature.properties.geometryId,
       geometrySource: inputFeature.properties.geometrySource,
-      ...pickAddress(payloadForPick),
+      ...pickAddress({ ...payloadForPick, addressHandlingConfig }),
       ...pickCompletionDates(payloadForPick),
       ...pickFloorCount(payloadForPick),
       ...pickName(payloadForPick),
@@ -258,11 +260,9 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
     }
   }
 
-  const addressNormalizationConfig = await getAddressNormalizationConfig();
-
   const beautifyAddress = createBeautifyAddress(
     knownAddresses,
-    addressNormalizationConfig,
+    addressHandlingConfig,
   );
 
   for (const outputFeature of outputFeatures) {

@@ -1,6 +1,13 @@
-import { AddressToken, AtomicAddressToken, CleanedAddressAst } from "../types";
+import { compileAddressHandlingConfig } from "../helpersForWordReplacements";
+import {
+  AddressHandlingConfig,
+  AddressToken,
+  AtomicAddressToken,
+  CleanedAddressAst,
+} from "../types";
 
 export const testCases: Array<{
+  addressHandlingConfig?: AddressHandlingConfig;
   rawAddresses: string[];
   expectedAtomicTokens?: AtomicAddressToken[];
   expectedTokens?: AddressToken[];
@@ -792,5 +799,21 @@ export const testCases: Array<{
       "Пензенская область, г. Пенза, ул. Рябова, д. 4Б, лит. Н,Н1",
     ],
     expectedStandardizedAddress: null,
+  },
+  {
+    rawAddresses: ["Пензенская, г. Пенза, что-то НЕПОНЯТНОЕ, у. Рбова, д. 4Б"],
+    addressHandlingConfig: compileAddressHandlingConfig({
+      wordReplacements: [
+        {
+          from: "у. рбова",
+          to: "ул. рябова",
+        },
+        {
+          from: "что-то НЕПОНЯТНОЕ",
+          to: "",
+        },
+      ],
+    }),
+    expectedStandardizedAddress: "область пензенская, пенза, улица рябова, 4б",
   },
 ];

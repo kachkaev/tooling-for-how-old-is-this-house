@@ -22,7 +22,9 @@ export const listFilePaths = async ({
     onlyFiles: true,
   });
   const globbyResults = _.sortBy(rawGlobbyResults);
-  process.stdout.write(` Found: ${globbyResults.length}.\n`);
+  if (logger) {
+    process.stdout.write(` Found: ${globbyResults.length}.\n`);
+  }
 
   return globbyResults;
 };

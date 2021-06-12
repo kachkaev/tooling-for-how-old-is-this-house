@@ -14,7 +14,7 @@ import {
   OutputLayer,
   reportGeocodesInOutputLayer,
 } from "./outputLayers";
-import { getAddressNormalizationConfig } from "./territory";
+import { getTerritoryAddressHandlingConfig } from "./territory";
 
 export const generateProgress = (index: number, total: number) => {
   const totalLength = `${total}`.length;
@@ -59,13 +59,17 @@ export const generateExtractOutputLayer = ({
       | undefined = undefined;
 
     if (canUseCollectedGeocodes) {
-      const addressNormalizationConfig = await getAddressNormalizationConfig();
-      const combinedGeocodeDictionary = await loadCombinedGeocodeDictionary();
+      const addressHandlingConfig = await getTerritoryAddressHandlingConfig(
+        logger,
+      );
+      const combinedGeocodeDictionary = await loadCombinedGeocodeDictionary(
+        logger,
+      );
 
       configuredGeocodeAddress = (address) =>
         geocodeAddress(
           address,
-          addressNormalizationConfig,
+          addressHandlingConfig,
           combinedGeocodeDictionary,
           // TODO: Pick from territory config / global config
           ["osm", "yandex"],

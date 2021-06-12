@@ -27,7 +27,7 @@ import {
   YandexGeocoderCacheEntry,
 } from "../../../shared/sources/yandex";
 import {
-  getAddressNormalizationConfig,
+  getTerritoryAddressHandlingConfig,
   getTerritoryExtent,
 } from "../../../shared/territory";
 
@@ -62,12 +62,12 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
 
   process.stdout.write(chalk.green("Filtering..."));
 
-  const addressNormalizationConfig = await getAddressNormalizationConfig();
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
   const filteredNormalizedAddresses = normalizedAddresses.filter(
     (normalizedAddress) =>
       addressIsWorthGeocodingWithYandex(
         normalizedAddress,
-        addressNormalizationConfig,
+        addressHandlingConfig,
       ),
   );
 

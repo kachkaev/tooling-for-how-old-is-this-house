@@ -9,7 +9,10 @@ export const addressIsGoodEnough = (
   addressNormalizationConfig: AddressNormalizationConfig,
   pickedStopWords: string[],
 ): boolean => {
-  const cleanedAddressAst = buildCleanedAddressAst(normalizedAddress);
+  const cleanedAddressAst = buildCleanedAddressAst(
+    normalizedAddress,
+    addressNormalizationConfig,
+  );
 
   if (
     cleanedAddressAst.children.some(
@@ -43,6 +46,7 @@ const stopWords = [
   "сарай",
   "участок",
 ];
+
 export const addressIsWorthKeepingInYandexCache = (
   normalizedAddress: string,
   addressNormalizationConfig: AddressNormalizationConfig,
@@ -50,6 +54,7 @@ export const addressIsWorthKeepingInYandexCache = (
   addressIsGoodEnough(normalizedAddress, addressNormalizationConfig, stopWords);
 
 const extendedStopWords = [...stopWords, "ст", "снт"];
+
 export const addressIsWorthGeocodingWithYandex = (
   normalizedAddress: string,
   addressNormalizationConfig: AddressNormalizationConfig,

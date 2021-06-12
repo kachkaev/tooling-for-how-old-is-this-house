@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import _ from "lodash";
 
 import {
+  AddressHandlingConfig,
   AddressNormalizationConfig,
   buildCleanedAddressAst,
   buildStandardizedAddressAst,
@@ -15,7 +16,7 @@ import {
 } from "../../outputLayers";
 import { processFiles } from "../../processFiles";
 import {
-  getAddressNormalizationConfig,
+  getTerritoryAddressHandlingConfig,
   getTerritoryExtent,
 } from "../../territory";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
@@ -70,7 +71,7 @@ const pickMostPromisingAddress = (
   const standardizableAddresses = definedAddresses.filter((rawAddress) => {
     try {
       buildStandardizedAddressAst(
-        buildCleanedAddressAst(rawAddress),
+        buildCleanedAddressAst(rawAddress, addressNormalizationConfig),
         addressNormalizationConfig,
       );
     } catch {
@@ -89,7 +90,7 @@ const pickMostPromisingAddress = (
 
 const extractPropertiesFromFirResponse = (
   infoPageObject: InfoPageObject,
-  addressNormalizationConfig: AddressNormalizationConfig,
+  addressHandlingConfig: AddressHandlingConfig,
 ): OutputLayerProperties | "notBuilding" | undefined => {
   const { cn, firResponse, firFetchedAt } = infoPageObject;
   if (typeof firResponse !== "object" || !firFetchedAt) {
@@ -110,7 +111,7 @@ const extractPropertiesFromFirResponse = (
         firResponse.objectData.objectAddress?.mergedAddress,
         firResponse.objectData.addressNote,
       ],
-      addressNormalizationConfig,
+      addressHandlingConfig,
     ),
     ...calculateFloorCounts(
       firResponse.parcelData.oksFloors,
@@ -157,7 +158,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
   geocodeAddress,
 }) => {
   const territoryExtent = await getTerritoryExtent();
-  const addressNormalizationConfig = await getAddressNormalizationConfig();
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
 
   const { objectCenterFeatures } = await combineRosreestrTiles({
     logger,
@@ -187,7 +188,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
         const propertyVariants = [
           extractPropertiesFromFirResponse(
             infoPageEntry,
-            addressNormalizationConfig,
+            addressHandlingConfig,
           ),
           extractPropertiesFromPkkResponse(infoPageEntry),
         ]

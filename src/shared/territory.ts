@@ -1,14 +1,13 @@
 import { CommandError } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
+import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import { load } from "js-yaml";
 import path from "path";
 
-import {
-  AddressNormalizationConfig,
-  BuildStandardizedAddressAstConfig,
-} from "./addresses";
+import { AddressHandlingConfig, RawAddressHandlingConfig } from "./addresses";
+import { compileAddressHandlingConfig } from "./addresses/helpersForWordReplacements";
 import { cleanEnv } from "./cleanEnv";
 
 export type TerritoryExtent = turf.Feature<turf.Polygon>;
@@ -59,7 +58,8 @@ export interface TerritoryConfig {
       handpickedCnsForPageInfos?: string[];
     };
   };
-  addressNormalization?: BuildStandardizedAddressAstConfig;
+  addressHandling?: RawAddressHandlingConfig;
+  [rest: string]: unknown;
 }
 
 export const getTerritoryConfigFilePath = (): string =>
@@ -90,6 +90,32 @@ export const getTerritoryExtent = async (): Promise<TerritoryExtent> => {
   return territoryExtent as TerritoryExtent;
 };
 
-export const getAddressNormalizationConfig = async (): Promise<AddressNormalizationConfig> => {
-  return (await getTerritoryConfig()).addressNormalization ?? {};
+export const getTerritoryAddressHandlingConfig = async (
+  logger: Console | undefined,
+): Promise<AddressHandlingConfig> => {
+  const territoryConfig = await getTerritoryConfig();
+
+  // TODO: Remove after 2022-01-01
+  if (territoryConfig["addressNormalization"]) {
+    throw new CommandError(
+      `Data in ${getTerritoryConfigFilePath()} is out of sync with the latest tooling. Please replace addressNormalization with addressHandling.`,
+    );
+  }
+
+  const rawAddressHandling = territoryConfig.addressHandling ?? {};
+
+  // TODO: Check user input. e.g.:
+  // if (wordReplacements !== undefined && !(wordReplacements instanceof Array)) {
+  //   reportIssue?.(
+  //     "Expected wordReplacements to be an array. Ignoring this field",
+  //   );
+
+  //   return rest;
+  // }
+
+  return compileAddressHandlingConfig(rawAddressHandling, (issue) =>
+    logger?.log(
+      chalk.yellow(`territory-config.yml → addressHandling: ${issue}`),
+    ),
+  );
 };
