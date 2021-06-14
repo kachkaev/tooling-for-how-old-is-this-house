@@ -359,6 +359,13 @@ Although some of the data sources are country-specific, parts of the repo can st
     Эта команда пока не доделана, потому что для Пензы было мало мало данных.
     -->
 
+    <!--
+    Скачать данные с Викигида:
+    ```sh
+    yarn exe src/commands/2-sources/wikivoyage/1-fetchPages.ts
+    ```
+    -->
+
 1.  **Скачать данные с Викимапии**
 
     Контуры объектов:

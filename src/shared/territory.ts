@@ -57,6 +57,9 @@ export interface TerritoryConfig {
     rosreestr?: {
       handpickedCnsForPageInfos?: string[];
     };
+    wikivoyage?: {
+      pagesToFetch?: string[];
+    };
   };
   addressHandling?: RawAddressHandlingConfig;
   [rest: string]: unknown;
