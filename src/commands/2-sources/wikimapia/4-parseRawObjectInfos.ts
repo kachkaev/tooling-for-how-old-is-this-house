@@ -18,7 +18,7 @@ import {
 import { processFiles } from "../../../shared/processFiles";
 import {
   getWikimapiaObjectInfoFileSuffix,
-  getWikimapiaObjectsDir,
+  getWikimapiaObjectsDirPath,
   getWikimapiaRawObjectInfoFileSuffix,
   WikimapiaObjectInfo,
   WikimapiaObjectInfoFile,
@@ -126,7 +126,7 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
   await processFiles({
     logger,
     fileSearchPattern: `**/*--${getWikimapiaRawObjectInfoFileSuffix()}`,
-    fileSearchDirPath: getWikimapiaObjectsDir(),
+    fileSearchDirPath: getWikimapiaObjectsDirPath(),
     filesNicknameToLog: "htmls with wikimapia objects",
     processFile: async (filePath, prefixLength) => {
       const outputFilePath = filePath.replace(

@@ -12,7 +12,7 @@ import { processFiles } from "../../processFiles";
 import { combineWikimapiaTiles } from "./combineWikimapiaTiles";
 import {
   getWikimapiaObjectInfoFileSuffix,
-  getWikimapiaObjectsDir,
+  getWikimapiaObjectsDirPath,
 } from "./helpersForPaths";
 import { WikimapiaObjectInfoFile } from "./types";
 
@@ -30,7 +30,7 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
 
   await processFiles({
     logger,
-    fileSearchDirPath: getWikimapiaObjectsDir(),
+    fileSearchDirPath: getWikimapiaObjectsDirPath(),
     fileSearchPattern: `**/*-${getWikimapiaObjectInfoFileSuffix()}`,
     filesNicknameToLog: "wikimapia object info files",
     processFile: async (filePath) => {
