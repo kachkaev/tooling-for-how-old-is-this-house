@@ -12,6 +12,7 @@ import {
   getUploadFilePath,
   MixedPropertyVariantsFeatureCollection,
 } from "../shared/outputMixing";
+import { getTerritoryAddressHandlingConfig } from "../shared/territory";
 
 interface UploadFeatureProperties {
   fid: number;
@@ -46,15 +47,39 @@ export const prepareUpload: Command = async ({ logger }) => {
   process.stdout.write(` Done.\n`);
   process.stdout.write(chalk.green("Processing..."));
 
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
+
+  const addressPrefixToRemove = addressHandlingConfig.defaultRegion
+    ? `${addressHandlingConfig.defaultRegion.toLowerCase()}, `
+    : undefined;
+
+  const removeDefaultRegionFromAddress = (
+    address: string | undefined,
+  ): string | undefined => {
+    if (!address) {
+      return undefined;
+    }
+
+    if (
+      !addressPrefixToRemove ||
+      !address.toLowerCase().startsWith(addressPrefixToRemove)
+    ) {
+      return address;
+    }
+
+    return address.substr(addressPrefixToRemove.length);
+  };
+
   const outputFeatures: UploadFeature[] = [];
   for (const inputFeature of inputFeatureCollection.features) {
     const outputFeatureProperties: UploadFeatureProperties = {
       fid: outputFeatures.length + 1,
 
       /* eslint-disable @typescript-eslint/naming-convention */
-      r_adress:
+      r_adress: removeDefaultRegionFromAddress(
         inputFeature.properties.derivedBeautifiedAddress ??
-        inputFeature.properties.address,
+          inputFeature.properties.address,
+      ),
       r_floors: inputFeature.properties.floorCountAboveGround,
       r_name: inputFeature.properties.name,
       r_photo_url: inputFeature.properties.photoUrl,
