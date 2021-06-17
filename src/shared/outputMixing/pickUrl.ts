@@ -7,9 +7,10 @@ export const pickUrl: PickFromPropertyVariants<"url" | "urlSource"> = ({
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
+    callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "osm"],
+    prioritizedSources: ["manual", "wikivoyage", "osm"],
     propertySelectors: ["url"],
     targetBuildArea,
   });

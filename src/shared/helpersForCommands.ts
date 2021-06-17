@@ -72,7 +72,7 @@ export const generateExtractOutputLayer = ({
           addressHandlingConfig,
           combinedGeocodeDictionary,
           // TODO: Pick from territory config / global config
-          ["osm", "yandex"],
+          ["osm", "yandex", "mkrf", "wikivoyage", "mingkh"],
         );
     }
 

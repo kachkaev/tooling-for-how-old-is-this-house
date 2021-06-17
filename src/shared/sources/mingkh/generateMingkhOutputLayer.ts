@@ -29,7 +29,10 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
         knownAt: houseInfo.properties.fetchedAt,
       };
 
-      return turf.feature(houseInfo.geometry, deepClean(outputLayerProperties));
+      return turf.feature(
+        houseInfo.geometry ?? null,
+        deepClean(outputLayerProperties),
+      );
     },
   );
 

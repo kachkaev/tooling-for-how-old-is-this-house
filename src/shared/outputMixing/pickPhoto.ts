@@ -5,9 +5,10 @@ export const pickPhoto: PickFromPropertyVariants<
   "photoAuthorName" | "photoAuthorUrl" | "photoSource" | "photoUrl"
 > = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
+    callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "mkrf", "wikimapia"],
+    prioritizedSources: ["manual", "mkrf", "wikivoyage", "wikimapia"],
     propertySelectors: ["photo"],
     targetBuildArea,
   });

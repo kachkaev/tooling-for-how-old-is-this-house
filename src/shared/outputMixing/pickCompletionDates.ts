@@ -6,11 +6,13 @@ export const pickCompletionDates: PickFromPropertyVariants<
   "completionDates" | "completionDatesSource" | "derivedCompletionYear"
 > = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
+    callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
     prioritizedSources: [
       "manual",
       "mkrf",
+      "wikivoyage",
       "mingkh",
       "rosreestr",
       "osm",

@@ -20,9 +20,17 @@ export const pickAddress: PickFromPropertyVariants<
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
+    callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "mkrf", "osm", "mingkh", "rosreestr"],
+    prioritizedSources: [
+      "manual",
+      "mkrf",
+      "osm",
+      "mingkh",
+      "rosreestr",
+      "wikivoyage",
+    ],
     propertySelectors: ["address"],
     targetBuildArea,
   });

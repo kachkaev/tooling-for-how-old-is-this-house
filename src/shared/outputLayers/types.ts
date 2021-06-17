@@ -30,11 +30,11 @@ export interface OutputLayerProperties {
 export type OutputLayerGeometry = turf.Polygon | turf.MultiPolygon | turf.Point;
 
 export type OutputLayerFeatureWithGeometry = turf.Feature<
-  turf.Polygon | turf.MultiPolygon,
+  OutputLayerGeometry,
   OutputLayerProperties
 >;
 export type OutputLayerFeatureWithoutGeometry = turf.Feature<
-  undefined,
+  null,
   OutputLayerProperties
 >;
 export type OutputLayerFeature =
@@ -42,7 +42,7 @@ export type OutputLayerFeature =
   | OutputLayerFeatureWithoutGeometry;
 
 export type OutputLayer = turf.FeatureCollection<
-  OutputLayerGeometry | undefined,
+  OutputLayerGeometry | null,
   OutputLayerProperties
 > & {
   knownAt?: string;

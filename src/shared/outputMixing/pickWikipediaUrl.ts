@@ -5,9 +5,10 @@ export const pickWikipediaUrl: PickFromPropertyVariants<
   "wikipediaUrl" | "wikipediaUrlSource"
 > = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
+    callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "osm"],
+    prioritizedSources: ["manual", "osm", "wikivoyage"],
     propertySelectors: ["wikipediaUrl"],
     targetBuildArea,
   });

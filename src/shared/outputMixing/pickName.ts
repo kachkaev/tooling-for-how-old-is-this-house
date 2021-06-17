@@ -7,9 +7,10 @@ export const pickName: PickFromPropertyVariants<"name" | "nameSource"> = ({
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
+    callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "mkrf", "osm", "wikimapia"],
+    prioritizedSources: ["manual", "mkrf", "wikivoyage", "osm", "wikimapia"],
     propertySelectors: ["name"],
     targetBuildArea,
   });

@@ -19,12 +19,14 @@ const calculatePercentageDifference = (a: number, b: number): number => {
 const alreadyLoggedWarningsSet = new Set<string>();
 
 export const prioritizeRelevantPropertyVariants = ({
+  callingFilePath,
   listRelevantPropertyVariants,
   logger,
   prioritizedSources,
   propertySelectors,
   targetBuildArea,
 }: {
+  callingFilePath: string;
   listRelevantPropertyVariants: ListRelevantPropertyVariants;
   logger: Console;
   prioritizedSources: string[];
@@ -75,7 +77,7 @@ export const prioritizeRelevantPropertyVariants = ({
         chalk.yellow(
           `Unexpected to find source "${unrecognizedSource}" when picking "${propertySelectors.join(
             '", "',
-          )}". Please add it to a corresponding src/shared/outputMixing/pick*.ts file to ensure the right priority.`,
+          )}". Please add it to a corresponding ${callingFilePath} to ensure the right priority.`,
         ),
       );
     }

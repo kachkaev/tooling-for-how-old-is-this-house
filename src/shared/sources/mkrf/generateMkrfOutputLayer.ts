@@ -93,7 +93,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
 
       // Coordinates
       const mapPosition = objectFile.data.general.address?.mapPosition;
-      let point = mapPosition;
+      let point = mapPosition ?? null;
       let pointSource = "map position";
       let externalGeometrySource: string | undefined = undefined;
 

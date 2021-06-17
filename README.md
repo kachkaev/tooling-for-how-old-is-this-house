@@ -25,11 +25,12 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 | | адрес | геометрия | год | этажность | название | википедия | фотография |
 | :- | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| **[Викигид](https://ru.wikivoyage.org)**  | 5️⃣ | ⏳ 📍 | 3️⃣ |    | 2️⃣ | 2️⃣ | 2️⃣ |
 | **[МинЖКХ](https://mingkh.ru)**           | 3️⃣ | ⏳ 📍 | 2️⃣ | 2️⃣ |
 | **[Минкульт](https://opendata.mkrf.ru)**  | 1️⃣ | ⏳ 📍 | 1️⃣ |    | 1️⃣ |    | 1️⃣ |
-| **[ОСМ](https://www.openstreetmap.org)**  | 2️⃣ | 1️⃣ 🟥 | 4️⃣ | 3️⃣ | 2️⃣ | 1️⃣ |
-| **[Росреестр](https://rosreestr.gov.ru)** | 4️⃣ | ⏳ 📍 | 3️⃣ | 1️⃣ | 🗑
-| **[Викимапия](https://wikimapia.org)**    | 🗑 | ⏳ 🟥 | 5️⃣ |    | 3️⃣ | 🗑 | 2️⃣ |
+| **[ОСМ](https://www.openstreetmap.org)**  | 2️⃣ | 1️⃣ 🟥 | 5️⃣ | 3️⃣ | 3️⃣ | 1️⃣ |
+| **[Росреестр](https://rosreestr.gov.ru)** | 4️⃣ | ⏳ 📍 | 4️⃣ | 1️⃣ | 🗑
+| **[Викимапия](https://wikimapia.org)**    | 🗑 | ⏳ 🟥 | 6️⃣ |    | 4️⃣ | 🗑 | 3️⃣ |
 
 <!-- prettier-ignore-end -->
 
@@ -359,13 +360,6 @@ Although some of the data sources are country-specific, parts of the repo can st
     Эта команда пока не доделана, потому что для Пензы было мало мало данных.
     -->
 
-    <!--
-    Скачать данные с Викигида:
-    ```sh
-    yarn exe src/commands/2-sources/wikivoyage/1-fetchPages.ts
-    ```
-    -->
-
 1.  **Скачать данные с Викимапии**
 
     Контуры объектов:
@@ -387,6 +381,12 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/wikimapia/4-parseRawObjectInfos.ts
     ```
 
+1.  **Скачать данные с Викигида**
+
+    ```sh
+    yarn exe src/commands/2-sources/wikivoyage/1-fetchPages.ts
+    ```
+
 1.  **Создать каталог геокодов**
 
     Геокодирование — процесс связывания адреса объекта и его координат.
@@ -399,6 +399,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
     yarn exe src/commands/2-sources/rosreestr/8-reportGeocodes.ts
     yarn exe src/commands/2-sources/wikimapia/8-reportGeocodes.ts
+    yarn exe src/commands/2-sources/wikivoyage/8-reportGeocodes.ts
     ```
 
     Результат работы команд будет в папке `/path/to/data/territories/TERRITORY_NAME/geocoding`.
@@ -453,6 +454,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts
     yarn exe src/commands/2-sources/wikimapia/9-extractOutputLayer.ts
+    yarn exe src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts
     ```
 
     Эти команды создадут файлы `/path/to/data/territories/TERRITORY_NAME/sources/*/output-layer.geojson`.

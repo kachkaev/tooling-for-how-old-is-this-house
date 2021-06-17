@@ -21,7 +21,6 @@ import { getSourcesDirPath } from "../shared/helpersForPaths";
 import {
   getOutputLayerFileName,
   OutputLayer,
-  OutputLayerFeatureWithGeometry,
   OutputLayerProperties,
 } from "../shared/outputLayers";
 import {
@@ -162,30 +161,34 @@ export const mixOutputLayers: Command = async ({ logger }) => {
         );
 
       if (layerRole === "base") {
-        const features: BaseLayerFeature[] = outputLayer.features
-          .filter((feature): feature is OutputLayerFeatureWithGeometry =>
-            Boolean(
-              feature.geometry &&
-                (feature.geometry.type === "Polygon" ||
-                  feature.geometry.type === "MultiPolygon"),
-            ),
-          )
-          .map((feature) => {
+        const features: BaseLayerFeature[] = outputLayer.features.flatMap(
+          (feature): BaseLayerFeature[] => {
+            const geometry = feature.geometry;
+            if (
+              !geometry ||
+              (geometry.type !== "Polygon" && geometry.type !== "MultiPolygon")
+            ) {
+              return [];
+            }
+
             const bbox = turf.bbox(feature);
 
-            return {
-              bbox,
-              bboxCenter: deriveBboxCenter(bbox),
-              bboxWithBuffer: addBufferToBbox(bbox, bufferSizeInMeters),
-              geometry: feature.geometry,
-              properties: ensureUniqueIdProperty(
-                feature.properties,
-                source,
-                logger,
-              ),
-              type: feature.type,
-            };
-          });
+            return [
+              {
+                bbox,
+                bboxCenter: deriveBboxCenter(bbox),
+                bboxWithBuffer: addBufferToBbox(bbox, bufferSizeInMeters),
+                geometry,
+                properties: ensureUniqueIdProperty(
+                  feature.properties,
+                  source,
+                  logger,
+                ),
+                type: feature.type,
+              },
+            ];
+          },
+        );
 
         logPickedFeatures("polygons and multipolygons", features.length);
 

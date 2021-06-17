@@ -6,14 +6,14 @@ import {
 import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
-import sortKeys from "sort-keys";
 
-import { prependCommentWithTimeToHtml } from "../../../shared/helpersForHtml";
-import { formatJson } from "../../../shared/helpersForJson";
+import { prependCommentWithJsonToHtml } from "../../../shared/helpersForHtml";
+import { serializeTime } from "../../../shared/helpersForJson";
 import {
   getWikivoyagePageFileSuffix,
   getWikivoyagePagesDir,
-} from "../../../shared/sources/wikivoyage/helpersForPaths";
+  WikivoyagePageMetadata,
+} from "../../../shared/sources/wikivoyage";
 import {
   getTerritoryConfig,
   getTerritoryConfigFilePath,
@@ -80,10 +80,19 @@ export const fetchPages: Command = async ({ logger }) => {
     ).data;
     const filePath = `${getWikivoyagePagesDir()}/${pageName}${getWikivoyagePageFileSuffix()}`;
 
-    const { source, ...metadata } = apiResponseData;
-    const wikiTextToWrite = prependCommentWithTimeToHtml(
-      `<!--\n${formatJson(sortKeys(metadata, { deep: true }))}-->\n\n${source}`,
-    );
+    const {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      content_model,
+      source,
+      ...rawMetadata
+    } = apiResponseData;
+
+    const metadata: WikivoyagePageMetadata = {
+      ...rawMetadata,
+      fetchedAt: serializeTime(),
+    };
+
+    const wikiTextToWrite = prependCommentWithJsonToHtml(source, metadata);
     await fs.writeFile(filePath, wikiTextToWrite);
     logger.log(chalk.magenta(filePath));
   }

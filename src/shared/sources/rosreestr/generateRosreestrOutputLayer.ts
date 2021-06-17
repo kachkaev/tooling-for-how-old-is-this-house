@@ -206,8 +206,8 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
         );
 
         const cn = infoPageEntry.cn;
-        let geometry: turf.Point | undefined =
-          objectCenterFeatureByCn[cn]?.geometry;
+        let geometry: turf.Point | null =
+          objectCenterFeatureByCn[cn]?.geometry ?? null;
 
         if (!geometry && outputLayerProperties.address && geocodeAddress) {
           const geocodeResult = geocodeAddress(outputLayerProperties.address);
