@@ -72,7 +72,10 @@ export const multiUnion = (
     firstThing.type === "Feature" ? firstThing : turf.feature(firstThing);
 
   for (const remainingThing of remainingThings) {
-    result = turf.union(result, remainingThing);
+    const newResult = turf.union(result, remainingThing);
+    if (newResult) {
+      result = newResult;
+    }
   }
 
   return result;
