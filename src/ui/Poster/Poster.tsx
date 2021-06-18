@@ -150,8 +150,8 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
       </DraftNotice2>
       <Copyright>
         данные: © участники OpenStreetMap, Росреестр, МинЖКХ, Министерство
-        культуры РФ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; визуализация: Александр
-        Качкаев (kachkaev.ru)
+        культуры РФ, Викигид &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; визуализация:
+        Александр Качкаев (kachkaev.ru)
       </Copyright>
     </Figure>
   );
