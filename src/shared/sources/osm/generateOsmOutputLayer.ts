@@ -227,7 +227,13 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         wikipediaUrl,
       };
 
-      return turf.feature(building.geometry, deepClean(outputLayerProperties));
+      // Simplify geometry to avoid redundant nodes from building parts and entrances
+      const geometry = turf.truncate(
+        turf.simplify(building.geometry, { tolerance: 0.000001 }),
+        { precision: 6 },
+      );
+
+      return turf.feature(geometry, deepClean(outputLayerProperties));
     },
   );
 
