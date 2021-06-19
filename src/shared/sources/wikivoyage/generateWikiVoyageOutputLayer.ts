@@ -21,7 +21,7 @@ import { WikivoyagePageMetadata } from "./types";
 
 interface MonumentTemplate {
   template: "monument";
-  type?: string; // "history" | "architecture"
+  type?: string; // "history" | "architecture" | "monument"
   name?: string;
   status?: string; // can be "destroyed"
 
@@ -183,6 +183,7 @@ export const generateWikiVoyageOutputLayer: GenerateOutputLayer = async ({
         const templateJson = template.json() as WikitextTemplate;
         if (
           templateJson?.template !== "monument" ||
+          templateJson.type !== "architecture" ||
           templateJson.status === "destroyed"
         ) {
           return;
