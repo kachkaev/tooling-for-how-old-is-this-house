@@ -89,22 +89,59 @@ git push
 cd -
 ```
 
-## Конфиг
+## Цикл ручной обработки данных
 
-```yml
-overrides: ## эта часть конфигурации не используется скриптами (логика не реализована)
-  - houseId: 478507
-    change:
-      centerPoint: null
-  - houseId: 968209
-    change:
-      year: 1956
-```
+1.  Обновить один из файлов в папке sources/manual
 
-## Проблемы
+1.  Запустить
 
-- Надо продлевать страницы, если в последних 100 страницах нашёлся хотя бы один объект. Пример: `58:29:3002004:2289`, `58:29:3002004:2254`
+    ```sh
+    CUSTOM_PATH=sources/manual yarn exe src/commands/formatDataFiles.ts \
+      && yarn exe src/commands/3-mixOutputLayers.ts \
+      && yarn exe src/commands/4-mixPropertyVariants.ts
+    ```
 
-- Надо игнорировать конкретные объекты
+## Цикл обновления данных в ОСМ
 
-  - `rosreestr/58:29:4004003:363`
+1.  Исправить данные на сайте ОСМ
+
+1.  Подождать пару минут, чтобы они попали на сервер Overpass API
+
+1.  Запустить
+
+    ```sh
+    yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts \
+      && yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts \
+      && yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts \
+      && yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts \
+      && yarn exe src/commands/3-mixOutputLayers.ts \
+      && yarn exe src/commands/4-mixPropertyVariants.ts
+    ```
+
+## TODO
+
+### Релиз чистовика Пензы
+
+- Исправить
+
+  - зоопарк павильоны и вокруг
+  - церкви (?)
+
+- Узнать про мосты
+
+### Потом
+
+- Заречный, Ахунская 25 (адрес гаража)
+
+## Другие источники
+
+### Госуслуги
+
+Карта домов:  
+<https://dom.gosuslugi.ru/#!/houses/gisMap>
+
+Карточка дома:  
+<https://dom.gosuslugi.ru/#!/house-view?guid=481b5137-ae2f-44a8-a78b-22001a80114f&typeCode=1>
+
+JSON API:  
+<https://dom.gosuslugi.ru/homemanagement/api/rest/services/houses/public/1/481b5137-ae2f-44a8-a78b-22001a80114f>s
