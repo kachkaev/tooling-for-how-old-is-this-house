@@ -32,7 +32,7 @@ const binWidth = 4;
 const barTick = 100;
 const barTickLabelFrequency = 5;
 const barGapX = 0.2;
-const barGabXExtraWhenLabel = 0.5;
+const barGabXExtraWhenLabel = 0.6;
 const xAxisLabelColor = "rgba(0,0,0,0.7)";
 
 const yAxisGridThickness = 1;
@@ -56,6 +56,8 @@ const buildAreaBins = [0, 100, 200, 500, 1000, 2000];
 const builtAreaColors = schemeYlGnBu[buildAreaBins.length + 1] ?? [];
 const buildAreaColor = scaleOrdinal(buildAreaBins, builtAreaColors);
 const binByBuiltArea = bin().domain([0, 10000]).thresholds(buildAreaBins);
+
+const gapOverlap = 0.3;
 
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
@@ -93,7 +95,10 @@ const Bar: React.VoidFunctionComponent<{
 
         const y = yScale(binValue);
         const rawHeight = yScale(0) - yScale(binValue);
-        const overlapCompensation = index === 0 ? 1 : 0;
+        const overlapCompensationV =
+          index !== bins.length - 1 && rawHeight > gapOverlap ? gapOverlap : 0;
+
+        const overlapCompensationH = year !== maxYear ? gapOverlap : 0;
 
         if (!rawHeight) {
           return null;
@@ -101,17 +106,18 @@ const Bar: React.VoidFunctionComponent<{
 
         yOffset += rawHeight;
 
-        const xOffset = showLabel ? barGabXExtraWhenLabel : 0;
+        const color = buildAreaColor(currentBin.x1!);
 
         return (
-          <rect
-            key={index}
-            x={xOffset}
-            width={binWidth - barGapX - xOffset}
-            y={y - yOffset + rawHeight - overlapCompensation}
-            height={rawHeight + overlapCompensation}
-            fill={buildAreaColor(currentBin.x1!)}
-          />
+          <React.Fragment key={index}>
+            <rect
+              x={0}
+              width={binWidth + overlapCompensationH}
+              y={y - yOffset + rawHeight - overlapCompensationV}
+              height={rawHeight + overlapCompensationV}
+              fill={color}
+            />
+          </React.Fragment>
         );
       })}
       {showLabel ? (
@@ -189,11 +195,43 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
 
   const yAxisTicks = tickify(maxY, barTick);
 
+  const years = _.range(minYear, maxYear + 1);
+
+  const hasLabel = (year: number): boolean =>
+    year === minYear || Math.round(year / 10) === year / 10;
+
   return (
     <>
       <GlobalStyle />
       <Wrapper {...rest}>
         <svg width={width} height={height}>
+          {years.map((year, index) => (
+            <Bar
+              key={year}
+              year={year}
+              showLabel={hasLabel(year)}
+              labelPrefix={index === 0 ? "..." : undefined}
+              buildings={buildingsByYear[year] ?? []}
+              xScale={xScale}
+              yScale={yScale}
+            />
+          ))}
+          {years.map((year, index) => {
+            if (index === 0) {
+              return;
+            }
+
+            return (
+              <rect
+                key={index}
+                fill={backgroundColor}
+                x={xScale(year)}
+                y={yScale(maxY)}
+                height={yScale(0) - yScale(maxY)}
+                width={hasLabel(year) ? barGabXExtraWhenLabel : barGapX}
+              />
+            );
+          })}
           <g transform={`translate(${paddingLeft},0)`}>
             {yAxisTicks.map((value, index) => {
               if ((value / barTickLabelFrequency) % barTick) {
@@ -225,17 +263,6 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
               );
             })}
           </g>
-          {_.range(minYear, maxYear + 1).map((year, index) => (
-            <Bar
-              key={year}
-              year={year}
-              showLabel={index === 0 || Math.round(year / 10) === year / 10}
-              labelPrefix={index === 0 ? "..." : undefined}
-              buildings={buildingsByYear[year] ?? []}
-              xScale={xScale}
-              yScale={yScale}
-            />
-          ))}
           <g transform={`translate(${paddingLeft},0)`}>
             {yAxisTicks.map((value, index) => {
               return (
