@@ -1,5 +1,8 @@
+import * as turf from "@turf/turf";
 import { scaleLinear } from "@visx/scale";
-import { ScaleLinear } from "d3-scale";
+import { bin } from "d3-array";
+import { ScaleLinear, scaleOrdinal } from "d3-scale";
+import { schemeYlGnBu } from "d3-scale-chromatic";
 import _ from "lodash";
 import * as React from "react";
 import styled from "styled-components";
@@ -10,26 +13,34 @@ import {
 } from "../../shared/outputMixing";
 import { GlobalStyle } from "../shared/GlobalStyle";
 
+const backgroundColor = "#fff";
+
 const Wrapper = styled.div`
-  outline: 1px solid green;
+  box-shadow: 5px 5px 10px #ddd;
   display: inline-block;
   overflow: hidden;
+  background-color: ${backgroundColor};
+
+  svg {
+    display: block;
+  }
 `;
 
-const barLabelOffset = 5;
-const barWidth = 5;
+const binLabelOffset = 5;
+const binWidth = 4;
 
 const barTick = 100;
 const barTickLabelFrequency = 5;
-const barTickGap = 0.2;
-
+const barGapX = 0.2;
+const barGabXExtraWhenLabel = 0.5;
 const xAxisLabelColor = "rgba(0,0,0,0.7)";
 
 const yAxisGridThickness = 1;
 const yAxisLabelOffset = 5;
 const yAxisLabelColor = "rgba(0,0,0,0.7)";
-// const yAxisGridColor = "#ccc";
-const yAxisGridColor = "rgba(0,0,0,0.05)";
+const yAxisGridColor = "rgba(0,0,0,0.07)";
+const barTickOpacity = 1;
+const barTickHeight = barGapX;
 
 const paddingLeft = 50;
 const paddingRight = 40;
@@ -38,6 +49,13 @@ const paddingBottom = 50;
 
 const minYear = 1850;
 const maxYear = 2020;
+
+const labelFontSize = 12;
+
+const buildAreaBins = [0, 100, 200, 500, 1000, 2000];
+const builtAreaColors = schemeYlGnBu[buildAreaBins.length + 1] ?? [];
+const buildAreaColor = scaleOrdinal(buildAreaBins, builtAreaColors);
+const binByBuiltArea = bin().domain([0, 10000]).thresholds(buildAreaBins);
 
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
@@ -58,43 +76,52 @@ const Bar: React.VoidFunctionComponent<{
   buildings: MixedPropertyVariantsFeature[];
   labelPrefix?: string;
 }> = ({ year, showLabel, xScale, yScale, buildings, labelPrefix }) => {
-  const color = "#ccc";
-
   const total = buildings.length;
-  const tickifiedValues = tickify(total, barTick);
+  if (total === 0) {
+    return null;
+  }
+  const bins = binByBuiltArea(
+    buildings.map((building) => turf.area(building)),
+  ).reverse();
+
+  let yOffset = 0;
 
   return (
     <g key={year} transform={`translate(${xScale(year)},0)`}>
-      {tickifiedValues.map((tickifiedValue, index) => {
-        if (index === 0 && total !== 0) {
+      {bins.map((currentBin, index) => {
+        const binValue = currentBin.length;
+
+        const y = yScale(binValue);
+        const rawHeight = yScale(0) - yScale(binValue);
+        const overlapCompensation = index === 0 ? 1 : 0;
+
+        if (!rawHeight) {
           return null;
         }
 
-        const prevTickifiedValue = tickifiedValues[index - 1] ?? 0;
+        yOffset += rawHeight;
 
-        const rawHeight = yScale(prevTickifiedValue) - yScale(tickifiedValue);
-        const height = rawHeight - (index > 0 ? barTickGap : 0);
-
-        if (!height) {
-          return null;
-        }
+        const xOffset = showLabel ? barGabXExtraWhenLabel : 0;
 
         return (
           <rect
             key={index}
-            x={0}
-            width={barWidth - 0.2}
-            y={yScale(prevTickifiedValue) - height + 0.2}
-            height={height}
-            fill={color}
+            x={xOffset}
+            width={binWidth - barGapX - xOffset}
+            y={y - yOffset + rawHeight - overlapCompensation}
+            height={rawHeight + overlapCompensation}
+            fill={buildAreaColor(currentBin.x1!)}
           />
         );
       })}
       {showLabel ? (
-        <g x={0} transform={`translate(0,${yScale(0) + barLabelOffset})`}>
+        <g x={0} transform={`translate(0.5,${yScale(0)})`}>
           <text
             fill={xAxisLabelColor}
-            transform={`rotate(-90),translate(-3,${barWidth - 1})`}
+            transform={`rotate(-90),translate(${-binLabelOffset},${
+              binWidth - 1
+            })`}
+            fontSize={labelFontSize}
             textAnchor="end"
             dominantBaseline="middle"
           >
@@ -116,7 +143,7 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
   buildingCollection,
   ...rest
 }) => {
-  const width = paddingLeft + (maxYear - minYear + 2) * barWidth + paddingLeft;
+  const width = paddingLeft + (maxYear - minYear + 2) * binWidth + paddingLeft;
   const height = paddingTop + 300 + paddingBottom;
 
   const buildingsByYear: Record<
@@ -152,7 +179,7 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
 
   const xScale = scaleLinear({
     domain: [minYear, maxYear],
-    range: [paddingLeft, width - paddingRight - barWidth],
+    range: [paddingLeft, width - paddingRight - binWidth],
   });
 
   const yScale = scaleLinear({
@@ -178,13 +205,14 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
                 <g key={index}>
                   <rect
                     fill={yAxisGridColor}
-                    y={yScale(value) + barTickGap}
-                    width={width - paddingLeft - paddingRight}
+                    y={yScale(value)}
+                    width={width - paddingLeft - paddingRight - barGapX}
                     height={yAxisGridThickness}
                   />
                   {showText ? (
                     <text
                       fill={yAxisLabelColor}
+                      fontSize={labelFontSize}
                       y={yScale(value)}
                       dominantBaseline="middle"
                       textAnchor="end"
@@ -208,6 +236,20 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
               yScale={yScale}
             />
           ))}
+          <g transform={`translate(${paddingLeft},0)`}>
+            {yAxisTicks.map((value, index) => {
+              return (
+                <rect
+                  key={index}
+                  fill={backgroundColor}
+                  opacity={barTickOpacity}
+                  y={yScale(value) - barTickHeight / 2}
+                  width={width - paddingLeft - paddingRight - barGapX}
+                  height={barTickHeight}
+                />
+              );
+            })}
+          </g>
         </svg>
       </Wrapper>
     </>
