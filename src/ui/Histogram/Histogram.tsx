@@ -48,6 +48,7 @@ const paddingTop = 30;
 const paddingBottom = 50;
 
 const minYear = 1795;
+const minYearLabelOffsetX = -1;
 const minYearLabel = "···";
 const maxYear = 2020;
 
@@ -87,10 +88,11 @@ const tickify = (value: number, tickSize: number): number[] => {
 const Bar: React.VoidFunctionComponent<{
   year: number;
   label: string;
+  labelOffsetX?: number;
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   buildings: MixedPropertyVariantsFeature[];
-}> = ({ year, label, xScale, yScale, buildings }) => {
+}> = ({ year, label, labelOffsetX = 0, xScale, yScale, buildings }) => {
   const bins = binByBuiltArea(
     buildings.map((building) => turf.area(building)),
   ).reverse();
@@ -134,7 +136,7 @@ const Bar: React.VoidFunctionComponent<{
           <text
             fill={labelColor}
             transform={`rotate(-90),translate(${-binLabelOffset},${
-              binWidth - 1
+              binWidth - 1 + labelOffsetX
             })`}
             fontSize={labelFontSize}
             textAnchor="end"
@@ -217,6 +219,7 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
             <Bar
               key={year}
               year={year}
+              labelOffsetX={index === 0 ? minYearLabelOffsetX : 0}
               label={
                 index === 0 ? minYearLabel : hasLabel(year) ? `${year}` : ""
               }
