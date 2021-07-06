@@ -1,7 +1,7 @@
 import * as turf from "@turf/turf";
 import { scaleLinear } from "@visx/scale";
 import { bin } from "d3-array";
-import { ScaleLinear, scaleOrdinal } from "d3-scale";
+import { ScaleLinear, scaleThreshold } from "d3-scale";
 import { schemeYlGnBu } from "d3-scale-chromatic";
 import _ from "lodash";
 import * as React from "react";
@@ -31,33 +31,47 @@ const binWidth = 4;
 
 const barTick = 100;
 const barTickLabelFrequency = 5;
+const barGapXOpacity = 0.5;
 const barGapX = 0.2;
-const barGabXExtraWhenLabel = 0.6;
-const xAxisLabelColor = "rgba(0,0,0,0.7)";
+const barGabXExtraWhenLabel = 0.5;
+const barGapXOpacityWhenLabel = 0.8;
 
 const yAxisGridThickness = 1;
 const yAxisLabelOffset = 5;
-const yAxisLabelColor = "rgba(0,0,0,0.7)";
 const yAxisGridColor = "rgba(0,0,0,0.07)";
-const barTickOpacity = 1;
+const barTickOpacity = barGapXOpacity;
 const barTickHeight = barGapX;
 
-const paddingLeft = 50;
+const paddingLeft = 56;
 const paddingRight = 40;
 const paddingTop = 30;
 const paddingBottom = 50;
 
-const minYear = 1850;
+const minYear = 1795;
+const minYearLabel = "···";
 const maxYear = 2020;
 
 const labelFontSize = 12;
+const labelColor = "rgba(0,0,0,0.7)";
 
-const buildAreaBins = [0, 100, 200, 500, 1000, 2000];
-const builtAreaColors = schemeYlGnBu[buildAreaBins.length + 1] ?? [];
-const buildAreaColor = scaleOrdinal(buildAreaBins, builtAreaColors);
-const binByBuiltArea = bin().domain([0, 10000]).thresholds(buildAreaBins);
+const buildAreaThresholds = [
+  100,
+  200,
+  500,
+  1000,
+  2000,
+  Number.MAX_SAFE_INTEGER,
+];
+const builtAreaColors =
+  schemeYlGnBu[buildAreaThresholds.length + 1]?.slice(1) ?? [];
+const buildAreaColor = scaleThreshold(buildAreaThresholds, builtAreaColors);
+const binByBuiltArea = bin().domain([0, 10000]).thresholds(buildAreaThresholds);
 
-const gapOverlap = 0.3;
+const gapOverlap = 0.2;
+
+const legendHeaderOffsetX = 5;
+const legendHeaderOffsetY = labelFontSize;
+const legendBackgroundWidth = 100;
 
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
@@ -72,16 +86,11 @@ const tickify = (value: number, tickSize: number): number[] => {
 
 const Bar: React.VoidFunctionComponent<{
   year: number;
-  showLabel: boolean;
+  label: string;
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   buildings: MixedPropertyVariantsFeature[];
-  labelPrefix?: string;
-}> = ({ year, showLabel, xScale, yScale, buildings, labelPrefix }) => {
-  const total = buildings.length;
-  if (total === 0) {
-    return null;
-  }
+}> = ({ year, label, xScale, yScale, buildings }) => {
   const bins = binByBuiltArea(
     buildings.map((building) => turf.area(building)),
   ).reverse();
@@ -106,7 +115,7 @@ const Bar: React.VoidFunctionComponent<{
 
         yOffset += rawHeight;
 
-        const color = buildAreaColor(currentBin.x1!);
+        const color = buildAreaColor(currentBin.x0!);
 
         return (
           <React.Fragment key={index}>
@@ -120,10 +129,10 @@ const Bar: React.VoidFunctionComponent<{
           </React.Fragment>
         );
       })}
-      {showLabel ? (
+      {label ? (
         <g x={0} transform={`translate(0.5,${yScale(0)})`}>
           <text
-            fill={xAxisLabelColor}
+            fill={labelColor}
             transform={`rotate(-90),translate(${-binLabelOffset},${
               binWidth - 1
             })`}
@@ -131,8 +140,7 @@ const Bar: React.VoidFunctionComponent<{
             textAnchor="end"
             dominantBaseline="middle"
           >
-            {labelPrefix ?? ""}
-            {year}
+            {label}
           </text>
         </g>
       ) : null}
@@ -149,7 +157,7 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
   buildingCollection,
   ...rest
 }) => {
-  const width = paddingLeft + (maxYear - minYear + 2) * binWidth + paddingLeft;
+  const width = paddingLeft + (maxYear - minYear + 1) * binWidth + paddingRight;
   const height = paddingTop + 300 + paddingBottom;
 
   const buildingsByYear: Record<
@@ -209,8 +217,9 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
             <Bar
               key={year}
               year={year}
-              showLabel={hasLabel(year)}
-              labelPrefix={index === 0 ? "..." : undefined}
+              label={
+                index === 0 ? minYearLabel : hasLabel(year) ? `${year}` : ""
+              }
               buildings={buildingsByYear[year] ?? []}
               xScale={xScale}
               yScale={yScale}
@@ -226,6 +235,9 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
                 key={index}
                 fill={backgroundColor}
                 x={xScale(year)}
+                opacity={
+                  hasLabel(year) ? barGapXOpacityWhenLabel : barGapXOpacity
+                }
                 y={yScale(maxY)}
                 height={yScale(0) - yScale(maxY)}
                 width={hasLabel(year) ? barGabXExtraWhenLabel : barGapX}
@@ -234,38 +246,7 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
           })}
           <g transform={`translate(${paddingLeft},0)`}>
             {yAxisTicks.map((value, index) => {
-              if ((value / barTickLabelFrequency) % barTick) {
-                return;
-              }
-              const showText = value > 0;
-
-              return (
-                <g key={index}>
-                  <rect
-                    fill={yAxisGridColor}
-                    y={yScale(value)}
-                    width={width - paddingLeft - paddingRight - barGapX}
-                    height={yAxisGridThickness}
-                  />
-                  {showText ? (
-                    <text
-                      fill={yAxisLabelColor}
-                      fontSize={labelFontSize}
-                      y={yScale(value)}
-                      dominantBaseline="middle"
-                      textAnchor="end"
-                      transform={`translate(${-yAxisLabelOffset},1)`}
-                    >
-                      {value}
-                    </text>
-                  ) : null}
-                </g>
-              );
-            })}
-          </g>
-          <g transform={`translate(${paddingLeft},0)`}>
-            {yAxisTicks.map((value, index) => {
-              return (
+              const subTick = (
                 <rect
                   key={index}
                   fill={backgroundColor}
@@ -274,6 +255,87 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
                   width={width - paddingLeft - paddingRight - barGapX}
                   height={barTickHeight}
                 />
+              );
+
+              if ((value / barTickLabelFrequency) % barTick > 0) {
+                return subTick;
+              }
+
+              const showText = value > 0;
+
+              return (
+                <g key={index}>
+                  <rect
+                    fill={yAxisGridColor}
+                    y={yScale(value) - (showText ? yAxisGridThickness / 2 : 0)}
+                    width={width - paddingLeft - paddingRight}
+                    height={yAxisGridThickness}
+                  />
+                  {subTick}
+                  {showText ? (
+                    <text
+                      fill={labelColor}
+                      fontSize={labelFontSize}
+                      y={yScale(value)}
+                      dominantBaseline="middle"
+                      textAnchor="end"
+                      transform={`translate(${-yAxisLabelOffset},1)`}
+                    >
+                      {value}
+                      {index === yAxisTicks.length - 1 ? (
+                        <tspan x={0} dy={labelFontSize}>
+                          зданий
+                        </tspan>
+                      ) : null}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+          </g>
+          {/* Legend */}
+          <rect
+            height={yAxisGridThickness * 2}
+            fill="#fff"
+            x={width - paddingRight - legendBackgroundWidth}
+            y={paddingTop - yAxisGridThickness}
+            width={legendBackgroundWidth}
+          />
+          <g transform={`translate(${width - paddingRight}, ${paddingTop})`}>
+            <text
+              textAnchor="end"
+              dx={legendHeaderOffsetX}
+              dy={1}
+              fill={labelColor}
+              dominantBaseline="middle"
+            >
+              площадь застройки, м²
+            </text>
+            {buildAreaThresholds.map((threshold, index) => {
+              return (
+                <React.Fragment key={index}>
+                  <rect
+                    width={binWidth}
+                    x={-binWidth}
+                    y={
+                      -gapOverlap + labelFontSize * index + legendHeaderOffsetY
+                    }
+                    height={labelFontSize + gapOverlap}
+                    fill={buildAreaColor(threshold - 1)}
+                  />
+                  {threshold < Number.MAX_SAFE_INTEGER ? (
+                    <text
+                      fill={labelColor}
+                      dx={-binWidth * 2}
+                      dominantBaseline="middle"
+                      y={labelFontSize * (index + 1) + legendHeaderOffsetY + 1}
+                      textAnchor="end"
+                    >
+                      {index === 0 ? "< " : ""}
+                      {threshold}
+                    </text>
+                  ) : null}
+                </React.Fragment>
               );
             })}
           </g>
