@@ -20,6 +20,7 @@ import {
 } from "../shared/geoMaps";
 import { GlobalStyle } from "../shared/GlobalStyle";
 import { AgeHistogram } from "./AgeHistogram";
+import { CropMark } from "./CropMark";
 
 const mapPaddingInMm = {
   top: 20,
@@ -104,11 +105,18 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   roadCollection,
   waterObjectCollection,
 }) => {
+  const {
+    widthInMillimeters,
+    heightInMillimeters,
+    printerBleedInMillimeters,
+    printerCropMarks,
+  } = posterConfig.layout;
+
   return (
     <Figure
       style={{
-        width: `${posterConfig.layout.widthInMillimeters}mm`,
-        height: `${posterConfig.layout.heightInMillimeters}mm`,
+        width: `${widthInMillimeters + printerBleedInMillimeters * 2}mm`,
+        height: `${heightInMillimeters + printerBleedInMillimeters * 2}mm`,
       }}
     >
       <GlobalStyle />
@@ -158,6 +166,26 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
         культуры РФ, Викигид &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; визуализация:
         Александр Качкаев (kachkaev.ru)
       </Copyright>
+      {printerBleedInMillimeters && printerCropMarks ? (
+        <>
+          <CropMark
+            corner="topLeft"
+            printerBleedInMillimeters={printerBleedInMillimeters}
+          />
+          <CropMark
+            corner="topRight"
+            printerBleedInMillimeters={printerBleedInMillimeters}
+          />
+          <CropMark
+            corner="bottomLeft"
+            printerBleedInMillimeters={printerBleedInMillimeters}
+          />
+          <CropMark
+            corner="bottomRight"
+            printerBleedInMillimeters={printerBleedInMillimeters}
+          />
+        </>
+      ) : undefined}
     </Figure>
   );
 };

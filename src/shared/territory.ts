@@ -129,7 +129,7 @@ export interface PosterConfig {
     widthInMillimeters: number;
     heightInMillimeters: number;
     printerBleedInMillimeters: number;
-    cropMarks: boolean;
+    printerCropMarks: boolean;
   };
   map: {
     centerLonLat: turf.Position;
@@ -142,7 +142,7 @@ const defaultPosterConfig: PosterConfig = {
     widthInMillimeters: 700,
     heightInMillimeters: 500,
     printerBleedInMillimeters: 5,
-    cropMarks: true,
+    printerCropMarks: true,
   },
   map: {
     territoryExtentOutline: false,
