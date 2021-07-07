@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { getMixedPropertyVariantsFilePath } from "../shared/outputMixing";
 import { readFetchedOsmFeatureCollection } from "../shared/sources/osm/readFetchedOsmFeatureCollection";
-import { getTerritoryExtent } from "../shared/territory";
+import { getPosterConfig, getTerritoryExtent } from "../shared/territory";
 import { PosterProps } from "../ui/Poster";
 
 const Poster = dynamic<PosterProps>(
@@ -28,6 +28,7 @@ const removeUndefinedForNextJsSerializing = <T,>(props: T): T =>
 export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
   return {
     props: removeUndefinedForNextJsSerializing({
+      posterConfig: await getPosterConfig(),
       buildingCollection: await fs.readJson(getMixedPropertyVariantsFilePath()),
       territoryExtent: await getTerritoryExtent(),
 

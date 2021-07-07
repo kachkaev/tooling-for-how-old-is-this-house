@@ -9,7 +9,7 @@ import {
   OsmRoadGeometry,
   OsmWaterObjectGeometry,
 } from "../../shared/sources/osm/types";
-import { TerritoryExtent } from "../../shared/territory";
+import { PosterConfig, TerritoryExtent } from "../../shared/territory";
 import {
   GeoMap,
   GeoMapLayerWithBuildingAges,
@@ -33,8 +33,6 @@ const Figure = styled.div`
   overflow: hidden;
   color: rgb(242, 246, 249);
   background: #0e0f12;
-  width: 700mm;
-  height: 700mm;
   position: relative;
   font-size: 5mm;
   line-height: 1.4em;
@@ -88,6 +86,7 @@ const DraftNotice2 = styled(DraftNotice)`
 `;
 
 export interface PosterProps {
+  posterConfig: PosterConfig;
   buildingCollection: MixedPropertyVariantsFeatureCollection;
   territoryExtent: TerritoryExtent;
 
@@ -97,6 +96,7 @@ export interface PosterProps {
 }
 
 export const Poster: React.VoidFunctionComponent<PosterProps> = ({
+  posterConfig,
   buildingCollection,
   territoryExtent,
 
@@ -105,7 +105,12 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   waterObjectCollection,
 }) => {
   return (
-    <Figure>
+    <Figure
+      style={{
+        width: `${posterConfig.layout.widthInMillimeters}mm`,
+        height: `${posterConfig.layout.heightInMillimeters}mm`,
+      }}
+    >
       <GlobalStyle />
       <StyledGeoMap paddingInMm={mapPaddingInMm} extentToFit={territoryExtent}>
         {(layerProps) => {

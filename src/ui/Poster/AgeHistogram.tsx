@@ -34,7 +34,7 @@ const paddingRight = 25 * pointsInMm;
 const paddingTop = 1 * pointsInMm;
 const paddingBottom = 28 * pointsInMm;
 
-const minYear = 1850;
+const minYear = 1790;
 const maxYear = 2020;
 
 const tickify = (value: number, tickSize: number): number[] => {
