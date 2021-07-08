@@ -4,7 +4,6 @@ import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import { load } from "js-yaml";
-import _ from "lodash";
 import path from "path";
 
 import { AddressHandlingConfig, RawAddressHandlingConfig } from "./addresses";
@@ -122,50 +121,4 @@ export const getTerritoryAddressHandlingConfig = async (
       chalk.yellow(`territory-config.yml → addressHandling: ${issue}`),
     ),
   );
-};
-
-export interface PosterConfig {
-  layout: {
-    widthInMillimeters: number;
-    heightInMillimeters: number;
-    printerBleedInMillimeters: number;
-    printerCropMarks: boolean;
-  };
-  map: {
-    centerLonLat: turf.Position;
-    territoryExtentOutline: boolean;
-  };
-}
-
-const defaultPosterConfig: PosterConfig = {
-  layout: {
-    widthInMillimeters: 700,
-    heightInMillimeters: 500,
-    printerBleedInMillimeters: 5,
-    printerCropMarks: true,
-  },
-  map: {
-    territoryExtentOutline: false,
-    centerLonLat: [0, 0],
-  },
-};
-
-export const getPosterConfig = async (): Promise<PosterConfig> => {
-  const rawPosterConfig = (await getTerritoryConfig()).poster;
-
-  // TODO: Handle edge cases
-
-  const result = _.defaultsDeep(
-    {},
-    rawPosterConfig,
-    defaultPosterConfig,
-  ) as PosterConfig;
-
-  if (!result.map.centerLonLat[0] || !result.map.centerLonLat[1]) {
-    result.map.centerLonLat = turf.centerOfMass(
-      await getTerritoryExtent(),
-    ).geometry.coordinates;
-  }
-
-  return result;
 };

@@ -1,15 +1,18 @@
+import * as turf from "@turf/turf";
+import _ from "lodash";
 import { DateTime } from "luxon";
 import * as React from "react";
 import styled from "styled-components";
 
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/outputMixing";
+import { PosterConfig } from "../../shared/poster";
 import {
   OsmFeatureCollection,
   OsmRailwayGeometry,
   OsmRoadGeometry,
   OsmWaterObjectGeometry,
 } from "../../shared/sources/osm/types";
-import { PosterConfig, TerritoryExtent } from "../../shared/territory";
+import { TerritoryExtent } from "../../shared/territory";
 import {
   GeoMap,
   GeoMapLayerWithBuildingAges,
@@ -96,6 +99,15 @@ export interface PosterProps {
   waterObjectCollection?: OsmFeatureCollection<OsmWaterObjectGeometry>;
 }
 
+const reverseFraction = (fractionalNumber: number): number => {
+  const digits = `${fractionalNumber}`
+    .split("")
+    .filter((char) => char >= "0" && char <= "9");
+  const result = parseInt(digits.reverse().join(""));
+
+  return isFinite(result) ? result : 0;
+};
+
 export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   posterConfig,
   buildingCollection,
@@ -111,6 +123,25 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
     printerBleedInMillimeters,
     printerCropMarks,
   } = posterConfig.layout;
+
+  const { territoryExtentOutline, buildingSampleSize } = posterConfig.map;
+
+  const sampledBuildingCollection = React.useMemo(
+    () =>
+      typeof buildingSampleSize === "number" && isFinite(buildingSampleSize)
+        ? {
+            ...buildingCollection,
+            features: _.orderBy(buildingCollection.features, (feature) => {
+              const [lon = 0, lat = 0] =
+                turf.pointOnFeature(feature).geometry.coordinates ?? [];
+              const fraction = reverseFraction(lon) + reverseFraction(lat);
+
+              return fraction;
+            }).slice(0, buildingSampleSize),
+          }
+        : buildingCollection,
+    [buildingCollection, buildingSampleSize],
+  );
 
   return (
     <Figure
@@ -139,13 +170,15 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
               {roadCollection ? (
                 <GeoMapLayerWithRoads {...layerProps} data={roadCollection} />
               ) : undefined}
-              <GeoMapLayerWithTerritoryExtent
-                {...layerProps}
-                data={territoryExtent}
-              />
+              {territoryExtentOutline ? (
+                <GeoMapLayerWithTerritoryExtent
+                  {...layerProps}
+                  data={territoryExtent}
+                />
+              ) : null}
               <GeoMapLayerWithBuildingAges
                 {...layerProps}
-                data={buildingCollection}
+                data={sampledBuildingCollection}
               />
             </>
           );

@@ -1,10 +1,14 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 
 import { makePageSnapshot } from "../shared/pageSnapshots";
-import { getPosterConfig } from "../shared/territory";
+import { extractPosterConfig } from "../shared/poster";
+import { getTerritoryConfig, getTerritoryExtent } from "../shared/territory";
 
 export const makePoster: Command = async ({ logger }) => {
-  const posterLayout = (await getPosterConfig()).layout;
+  const posterLayout = extractPosterConfig(
+    await getTerritoryConfig(),
+    await getTerritoryExtent(),
+  ).layout;
   await makePageSnapshot({
     pagePath: "poster",
     logger,
