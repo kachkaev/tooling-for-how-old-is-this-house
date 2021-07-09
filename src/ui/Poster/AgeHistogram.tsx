@@ -111,7 +111,7 @@ const Bar: React.VoidFunctionComponent<{
   );
 };
 
-export interface AgeHistogramProps extends React.DOMAttributes<HTMLDivElement> {
+export interface AgeHistogramProps extends React.HTMLProps<HTMLDivElement> {
   children?: React.ReactNode;
   buildingCollection: MixedPropertyVariantsFeatureCollection;
 }

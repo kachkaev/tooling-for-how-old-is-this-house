@@ -52,14 +52,10 @@ const StyledGeoMap = styled(GeoMap)`
 
 const StyledAgeHistogram = styled(AgeHistogram)`
   position: absolute;
-  left: ${mapPaddingInMm.left}mm;
-  right: ${mapPaddingInMm.right}mm;
-  bottom: 22mm;
 `;
 
 const Copyright = styled.div`
   position: absolute;
-  left: ${mapPaddingInMm.left + 1}mm;
   bottom: 12mm;
   line-height: 1.1em;
   text-align: left;
@@ -67,14 +63,13 @@ const Copyright = styled.div`
 `;
 
 const DraftNotice = styled.div`
-  right: 60mm;
-  top: 100mm;
   position: absolute;
-  font-size: 40mm;
-  line-height: 1.1em;
+  font-size: 30mm;
+  line-height: 1.2em;
   text-align: right;
   color: #f03939;
   opacity: 0.15;
+  transform: translate(1mm, -15mm);
 `;
 
 const DraftNoticeHeader = styled.div`
@@ -82,11 +77,11 @@ const DraftNoticeHeader = styled.div`
 `;
 
 const DraftNotice2 = styled(DraftNotice)`
+  line-height: 1em;
   right: auto;
   top: auto;
-  left: ${mapPaddingInMm.left}mm;
-  bottom: 100mm;
   text-align: left;
+  transform: translate(-2mm, -35mm);
 `;
 
 export interface PosterProps {
@@ -99,7 +94,10 @@ export interface PosterProps {
   waterObjectCollection?: OsmFeatureCollection<OsmWaterObjectGeometry>;
 }
 
-const reverseFraction = (fractionalNumber: number): number => {
+/**
+ * 1.2345 → 54321
+ */
+const extractNumberDigitsInReverse = (fractionalNumber: number): number => {
   const digits = `${fractionalNumber}`
     .split("")
     .filter((char) => char >= "0" && char <= "9");
@@ -117,12 +115,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   roadCollection,
   waterObjectCollection,
 }) => {
-  const {
-    widthInMillimeters,
-    heightInMillimeters,
-    printerBleedInMillimeters,
-    printerCropMarks,
-  } = posterConfig.layout;
+  const { layout, timeline } = posterConfig;
 
   const { territoryExtentOutline, buildingSampleSize } = posterConfig.map;
 
@@ -134,9 +127,11 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
             features: _.orderBy(buildingCollection.features, (feature) => {
               const [lon = 0, lat = 0] =
                 turf.pointOnFeature(feature).geometry.coordinates ?? [];
-              const fraction = reverseFraction(lon) + reverseFraction(lat);
+              const pseudoRandomIndex =
+                extractNumberDigitsInReverse(lon) +
+                extractNumberDigitsInReverse(lat);
 
-              return fraction;
+              return pseudoRandomIndex;
             }).slice(0, buildingSampleSize),
           }
         : buildingCollection,
@@ -146,8 +141,12 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   return (
     <Figure
       style={{
-        width: `${widthInMillimeters + printerBleedInMillimeters * 2}mm`,
-        height: `${heightInMillimeters + printerBleedInMillimeters * 2}mm`,
+        width: `${
+          layout.widthInMillimeters + layout.printerBleedInMillimeters * 2
+        }mm`,
+        height: `${
+          layout.heightInMillimeters + layout.printerBleedInMillimeters * 2
+        }mm`,
       }}
     >
       <GlobalStyle />
@@ -184,38 +183,77 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
           );
         }}
       </StyledGeoMap>
-      <StyledAgeHistogram buildingCollection={buildingCollection} />
-      <DraftNotice>
+      <StyledAgeHistogram
+        style={{
+          bottom: `${
+            timeline.marginBottomInMillimeters +
+            layout.printerBleedInMillimeters
+          }mm`,
+          left: `${
+            timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
+          }mm`,
+          right: `${
+            timeline.marginRightInMillimeters + layout.printerBleedInMillimeters
+          }mm`,
+        }}
+        buildingCollection={buildingCollection}
+      />
+      <DraftNotice
+        style={{
+          top: `${
+            timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
+          }mm`,
+          right: `${
+            timeline.marginLeftInMillimeters + +layout.printerBleedInMillimeters
+          }mm`,
+        }}
+      >
         <DraftNoticeHeader>черновик</DraftNoticeHeader>
         {DateTime.now().toFormat("yyyy-MM-dd")}
       </DraftNotice>
-      <DraftNotice2>
+      <DraftNotice2
+        style={{
+          left: `${
+            timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
+          }mm`,
+          bottom: `${
+            timeline.marginBottomInMillimeters +
+            layout.printerBleedInMillimeters
+          }mm`,
+        }}
+      >
         не для
         <br />
         распространения
       </DraftNotice2>
-      <Copyright>
+      <Copyright
+        style={{
+          left: `${
+            timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
+          }mm`,
+        }}
+      >
         данные: © участники OpenStreetMap, Росреестр, МинЖКХ, Министерство
         культуры РФ, Викигид &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; визуализация:
         Александр Качкаев (kachkaev.ru)
       </Copyright>
-      {printerBleedInMillimeters && printerCropMarks ? (
+      {layout.printerBleedInMillimeters && layout.printerCropMarks ? (
         <>
           <CropMark
             corner="topLeft"
-            printerBleedInMillimeters={printerBleedInMillimeters}
+            printerBleedInMillimeters={layout.printerBleedInMillimeters}
           />
           <CropMark
             corner="topRight"
-            printerBleedInMillimeters={printerBleedInMillimeters}
+            printerBleedInMillimeters={layout.printerBleedInMillimeters}
           />
           <CropMark
             corner="bottomLeft"
-            printerBleedInMillimeters={printerBleedInMillimeters}
+            printerBleedInMillimeters={layout.printerBleedInMillimeters}
           />
           <CropMark
             corner="bottomRight"
-            printerBleedInMillimeters={printerBleedInMillimeters}
+            printerBleedInMillimeters={layout.printerBleedInMillimeters}
           />
         </>
       ) : undefined}

@@ -15,6 +15,12 @@ export interface PosterConfig {
     centerLonLat: turf.Position;
     territoryExtentOutline: boolean;
   };
+  timeline: {
+    abnormalYears: number[];
+    marginLeftInMillimeters: number;
+    marginRightInMillimeters: number;
+    marginBottomInMillimeters: number;
+  };
 }
 
 const defaultPosterConfig: PosterConfig = {
@@ -27,6 +33,12 @@ const defaultPosterConfig: PosterConfig = {
   map: {
     territoryExtentOutline: false,
     centerLonLat: [0, 0],
+  },
+  timeline: {
+    abnormalYears: [1900, 1910, 1917],
+    marginLeftInMillimeters: 50,
+    marginRightInMillimeters: 50,
+    marginBottomInMillimeters: 50,
   },
 };
 
