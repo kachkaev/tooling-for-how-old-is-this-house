@@ -4,7 +4,6 @@ import { DateTime } from "luxon";
 import * as React from "react";
 import styled from "styled-components";
 
-import { colorBins } from "../../shared/completionDates";
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/outputMixing";
 import { PosterConfig } from "../../shared/poster";
 import {
@@ -16,6 +15,7 @@ import {
 import { TerritoryExtent } from "../../shared/territory";
 import { GlobalStyle } from "../shared/GlobalStyle";
 import { CropMark } from "./CropMark";
+import { generateMapCompletionYearToColor } from "./generateMapCompletionYearToColor";
 import { GeoMap } from "./GeoMap";
 import { GeoMapLayerWithBuildingAges } from "./GeoMapLayerWithBuildingAges";
 import { GeoMapLayerWithRailways } from "./GeoMapLayerWithRailways";
@@ -88,12 +88,10 @@ const Footer = styled.div`
 `;
 
 const DraftNotice = styled.div`
-  visibility: hidden;
   position: absolute;
   font-size: 30mm;
   line-height: 1.2em;
   text-align: right;
-  color: ${colorBins[0]![1]};
   opacity: 0.4;
   transform: translate(1mm, -15mm);
 `;
@@ -141,7 +139,22 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   roadCollection,
   waterObjectCollection,
 }) => {
-  const { layout, timeline, map } = posterConfig;
+  const {
+    colorByCompletionYear,
+    colorForUnknownCompletionYear,
+    layout,
+    map,
+    timeline,
+  } = posterConfig;
+
+  const mapCompletionYearToColor = React.useMemo(
+    () =>
+      generateMapCompletionYearToColor(
+        colorByCompletionYear,
+        colorForUnknownCompletionYear,
+      ),
+    [colorByCompletionYear, colorForUnknownCompletionYear],
+  );
 
   const sampledBuildingCollection = React.useMemo(
     () =>
@@ -223,6 +236,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
               ) : null}
               <GeoMapLayerWithBuildingAges
                 {...layerProps}
+                mapCompletionYearToColor={mapCompletionYearToColor}
                 data={sampledBuildingCollection}
               />
             </>
@@ -233,12 +247,14 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
         <Timeline
           style={timelineStyle}
           buildingCollection={buildingCollection}
+          mapCompletionYearToColor={mapCompletionYearToColor}
           {...timeline}
         />
       </Shadow>
       <Shadow>
         <DraftNotice
           style={{
+            color: mapCompletionYearToColor(0),
             top: `${
               timeline.marginLeftInMillimeters +
               layout.printerBleedInMillimeters
@@ -256,6 +272,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
       <Shadow>
         <DraftNotice2
           style={{
+            color: mapCompletionYearToColor(0),
             left: `${
               timeline.marginLeftInMillimeters +
               layout.printerBleedInMillimeters

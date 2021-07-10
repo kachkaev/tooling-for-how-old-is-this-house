@@ -1,12 +1,11 @@
 import * as React from "react";
 
-import { mapCompletionYearToColor } from "../../shared/completionDates";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/outputMixing";
 import { GeoMapLayer } from "./shared/GeoMapLayer";
-import { ProjectionConfig } from "./types";
+import { MapCompletionYearToColor, ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithBuildingAgesProps {
   width: number;
@@ -15,6 +14,7 @@ export interface GeoMapLayerWithBuildingAgesProps {
   sample?: number;
   bufferInMeters?: number;
   projectionConfig: ProjectionConfig;
+  mapCompletionYearToColor: MapCompletionYearToColor;
 }
 
 export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLayerWithBuildingAgesProps> = ({
@@ -23,6 +23,7 @@ export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLaye
   data,
   sample,
   projectionConfig,
+  mapCompletionYearToColor,
 }) => {
   const featureProps = React.useCallback<
     (feature: MixedPropertyVariantsFeature) => React.SVGProps<SVGPathElement>
@@ -33,7 +34,7 @@ export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLaye
       strokeOpacity: 0.3,
       strokeWidth: 0.2,
     }),
-    [],
+    [mapCompletionYearToColor],
   );
 
   const sampledFeatures = React.useMemo(

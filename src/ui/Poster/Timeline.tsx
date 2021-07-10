@@ -5,12 +5,12 @@ import * as React from "react";
 import { useMeasure } from "react-use";
 import styled from "styled-components";
 
-import { mapCompletionYearToColor } from "../../shared/completionDates";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/outputMixing";
 import { pointsInMm } from "../shared/printing";
+import { MapCompletionYearToColor } from "./types";
 
 const numberFormat = Intl.NumberFormat("ru");
 
@@ -56,13 +56,22 @@ const tickify = (value: number, tickSize: number): number[] => {
 };
 
 const Bar: React.VoidFunctionComponent<{
-  year: number;
+  buildings: MixedPropertyVariantsFeature[];
   label: string;
   labelOffsetX?: number;
+  mapCompletionYearToColor: MapCompletionYearToColor;
   xScale: ScaleLinear<number, number>;
+  year: number;
   yScale: ScaleLinear<number, number>;
-  buildings: MixedPropertyVariantsFeature[];
-}> = ({ year, label, labelOffsetX = 0, xScale, yScale, buildings }) => {
+}> = ({
+  buildings,
+  label,
+  labelOffsetX = 0,
+  mapCompletionYearToColor,
+  xScale,
+  year,
+  yScale,
+}) => {
   const labelColor = mapCompletionYearToColor(year);
   const barColor = mapCompletionYearToColor(
     buildings.length > 0 ? year : undefined,
@@ -123,6 +132,7 @@ const Bar: React.VoidFunctionComponent<{
 export interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   buildingCollection: MixedPropertyVariantsFeatureCollection;
+  mapCompletionYearToColor: MapCompletionYearToColor;
 
   minYear: number;
   minYearLabelOffsetXInMillimeters: number;
@@ -137,6 +147,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
   minYearLabelOffsetXInMillimeters,
   minYearLabel,
   maxYear,
+  mapCompletionYearToColor,
   ...rest
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
@@ -205,6 +216,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
             <Bar
               key={year}
               year={year}
+              mapCompletionYearToColor={mapCompletionYearToColor}
               labelOffsetX={
                 index === 0 && minYearLabel
                   ? minYearLabelOffsetXInMillimeters
