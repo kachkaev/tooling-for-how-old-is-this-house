@@ -12,7 +12,7 @@ export interface PosterConfig {
   };
   map: {
     buildingSampleSize?: number;
-    centerLonLat: turf.Position;
+    centerLonLat: [number, number];
     territoryExtentOutline: boolean;
     zoomInMillimetersPerKilometer: number;
     offsetXInMillimeters: number;
@@ -63,9 +63,8 @@ export const extractPosterConfig = (
   ) as PosterConfig;
 
   if (!result.map.centerLonLat[0] || !result.map.centerLonLat[1]) {
-    result.map.centerLonLat = turf.centerOfMass(
-      territoryExtent,
-    ).geometry.coordinates;
+    result.map.centerLonLat = turf.centerOfMass(territoryExtent).geometry
+      .coordinates as [number, number];
   }
 
   return result;

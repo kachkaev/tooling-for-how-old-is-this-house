@@ -34,7 +34,7 @@ const paddingRight = 25 * pointsInMm;
 const paddingTop = 1 * pointsInMm;
 const paddingBottom = 28 * pointsInMm;
 
-const minYear = 1790;
+const minYear = 1795;
 const maxYear = 2020;
 
 const tickify = (value: number, tickSize: number): number[] => {
@@ -56,7 +56,8 @@ const Bar: React.VoidFunctionComponent<{
   buildings: MixedPropertyVariantsFeature[];
   labelPrefix?: string;
 }> = ({ year, showLabel, xScale, yScale, buildings, labelPrefix }) => {
-  const color = mapCompletionYearToColor(
+  const labelColor = mapCompletionYearToColor(year);
+  const barColor = mapCompletionYearToColor(
     buildings.length > 0 ? year : undefined,
   );
 
@@ -89,7 +90,7 @@ const Bar: React.VoidFunctionComponent<{
             width={barWidth}
             y={yScale(prevTickifiedValue) - height}
             height={height}
-            fill={color}
+            fill={barColor}
             rx=".5mm"
           />
         );
@@ -97,7 +98,7 @@ const Bar: React.VoidFunctionComponent<{
       {showLabel ? (
         <g x={0} transform={`translate(0,${yScale(0) + barLabelOffset})`}>
           <text
-            fill={color}
+            fill={labelColor}
             transform={`rotate(-90),translate(0,${barWidth / 2})`}
             textAnchor="end"
             alignmentBaseline="middle"

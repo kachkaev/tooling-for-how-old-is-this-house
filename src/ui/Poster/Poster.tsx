@@ -25,11 +25,13 @@ import { GlobalStyle } from "../shared/GlobalStyle";
 import { AgeHistogram } from "./AgeHistogram";
 import { CropMark } from "./CropMark";
 
+const backgroundColor = "#0e0f12";
+
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
   overflow: hidden;
   color: rgb(242, 246, 249);
-  background: #0e0f12;
+  background: ${backgroundColor};
   position: relative;
   font-size: 5mm;
   line-height: 1.4em;
@@ -45,6 +47,15 @@ const StyledGeoMap = styled(GeoMap)`
 
 const StyledAgeHistogram = styled(AgeHistogram)`
   position: absolute;
+`;
+
+// Using two histogram instances avoid raster content because of CSS filters
+const StyledAgeHistogramShadow = styled(StyledAgeHistogram)`
+  filter: brightness(0) blur(3mm) drop-shadow(0 0 3mm ${backgroundColor})
+    drop-shadow(0 0 3mm ${backgroundColor})
+    drop-shadow(0 0 2mm ${backgroundColor})
+    drop-shadow(0 0 1mm ${backgroundColor})
+    drop-shadow(0 0 1mm ${backgroundColor});
 `;
 
 const Copyright = styled.div`
@@ -130,6 +141,18 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
     [buildingCollection, map.buildingSampleSize],
   );
 
+  const ageHistogramStyle: React.CSSProperties = {
+    bottom: `${
+      timeline.marginBottomInMillimeters + layout.printerBleedInMillimeters
+    }mm`,
+    left: `${
+      timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
+    }mm`,
+    right: `${
+      timeline.marginRightInMillimeters + layout.printerBleedInMillimeters
+    }mm`,
+  };
+
   return (
     <Figure
       style={{
@@ -175,19 +198,12 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
           );
         }}
       </StyledGeoMap>
+      <StyledAgeHistogramShadow
+        style={ageHistogramStyle}
+        buildingCollection={buildingCollection}
+      />
       <StyledAgeHistogram
-        style={{
-          bottom: `${
-            timeline.marginBottomInMillimeters +
-            layout.printerBleedInMillimeters
-          }mm`,
-          left: `${
-            timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
-          }mm`,
-          right: `${
-            timeline.marginRightInMillimeters + layout.printerBleedInMillimeters
-          }mm`,
-        }}
+        style={ageHistogramStyle}
         buildingCollection={buildingCollection}
       />
       <DraftNotice
