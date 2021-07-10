@@ -15,7 +15,6 @@ import {
 } from "../../shared/sources/osm/types";
 import { TerritoryExtent } from "../../shared/territory";
 import { GlobalStyle } from "../shared/GlobalStyle";
-import { AgeHistogram } from "./AgeHistogram";
 import { CropMark } from "./CropMark";
 import { GeoMap } from "./GeoMap";
 import { GeoMapLayerWithBuildingAges } from "./GeoMapLayerWithBuildingAges";
@@ -23,6 +22,7 @@ import { GeoMapLayerWithRailways } from "./GeoMapLayerWithRailways";
 import { GeoMapLayerWithRoads } from "./GeoMapLayerWithRoads";
 import { GeoMapLayerWithTerritoryExtent } from "./GeoMapLayerWithTerritoryExtent";
 import { GeoMapLayerWithWaterObjects } from "./GeoMapLayerWithWaterObjects";
+import { Timeline } from "./Timeline";
 import { ZoomMark } from "./ZoomMark";
 
 const backgroundColor = "#041116";
@@ -33,7 +33,6 @@ const Figure = styled.div`
   color: rgb(242, 246, 249);
   background: ${backgroundColor};
   position: relative;
-  /* -webkit-font-smoothing: antialiased; */
 
   font-size: 5mm;
   line-height: 1.4em;
@@ -47,19 +46,28 @@ const StyledGeoMap = styled(GeoMap)`
   top: 0;
 `;
 
-const StyledAgeHistogram = styled(AgeHistogram)`
-  position: absolute;
-`;
-
-// Using two histogram instances avoid raster content because of CSS filters
-const StyledAgeHistogramShadow = styled(StyledAgeHistogram)`
-  filter: brightness(0) opacity(0.7) blur(2mm)
+const Shadow: React.VoidFunctionComponent<{
+  children: React.ReactElement<HTMLElement>;
+}> = ({ children }) => {
+  const shadow = React.cloneElement(children, {
+    style: {
+      ...children.props.style,
+      filter: `brightness(0) opacity(0.7) blur(2mm)
     drop-shadow(0 0 3mm ${backgroundColor})
     drop-shadow(0 0 3mm ${backgroundColor})
     drop-shadow(0 0 2mm ${backgroundColor})
     drop-shadow(0 0 1mm ${backgroundColor})
-    drop-shadow(0 0 1mm ${backgroundColor});
-`;
+    drop-shadow(0 0 1mm ${backgroundColor})`,
+    },
+  });
+
+  return (
+    <>
+      {shadow}
+      {children}
+    </>
+  );
+};
 
 const Footer = styled.div`
   position: absolute;
@@ -150,17 +158,26 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
     [buildingCollection, map.buildingSampleSize],
   );
 
-  const ageHistogramStyle: React.CSSProperties = {
-    bottom: `${
-      timeline.marginBottomInMillimeters + layout.printerBleedInMillimeters
-    }mm`,
-    left: `${
-      timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
-    }mm`,
-    right: `${
-      timeline.marginRightInMillimeters + layout.printerBleedInMillimeters
-    }mm`,
-  };
+  const timelineStyle: React.CSSProperties = React.useMemo(
+    () => ({
+      position: "absolute",
+      bottom: `${
+        timeline.marginBottomInMillimeters + layout.printerBleedInMillimeters
+      }mm`,
+      left: `${
+        timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
+      }mm`,
+      right: `${
+        timeline.marginRightInMillimeters + layout.printerBleedInMillimeters
+      }mm`,
+    }),
+    [
+      layout.printerBleedInMillimeters,
+      timeline.marginBottomInMillimeters,
+      timeline.marginLeftInMillimeters,
+      timeline.marginRightInMillimeters,
+    ],
+  );
 
   return (
     <Figure
@@ -207,70 +224,82 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
           );
         }}
       </StyledGeoMap>
-      <StyledAgeHistogramShadow
-        style={ageHistogramStyle}
-        buildingCollection={buildingCollection}
-      />
-      <StyledAgeHistogram
-        style={ageHistogramStyle}
-        buildingCollection={buildingCollection}
-      />
-      <DraftNotice
-        style={{
-          top: `${
-            timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
-          }mm`,
-          right: `${
-            timeline.marginLeftInMillimeters + +layout.printerBleedInMillimeters
-          }mm`,
-        }}
-      >
-        <DraftNoticeHeader>черновик</DraftNoticeHeader>
-        {DateTime.now().toFormat("yyyy-MM-dd")}
-      </DraftNotice>
-      <DraftNotice2
-        style={{
-          left: `${
-            timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
-          }mm`,
-          bottom: `${
-            timeline.marginBottomInMillimeters +
-            layout.printerBleedInMillimeters
-          }mm`,
-        }}
-      >
-        не для
-        <br />
-        распространения
-      </DraftNotice2>
-      <Footer
-        style={{
-          left: `${
-            timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
-          }mm`,
-        }}
-      >
-        Этот черновик постера сгенерирован при помощи{" "}
-        <a href="https://github.com/kachkaev/tooling-for-how-old-is-this-house">
-          github.com/kachkaev/tooling-for-how-old-is-this-house
-        </a>
-        .<br />
-        Чтобы получить чистовик, вам надо связаться с администратором сайта{" "}
-        <a href="https://how-old-is-this.house">how-old-is-this.house</a> и
-        передать экспортированную ПДФ-ку. В чистовик постера добавят список
-        источников данных и логотип издательства.
-        <br />
-      </Footer>
-      <ZoomMark
-        zoomInMillimetersPerKilometer={map.zoomInMillimetersPerKilometer}
-        style={{
-          position: "absolute",
-          right: `${
-            timeline.marginRightInMillimeters + layout.printerBleedInMillimeters
-          }mm`,
-          bottom: "15mm",
-        }}
-      />
+      <Shadow>
+        <Timeline
+          style={timelineStyle}
+          buildingCollection={buildingCollection}
+          {...timeline}
+        />
+      </Shadow>
+      <Shadow>
+        <DraftNotice
+          style={{
+            top: `${
+              timeline.marginLeftInMillimeters +
+              layout.printerBleedInMillimeters
+            }mm`,
+            right: `${
+              timeline.marginLeftInMillimeters +
+              +layout.printerBleedInMillimeters
+            }mm`,
+          }}
+        >
+          <DraftNoticeHeader>черновик</DraftNoticeHeader>
+          {DateTime.now().toFormat("yyyy-MM-dd")}
+        </DraftNotice>
+      </Shadow>
+      <Shadow>
+        <DraftNotice2
+          style={{
+            left: `${
+              timeline.marginLeftInMillimeters +
+              layout.printerBleedInMillimeters
+            }mm`,
+            bottom: `${
+              timeline.marginBottomInMillimeters +
+              layout.printerBleedInMillimeters
+            }mm`,
+          }}
+        >
+          не для
+          <br />
+          распространения
+        </DraftNotice2>
+      </Shadow>
+      <Shadow>
+        <Footer
+          style={{
+            left: `${
+              timeline.marginLeftInMillimeters +
+              layout.printerBleedInMillimeters
+            }mm`,
+          }}
+        >
+          Этот черновик постера создан при помощи{" "}
+          <a href="https://github.com/kachkaev/tooling-for-how-old-is-this-house">
+            github.com/kachkaev/tooling-for-how-old-is-this-house
+          </a>
+          .<br />
+          Вам надо связаться с администратором сайта{" "}
+          <a href="https://how-old-is-this.house">how-old-is-this.house</a> и
+          передать экспортированную ПДФ-ку. В чистовик постера добавят список
+          источников данных и логотип издательства.
+          <br />
+        </Footer>
+      </Shadow>
+      <Shadow>
+        <ZoomMark
+          zoomInMillimetersPerKilometer={map.zoomInMillimetersPerKilometer}
+          style={{
+            position: "absolute",
+            right: `${
+              timeline.marginRightInMillimeters +
+              layout.printerBleedInMillimeters
+            }mm`,
+            bottom: "15mm",
+          }}
+        />
+      </Shadow>
       {layout.printerBleedInMillimeters && layout.printerCropMarks ? (
         <>
           <CropMark

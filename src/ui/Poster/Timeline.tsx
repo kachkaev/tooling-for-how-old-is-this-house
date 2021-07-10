@@ -34,9 +34,6 @@ const paddingRight = 25 * pointsInMm;
 const paddingTop = 1 * pointsInMm;
 const paddingBottom = 28 * pointsInMm;
 
-const minYear = 1795;
-const maxYear = 2020;
-
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
 
@@ -50,12 +47,12 @@ const tickify = (value: number, tickSize: number): number[] => {
 
 const Bar: React.VoidFunctionComponent<{
   year: number;
-  showLabel: boolean;
+  label: string;
+  labelOffsetX?: number;
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   buildings: MixedPropertyVariantsFeature[];
-  labelPrefix?: string;
-}> = ({ year, showLabel, xScale, yScale, buildings, labelPrefix }) => {
+}> = ({ year, label, labelOffsetX = 0, xScale, yScale, buildings }) => {
   const labelColor = mapCompletionYearToColor(year);
   const barColor = mapCompletionYearToColor(
     buildings.length > 0 ? year : undefined,
@@ -95,16 +92,17 @@ const Bar: React.VoidFunctionComponent<{
           />
         );
       })}
-      {showLabel ? (
+      {label ? (
         <g x={0} transform={`translate(0,${yScale(0) + barLabelOffset})`}>
           <text
             fill={labelColor}
-            transform={`rotate(-90),translate(0,${barWidth / 2})`}
+            transform={`rotate(-90),translate(0,${
+              barWidth / 2 + labelOffsetX
+            })`}
             textAnchor="end"
             alignmentBaseline="middle"
           >
-            {labelPrefix ?? ""}
-            {year}
+            {label}
           </text>
         </g>
       ) : null}
@@ -112,14 +110,23 @@ const Bar: React.VoidFunctionComponent<{
   );
 };
 
-export interface AgeHistogramProps extends React.HTMLProps<HTMLDivElement> {
+export interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   buildingCollection: MixedPropertyVariantsFeatureCollection;
+
+  minYear: number;
+  minYearLabelOffsetXInMillimeters: number;
+  minYearLabel?: string;
+
+  maxYear: number;
 }
 
-const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
+const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
   buildingCollection,
-  as,
+  minYear,
+  minYearLabelOffsetXInMillimeters,
+  minYearLabel,
+  maxYear,
   ...rest
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
@@ -143,7 +150,7 @@ const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
 
         return derivedCompletionYear;
       }),
-    [buildingCollection.features],
+    [buildingCollection.features, maxYear, minYear],
   );
 
   const maxBuildingsPerYear =
@@ -175,8 +182,18 @@ const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
             <Bar
               key={year}
               year={year}
-              showLabel={index === 0 || Math.round(year / 10) === year / 10}
-              labelPrefix={index === 0 ? "..." : undefined}
+              labelOffsetX={
+                index === 0 && minYearLabel
+                  ? minYearLabelOffsetXInMillimeters
+                  : undefined
+              }
+              label={
+                index === 0 && minYearLabel
+                  ? minYearLabel
+                  : Math.round(year / 10) === year / 10
+                  ? `${year}`
+                  : ""
+              }
               buildings={buildingsByYear[year] ?? []}
               xScale={xScale}
               yScale={yScale}
@@ -231,5 +248,5 @@ const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
   );
 };
 
-const WrappedAgeHistogram = React.memo(AgeHistogram);
-export { WrappedAgeHistogram as AgeHistogram };
+const WrappedTimeline = React.memo(Timeline);
+export { WrappedTimeline as Timeline };

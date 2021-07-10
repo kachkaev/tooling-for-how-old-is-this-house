@@ -23,6 +23,12 @@ export interface PosterConfig {
     marginLeftInMillimeters: number;
     marginRightInMillimeters: number;
     marginBottomInMillimeters: number;
+
+    minYear: number;
+    minYearLabelOffsetXInMillimeters: number;
+    minYearLabel?: string;
+
+    maxYear: number;
   };
 }
 
@@ -42,9 +48,14 @@ const defaultPosterConfig: PosterConfig = {
   },
   timeline: {
     abnormalYears: [1900, 1910, 1917],
-    marginLeftInMillimeters: 50,
-    marginRightInMillimeters: 50,
-    marginBottomInMillimeters: 50,
+    marginLeftInMillimeters: 15,
+    marginRightInMillimeters: 15,
+    marginBottomInMillimeters: 35,
+
+    minYear: 1795,
+    minYearLabelOffsetXInMillimeters: -0.5,
+    minYearLabel: "···",
+    maxYear: 2020,
   },
 };
 
