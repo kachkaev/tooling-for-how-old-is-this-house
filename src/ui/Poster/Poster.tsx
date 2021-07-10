@@ -61,12 +61,18 @@ const StyledAgeHistogramShadow = styled(StyledAgeHistogram)`
     drop-shadow(0 0 1mm ${backgroundColor});
 `;
 
-const Copyright = styled.div`
+const Footer = styled.div`
   position: absolute;
   bottom: 12mm;
-  line-height: 1.1em;
+  line-height: 1.2em;
   text-align: left;
-  opacity: 0.3;
+  opacity: 0.8;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: bold;
+  }
 `;
 
 const DraftNotice = styled.div`
@@ -237,17 +243,24 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
         <br />
         распространения
       </DraftNotice2>
-      <Copyright
+      <Footer
         style={{
           left: `${
             timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
           }mm`,
         }}
       >
-        данные: © участники OpenStreetMap, Росреестр, МинЖКХ, Министерство
-        культуры РФ, Викигид &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; визуализация:
-        Александр Качкаев (kachkaev.ru)
-      </Copyright>
+        Этот черновик постера сгенерирован при помощи{" "}
+        <a href="https://github.com/kachkaev/tooling-for-how-old-is-this-house">
+          github.com/kachkaev/tooling-for-how-old-is-this-house
+        </a>
+        .<br />
+        Чтобы получить чистовик, вам надо связаться с администратором сайта{" "}
+        <a href="https://how-old-is-this.house">how-old-is-this.house</a> и
+        передать экспортированную ПДФ-ку. В чистовик постера добавят список
+        источников данных и логотип издательства.
+        <br />
+      </Footer>
       <ZoomMark
         zoomInMillimetersPerKilometer={map.zoomInMillimetersPerKilometer}
         style={{
