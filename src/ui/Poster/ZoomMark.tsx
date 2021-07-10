@@ -4,10 +4,10 @@ import styled from "styled-components";
 const Wrapper = styled.div`
   border: 0.3mm solid rgba(255, 255, 255, 1);
   border-top: none;
-  font-size: 5mm;
   text-align: center;
   height: 3mm;
   position: relative;
+  box-sizing: border-box;
 `;
 
 const Text = styled.div`

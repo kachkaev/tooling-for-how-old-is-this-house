@@ -117,7 +117,7 @@ export interface AgeHistogramProps extends React.HTMLProps<HTMLDivElement> {
   buildingCollection: MixedPropertyVariantsFeatureCollection;
 }
 
-export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
+const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
   buildingCollection,
   as,
   ...rest
@@ -230,3 +230,6 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
     </Wrapper>
   );
 };
+
+const WrappedAgeHistogram = React.memo(AgeHistogram);
+export { WrappedAgeHistogram as AgeHistogram };

@@ -648,7 +648,7 @@
     prettier-plugin-packagejson "^2.2.6"
     prettier-plugin-sh "^0.6.0"
 
-"@mapbox/geojson-rewind@0.4.0", "@mapbox/geojson-rewind@^0.5.0":
+"@mapbox/geojson-rewind@0.4.0", "@mapbox/geojson-rewind@^0.5.0", "@mapbox/geojson-rewind@^0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@mapbox/geojson-rewind/-/geojson-rewind-0.5.1.tgz#adbe16dc683eb40e90934c51a5e28c7bbf44f4e1"
   integrity sha512-eL7fMmfTBKjrb+VFHXCGv9Ot0zc3C0U+CwXo1IrP+EPwDczLoXv34Tgq3y+2mPSFNVUXgU42ILWJTC7145KPTA==

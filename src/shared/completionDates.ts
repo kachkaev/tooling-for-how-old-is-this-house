@@ -87,7 +87,7 @@ export const colorBinsUsingSpectral: Array<[number, string]> = [
   [2010, interpolateSpectral(spectralBase + spectralStep1 * 11)],
 ];
 
-const colorBins = colorBinsUsingSpectral;
+export const colorBins = colorBinsUsingSpectral;
 
 const scale = scaleThreshold<number, string>({
   domain: colorBins.map(([threshold]) => threshold),

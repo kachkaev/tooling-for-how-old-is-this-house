@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import * as React from "react";
 import styled from "styled-components";
 
+import { colorBins } from "../../shared/completionDates";
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/outputMixing";
 import { PosterConfig } from "../../shared/poster";
 import {
@@ -26,7 +27,7 @@ import { AgeHistogram } from "./AgeHistogram";
 import { CropMark } from "./CropMark";
 import { ZoomMark } from "./ZoomMark";
 
-const backgroundColor = "#020509";
+const backgroundColor = "#041116";
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
@@ -34,6 +35,8 @@ const Figure = styled.div`
   color: rgb(242, 246, 249);
   background: ${backgroundColor};
   position: relative;
+  /* -webkit-font-smoothing: antialiased; */
+
   font-size: 5mm;
   line-height: 1.4em;
 `;
@@ -52,7 +55,8 @@ const StyledAgeHistogram = styled(AgeHistogram)`
 
 // Using two histogram instances avoid raster content because of CSS filters
 const StyledAgeHistogramShadow = styled(StyledAgeHistogram)`
-  filter: brightness(0) blur(1mm) drop-shadow(0 0 3mm ${backgroundColor})
+  filter: brightness(0) opacity(0.7) blur(2mm)
+    drop-shadow(0 0 3mm ${backgroundColor})
     drop-shadow(0 0 3mm ${backgroundColor})
     drop-shadow(0 0 2mm ${backgroundColor})
     drop-shadow(0 0 1mm ${backgroundColor})
@@ -72,8 +76,8 @@ const DraftNotice = styled.div`
   font-size: 30mm;
   line-height: 1.2em;
   text-align: right;
-  color: #f03939;
-  opacity: 0.15;
+  color: ${colorBins[0]![1]};
+  opacity: 0.4;
   transform: translate(1mm, -15mm);
 `;
 

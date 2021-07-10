@@ -9,17 +9,23 @@ export const makePoster: Command = async ({ logger }) => {
     await getTerritoryConfig(),
     await getTerritoryExtent(),
   ).layout;
+
+  // TODO: link to environment variables
+  const formats = ["pdf"];
+
   await makePageSnapshot({
     pagePath: "poster",
     logger,
     imageScaleFactor: 3,
-    imageExtension: "jpg",
-    pdfSizeInMillimeters: [
-      posterLayout.widthInMillimeters +
-        posterLayout.printerBleedInMillimeters * 2,
-      posterLayout.heightInMillimeters +
-        posterLayout.printerBleedInMillimeters * 2,
-    ],
+    imageExtension: formats.includes("jpg") ? "jpg" : undefined,
+    pdfSizeInMillimeters: formats.includes("pdf")
+      ? [
+          posterLayout.widthInMillimeters +
+            posterLayout.printerBleedInMillimeters * 2,
+          posterLayout.heightInMillimeters +
+            posterLayout.printerBleedInMillimeters * 2,
+        ]
+      : undefined,
   });
 };
 

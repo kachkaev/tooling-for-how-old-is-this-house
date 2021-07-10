@@ -1,3 +1,6 @@
+import rewind from "@mapbox/geojson-rewind";
+import * as turf from "@turf/turf";
+import { geoMercator } from "d3-geo";
 import * as React from "react";
 import { useMeasure } from "react-use";
 import styled from "styled-components";
@@ -40,8 +43,16 @@ export const GeoMap: React.VoidFunctionComponent<GeoMapProps> = ({
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
 
-  const projectionConfig: ProjectionConfig = React.useMemo(
-    () => ({
+  const projectionConfig: ProjectionConfig = React.useMemo(() => {
+    const projection = geoMercator().fitSize(
+      [
+        zoomInMillimetersPerKilometer * pointsInMm,
+        zoomInMillimetersPerKilometer * pointsInMm,
+      ],
+      rewind(turf.buffer(turf.point(centerLonLat), 0.5), true),
+    );
+
+    return {
       center: centerLonLat,
       clipExtent: [
         [-clipExtentDistanceInPixels, -clipExtentDistanceInPixels],
@@ -54,19 +65,16 @@ export const GeoMap: React.VoidFunctionComponent<GeoMapProps> = ({
         offsetXInMillimeters + width / 2,
         offsetYInMillimeters + height / 2,
       ],
-      scale:
-        (zoomInMillimetersPerKilometer * 1000 * pointsInMm) /
-        Math.cos((centerLonLat[1] / 180) * Math.PI),
-    }),
-    [
-      centerLonLat,
-      height,
-      offsetXInMillimeters,
-      offsetYInMillimeters,
-      width,
-      zoomInMillimetersPerKilometer,
-    ],
-  );
+      scale: projection.scale(),
+    };
+  }, [
+    centerLonLat,
+    height,
+    offsetXInMillimeters,
+    offsetYInMillimeters,
+    width,
+    zoomInMillimetersPerKilometer,
+  ]);
 
   return (
     <Wrapper {...rest} ref={ref}>
