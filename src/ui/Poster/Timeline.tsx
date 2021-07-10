@@ -1,3 +1,4 @@
+import { LinearGradient } from "@visx/gradient";
 import { scaleLinear } from "@visx/scale";
 import { ScaleLinear } from "d3-scale";
 import _ from "lodash";
@@ -56,6 +57,8 @@ const tickify = (value: number, tickSize: number): number[] => {
 };
 
 const Bar: React.VoidFunctionComponent<{
+  abnormalYears: number[];
+  abnormalYearBuildingCountCap: number;
   buildings: MixedPropertyVariantsFeature[];
   label: string;
   labelOffsetX?: number;
@@ -64,6 +67,8 @@ const Bar: React.VoidFunctionComponent<{
   year: number;
   yScale: ScaleLinear<number, number>;
 }> = ({
+  abnormalYears,
+  abnormalYearBuildingCountCap,
   buildings,
   label,
   labelOffsetX = 0,
@@ -77,7 +82,11 @@ const Bar: React.VoidFunctionComponent<{
     buildings.length > 0 ? year : undefined,
   );
 
-  const total = buildings.length;
+  const yearIsAbnormal = abnormalYears?.includes(year);
+  const total =
+    yearIsAbnormal && abnormalYearBuildingCountCap > 0
+      ? Math.min(buildings.length, abnormalYearBuildingCountCap)
+      : buildings.length;
   const tickifiedValues = tickify(total, barTick);
 
   return (
@@ -87,6 +96,7 @@ const Bar: React.VoidFunctionComponent<{
           return null;
         }
 
+        const gradientId = yearIsAbnormal ? `g-${year}-${index}` : undefined;
         const prevTickifiedValue = tickifiedValues[index - 1] ?? 0;
 
         const rawHeight = yScale(prevTickifiedValue) - yScale(tickifiedValue);
@@ -100,15 +110,24 @@ const Bar: React.VoidFunctionComponent<{
         }
 
         return (
-          <rect
-            key={index}
-            x={-barWidth / 2}
-            width={barWidth}
-            y={yScale(prevTickifiedValue) - height}
-            height={height}
-            fill={barColor}
-            // rx=".5mm"
-          />
+          <React.Fragment key={index}>
+            {gradientId ? (
+              <LinearGradient
+                id={gradientId}
+                from={barColor}
+                fromOpacity={1 - tickifiedValue / total}
+                to={barColor}
+                toOpacity={1 - prevTickifiedValue / total}
+              />
+            ) : null}
+            <rect
+              x={-barWidth / 2}
+              width={barWidth}
+              y={yScale(prevTickifiedValue) - height}
+              height={height}
+              fill={gradientId ? `url('#${gradientId}')` : barColor}
+            />
+          </React.Fragment>
         );
       })}
       {label ? (
@@ -130,10 +149,12 @@ const Bar: React.VoidFunctionComponent<{
 };
 
 export interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
+  children?: never;
   buildingCollection: MixedPropertyVariantsFeatureCollection;
   mapCompletionYearToColor: MapCompletionYearToColor;
 
+  abnormalYears: number[];
+  abnormalYearBuildingCountCap: number;
   minYear: number;
   minYearLabelOffsetXInMillimeters: number;
   minYearLabel?: string;
@@ -143,6 +164,8 @@ export interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
   buildingCollection,
+  abnormalYears,
+  abnormalYearBuildingCountCap,
   minYear,
   minYearLabelOffsetXInMillimeters,
   minYearLabel,
@@ -216,6 +239,8 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
             <Bar
               key={year}
               year={year}
+              abnormalYears={abnormalYears}
+              abnormalYearBuildingCountCap={abnormalYearBuildingCountCap}
               mapCompletionYearToColor={mapCompletionYearToColor}
               labelOffsetX={
                 index === 0 && minYearLabel

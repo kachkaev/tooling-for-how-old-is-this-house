@@ -20,6 +20,7 @@ export interface PosterConfig {
   };
   timeline: {
     abnormalYears: number[];
+    abnormalYearBuildingCountCap: number;
     marginLeftInMillimeters: number;
     marginRightInMillimeters: number;
     marginBottomInMillimeters: number;
@@ -64,7 +65,8 @@ const defaultPosterConfig: PosterConfig = {
     centerLonLat: [0, 0],
   },
   timeline: {
-    abnormalYears: [1900, 1910, 1917],
+    abnormalYears: [],
+    abnormalYearBuildingCountCap: 200,
     marginLeftInMillimeters: 15,
     marginRightInMillimeters: 15,
     marginBottomInMillimeters: 35,

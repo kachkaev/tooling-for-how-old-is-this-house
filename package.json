@@ -33,6 +33,7 @@
   "dependencies": {
     "@mapbox/geojson-rewind": "^0.5.1",
     "@visx/geo": "^1.13.0",
+    "@visx/gradient": "^1.7.0",
     "@visx/scale": "^1.11.1",
     "d3-array": "^2.12.1",
     "d3-color": "^2.0.0",
