@@ -5,8 +5,8 @@ import {
   OsmFeatureCollection,
   OsmFeatureProperties,
   OsmRoadGeometry,
-} from "../../../shared/sources/osm/types";
-import { GeoMapLayer } from "./GeoMapLayer";
+} from "../../shared/sources/osm/types";
+import { GeoMapLayer } from "./shared/GeoMapLayer";
 import { ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithRailwaysProps {

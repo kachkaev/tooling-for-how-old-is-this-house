@@ -3,7 +3,7 @@ import { Mercator } from "@visx/geo";
 import _ from "lodash";
 import * as React from "react";
 
-import { ProjectionConfig } from "./types";
+import { ProjectionConfig } from "../types";
 
 type BaseFeature = turf.Feature<
   turf.Polygon | turf.MultiPolygon | turf.LineString | turf.MultiLineString

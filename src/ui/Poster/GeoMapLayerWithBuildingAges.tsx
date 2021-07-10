@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import { mapCompletionYearToColor } from "../../../shared/completionDates";
+import { mapCompletionYearToColor } from "../../shared/completionDates";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../../../shared/outputMixing";
-import { GeoMapLayer } from "./GeoMapLayer";
+} from "../../shared/outputMixing";
+import { GeoMapLayer } from "./shared/GeoMapLayer";
 import { ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithBuildingAgesProps {

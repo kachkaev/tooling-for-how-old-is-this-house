@@ -14,17 +14,15 @@ import {
   OsmWaterObjectGeometry,
 } from "../../shared/sources/osm/types";
 import { TerritoryExtent } from "../../shared/territory";
-import {
-  GeoMap,
-  GeoMapLayerWithBuildingAges,
-  GeoMapLayerWithRailways,
-  GeoMapLayerWithRoads,
-  GeoMapLayerWithTerritoryExtent,
-  GeoMapLayerWithWaterObjects,
-} from "../shared/geoMaps";
 import { GlobalStyle } from "../shared/GlobalStyle";
 import { AgeHistogram } from "./AgeHistogram";
 import { CropMark } from "./CropMark";
+import { GeoMap } from "./GeoMap";
+import { GeoMapLayerWithBuildingAges } from "./GeoMapLayerWithBuildingAges";
+import { GeoMapLayerWithRailways } from "./GeoMapLayerWithRailways";
+import { GeoMapLayerWithRoads } from "./GeoMapLayerWithRoads";
+import { GeoMapLayerWithTerritoryExtent } from "./GeoMapLayerWithTerritoryExtent";
+import { GeoMapLayerWithWaterObjects } from "./GeoMapLayerWithWaterObjects";
 import { ZoomMark } from "./ZoomMark";
 
 const backgroundColor = "#041116";
