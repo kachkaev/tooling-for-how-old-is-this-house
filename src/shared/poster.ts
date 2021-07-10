@@ -14,6 +14,9 @@ export interface PosterConfig {
     buildingSampleSize?: number;
     centerLonLat: turf.Position;
     territoryExtentOutline: boolean;
+    zoomInMillimetersPerKilometer: number;
+    offsetXInMillimeters: number;
+    offsetYInMillimeters: number;
   };
   timeline: {
     abnormalYears: number[];
@@ -32,6 +35,9 @@ const defaultPosterConfig: PosterConfig = {
   },
   map: {
     territoryExtentOutline: false,
+    zoomInMillimetersPerKilometer: 100,
+    offsetXInMillimeters: 0,
+    offsetYInMillimeters: 0,
     centerLonLat: [0, 0],
   },
   timeline: {

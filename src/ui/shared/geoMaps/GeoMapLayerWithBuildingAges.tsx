@@ -6,23 +6,23 @@ import {
   MixedPropertyVariantsFeatureCollection,
 } from "../../../shared/outputMixing";
 import { GeoMapLayer } from "./GeoMapLayer";
-import { FitExtent } from "./types";
+import { ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithBuildingAgesProps {
   width: number;
   height: number;
   data: MixedPropertyVariantsFeatureCollection;
-  fitExtent: FitExtent;
   sample?: number;
   bufferInMeters?: number;
+  projectionConfig: ProjectionConfig;
 }
 
 export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLayerWithBuildingAgesProps> = ({
   width,
   height,
-  fitExtent,
   data,
   sample,
+  projectionConfig,
 }) => {
   const featureProps = React.useCallback<
     (feature: MixedPropertyVariantsFeature) => React.SVGProps<SVGPathElement>
@@ -45,9 +45,9 @@ export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLaye
     <GeoMapLayer<MixedPropertyVariantsFeature>
       width={width}
       height={height}
-      fitExtent={fitExtent}
       featureProps={featureProps}
       features={sampledFeatures}
+      projectionConfig={projectionConfig}
     />
   );
 };

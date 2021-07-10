@@ -1,10 +1,8 @@
-import * as turf from "@turf/turf";
 import * as React from "react";
 import { useMeasure } from "react-use";
 import styled from "styled-components";
 
-import { pointsInMm } from "../printing";
-import { FitExtent } from "./types";
+import { ProjectionConfig } from "./types";
 
 const Wrapper = styled.div`
   position: relative;
@@ -17,65 +15,56 @@ const StyledSvg = styled.svg`
   overflow: hidden;
 `;
 
-interface Padding {
-  top: number;
-  left: number;
-  right: number;
-  bottom: number;
-}
-
-const normalizePadding = (rawPadding: number | Padding): Padding => {
-  if (typeof rawPadding === "number") {
-    return {
-      left: rawPadding,
-      right: rawPadding,
-      top: rawPadding,
-      bottom: rawPadding,
-    };
-  }
-
-  return rawPadding;
-};
-
 export interface GeoMapProps extends React.HTMLAttributes<HTMLDivElement> {
-  extentToFit: turf.Feature<turf.Polygon>;
-  paddingInMm?: number | Padding;
+  centerLonLat: [number, number];
+  zoomInMillimetersPerKilometer: number;
+  offsetXInMillimeters: number;
+  offsetYInMillimeters: number;
   children: (payload: {
     width: number;
     height: number;
-    fitExtent: FitExtent;
+    projectionConfig: ProjectionConfig;
   }) => React.ReactNode;
 }
 
 export const GeoMap: React.VoidFunctionComponent<GeoMapProps> = ({
-  extentToFit,
-  paddingInMm: rawPaddingInMm = 0,
   children,
+  centerLonLat,
+  offsetXInMillimeters,
+  offsetYInMillimeters,
+  zoomInMillimetersPerKilometer,
   ...rest
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
 
-  const paddingInMm = normalizePadding(rawPaddingInMm);
-
-  const fitExtent: FitExtent = [
-    [
-      [paddingInMm.left * pointsInMm, paddingInMm.top * pointsInMm],
-      [
-        width - paddingInMm.right * pointsInMm,
-        height - paddingInMm.bottom * pointsInMm,
+  const projectionConfig: ProjectionConfig = React.useMemo(
+    () => ({
+      center: centerLonLat,
+      clipExtent: [
+        [0, 0],
+        [width, height],
       ],
+      translate: [
+        offsetXInMillimeters + width / 2,
+        offsetYInMillimeters + height / 2,
+      ],
+      scale: zoomInMillimetersPerKilometer * 1000,
+    }),
+    [
+      centerLonLat,
+      height,
+      offsetXInMillimeters,
+      offsetYInMillimeters,
+      width,
+      zoomInMillimetersPerKilometer,
     ],
-    turf.bboxPolygon(turf.bbox(extentToFit)).geometry,
-  ];
-
-  // TODO: figure out why visx / turf are incompatible orientation-wise
-  fitExtent[1].coordinates[0].reverse();
+  );
 
   return (
     <Wrapper {...rest} ref={ref}>
       {width && height ? (
         <StyledSvg width={width} height={height}>
-          {children?.({ width, height, fitExtent })}
+          {children?.({ width, height, projectionConfig })}
         </StyledSvg>
       ) : null}
     </Wrapper>

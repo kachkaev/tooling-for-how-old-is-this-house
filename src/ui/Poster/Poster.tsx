@@ -25,13 +25,6 @@ import { GlobalStyle } from "../shared/GlobalStyle";
 import { AgeHistogram } from "./AgeHistogram";
 import { CropMark } from "./CropMark";
 
-const mapPaddingInMm = {
-  top: 20,
-  right: 20,
-  bottom: 120,
-  left: 20,
-};
-
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
   overflow: hidden;
@@ -115,13 +108,12 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   roadCollection,
   waterObjectCollection,
 }) => {
-  const { layout, timeline } = posterConfig;
-
-  const { territoryExtentOutline, buildingSampleSize } = posterConfig.map;
+  const { layout, timeline, map } = posterConfig;
 
   const sampledBuildingCollection = React.useMemo(
     () =>
-      typeof buildingSampleSize === "number" && isFinite(buildingSampleSize)
+      typeof map.buildingSampleSize === "number" &&
+      isFinite(map.buildingSampleSize)
         ? {
             ...buildingCollection,
             features: _.orderBy(buildingCollection.features, (feature) => {
@@ -132,10 +124,10 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
                 extractNumberDigitsInReverse(lat);
 
               return pseudoRandomIndex;
-            }).slice(0, buildingSampleSize),
+            }).slice(0, map.buildingSampleSize),
           }
         : buildingCollection,
-    [buildingCollection, buildingSampleSize],
+    [buildingCollection, map.buildingSampleSize],
   );
 
   return (
@@ -150,7 +142,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
       }}
     >
       <GlobalStyle />
-      <StyledGeoMap paddingInMm={mapPaddingInMm} extentToFit={territoryExtent}>
+      <StyledGeoMap {...map}>
         {(layerProps) => {
           return (
             <>
@@ -169,7 +161,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
               {roadCollection ? (
                 <GeoMapLayerWithRoads {...layerProps} data={roadCollection} />
               ) : undefined}
-              {territoryExtentOutline ? (
+              {map.territoryExtentOutline ? (
                 <GeoMapLayerWithTerritoryExtent
                   {...layerProps}
                   data={territoryExtent}

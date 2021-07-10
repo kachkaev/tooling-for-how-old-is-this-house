@@ -6,13 +6,13 @@ import {
   OsmWaterObjectGeometry,
 } from "../../../shared/sources/osm/types";
 import { GeoMapLayer } from "./GeoMapLayer";
-import { FitExtent } from "./types";
+import { ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithWaterObjectsProps {
   width: number;
   height: number;
   data: OsmFeatureCollection<OsmWaterObjectGeometry>;
-  fitExtent: FitExtent;
+  projectionConfig: ProjectionConfig;
 }
 
 // const waterColor = "#1F2737";
@@ -24,7 +24,7 @@ const waterColor = "#151C28";
 export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLayerWithWaterObjectsProps> = ({
   width,
   height,
-  fitExtent,
+  projectionConfig,
   data,
 }) => {
   const allAreaFeatures = React.useMemo(
@@ -93,7 +93,7 @@ export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLaye
       <GeoMapLayer
         width={width}
         height={height}
-        fitExtent={fitExtent}
+        projectionConfig={projectionConfig}
         featureProps={areaProps}
         features={normalAreaFeatures}
       />
@@ -101,7 +101,7 @@ export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLaye
         <GeoMapLayer
           width={width}
           height={height}
-          fitExtent={fitExtent}
+          projectionConfig={projectionConfig}
           featureProps={areaProps}
           features={wetlandAreaFeatures}
         />
@@ -109,7 +109,7 @@ export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLaye
       <GeoMapLayer
         width={width}
         height={height}
-        fitExtent={fitExtent}
+        projectionConfig={projectionConfig}
         featureProps={lineProps}
         features={lineFeatures}
       />

@@ -1,3 +1,6 @@
 import { Mercator } from "@visx/geo";
 
-export type FitExtent = Parameters<typeof Mercator>[0]["fitExtent"];
+export type ProjectionConfig = Pick<
+  Parameters<typeof Mercator>[0],
+  "scale" | "clipExtent" | "translate" | "center"
+>;

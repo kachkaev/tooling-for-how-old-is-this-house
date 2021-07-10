@@ -3,19 +3,19 @@ import * as React from "react";
 import { TerritoryExtent } from "../../../shared/territory";
 import { pointsInMm } from "../printing";
 import { GeoMapLayer } from "./GeoMapLayer";
-import { FitExtent } from "./types";
+import { ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithTerritoryExtentProps {
   width: number;
   height: number;
   data: TerritoryExtent;
-  fitExtent: FitExtent;
+  projectionConfig: ProjectionConfig;
 }
 
 export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapLayerWithTerritoryExtentProps> = ({
   width,
   height,
-  fitExtent,
+  projectionConfig,
   data,
 }) => {
   const featureProps = React.useCallback<() => React.SVGProps<SVGPathElement>>(
@@ -41,7 +41,7 @@ export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapL
     <GeoMapLayer
       width={width}
       height={height}
-      fitExtent={fitExtent}
+      projectionConfig={projectionConfig}
       featureProps={featureProps}
       opacity={0.3}
       features={[dataToDraw]}

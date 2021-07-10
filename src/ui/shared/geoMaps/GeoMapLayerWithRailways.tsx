@@ -7,13 +7,13 @@ import {
   OsmRoadGeometry,
 } from "../../../shared/sources/osm/types";
 import { GeoMapLayer } from "./GeoMapLayer";
-import { FitExtent } from "./types";
+import { ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithRailwaysProps {
   width: number;
   height: number;
   data: OsmFeatureCollection<OsmRoadGeometry>;
-  fitExtent: FitExtent;
+  projectionConfig: ProjectionConfig;
 }
 
 type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
@@ -29,7 +29,7 @@ const mapRailwayPropertiesToStrokeWidth = (
 export const GeoMapLayerWithRailways: React.VoidFunctionComponent<GeoMapLayerWithRailwaysProps> = ({
   width,
   height,
-  fitExtent,
+  projectionConfig,
   data,
 }) => {
   const featureProps = React.useCallback<
@@ -49,7 +49,7 @@ export const GeoMapLayerWithRailways: React.VoidFunctionComponent<GeoMapLayerWit
     <GeoMapLayer<RoadGeometryFeature>
       width={width}
       height={height}
-      fitExtent={fitExtent}
+      projectionConfig={projectionConfig}
       featureProps={featureProps}
       features={data.features}
     />

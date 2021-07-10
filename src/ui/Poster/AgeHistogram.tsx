@@ -118,6 +118,7 @@ export interface AgeHistogramProps extends React.HTMLProps<HTMLDivElement> {
 
 export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
   buildingCollection,
+  as,
   ...rest
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
