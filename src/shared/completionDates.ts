@@ -83,8 +83,9 @@ export const colorBinsUsingSpectral: Array<[number, string]> = [
   [1980, interpolateSpectral(spectralBase + spectralStep1 * 8.2)],
 
   [1990, interpolateSpectral(spectralBase + spectralStep1 * 9.2)],
-  [2000, interpolateSpectral(spectralBase + spectralStep1 * 10.2)],
-  [2010, interpolateSpectral(spectralBase + spectralStep1 * 11)],
+  [2000, interpolateSpectral(spectralBase + spectralStep1 * 10.0)],
+  [2010, interpolateSpectral(spectralBase + spectralStep1 * 10.7)],
+  [2020, interpolateSpectral(spectralBase + spectralStep1 * 12.5)],
 ];
 
 export const colorBins = colorBinsUsingSpectral;

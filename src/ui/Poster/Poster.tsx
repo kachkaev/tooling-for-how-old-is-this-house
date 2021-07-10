@@ -25,7 +25,7 @@ import { GeoMapLayerWithWaterObjects } from "./GeoMapLayerWithWaterObjects";
 import { Timeline } from "./Timeline";
 import { ZoomMark } from "./ZoomMark";
 
-const backgroundColor = "#041116";
+const backgroundColor = "#020509";
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
@@ -81,9 +81,14 @@ const Footer = styled.div`
     text-decoration: none;
     font-weight: bold;
   }
+
+  a:hover {
+    border-bottom: 0.1mm solid;
+  }
 `;
 
 const DraftNotice = styled.div`
+  visibility: hidden;
   position: absolute;
   font-size: 30mm;
   line-height: 1.2em;

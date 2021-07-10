@@ -12,22 +12,32 @@ import {
 } from "../../shared/outputMixing";
 import { pointsInMm } from "../shared/printing";
 
+const numberFormat = Intl.NumberFormat("ru");
+
+const formatNumber = (n: number) => {
+  return numberFormat.format(n).replace(/\u00A0/g, "\u202F");
+};
+
 const Wrapper = styled.div`
-  height: 100mm;
-  overflow: hidden;
+  height: 140mm;
+  position: relative;
+
+  svg {
+    position: absolute;
+  }
 `;
 
-const barLabelOffset = 5 * pointsInMm;
-const barWidth = 1 * pointsInMm;
-const barMinHeight = 1 * pointsInMm;
+const barLabelOffset = 4 * pointsInMm;
+const barWidth = 1.5 * pointsInMm;
+const barMinHeight = 0.5 * pointsInMm;
 
 const barTick = 100;
-const barTickLabelFrequency = 2;
+const barTickLabelFrequency = 5;
 const barTickGap = 0.5 * pointsInMm;
 
 const yAxisThickness = 0.3 * pointsInMm;
-const yAxisOffsetLeft = 10 * pointsInMm;
-const yAxisOpacity = 1;
+const yAxisOffsetLeft = 6 * pointsInMm;
+const yAxisOpacity = 0.8;
 
 const paddingLeft = 3 * pointsInMm;
 const paddingRight = 25 * pointsInMm;
@@ -88,7 +98,7 @@ const Bar: React.VoidFunctionComponent<{
             y={yScale(prevTickifiedValue) - height}
             height={height}
             fill={barColor}
-            rx=".5mm"
+            // rx=".5mm"
           />
         );
       })}
@@ -160,11 +170,17 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
       ),
     ) ?? 0;
 
-  const maxY = Math.ceil(maxBuildingsPerYear / barTick) * barTick;
+  const maxY =
+    Math.ceil(maxBuildingsPerYear / barTick / barTickLabelFrequency) *
+    barTick *
+    barTickLabelFrequency;
+
+  const svgWidth = width + paddingLeft + paddingRight;
+  const svgHeight = height + paddingTop + paddingBottom;
 
   const xScale = scaleLinear({
     domain: [minYear, maxYear],
-    range: [paddingLeft, width - paddingRight],
+    range: [paddingLeft, width + paddingLeft - yAxisOffsetLeft],
   });
 
   const yScale = scaleLinear({
@@ -177,7 +193,14 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
   return (
     <Wrapper {...rest} ref={ref}>
       {!height || !width ? null : (
-        <svg width={width} height={height}>
+        <svg
+          width={svgWidth}
+          height={svgHeight}
+          style={{
+            left: -paddingLeft,
+            top: -paddingTop,
+          }}
+        >
           {_.range(minYear, maxYear + 1).map((year, index) => (
             <Bar
               key={year}
@@ -201,7 +224,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
           ))}
           <g
             opacity={yAxisOpacity}
-            transform={`translate(${width - paddingRight + yAxisOffsetLeft},0)`}
+            transform={`translate(${svgWidth - paddingRight},0)`}
           >
             {yAxisTicks.map((value, index) => {
               if (index === 0) {
@@ -221,7 +244,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
                   />
                   {(value / barTickLabelFrequency) % barTick ? null : (
                     <text
-                      rx=".3mm"
+                      fontSize="0.8em"
                       fill="#fff"
                       y={yScale(value) + barTickGap}
                       width={yAxisThickness}
@@ -230,12 +253,8 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
                       transform={`translate(${3 * pointsInMm},${
                         -0.5 * pointsInMm
                       })`}
-                      // transform={`translate(${14 * pointsInMm},${
-                      //   -0.5 * pointsInMm
-                      // })`}
-                      // textAnchor="end"
                     >
-                      {value}
+                      {formatNumber(value)}
                     </text>
                   )}
                 </g>

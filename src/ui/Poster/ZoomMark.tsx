@@ -5,9 +5,10 @@ const Wrapper = styled.div`
   border: 0.3mm solid rgba(255, 255, 255, 1);
   border-top: none;
   text-align: center;
-  height: 3mm;
+  height: 4mm;
   position: relative;
   box-sizing: border-box;
+  opacity: 0.8;
 `;
 
 const Text = styled.div`
@@ -15,8 +16,8 @@ const Text = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  line-height: 1.1em;
-  font-size: 5mm;
+  line-height: 1.4em;
+  font-size: ${5 * 0.8}mm;
   text-align: center;
 `;
 
@@ -34,7 +35,7 @@ export const ZoomMark: React.VoidFunctionComponent<ZoomMarkProps> = ({
       {...rest}
       style={{ ...style, width: `${zoomInMillimetersPerKilometer}mm` }}
     >
-      <Text>1 км</Text>
+      <Text>1 километр</Text>
     </Wrapper>
   );
 };
