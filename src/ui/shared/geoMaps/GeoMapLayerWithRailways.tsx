@@ -23,8 +23,8 @@ const mapRailwayPropertiesToStrokeWidth = (
 ): number =>
   osmFeatureProperties.railway?.startsWith("rail") &&
   osmFeatureProperties.usage?.startsWith("main")
-    ? 1.5
-    : 1;
+    ? 1
+    : 0.5;
 
 export const GeoMapLayerWithRailways: React.VoidFunctionComponent<GeoMapLayerWithRailwaysProps> = ({
   width,

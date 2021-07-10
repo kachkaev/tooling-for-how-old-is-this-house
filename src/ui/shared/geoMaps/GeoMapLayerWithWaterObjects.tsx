@@ -15,11 +15,8 @@ export interface GeoMapLayerWithWaterObjectsProps {
   projectionConfig: ProjectionConfig;
 }
 
-// const waterColor = "#1F2737";
-// const waterColor = "#181f2d";
-const waterColor = "#151C28";
-// const waterColor = "#131921";
-// const waterColor = "#203339";
+const waterColor = "#1d3137";
+// const waterColor = "#253a45";
 
 export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLayerWithWaterObjectsProps> = ({
   width,

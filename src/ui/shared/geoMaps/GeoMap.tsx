@@ -2,7 +2,10 @@ import * as React from "react";
 import { useMeasure } from "react-use";
 import styled from "styled-components";
 
+import { pointsInMm } from "../printing";
 import { ProjectionConfig } from "./types";
+
+const clipExtentDistanceInPixels = 30;
 
 const Wrapper = styled.div`
   position: relative;
@@ -41,14 +44,19 @@ export const GeoMap: React.VoidFunctionComponent<GeoMapProps> = ({
     () => ({
       center: centerLonLat,
       clipExtent: [
-        [0, 0],
-        [width, height],
+        [-clipExtentDistanceInPixels, -clipExtentDistanceInPixels],
+        [
+          width + clipExtentDistanceInPixels,
+          height + clipExtentDistanceInPixels,
+        ],
       ],
       translate: [
         offsetXInMillimeters + width / 2,
         offsetYInMillimeters + height / 2,
       ],
-      scale: zoomInMillimetersPerKilometer * 1000,
+      scale:
+        (zoomInMillimetersPerKilometer * 1000 * pointsInMm) /
+        Math.cos((centerLonLat[1] / 180) * Math.PI),
     }),
     [
       centerLonLat,

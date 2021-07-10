@@ -19,12 +19,12 @@ type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
 
 const mapHighwayTypeToStrokeWidth = (highwayType: string | undefined): number =>
   highwayType?.startsWith("trunk")
-    ? 3
+    ? 2
     : highwayType?.startsWith("primary")
-    ? 1.5
+    ? 1
     : highwayType?.startsWith("secondary")
-    ? 1.5
-    : 1;
+    ? 1
+    : 0.5;
 
 export const GeoMapLayerWithRoads: React.VoidFunctionComponent<GeoMapLayerWithRoadsProps> = ({
   width,
@@ -37,7 +37,7 @@ export const GeoMapLayerWithRoads: React.VoidFunctionComponent<GeoMapLayerWithRo
   >(
     (feature) => ({
       fill: "none",
-      stroke: "#1a1e22",
+      stroke: "#292929",
       strokeWidth: mapHighwayTypeToStrokeWidth(feature.properties.highway),
       strokeLinejoin: "round",
       strokeLinecap: "round",

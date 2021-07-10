@@ -27,7 +27,7 @@ const barTickGap = 0.5 * pointsInMm;
 
 const yAxisThickness = 0.3 * pointsInMm;
 const yAxisOffsetLeft = 10 * pointsInMm;
-const yAxisOpacity = 0.3;
+const yAxisOpacity = 1;
 
 const paddingLeft = 3 * pointsInMm;
 const paddingRight = 25 * pointsInMm;

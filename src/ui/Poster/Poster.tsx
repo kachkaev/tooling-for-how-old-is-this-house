@@ -24,8 +24,9 @@ import {
 import { GlobalStyle } from "../shared/GlobalStyle";
 import { AgeHistogram } from "./AgeHistogram";
 import { CropMark } from "./CropMark";
+import { ZoomMark } from "./ZoomMark";
 
-const backgroundColor = "#0e0f12";
+const backgroundColor = "#020509";
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
@@ -51,7 +52,7 @@ const StyledAgeHistogram = styled(AgeHistogram)`
 
 // Using two histogram instances avoid raster content because of CSS filters
 const StyledAgeHistogramShadow = styled(StyledAgeHistogram)`
-  filter: brightness(0) blur(3mm) drop-shadow(0 0 3mm ${backgroundColor})
+  filter: brightness(0) blur(1mm) drop-shadow(0 0 3mm ${backgroundColor})
     drop-shadow(0 0 3mm ${backgroundColor})
     drop-shadow(0 0 2mm ${backgroundColor})
     drop-shadow(0 0 1mm ${backgroundColor})
@@ -245,6 +246,16 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
         культуры РФ, Викигид &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; визуализация:
         Александр Качкаев (kachkaev.ru)
       </Copyright>
+      <ZoomMark
+        zoomInMillimetersPerKilometer={map.zoomInMillimetersPerKilometer}
+        style={{
+          position: "absolute",
+          right: `${
+            timeline.marginRightInMillimeters + layout.printerBleedInMillimeters
+          }mm`,
+          bottom: "15mm",
+        }}
+      />
       {layout.printerBleedInMillimeters && layout.printerCropMarks ? (
         <>
           <CropMark
