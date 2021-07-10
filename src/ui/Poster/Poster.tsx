@@ -92,7 +92,8 @@ const DraftNotice = styled.div`
   font-size: 30mm;
   line-height: 1.2em;
   text-align: right;
-  opacity: 0.4;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.15);
   transform: translate(1mm, -15mm);
 `;
 
@@ -254,7 +255,6 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
       <Shadow>
         <DraftNotice
           style={{
-            color: mapCompletionYearToColor(0),
             top: `${
               timeline.marginLeftInMillimeters +
               layout.printerBleedInMillimeters
@@ -272,7 +272,6 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
       <Shadow>
         <DraftNotice2
           style={{
-            color: mapCompletionYearToColor(0),
             left: `${
               timeline.marginLeftInMillimeters +
               layout.printerBleedInMillimeters
@@ -301,11 +300,13 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
           <a href="https://github.com/kachkaev/tooling-for-how-old-is-this-house">
             github.com/kachkaev/tooling-for-how-old-is-this-house
           </a>
-          .<br />
-          Вам надо связаться с администратором сайта{" "}
+          . Размеры, цвета и другие параметры задаются в territory-config.yml →
+          poster.
+          <br />
+          После настройки постера свяжитесь с администратором сайта{" "}
           <a href="https://how-old-is-this.house">how-old-is-this.house</a> и
-          передать экспортированную ПДФ-ку. В чистовик постера добавят список
-          источников данных и логотип издательства.
+          передайте экспортированную ПДФку. В чистовик добавят список источников
+          данных и логотип издательства.
           <br />
         </Footer>
       </Shadow>
