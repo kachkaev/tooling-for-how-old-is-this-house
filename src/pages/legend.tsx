@@ -5,19 +5,25 @@ import * as React from "react";
 
 import { getMixedPropertyVariantsFilePath } from "../shared/outputMixing";
 import { readFetchedOsmFeatureCollection } from "../shared/sources/osm/readFetchedOsmFeatureCollection";
-import { getTerritoryExtent } from "../shared/territory";
-import { PosterProps } from "../ui/Poster";
+import {
+  getTerritoryConfig,
+  getTerritoryExtent,
+  TerritoryExtent,
+} from "../shared/territory";
+import { LegendProps } from "../ui/Legend";
 import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
 import { usePosterConfig } from "../ui/shared/usePosterConfig";
 
-const Poster = dynamic<PosterProps>(
-  import("../ui/Poster").then((m) => m.Poster),
+const Legend = dynamic<LegendProps>(
+  import("../ui/Legend").then((m) => m.Legend),
   { ssr: false },
 );
 
-type PosterPageProps = Omit<PosterProps, "posterConfig">;
+type LegendPageProps = Omit<LegendProps, "posterConfig"> & {
+  territoryExtent: TerritoryExtent;
+};
 
-const PosterPage: NextPage<PosterPageProps> = ({
+const LegendPage: NextPage<LegendPageProps> = ({
   territoryExtent,
   ...rest
 }) => {
@@ -28,13 +34,7 @@ const PosterPage: NextPage<PosterPageProps> = ({
     return null;
   }
 
-  return (
-    <Poster
-      territoryExtent={territoryExtent}
-      posterConfig={posterConfig}
-      {...rest}
-    />
-  );
+  return <Legend posterConfig={posterConfig} {...rest} />;
 };
 
 // https://github.com/vercel/next.js/discussions/11209
@@ -43,9 +43,10 @@ const removeUndefinedForNextJsSerializing = <T,>(props: T): T =>
     Object.entries(props).filter(([, value]) => value !== undefined),
   ) as T;
 
-export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
+export const getStaticProps: GetStaticProps<LegendPageProps> = async () => {
   return {
     props: removeUndefinedForNextJsSerializing({
+      territoryConfig: await getTerritoryConfig(),
       buildingCollection: await fs.readJson(getMixedPropertyVariantsFilePath()),
       territoryExtent: await getTerritoryExtent(),
 
@@ -58,4 +59,4 @@ export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
   };
 };
 
-export default PosterPage;
+export default LegendPage;
