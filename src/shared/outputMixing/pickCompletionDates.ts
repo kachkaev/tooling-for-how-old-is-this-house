@@ -2,6 +2,8 @@ import { deriveCompletionYearFromCompletionDates } from "../completionDates";
 import { prioritizeRelevantPropertyVariants } from "./prioritizeRelevantPropertyVariants";
 import { PickFromPropertyVariants, PropertyVariant } from "./types";
 
+const usuallyAbnormalYears = [1800, 1900, 1910, 1917];
+
 export const pickCompletionDates: PickFromPropertyVariants<
   "completionDates" | "completionDatesSource" | "derivedCompletionYear"
 > = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
@@ -33,7 +35,7 @@ export const pickCompletionDates: PickFromPropertyVariants<
       propertyVariant.completionDates,
     );
 
-    if ([1900, 1910, 1917].includes(derivedCompletionYear ?? 0)) {
+    if (usuallyAbnormalYears.includes(derivedCompletionYear ?? 0)) {
       propertyVariantsWithRoughYear.push(propertyVariant);
       continue;
     }
