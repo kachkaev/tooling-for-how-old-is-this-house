@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/outputMixing";
 import { PosterConfig } from "../../shared/poster";
 import {
+  OsmFeature,
   OsmFeatureCollection,
   OsmRailwayGeometry,
   OsmRoadGeometry,
@@ -24,6 +25,30 @@ import { Timeline } from "./Timeline";
 import { ZoomMark } from "./ZoomMark";
 
 const backgroundColor = "#020509";
+
+const filterOsmFeaturesBelowGround = (
+  osmFeature: OsmFeature<OsmRoadGeometry | OsmRailwayGeometry>,
+): boolean => {
+  const layer = parseInt(osmFeature.properties.layer ?? "");
+
+  return layer < 0 || Boolean(osmFeature.properties.tunnel);
+};
+
+const filterOsmFeaturesNotBelowGround = (
+  osmFeature: OsmFeature<OsmRoadGeometry | OsmRailwayGeometry>,
+): boolean => {
+  const layer = parseInt(osmFeature.properties.layer ?? "");
+
+  return !isFinite(layer) || layer >= 0;
+};
+
+const filterOsmFeaturesAboveGround = (
+  osmFeature: OsmFeature<OsmRoadGeometry | OsmRailwayGeometry>,
+): boolean => {
+  const layer = parseInt(osmFeature.properties.layer ?? "");
+
+  return layer > 0 || Boolean(osmFeature.properties.bridge);
+};
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
@@ -180,33 +205,81 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
         {(layerProps) => {
           return (
             <>
+              {/* roads and railways below ground */}
+              {railwayCollection ? (
+                <GeoMapLayerWithRailways
+                  {...layerProps}
+                  featureFilter={filterOsmFeaturesBelowGround}
+                  opacity={0.7}
+                  data={railwayCollection}
+                />
+              ) : null}
+              {roadCollection ? (
+                <GeoMapLayerWithRoads
+                  {...layerProps}
+                  featureFilter={filterOsmFeaturesBelowGround}
+                  opacity={0.7}
+                  data={roadCollection}
+                />
+              ) : null}
+
+              {/* water objects */}
               {waterObjectCollection ? (
                 <GeoMapLayerWithWaterObjects
                   {...layerProps}
                   data={waterObjectCollection}
                 />
-              ) : undefined}
+              ) : null}
+
+              {/* roads and railways NOT below ground */}
               {railwayCollection ? (
                 <GeoMapLayerWithRailways
                   {...layerProps}
+                  featureFilter={filterOsmFeaturesNotBelowGround}
                   data={railwayCollection}
                 />
-              ) : undefined}
+              ) : null}
               {roadCollection ? (
-                <GeoMapLayerWithRoads {...layerProps} data={roadCollection} />
-              ) : undefined}
+                <GeoMapLayerWithRoads
+                  {...layerProps}
+                  featureFilter={filterOsmFeaturesNotBelowGround}
+                  data={roadCollection}
+                />
+              ) : null}
+
+              {/* territory extent outline */}
               {map.territoryExtentOutline ? (
                 <GeoMapLayerWithTerritoryExtent
                   {...layerProps}
                   data={territoryExtent}
                 />
               ) : null}
+
+              {/* buildings */}
               <GeoMapLayerWithBuildingCompletionYears
                 {...layerProps}
                 sampleSize={map.buildingSampleSize}
                 mapCompletionYearToColor={mapCompletionYearToColor}
                 data={buildingCollection}
               />
+
+              {/* roads and railways above ground */}
+              {railwayCollection ? (
+                <GeoMapLayerWithRailways
+                  {...layerProps}
+                  featureFilter={filterOsmFeaturesAboveGround}
+                  opacity={0.5}
+                  data={railwayCollection}
+                />
+              ) : null}
+              {roadCollection ? (
+                <GeoMapLayerWithRoads
+                  {...layerProps}
+                  featureFilter={filterOsmFeaturesAboveGround}
+                  opacity={0.5}
+                  data={roadCollection}
+                />
+              ) : null}
             </>
           );
         }}
@@ -309,7 +382,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
             printerBleedInMillimeters={layout.printerBleedInMillimeters}
           />
         </>
-      ) : undefined}
+      ) : null}
     </Figure>
   );
 };

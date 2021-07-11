@@ -8,14 +8,16 @@ import {
 import { GeoMapLayer } from "./shared/GeoMapLayer";
 import { ProjectionConfig } from "./types";
 
+type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
+
 export interface GeoMapLayerWithRoadsProps {
   width: number;
   height: number;
   data: OsmFeatureCollection<OsmRoadGeometry>;
   projectionConfig: ProjectionConfig;
+  featureFilter?: (osmFeature: RoadGeometryFeature) => boolean;
+  opacity?: number;
 }
-
-type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
 
 const mapHighwayTypeToStrokeWidth = (highwayType: string | undefined): number =>
   highwayType?.startsWith("trunk")
@@ -24,25 +26,34 @@ const mapHighwayTypeToStrokeWidth = (highwayType: string | undefined): number =>
     ? 1
     : highwayType?.startsWith("secondary")
     ? 1
-    : 0.5;
+    : 0.7;
 
 export const GeoMapLayerWithRoads: React.VoidFunctionComponent<GeoMapLayerWithRoadsProps> = ({
   width,
   height,
   projectionConfig,
   data,
+  featureFilter,
+  opacity = 1,
 }) => {
   const featureProps = React.useCallback<
     (feature: RoadGeometryFeature) => React.SVGProps<SVGPathElement>
   >(
     (feature) => ({
       fill: "none",
-      stroke: "#292929",
+      stroke: "#222",
+      // stroke: "#f00",
       strokeWidth: mapHighwayTypeToStrokeWidth(feature.properties.highway),
       strokeLinejoin: "round",
       strokeLinecap: "round",
+      opacity,
     }),
-    [],
+    [opacity],
+  );
+
+  const features = React.useMemo(
+    () => (featureFilter ? data.features.filter(featureFilter) : data.features),
+    [data.features, featureFilter],
   );
 
   return (
@@ -51,7 +62,7 @@ export const GeoMapLayerWithRoads: React.VoidFunctionComponent<GeoMapLayerWithRo
       height={height}
       projectionConfig={projectionConfig}
       featureProps={featureProps}
-      features={data.features}
+      features={features}
     />
   );
 };

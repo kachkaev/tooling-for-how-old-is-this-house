@@ -9,14 +9,16 @@ import {
 import { GeoMapLayer } from "./shared/GeoMapLayer";
 import { ProjectionConfig } from "./types";
 
+type RailwayGeometryFeature = OsmFeature<OsmRoadGeometry>;
+
 export interface GeoMapLayerWithRailwaysProps {
   width: number;
   height: number;
   data: OsmFeatureCollection<OsmRoadGeometry>;
   projectionConfig: ProjectionConfig;
+  featureFilter?: (osmFeature: RailwayGeometryFeature) => boolean;
+  opacity?: number;
 }
-
-type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
 
 const mapRailwayPropertiesToStrokeWidth = (
   osmFeatureProperties: OsmFeatureProperties,
@@ -31,27 +33,35 @@ export const GeoMapLayerWithRailways: React.VoidFunctionComponent<GeoMapLayerWit
   height,
   projectionConfig,
   data,
+  featureFilter,
+  opacity = 1,
 }) => {
   const featureProps = React.useCallback<
-    (feature: RoadGeometryFeature) => React.SVGProps<SVGPathElement>
+    (feature: RailwayGeometryFeature) => React.SVGProps<SVGPathElement>
   >(
     (feature) => ({
       fill: "none",
+      opacity,
       stroke: "#000",
       strokeWidth: mapRailwayPropertiesToStrokeWidth(feature.properties),
       strokeLinejoin: "round",
       strokeLinecap: "round",
     }),
-    [],
+    [opacity],
+  );
+
+  const features = React.useMemo(
+    () => (featureFilter ? data.features.filter(featureFilter) : data.features),
+    [data.features, featureFilter],
   );
 
   return (
-    <GeoMapLayer<RoadGeometryFeature>
+    <GeoMapLayer<RailwayGeometryFeature>
       width={width}
       height={height}
       projectionConfig={projectionConfig}
       featureProps={featureProps}
-      features={data.features}
+      features={features}
     />
   );
 };
