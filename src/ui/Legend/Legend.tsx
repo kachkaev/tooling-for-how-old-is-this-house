@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/outputMixing";
 import { PosterConfig } from "../../shared/poster";
 import { GlobalStyle } from "../shared/GlobalStyle";
+import { PtSansDigit } from "./PtSansDigit";
 
 const backgroundColor = "#1e2023";
 const width = 366;
@@ -105,14 +106,18 @@ export const Legend: React.VoidFunctionComponent<LegendProps> = ({
                         width={tickWidth}
                         fill={color}
                       />
-                      <text
-                        fill="#656565"
-                        y={blockHeight + tickHeight + labelOffsetTop}
-                        dominantBaseline="hanging"
-                        textAnchor="middle"
-                      >
-                        {completionYear}
-                      </text>
+                      {`${completionYear}`
+                        .split("")
+                        .map((digit, digitIndex) => (
+                          <PtSansDigit
+                            key={digitIndex}
+                            digit={digit}
+                            fill="#656565"
+                            transform={`translate(${5 * (digitIndex - 2)}, ${
+                              blockHeight + tickHeight + labelOffsetTop
+                            }) scale(1.1)`}
+                          />
+                        ))}
                     </>
                   ) : null}
                 </g>
