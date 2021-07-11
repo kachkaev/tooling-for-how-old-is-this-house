@@ -135,10 +135,10 @@ const Bar: React.VoidFunctionComponent<{
           <text
             fill={labelColor}
             transform={`rotate(-90),translate(0,${
-              barWidth / 2 + labelOffsetX
+              barWidth / 2 + labelOffsetX - 0.5
             })`}
             textAnchor="end"
-            alignmentBaseline="middle"
+            dominantBaseline="middle"
           >
             {label}
           </text>
@@ -277,7 +277,6 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
                     height={
                       yScale(value - barTick) - yScale(value) - barTickGap
                     }
-                    rx=".3mm"
                   />
                   {(value / barTickLabelFrequency) % barTick ? null : (
                     <text
@@ -285,10 +284,10 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
                       fill="#fff"
                       y={yScale(value) + barTickGap}
                       width={yAxisThickness}
-                      alignmentBaseline="text-before-edge"
+                      dominantBaseline="text-before-edge"
                       textAnchor="start"
                       transform={`translate(${3 * pointsInMm},${
-                        -0.5 * pointsInMm
+                        -1.2 * pointsInMm
                       })`}
                     >
                       {formatNumber(value)}
