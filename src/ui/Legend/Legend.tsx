@@ -73,16 +73,17 @@ export const Legend: React.VoidFunctionComponent<LegendProps> = ({
         <svg width={width} height={height}>
           <g transform={`translate(${paddingLeft},${paddingTop})`}>
             {legendEntries.map(({ completionYear, color }, index) => {
+              const blockIsLast = index === legendEntries.length - 1;
               const currentBlockWidthRatio =
                 index === 0
                   ? firstBlockWidthRatio
-                  : index === legendEntries.length - 1
+                  : blockIsLast
                   ? lastBlockWidthRatio
                   : 1;
 
-              const currentBlockWidth = Math.ceil(
-                blockWidth * currentBlockWidthRatio,
-              );
+              const currentBlockWidth =
+                Math.ceil(blockWidth * currentBlockWidthRatio) +
+                (blockIsLast ? 0 : 1);
 
               return (
                 <g
@@ -101,8 +102,7 @@ export const Legend: React.VoidFunctionComponent<LegendProps> = ({
                   {completionYear > 0 ? (
                     <>
                       <rect
-                        y={blockHeight}
-                        height={tickHeight}
+                        height={blockHeight + tickHeight}
                         width={tickWidth}
                         fill={color}
                       />
