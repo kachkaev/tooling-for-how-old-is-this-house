@@ -15,7 +15,7 @@ import { GlobalStyle } from "../shared/GlobalStyle";
 import { CropMark } from "./CropMark";
 import { generateMapCompletionYearToColor } from "./generateMapCompletionYearToColor";
 import { GeoMap } from "./GeoMap";
-import { GeoMapLayerWithBuildingCompletionYears } from "./GeoMapLayerWithBuildingAges";
+import { GeoMapLayerWithBuildingCompletionYears } from "./GeoMapLayerWithBuildingCompletionYears";
 import { GeoMapLayerWithRailways } from "./GeoMapLayerWithRailways";
 import { GeoMapLayerWithRoads } from "./GeoMapLayerWithRoads";
 import { GeoMapLayerWithTerritoryExtent } from "./GeoMapLayerWithTerritoryExtent";
