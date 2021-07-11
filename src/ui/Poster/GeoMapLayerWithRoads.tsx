@@ -41,8 +41,7 @@ export const GeoMapLayerWithRoads: React.VoidFunctionComponent<GeoMapLayerWithRo
   >(
     (feature) => ({
       fill: "none",
-      stroke: "#222",
-      // stroke: "#f00",
+      stroke: "#202426",
       strokeWidth: mapHighwayTypeToStrokeWidth(feature.properties.highway),
       strokeLinejoin: "round",
       strokeLinecap: "round",

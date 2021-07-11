@@ -24,7 +24,7 @@ import { GeoMapLayerWithWaterObjects } from "./GeoMapLayerWithWaterObjects";
 import { Timeline } from "./Timeline";
 import { ZoomMark } from "./ZoomMark";
 
-const backgroundColor = "#020509";
+const backgroundColor = "#030D12";
 
 const filterOsmFeaturesBelowGround = (
   osmFeature: OsmFeature<OsmRoadGeometry | OsmRailwayGeometry>,
