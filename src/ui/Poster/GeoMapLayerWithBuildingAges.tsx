@@ -1,3 +1,5 @@
+import * as turf from "@turf/turf";
+import _ from "lodash";
 import * as React from "react";
 
 import {
@@ -7,21 +9,33 @@ import {
 import { GeoMapLayer } from "./shared/GeoMapLayer";
 import { MapCompletionYearToColor, ProjectionConfig } from "./types";
 
-export interface GeoMapLayerWithBuildingAgesProps {
+/**
+ * 1.2345 → 54321
+ */
+const extractNumberDigitsInReverse = (fractionalNumber: number): number => {
+  const digits = `${fractionalNumber}`
+    .split("")
+    .filter((char) => char >= "0" && char <= "9");
+  const result = parseInt(digits.reverse().join(""));
+
+  return isFinite(result) ? result : 0;
+};
+
+export interface GeoMapLayerWithBuildingCompletionYearsProps {
   width: number;
   height: number;
   data: MixedPropertyVariantsFeatureCollection;
-  sample?: number;
+  sampleSize?: number;
   bufferInMeters?: number;
   projectionConfig: ProjectionConfig;
   mapCompletionYearToColor: MapCompletionYearToColor;
 }
 
-export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLayerWithBuildingAgesProps> = ({
+export const GeoMapLayerWithBuildingCompletionYears: React.VoidFunctionComponent<GeoMapLayerWithBuildingCompletionYearsProps> = ({
   width,
   height,
   data,
-  sample,
+  sampleSize,
   projectionConfig,
   mapCompletionYearToColor,
 }) => {
@@ -31,15 +45,32 @@ export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLaye
     (feature) => ({
       fill: mapCompletionYearToColor(feature.properties.derivedCompletionYear),
       stroke: "#0e0f12",
+      paintOrder: "stroke",
       strokeOpacity: 0.3,
       strokeWidth: 0.2,
     }),
     [mapCompletionYearToColor],
   );
 
-  const sampledFeatures = React.useMemo(
-    () => (sample ? data.features.slice(0, sample) : data.features),
-    [sample, data.features],
+  const sampledBuildings = React.useMemo(
+    () =>
+      typeof sampleSize === "number" && isFinite(sampleSize)
+        ? _.orderBy(data.features, (feature) => {
+            const [lon = 0, lat = 0] =
+              turf.pointOnFeature(feature).geometry.coordinates ?? [];
+            const pseudoRandomIndex =
+              extractNumberDigitsInReverse(lon) +
+              extractNumberDigitsInReverse(lat);
+
+            return pseudoRandomIndex;
+          }).slice(0, sampleSize)
+        : data.features,
+    [data, sampleSize],
+  );
+
+  const sampledAndOrderedBuildings = React.useMemo(
+    () => _.orderBy(sampledBuildings, (building) => turf.area(building)),
+    [sampledBuildings],
   );
 
   return (
@@ -47,7 +78,7 @@ export const GeoMapLayerWithBuildingAges: React.VoidFunctionComponent<GeoMapLaye
       width={width}
       height={height}
       featureProps={featureProps}
-      features={sampledFeatures}
+      features={sampledAndOrderedBuildings}
       projectionConfig={projectionConfig}
     />
   );

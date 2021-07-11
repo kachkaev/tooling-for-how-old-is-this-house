@@ -1,5 +1,3 @@
-import * as turf from "@turf/turf";
-import _ from "lodash";
 import { DateTime } from "luxon";
 import * as React from "react";
 import styled from "styled-components";
@@ -17,7 +15,7 @@ import { GlobalStyle } from "../shared/GlobalStyle";
 import { CropMark } from "./CropMark";
 import { generateMapCompletionYearToColor } from "./generateMapCompletionYearToColor";
 import { GeoMap } from "./GeoMap";
-import { GeoMapLayerWithBuildingAges } from "./GeoMapLayerWithBuildingAges";
+import { GeoMapLayerWithBuildingCompletionYears } from "./GeoMapLayerWithBuildingAges";
 import { GeoMapLayerWithRailways } from "./GeoMapLayerWithRailways";
 import { GeoMapLayerWithRoads } from "./GeoMapLayerWithRoads";
 import { GeoMapLayerWithTerritoryExtent } from "./GeoMapLayerWithTerritoryExtent";
@@ -119,18 +117,6 @@ export interface PosterProps {
   waterObjectCollection?: OsmFeatureCollection<OsmWaterObjectGeometry>;
 }
 
-/**
- * 1.2345 → 54321
- */
-const extractNumberDigitsInReverse = (fractionalNumber: number): number => {
-  const digits = `${fractionalNumber}`
-    .split("")
-    .filter((char) => char >= "0" && char <= "9");
-  const result = parseInt(digits.reverse().join(""));
-
-  return isFinite(result) ? result : 0;
-};
-
 export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   posterConfig,
   buildingCollection,
@@ -155,26 +141,6 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
         colorForUnknownCompletionYear,
       ),
     [colorByCompletionYear, colorForUnknownCompletionYear],
-  );
-
-  const sampledBuildingCollection = React.useMemo(
-    () =>
-      typeof map.buildingSampleSize === "number" &&
-      isFinite(map.buildingSampleSize)
-        ? {
-            ...buildingCollection,
-            features: _.orderBy(buildingCollection.features, (feature) => {
-              const [lon = 0, lat = 0] =
-                turf.pointOnFeature(feature).geometry.coordinates ?? [];
-              const pseudoRandomIndex =
-                extractNumberDigitsInReverse(lon) +
-                extractNumberDigitsInReverse(lat);
-
-              return pseudoRandomIndex;
-            }).slice(0, map.buildingSampleSize),
-          }
-        : buildingCollection,
-    [buildingCollection, map.buildingSampleSize],
   );
 
   const timelineStyle: React.CSSProperties = React.useMemo(
@@ -235,10 +201,11 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
                   data={territoryExtent}
                 />
               ) : null}
-              <GeoMapLayerWithBuildingAges
+              <GeoMapLayerWithBuildingCompletionYears
                 {...layerProps}
+                sampleSize={map.buildingSampleSize}
                 mapCompletionYearToColor={mapCompletionYearToColor}
-                data={sampledBuildingCollection}
+                data={buildingCollection}
               />
             </>
           );
