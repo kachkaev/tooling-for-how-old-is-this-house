@@ -118,3 +118,19 @@ export const extractPosterConfig = (
 
   return result;
 };
+
+export interface LegendEntry {
+  completionYear: number;
+  color: string;
+}
+
+export const extractLegendEntries = (
+  posterConfig: PosterConfig,
+): LegendEntry[] => {
+  return Object.entries(posterConfig.colorByCompletionYear).map(
+    ([rawCompletionYear, color]) => ({
+      completionYear: parseInt(rawCompletionYear),
+      color,
+    }),
+  );
+};

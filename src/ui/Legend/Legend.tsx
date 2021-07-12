@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/outputMixing";
-import { PosterConfig } from "../../shared/poster";
+import { extractLegendEntries, PosterConfig } from "../../shared/poster";
 import { GlobalStyle } from "../shared/GlobalStyle";
 import { PtSansDigit } from "./PtSansDigit";
 
@@ -35,17 +35,7 @@ export interface LegendProps {
 export const Legend: React.VoidFunctionComponent<LegendProps> = ({
   posterConfig,
 }) => {
-  const colorByCompletionYear = posterConfig.colorByCompletionYear;
-
-  const legendEntries: Array<{
-    completionYear: number;
-    color: string;
-  }> = Object.entries(colorByCompletionYear).map(
-    ([rawCompletionYear, color]) => ({
-      completionYear: parseInt(rawCompletionYear),
-      color,
-    }),
-  );
+  const legendEntries = extractLegendEntries(posterConfig);
 
   const firstBlockWidthRatio =
     (legendEntries[0]?.completionYear ?? 0) > 0 ? 1 : 0.5;
