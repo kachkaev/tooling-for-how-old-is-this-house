@@ -11,6 +11,7 @@ import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/outputMixing";
+import { PosterConfig } from "../../shared/poster";
 import { GlobalStyle } from "../shared/GlobalStyle";
 
 const backgroundColor = "#fff";
@@ -47,11 +48,6 @@ const paddingRight = 40;
 const paddingTop = 30;
 const paddingBottom = 50;
 
-const minYear = 1795;
-const minYearLabelOffsetX = -1;
-const minYearLabel = "···";
-const maxYear = 2020;
-
 const labelFontSize = 12;
 const labelColor = "rgba(0,0,0,0.7)";
 
@@ -87,12 +83,21 @@ const tickify = (value: number, tickSize: number): number[] => {
 
 const Bar: React.VoidFunctionComponent<{
   year: number;
+  maxYear: number;
   label: string;
   labelOffsetX?: number;
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   buildings: MixedPropertyVariantsFeature[];
-}> = ({ year, label, labelOffsetX = 0, xScale, yScale, buildings }) => {
+}> = ({
+  year,
+  maxYear,
+  label,
+  labelOffsetX = 0,
+  xScale,
+  yScale,
+  buildings,
+}) => {
   const bins = binByBuiltArea(
     buildings.map((building) => turf.area(building)),
   ).reverse();
@@ -153,12 +158,21 @@ const Bar: React.VoidFunctionComponent<{
 export interface HistogramProps extends React.DOMAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   buildingCollection: MixedPropertyVariantsFeatureCollection;
+  posterConfig: PosterConfig;
 }
 
 export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
   buildingCollection,
+  posterConfig,
   ...rest
 }) => {
+  const {
+    maxYear,
+    minYear,
+    minYearLabel,
+    minYearLabelOffsetXInMillimeters,
+  } = posterConfig.timeline;
+
   const width = paddingLeft + (maxYear - minYear + 1) * binWidth + paddingRight;
   const height = paddingTop + 300 + paddingBottom;
 
@@ -181,7 +195,7 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
 
         return derivedCompletionYear;
       }),
-    [buildingCollection.features],
+    [buildingCollection.features, maxYear, minYear],
   );
 
   const maxBuildingsPerYear =
@@ -219,9 +233,14 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
             <Bar
               key={year}
               year={year}
-              labelOffsetX={index === 0 ? minYearLabelOffsetX : 0}
+              maxYear={maxYear}
+              labelOffsetX={index === 0 ? minYearLabelOffsetXInMillimeters : 0}
               label={
-                index === 0 ? minYearLabel : hasLabel(year) ? `${year}` : ""
+                index === 0 && minYearLabel
+                  ? minYearLabel
+                  : hasLabel(year)
+                  ? `${year}`
+                  : ""
               }
               buildings={buildingsByYear[year] ?? []}
               xScale={xScale}
