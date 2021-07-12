@@ -14,12 +14,58 @@ import {
   getWikimapiaObjectInfoFileSuffix,
   getWikimapiaObjectsDirPath,
 } from "./helpersForPaths";
-import { WikimapiaObjectInfoFile } from "./types";
+import { WikimapiaObjectInfoFile, WikimapiaObjectPhotoInfo } from "./types";
 
 const minAreaInMeters = 3;
 const maxAreaInMeters = 50000;
 const maxPerimeterInMeters = 2000;
 const maxPerimeterToAreaSqrtRatio = 20;
+
+const maxIdDeltaForPhotosInOneBatch = 100;
+
+/**
+ * http://photos.wikimapia.org/p/00/08/38/48/20_big.jpg
+ * ↓
+ * 8384820
+ */
+const extractPhotoIdFromUrl = (url: string): number => {
+  const digits = url.split("").filter((char) => char >= "0" && char <= "9");
+
+  return parseInt(digits.join("").replace(/^0+/, ""));
+};
+
+/**
+ * Picks first photo from the last upload batch.
+ *
+ * A batch is defined as photos uploaded together by a single user.
+ */
+const pickPhotoInfo = (
+  photoInfos?: WikimapiaObjectPhotoInfo[],
+): WikimapiaObjectPhotoInfo | undefined => {
+  if (!photoInfos?.length) {
+    return undefined;
+  }
+
+  let result: WikimapiaObjectPhotoInfo | undefined = undefined;
+  for (let index = photoInfos.length - 1; index >= 0; index -= 1) {
+    const photoInfo = photoInfos[index]!;
+
+    if (
+      result &&
+      (result.userId !== photoInfo.userId ||
+        Math.abs(
+          extractPhotoIdFromUrl(result.url) -
+            extractPhotoIdFromUrl(photoInfo.url),
+        ) > maxIdDeltaForPhotosInOneBatch)
+    ) {
+      break;
+    }
+
+    result = photoInfo;
+  }
+
+  return result;
+};
 
 export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
   logger,
@@ -70,16 +116,15 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
       continue;
     }
 
-    const photos = objectInfoFile.data.photos;
-    const mostRecentPhotoInfo = photos ? photos[photos.length - 1] : undefined;
+    const pickedPhotoInfo = pickPhotoInfo(objectInfoFile.data.photos);
 
     // Combined properties
     const outputLayerProperties: OutputLayerProperties = {
       id,
-      photoUrl: mostRecentPhotoInfo?.url,
-      photoAuthorName: mostRecentPhotoInfo?.userName,
-      photoAuthorUrl: mostRecentPhotoInfo
-        ? `https://wikimapia.org/user/${mostRecentPhotoInfo.userId}`
+      photoUrl: pickedPhotoInfo?.url,
+      photoAuthorName: pickedPhotoInfo?.userName,
+      photoAuthorUrl: pickedPhotoInfo
+        ? `https://wikimapia.org/user/${pickedPhotoInfo.userId}`
         : undefined,
       knownAt: objectInfoFile.fetchedAt,
       completionDates: objectInfoFile.data.completionDates,
