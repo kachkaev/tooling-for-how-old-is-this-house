@@ -15,8 +15,8 @@ export const pickCompletionDates: PickFromPropertyVariants<
       "manual",
       "mkrf",
       "wikivoyage",
-      "mingkh",
       "osm",
+      "mingkh",
       "rosreestr",
       "wikimapia",
     ],
@@ -35,7 +35,10 @@ export const pickCompletionDates: PickFromPropertyVariants<
       propertyVariant.completionDates,
     );
 
-    if (usuallyAbnormalYears.includes(derivedCompletionYear ?? 0)) {
+    if (
+      propertyVariant.source !== "manual" &&
+      usuallyAbnormalYears.includes(derivedCompletionYear ?? 0)
+    ) {
       propertyVariantsWithRoughYear.push(propertyVariant);
       continue;
     }
