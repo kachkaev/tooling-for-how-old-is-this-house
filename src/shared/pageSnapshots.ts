@@ -6,6 +6,8 @@ import puppeteer from "puppeteer";
 
 import { getOutputDirPath } from "./outputMixing";
 
+const nextJsPageSelector = "#__next *";
+
 export const getImageDirPath = (): string =>
   path.resolve(getOutputDirPath(), "images");
 
@@ -36,6 +38,8 @@ const ensureImageSnapshot = async ({
     height: 100,
     deviceScaleFactor: imageScaleFactor,
   });
+
+  await page.waitForSelector(nextJsPageSelector);
 
   await page.screenshot({
     path: imagePath,
@@ -68,6 +72,8 @@ const ensurePdfSnapshot = async ({
     height: 100,
     deviceScaleFactor: 1,
   });
+
+  await page.waitForSelector(nextJsPageSelector);
 
   await page.pdf({
     path: pdfPath,
