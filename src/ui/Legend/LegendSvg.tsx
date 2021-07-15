@@ -10,6 +10,10 @@ const tickHeight = 5;
 const tickWidth = 2;
 const labelOffsetTop = 4;
 
+const propsForStandaloneSvg = {
+  xmlns: "http://www.w3.org/2000/svg",
+  "xmlns:xlink": "http://www.w3.org/1999/xlink",
+};
 export interface LegendSvgProps extends React.SVGAttributes<SVGSVGElement> {
   legendEntries: LegendEntry[];
   width: number;
@@ -42,7 +46,7 @@ export const LegendSvg: React.VoidFunctionComponent<LegendSvgProps> = ({
     );
 
   return (
-    <svg width={width} height={height} {...rest}>
+    <svg width={width} height={height} {...propsForStandaloneSvg} {...rest}>
       <g transform={`translate(${paddingLeft},${paddingTop})`}>
         {legendEntries.map(({ completionYear, color }, index) => {
           const blockIsLast = index === legendEntries.length - 1;
