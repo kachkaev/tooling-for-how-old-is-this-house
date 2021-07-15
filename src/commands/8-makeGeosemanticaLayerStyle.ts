@@ -87,7 +87,7 @@ const sldBase = html`
                 <se:SvgParameter name="font-weight">bold</se:SvgParameter>
               </se:Font>
               <se:Geometry>
-                <ogc:Function name="centroid">
+                <ogc:Function name="interiorPoint">
                   <ogc:PropertyName>geom</ogc:PropertyName>
                 </ogc:Function>
               </se:Geometry>
