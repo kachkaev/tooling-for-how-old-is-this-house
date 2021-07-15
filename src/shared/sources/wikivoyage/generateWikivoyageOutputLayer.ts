@@ -159,7 +159,7 @@ const extractWikipediaUrl = (
   };
 };
 
-export const generateWikiVoyageOutputLayer: GenerateOutputLayer = async ({
+export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
   logger,
 }) => {
   const territoryExtent = await getTerritoryExtent();
