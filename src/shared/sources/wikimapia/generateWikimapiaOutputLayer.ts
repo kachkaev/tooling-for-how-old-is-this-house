@@ -99,10 +99,17 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
       continue;
     }
 
+    // Exclude demolished features
+    if (objectInfoFile.data.demolished) {
+      continue;
+    }
+
+    // Exclude objects that are too big or too small
     const areaInMeters = turf.area(objectFeature);
     if (areaInMeters > maxAreaInMeters || areaInMeters < minAreaInMeters) {
       continue;
     }
+
     // Excludes 'long' features such as streets
     const perimeterInMeters =
       turf.length(turf.polygonToLine(objectFeature)) * 1000;
