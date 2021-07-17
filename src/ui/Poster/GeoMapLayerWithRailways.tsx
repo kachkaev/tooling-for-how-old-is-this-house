@@ -5,53 +5,63 @@ import {
   OsmFeatureCollection,
   OsmFeatureProperties,
   OsmRoadGeometry,
-} from "../../../shared/sources/osm/types";
-import { GeoMapLayer } from "./GeoMapLayer";
-import { FitExtent } from "./types";
+} from "../../shared/sources/osm/types";
+import { GeoMapLayer } from "./shared/GeoMapLayer";
+import { ProjectionConfig } from "./types";
+
+type RailwayGeometryFeature = OsmFeature<OsmRoadGeometry>;
 
 export interface GeoMapLayerWithRailwaysProps {
   width: number;
   height: number;
   data: OsmFeatureCollection<OsmRoadGeometry>;
-  fitExtent: FitExtent;
+  projectionConfig: ProjectionConfig;
+  featureFilter?: (osmFeature: RailwayGeometryFeature) => boolean;
+  opacity?: number;
 }
-
-type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
 
 const mapRailwayPropertiesToStrokeWidth = (
   osmFeatureProperties: OsmFeatureProperties,
 ): number =>
   osmFeatureProperties.railway?.startsWith("rail") &&
   osmFeatureProperties.usage?.startsWith("main")
-    ? 1.5
-    : 1;
+    ? 1
+    : 0.5;
 
 export const GeoMapLayerWithRailways: React.VoidFunctionComponent<GeoMapLayerWithRailwaysProps> = ({
   width,
   height,
-  fitExtent,
+  projectionConfig,
   data,
+  featureFilter,
+  opacity = 1,
 }) => {
   const featureProps = React.useCallback<
-    (feature: RoadGeometryFeature) => React.SVGProps<SVGPathElement>
+    (feature: RailwayGeometryFeature) => React.SVGProps<SVGPathElement>
   >(
     (feature) => ({
       fill: "none",
+      opacity,
       stroke: "#000",
       strokeWidth: mapRailwayPropertiesToStrokeWidth(feature.properties),
       strokeLinejoin: "round",
       strokeLinecap: "round",
     }),
-    [],
+    [opacity],
+  );
+
+  const features = React.useMemo(
+    () => (featureFilter ? data.features.filter(featureFilter) : data.features),
+    [data.features, featureFilter],
   );
 
   return (
-    <GeoMapLayer<RoadGeometryFeature>
+    <GeoMapLayer<RailwayGeometryFeature>
       width={width}
       height={height}
-      fitExtent={fitExtent}
+      projectionConfig={projectionConfig}
       featureProps={featureProps}
-      features={data.features}
+      features={features}
     />
   );
 };

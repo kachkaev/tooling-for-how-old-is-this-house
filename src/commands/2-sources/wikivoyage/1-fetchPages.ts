@@ -6,6 +6,7 @@ import {
 import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
+import path from "path";
 
 import { prependCommentWithJsonToHtml } from "../../../shared/helpersForHtml";
 import { serializeTime } from "../../../shared/helpersForJson";
@@ -93,6 +94,7 @@ export const fetchPages: Command = async ({ logger }) => {
     };
 
     const wikiTextToWrite = prependCommentWithJsonToHtml(source, metadata);
+    await fs.mkdirp(path.dirname(filePath));
     await fs.writeFile(filePath, wikiTextToWrite);
     logger.log(chalk.magenta(filePath));
   }

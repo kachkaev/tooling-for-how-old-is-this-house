@@ -49,6 +49,7 @@ export interface WikimapiaObjectInfo {
   completionDates?: string;
   name?: string;
   photos?: WikimapiaObjectPhotoInfo[];
+  demolished?: boolean;
 }
 
 export interface WikimapiaObjectInfoFile {

@@ -196,6 +196,12 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
       // Extract title
       info.name = extractName(rawInfo, addressHandlingConfig);
 
+      // Mark buildings are demolished
+      // https://wikimapia.org/object/category/?type=view&id=45694
+      if (rawInfo.includes('id="category-45694"')) {
+        info.demolished = true;
+      }
+
       const objectInfoFileJson: WikimapiaObjectInfoFile = {
         fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),
         parsedAt: serializeTime(),

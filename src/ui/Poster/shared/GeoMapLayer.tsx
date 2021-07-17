@@ -3,7 +3,7 @@ import { Mercator } from "@visx/geo";
 import _ from "lodash";
 import * as React from "react";
 
-import { FitExtent } from "./types";
+import { ProjectionConfig } from "../types";
 
 type BaseFeature = turf.Feature<
   turf.Polygon | turf.MultiPolygon | turf.LineString | turf.MultiLineString
@@ -11,11 +11,9 @@ type BaseFeature = turf.Feature<
 
 export interface GeoMapLayerProps<Feature extends BaseFeature = BaseFeature>
   extends React.SVGAttributes<SVGGElement> {
-  width: number;
-  height: number;
-  fitExtent: FitExtent;
   features: Feature[];
   featureProps: (feature: Feature) => React.SVGProps<SVGPathElement>;
+  projectionConfig: ProjectionConfig;
 }
 
 type GeoMapLayerType = <Feature extends BaseFeature>(
@@ -25,9 +23,11 @@ type GeoMapLayerType = <Feature extends BaseFeature>(
 const GeoMapLayer: GeoMapLayerType = ({
   width,
   height,
-  fitExtent,
   features,
   featureProps,
+
+  projectionConfig,
+
   ...rest
 }) => {
   // https://stackoverflow.com/a/63357336/1818285
@@ -36,7 +36,7 @@ const GeoMapLayer: GeoMapLayerType = ({
   return (
     <g {...rest}>
       {chunkedFeatures.map((featuresInChunk, chunkIndex) => (
-        <Mercator data={featuresInChunk} fitExtent={fitExtent} key={chunkIndex}>
+        <Mercator data={featuresInChunk} key={chunkIndex} {...projectionConfig}>
           {(data) =>
             data.features.map(({ path, feature }, index) => {
               return (

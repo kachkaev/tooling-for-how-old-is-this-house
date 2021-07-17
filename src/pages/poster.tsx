@@ -7,16 +7,34 @@ import { getMixedPropertyVariantsFilePath } from "../shared/outputMixing";
 import { readFetchedOsmFeatureCollection } from "../shared/sources/osm/readFetchedOsmFeatureCollection";
 import { getTerritoryExtent } from "../shared/territory";
 import { PosterProps } from "../ui/Poster";
+import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
+import { usePosterConfig } from "../ui/shared/usePosterConfig";
 
 const Poster = dynamic<PosterProps>(
   import("../ui/Poster").then((m) => m.Poster),
   { ssr: false },
 );
 
-type PosterPageProps = PosterProps;
+type PosterPageProps = Omit<PosterProps, "posterConfig">;
 
-const PosterPage: NextPage<PosterPageProps> = (props) => {
-  return <Poster {...props} />;
+const PosterPage: NextPage<PosterPageProps> = ({
+  territoryExtent,
+  ...rest
+}) => {
+  const territoryConfig = useLiveTerritoryConfig();
+  const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
+
+  if (!posterConfig) {
+    return null;
+  }
+
+  return (
+    <Poster
+      territoryExtent={territoryExtent}
+      posterConfig={posterConfig}
+      {...rest}
+    />
+  );
 };
 
 // https://github.com/vercel/next.js/discussions/11209

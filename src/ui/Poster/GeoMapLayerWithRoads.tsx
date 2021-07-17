@@ -4,54 +4,64 @@ import {
   OsmFeature,
   OsmFeatureCollection,
   OsmRoadGeometry,
-} from "../../../shared/sources/osm/types";
-import { GeoMapLayer } from "./GeoMapLayer";
-import { FitExtent } from "./types";
+} from "../../shared/sources/osm/types";
+import { GeoMapLayer } from "./shared/GeoMapLayer";
+import { ProjectionConfig } from "./types";
+
+type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
 
 export interface GeoMapLayerWithRoadsProps {
   width: number;
   height: number;
   data: OsmFeatureCollection<OsmRoadGeometry>;
-  fitExtent: FitExtent;
+  projectionConfig: ProjectionConfig;
+  featureFilter?: (osmFeature: RoadGeometryFeature) => boolean;
+  opacity?: number;
 }
-
-type RoadGeometryFeature = OsmFeature<OsmRoadGeometry>;
 
 const mapHighwayTypeToStrokeWidth = (highwayType: string | undefined): number =>
   highwayType?.startsWith("trunk")
-    ? 3
+    ? 2
     : highwayType?.startsWith("primary")
-    ? 1.5
+    ? 1
     : highwayType?.startsWith("secondary")
-    ? 1.5
-    : 1;
+    ? 1
+    : 0.7;
 
 export const GeoMapLayerWithRoads: React.VoidFunctionComponent<GeoMapLayerWithRoadsProps> = ({
   width,
   height,
-  fitExtent,
+  projectionConfig,
   data,
+  featureFilter,
+  opacity = 1,
 }) => {
   const featureProps = React.useCallback<
     (feature: RoadGeometryFeature) => React.SVGProps<SVGPathElement>
   >(
     (feature) => ({
       fill: "none",
-      stroke: "#1a1e22",
+      stroke: "#181c1f",
       strokeWidth: mapHighwayTypeToStrokeWidth(feature.properties.highway),
       strokeLinejoin: "round",
       strokeLinecap: "round",
+      opacity,
     }),
-    [],
+    [opacity],
+  );
+
+  const features = React.useMemo(
+    () => (featureFilter ? data.features.filter(featureFilter) : data.features),
+    [data.features, featureFilter],
   );
 
   return (
     <GeoMapLayer<RoadGeometryFeature>
       width={width}
       height={height}
-      fitExtent={fitExtent}
+      projectionConfig={projectionConfig}
       featureProps={featureProps}
-      features={data.features}
+      features={features}
     />
   );
 };

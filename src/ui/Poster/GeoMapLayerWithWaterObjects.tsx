@@ -4,27 +4,26 @@ import {
   OsmFeature,
   OsmFeatureCollection,
   OsmWaterObjectGeometry,
-} from "../../../shared/sources/osm/types";
-import { GeoMapLayer } from "./GeoMapLayer";
-import { FitExtent } from "./types";
+} from "../../shared/sources/osm/types";
+import { GeoMapLayer } from "./shared/GeoMapLayer";
+import { ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithWaterObjectsProps {
   width: number;
   height: number;
   data: OsmFeatureCollection<OsmWaterObjectGeometry>;
-  fitExtent: FitExtent;
+  projectionConfig: ProjectionConfig;
 }
 
-// const waterColor = "#1F2737";
-// const waterColor = "#181f2d";
-const waterColor = "#151C28";
 // const waterColor = "#131921";
-// const waterColor = "#203339";
+const waterColor = "#151C28";
+// const waterColor = "#1d3137";
+// const waterColor = "#253a45";
 
 export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLayerWithWaterObjectsProps> = ({
   width,
   height,
-  fitExtent,
+  projectionConfig,
   data,
 }) => {
   const allAreaFeatures = React.useMemo(
@@ -93,7 +92,7 @@ export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLaye
       <GeoMapLayer
         width={width}
         height={height}
-        fitExtent={fitExtent}
+        projectionConfig={projectionConfig}
         featureProps={areaProps}
         features={normalAreaFeatures}
       />
@@ -101,7 +100,7 @@ export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLaye
         <GeoMapLayer
           width={width}
           height={height}
-          fitExtent={fitExtent}
+          projectionConfig={projectionConfig}
           featureProps={areaProps}
           features={wetlandAreaFeatures}
         />
@@ -109,7 +108,7 @@ export const GeoMapLayerWithWaterObjects: React.VoidFunctionComponent<GeoMapLaye
       <GeoMapLayer
         width={width}
         height={height}
-        fitExtent={fitExtent}
+        projectionConfig={projectionConfig}
         featureProps={lineProps}
         features={lineFeatures}
       />

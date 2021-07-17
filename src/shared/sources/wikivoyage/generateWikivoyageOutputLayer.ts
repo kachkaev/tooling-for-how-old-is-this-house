@@ -126,10 +126,10 @@ const extractPhoto = (
   }
 
   return {
-    photoUrl: `https://commons.wikimedia.org/wiki/File:${photoUrlSlug.replace(
-      / /g,
-      "_",
-    )}`,
+    // https://stackoverflow.com/a/46441957/1818285
+    photoUrl: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(
+      photoUrlSlug,
+    )}?width=1000`,
     photoAuthorName: "Wikimedia Commons",
     photoAuthorUrl: "https://commons.wikimedia.org",
   };
@@ -159,7 +159,7 @@ const extractWikipediaUrl = (
   };
 };
 
-export const generateWikiVoyageOutputLayer: GenerateOutputLayer = async ({
+export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
   logger,
 }) => {
   const territoryExtent = await getTerritoryExtent();

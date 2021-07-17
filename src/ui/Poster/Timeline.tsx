@@ -1,3 +1,4 @@
+import { LinearGradient } from "@visx/gradient";
 import { scaleLinear } from "@visx/scale";
 import { ScaleLinear } from "d3-scale";
 import _ from "lodash";
@@ -5,37 +6,44 @@ import * as React from "react";
 import { useMeasure } from "react-use";
 import styled from "styled-components";
 
-import { mapCompletionYearToColor } from "../../shared/completionDates";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/outputMixing";
 import { pointsInMm } from "../shared/printing";
+import { MapCompletionYearToColor } from "./types";
+
+const numberFormat = Intl.NumberFormat("ru");
+
+const formatNumber = (n: number) => {
+  return numberFormat.format(n).replace(/\u00A0/g, "\u202F");
+};
 
 const Wrapper = styled.div`
-  height: 100mm;
-  overflow: hidden;
+  height: 140mm;
+  position: relative;
+
+  svg {
+    position: absolute;
+  }
 `;
 
-const barLabelOffset = 5 * pointsInMm;
-const barWidth = 1 * pointsInMm;
-const barMinHeight = 1 * pointsInMm;
+const barLabelOffset = 4 * pointsInMm;
+const barWidth = 1.5 * pointsInMm;
+const barMinHeight = 0.5 * pointsInMm;
 
 const barTick = 100;
-const barTickLabelFrequency = 2;
+const barTickLabelFrequency = 5;
 const barTickGap = 0.5 * pointsInMm;
 
 const yAxisThickness = 0.3 * pointsInMm;
-const yAxisOffsetLeft = 10 * pointsInMm;
-const yAxisOpacity = 0.3;
+const yAxisOffsetLeft = 6 * pointsInMm;
+const yAxisOpacity = 0.8;
 
 const paddingLeft = 3 * pointsInMm;
 const paddingRight = 25 * pointsInMm;
 const paddingTop = 1 * pointsInMm;
 const paddingBottom = 28 * pointsInMm;
-
-const minYear = 1850;
-const maxYear = 2020;
 
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
@@ -49,18 +57,36 @@ const tickify = (value: number, tickSize: number): number[] => {
 };
 
 const Bar: React.VoidFunctionComponent<{
-  year: number;
-  showLabel: boolean;
-  xScale: ScaleLinear<number, number>;
-  yScale: ScaleLinear<number, number>;
+  abnormalYears: number[];
+  abnormalYearBuildingCountCap: number;
   buildings: MixedPropertyVariantsFeature[];
-  labelPrefix?: string;
-}> = ({ year, showLabel, xScale, yScale, buildings, labelPrefix }) => {
-  const color = mapCompletionYearToColor(
+  label: string;
+  labelOffsetX?: number;
+  mapCompletionYearToColor: MapCompletionYearToColor;
+  xScale: ScaleLinear<number, number>;
+  year: number;
+  yScale: ScaleLinear<number, number>;
+}> = ({
+  abnormalYears,
+  abnormalYearBuildingCountCap,
+  buildings,
+  label,
+  labelOffsetX = 0,
+  mapCompletionYearToColor,
+  xScale,
+  year,
+  yScale,
+}) => {
+  const labelColor = mapCompletionYearToColor(year);
+  const barColor = mapCompletionYearToColor(
     buildings.length > 0 ? year : undefined,
   );
 
-  const total = buildings.length;
+  const yearIsAbnormal = abnormalYears?.includes(year);
+  const total =
+    yearIsAbnormal && abnormalYearBuildingCountCap > 0
+      ? Math.min(buildings.length, abnormalYearBuildingCountCap)
+      : buildings.length;
   const tickifiedValues = tickify(total, barTick);
 
   return (
@@ -70,6 +96,7 @@ const Bar: React.VoidFunctionComponent<{
           return null;
         }
 
+        const gradientId = yearIsAbnormal ? `g-${year}-${index}` : undefined;
         const prevTickifiedValue = tickifiedValues[index - 1] ?? 0;
 
         const rawHeight = yScale(prevTickifiedValue) - yScale(tickifiedValue);
@@ -83,27 +110,37 @@ const Bar: React.VoidFunctionComponent<{
         }
 
         return (
-          <rect
-            key={index}
-            x={-barWidth / 2}
-            width={barWidth}
-            y={yScale(prevTickifiedValue) - height}
-            height={height}
-            fill={color}
-            rx=".5mm"
-          />
+          <React.Fragment key={index}>
+            {gradientId ? (
+              <LinearGradient
+                id={gradientId}
+                from={barColor}
+                fromOpacity={1 - tickifiedValue / total}
+                to={barColor}
+                toOpacity={1 - prevTickifiedValue / total}
+              />
+            ) : null}
+            <rect
+              x={-barWidth / 2}
+              width={barWidth}
+              y={yScale(prevTickifiedValue) - height}
+              height={height}
+              fill={gradientId ? `url('#${gradientId}')` : barColor}
+            />
+          </React.Fragment>
         );
       })}
-      {showLabel ? (
+      {label ? (
         <g x={0} transform={`translate(0,${yScale(0) + barLabelOffset})`}>
           <text
-            fill={color}
-            transform={`rotate(-90),translate(0,${barWidth / 2})`}
+            fill={labelColor}
+            transform={`rotate(-90),translate(0,${
+              barWidth / 2 + labelOffsetX - 0.5
+            })`}
             textAnchor="end"
-            alignmentBaseline="middle"
+            dominantBaseline="middle"
           >
-            {labelPrefix ?? ""}
-            {year}
+            {label}
           </text>
         </g>
       ) : null}
@@ -111,13 +148,29 @@ const Bar: React.VoidFunctionComponent<{
   );
 };
 
-export interface AgeHistogramProps extends React.DOMAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
+export interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
+  children?: never;
   buildingCollection: MixedPropertyVariantsFeatureCollection;
+  mapCompletionYearToColor: MapCompletionYearToColor;
+
+  abnormalYears: number[];
+  abnormalYearBuildingCountCap: number;
+  minYear: number;
+  minYearLabelOffsetXInMillimeters: number;
+  minYearLabel?: string;
+
+  maxYear: number;
 }
 
-export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
+const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
   buildingCollection,
+  abnormalYears,
+  abnormalYearBuildingCountCap,
+  minYear,
+  minYearLabelOffsetXInMillimeters,
+  minYearLabel,
+  maxYear,
+  mapCompletionYearToColor,
   ...rest
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>();
@@ -141,7 +194,7 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
 
         return derivedCompletionYear;
       }),
-    [buildingCollection.features],
+    [buildingCollection.features, maxYear, minYear],
   );
 
   const maxBuildingsPerYear =
@@ -151,11 +204,17 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
       ),
     ) ?? 0;
 
-  const maxY = Math.ceil(maxBuildingsPerYear / barTick) * barTick;
+  const maxY =
+    Math.ceil(maxBuildingsPerYear / barTick / barTickLabelFrequency) *
+    barTick *
+    barTickLabelFrequency;
+
+  const svgWidth = width + paddingLeft + paddingRight;
+  const svgHeight = height + paddingTop + paddingBottom;
 
   const xScale = scaleLinear({
     domain: [minYear, maxYear],
-    range: [paddingLeft, width - paddingRight],
+    range: [paddingLeft, width + paddingLeft - yAxisOffsetLeft],
   });
 
   const yScale = scaleLinear({
@@ -168,13 +227,33 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
   return (
     <Wrapper {...rest} ref={ref}>
       {!height || !width ? null : (
-        <svg width={width} height={height}>
+        <svg
+          width={svgWidth}
+          height={svgHeight}
+          style={{
+            left: -paddingLeft,
+            top: -paddingTop,
+          }}
+        >
           {_.range(minYear, maxYear + 1).map((year, index) => (
             <Bar
               key={year}
               year={year}
-              showLabel={index === 0 || Math.round(year / 10) === year / 10}
-              labelPrefix={index === 0 ? "..." : undefined}
+              abnormalYears={abnormalYears}
+              abnormalYearBuildingCountCap={abnormalYearBuildingCountCap}
+              mapCompletionYearToColor={mapCompletionYearToColor}
+              labelOffsetX={
+                index === 0 && minYearLabel
+                  ? minYearLabelOffsetXInMillimeters
+                  : undefined
+              }
+              label={
+                index === 0 && minYearLabel
+                  ? minYearLabel
+                  : Math.round(year / 10) === year / 10
+                  ? `${year}`
+                  : ""
+              }
               buildings={buildingsByYear[year] ?? []}
               xScale={xScale}
               yScale={yScale}
@@ -182,7 +261,7 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
           ))}
           <g
             opacity={yAxisOpacity}
-            transform={`translate(${width - paddingRight + yAxisOffsetLeft},0)`}
+            transform={`translate(${svgWidth - paddingRight},0)`}
           >
             {yAxisTicks.map((value, index) => {
               if (index === 0) {
@@ -198,25 +277,20 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
                     height={
                       yScale(value - barTick) - yScale(value) - barTickGap
                     }
-                    rx=".3mm"
                   />
                   {(value / barTickLabelFrequency) % barTick ? null : (
                     <text
-                      rx=".3mm"
+                      fontSize="0.8em"
                       fill="#fff"
                       y={yScale(value) + barTickGap}
                       width={yAxisThickness}
-                      alignmentBaseline="text-before-edge"
+                      dominantBaseline="text-before-edge"
                       textAnchor="start"
                       transform={`translate(${3 * pointsInMm},${
-                        -0.5 * pointsInMm
+                        -1.2 * pointsInMm
                       })`}
-                      // transform={`translate(${14 * pointsInMm},${
-                      //   -0.5 * pointsInMm
-                      // })`}
-                      // textAnchor="end"
                     >
-                      {value}
+                      {formatNumber(value)}
                     </text>
                   )}
                 </g>
@@ -228,3 +302,6 @@ export const AgeHistogram: React.VoidFunctionComponent<AgeHistogramProps> = ({
     </Wrapper>
   );
 };
+
+const WrappedTimeline = React.memo(Timeline);
+export { WrappedTimeline as Timeline };
