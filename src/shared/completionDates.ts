@@ -1,11 +1,3 @@
-import { scaleThreshold } from "@visx/scale";
-import {
-  interpolateCool,
-  interpolateSinebow,
-  interpolateSpectral,
-  interpolateWarm,
-} from "d3-scale-chromatic";
-
 const toArabic = (romanNumber: string): number => {
   const map: Record<string, number> = {
     M: 1000,
@@ -45,7 +37,8 @@ const centParts: Record<string, number> = {
   "4-я четв.": 87,
 };
 
-export const deriveCompletionYearFromCompletionDates = (
+// TODO: Change signature from string → number to string → string, keep human-readable part and add tests
+export const cleanupCompletionDates = (
   completionDates: string | undefined,
 ): number | undefined => {
   if (!completionDates) {
@@ -100,6 +93,25 @@ export const deriveCompletionYearFromCompletionDates = (
     const year = toArabic(centStr) * 100 - 50;
 
     return year;
+  }
+
+  return undefined;
+};
+
+export const deriveCompletionYearFromCompletionDates = (
+  completionDates: string | undefined,
+): number | undefined => {
+  if (!completionDates) {
+    return undefined;
+  }
+
+  const completionYearMatch = completionDates.match(
+    // Using the same regexp as on geosemantica.ru
+    /\d{4}(?=,|\s|)(?!-)|\d(?:\s)\d{3}|\d{2}(?:\s)\d{2}/,
+  );
+
+  if (completionYearMatch?.[0]) {
+    return parseInt(completionYearMatch[0]);
   }
 
   return undefined;
