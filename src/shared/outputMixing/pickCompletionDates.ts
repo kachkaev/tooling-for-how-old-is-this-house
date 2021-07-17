@@ -27,24 +27,22 @@ export const pickCompletionDates: PickFromPropertyVariants<
   const propertyVariantsWithRoughYear: PropertyVariant[] = [];
   const propertyVariantsWithoutDerivedYear: PropertyVariant[] = [];
   for (const propertyVariant of propertyVariants) {
-    if (!propertyVariant.completionDates) {
+    if (typeof propertyVariant.completionDates !== "string") {
       continue;
     }
-
     const derivedCompletionYear = deriveCompletionYearFromCompletionDates(
       propertyVariant.completionDates,
     );
 
-    if (
-      propertyVariant.source !== "manual" &&
-      usuallyAbnormalYears.includes(derivedCompletionYear ?? 0)
-    ) {
-      propertyVariantsWithRoughYear.push(propertyVariant);
-      continue;
-    }
-    if (!derivedCompletionYear) {
-      propertyVariantsWithoutDerivedYear.push(propertyVariant);
-      continue;
+    if (propertyVariant.source !== "manual") {
+      if (usuallyAbnormalYears.includes(derivedCompletionYear ?? 0)) {
+        propertyVariantsWithRoughYear.push(propertyVariant);
+        continue;
+      }
+      if (!derivedCompletionYear) {
+        propertyVariantsWithoutDerivedYear.push(propertyVariant);
+        continue;
+      }
     }
 
     return {
