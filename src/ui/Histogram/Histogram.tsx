@@ -1,7 +1,6 @@
 import * as turf from "@turf/turf";
-import { scaleLinear } from "@visx/scale";
 import { bin } from "d3-array";
-import { ScaleLinear, scaleThreshold } from "d3-scale";
+import { ScaleLinear, scaleLinear, scaleThreshold } from "d3-scale";
 import { schemeYlGnBu } from "d3-scale-chromatic";
 import _ from "lodash";
 import * as React from "react";
@@ -207,15 +206,13 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
 
   const maxY = Math.ceil(maxBuildingsPerYear / barTick) * barTick;
 
-  const xScale = scaleLinear({
-    domain: [minYear, maxYear],
-    range: [paddingLeft, width - paddingRight - binWidth],
-  });
+  const xScale = scaleLinear()
+    .domain([minYear, maxYear])
+    .range([paddingLeft, width - paddingRight - binWidth]);
 
-  const yScale = scaleLinear({
-    domain: [0, maxY],
-    range: [height - paddingBottom, paddingTop],
-  });
+  const yScale = scaleLinear()
+    .domain([0, maxY])
+    .range([height - paddingBottom, paddingTop]);
 
   const yAxisTicks = tickify(maxY, barTick);
 

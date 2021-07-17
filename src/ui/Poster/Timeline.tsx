@@ -1,6 +1,5 @@
 import { LinearGradient } from "@visx/gradient";
-import { scaleLinear } from "@visx/scale";
-import { ScaleLinear } from "d3-scale";
+import { ScaleLinear, scaleLinear } from "d3-scale";
 import _ from "lodash";
 import * as React from "react";
 import { useMeasure } from "react-use";
@@ -212,15 +211,13 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
   const svgWidth = width + paddingLeft + paddingRight;
   const svgHeight = height + paddingTop + paddingBottom;
 
-  const xScale = scaleLinear({
-    domain: [minYear, maxYear],
-    range: [paddingLeft, width + paddingLeft - yAxisOffsetLeft],
-  });
+  const xScale = scaleLinear()
+    .domain([minYear, maxYear])
+    .range([paddingLeft, width + paddingLeft - yAxisOffsetLeft]);
 
-  const yScale = scaleLinear({
-    domain: [0, maxY],
-    range: [height - paddingBottom, paddingTop],
-  });
+  const yScale = scaleLinear()
+    .domain([0, maxY])
+    .range([height - paddingBottom, paddingTop]);
 
   const yAxisTicks = tickify(maxY, barTick);
 

@@ -1,4 +1,4 @@
-import { scaleThreshold } from "@visx/scale";
+import { scaleThreshold } from "d3-scale";
 
 import { MapCompletionYearToColor } from "./types";
 
@@ -17,10 +17,7 @@ export const generateMapCompletionYearToColor = (
     }
   });
 
-  const scale = scaleThreshold<number, string>({
-    domain,
-    range,
-  });
+  const scale = scaleThreshold<number, string>().domain(domain).range(range);
 
   return (completionYear) => {
     const year = completionYear;
