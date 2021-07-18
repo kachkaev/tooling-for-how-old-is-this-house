@@ -2,6 +2,14 @@ import { beautifyName, isBeautifiedTrivialName } from "../helpersForNames";
 import { prioritizeRelevantPropertyVariants } from "./prioritizeRelevantPropertyVariants";
 import { PickFromPropertyVariants } from "./types";
 
+const maxDesiredNameLength = 80;
+
+type Result = {
+  derivedBeautifiedName: string;
+  name: string;
+  nameSource: string;
+};
+
 export const pickName: PickFromPropertyVariants<
   "name" | "nameSource" | "derivedBeautifiedName"
 > = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
@@ -14,36 +22,33 @@ export const pickName: PickFromPropertyVariants<
     targetBuildArea,
   });
 
-  let fallbackResult:
-    | {
-        derivedBeautifiedName: string;
-        name: string;
-        nameSource: string;
-      }
-    | undefined = undefined;
+  let fallbackLongResult: Result | undefined = undefined;
+  let fallbackTrivialResult: Result | undefined = undefined;
 
   for (const propertyVariant of propertyVariants) {
-    if (propertyVariant.name) {
-      const derivedBeautifiedName = beautifyName(propertyVariant.name);
-
-      if (isBeautifiedTrivialName(derivedBeautifiedName)) {
-        if (!fallbackResult) {
-          fallbackResult = {
-            derivedBeautifiedName,
-            name: propertyVariant.name,
-            nameSource: propertyVariant.source,
-          };
-        }
-        continue;
-      }
-
-      return {
+    const derivedBeautifiedName = beautifyName(propertyVariant.name);
+    if (propertyVariant.name && derivedBeautifiedName) {
+      const result: Result = {
         derivedBeautifiedName,
         name: propertyVariant.name,
         nameSource: propertyVariant.source,
       };
+
+      if (isBeautifiedTrivialName(derivedBeautifiedName)) {
+        if (!fallbackTrivialResult) {
+          fallbackTrivialResult = result;
+        }
+        continue;
+      }
+
+      if (derivedBeautifiedName.length > maxDesiredNameLength) {
+        fallbackLongResult = result;
+        continue;
+      }
+
+      return result;
     }
   }
 
-  return fallbackResult ?? {};
+  return fallbackLongResult ?? fallbackTrivialResult ?? {};
 };
