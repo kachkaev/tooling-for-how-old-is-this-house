@@ -81,7 +81,7 @@ export const prepareUpload: Command = async ({ logger }) => {
           inputFeature.properties.address,
       ),
       r_floors: inputFeature.properties.floorCountAboveGround,
-      r_name: inputFeature.properties.name,
+      r_name: inputFeature.properties.derivedBeautifiedName,
       r_photo_url: inputFeature.properties.photoUrl,
       r_url: inputFeature.properties.url,
       r_wikipedia: inputFeature.properties.wikipediaUrl,

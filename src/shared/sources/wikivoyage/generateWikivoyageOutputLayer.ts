@@ -107,14 +107,12 @@ const extractId = (
 const extractName = (
   templateJson: MonumentTemplate,
 ): Partial<OutputLayerProperties> => {
-  const name = templateJson.name;
-  if (!name || name.toLowerCase().trim() === "дом жилой") {
+  const name = templateJson.name?.trim();
+  if (!name) {
     return {};
   }
 
-  return {
-    name,
-  };
+  return { name };
 };
 
 const extractPhoto = (
@@ -152,9 +150,8 @@ const extractWikipediaUrl = (
   }
 
   return {
-    wikipediaUrl: `https://ru.wikipedia.org/wiki/${wikipediaUrlSlug.replace(
-      / /g,
-      "_",
+    wikipediaUrl: `https://ru.wikipedia.org/wiki/${encodeURIComponent(
+      wikipediaUrlSlug,
     )}`,
   };
 };

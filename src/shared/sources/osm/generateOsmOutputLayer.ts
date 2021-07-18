@@ -6,6 +6,7 @@ import _ from "lodash";
 import path from "path";
 
 import { deepClean } from "../../deepClean";
+import { TrivialName } from "../../helpersForNames";
 import {
   GenerateOutputLayer,
   OutputLayer,
@@ -14,7 +15,7 @@ import {
 import { getTerritoryExtent } from "../../territory";
 import { getOsmDirPath } from "./helpersForPaths";
 import { readFetchedOsmFeatureCollection } from "./readFetchedOsmFeatureCollection";
-import { OsmFeature } from "./types";
+import { OsmFeature, OsmFeatureProperties } from "./types";
 
 const buildWikipediaUrl = (
   wikipediaTagValue: string | undefined,
@@ -36,7 +37,7 @@ const buildWikipediaUrl = (
   return `https://${languageSubdomain}.wikipedia.org/wiki/${articleSlug}`;
 };
 
-const deriveFloorCouuntAboveGroundFromBuildingTag = (
+const deriveFloorCountAboveGroundFromBuildingTag = (
   buildingType: string | undefined,
 ): number | undefined => {
   switch (buildingType) {
@@ -52,7 +53,77 @@ const deriveFloorCouuntAboveGroundFromBuildingTag = (
   return undefined;
 };
 
+// https://wiki.openstreetmap.org/wiki/Key:amenity
+// https://wiki.openstreetmap.org/wiki/Key:building
+// https://wiki.openstreetmap.org/wiki/Key:leisure
+const trivialNameByTagValue: Record<string, TrivialName> = {
+  /* eslint-disable @typescript-eslint/naming-convention */
+  abandoned: "заброшенное здание",
+  apartments: "жилой дом",
+  bar: "бар",
+  barn: "хранилище",
+  cafe: "кафе",
+  cinema: "кинотеатр",
+  community_centre: "центр культурного развития",
+  construction: "строящийся объект",
+  container: "контейнер",
+  detached: "жилой дом",
+  dormitory: "общежитие",
+  fire_station: "пожарная станция",
+  fitness_centre: "спортивный зал",
+  fuel: "АЗС",
+  garage: "гараж",
+  garages: "гаражи",
+  gazebo: "беседка",
+  grandstand: "трибуна",
+  greenhouse: "теплица",
+  gym: "спортивный зал",
+  hospital: "медицинский корпус",
+  hotel: "гостиница",
+  house: "жилой дом",
+  industrial: "промышленное здание",
+  kiosk: "киоск",
+  library: "библиотека",
+  music_school: "музыкальная школа",
+  office: "офисное здание",
+  post_office: "почтовое отделение",
+  reservoir: "резервуар",
+  residential: "жилой дом",
+  restaurant: "ресторан",
+  roof: "навес",
+  ruins: "разрушенный объект",
+  semidetached_house: "жилой дом",
+  shed: "сарай",
+  sports_hall: "спортивный зал",
+  stable: "конюшни",
+  storage_tank: "резервуар",
+  sty: "хлев",
+  sub_station: "трансформаторная подстанция",
+  supermarket: "супермаркет",
+  swimming_pool: "бассейн",
+  temple: "часовня",
+  theatre: "театр",
+  transformer_tower: "трансформаторная подстанция",
+  university: "университетское здание",
+  warehouse: "складское здание",
+  water_tower: "водонапорная башня",
+  /* eslint-enable @typescript-eslint/naming-convention */
+};
+
+const generateTrivialNameFromOsmTags = ({
+  amenity,
+  building,
+  leisure,
+  power,
+}: OsmFeatureProperties): TrivialName | undefined =>
+  trivialNameByTagValue[amenity ?? ""] ??
+  trivialNameByTagValue[leisure ?? ""] ??
+  trivialNameByTagValue[power ?? ""] ??
+  trivialNameByTagValue[building ?? ""] ??
+  undefined;
+
 type IntersectorFunction = (feature: turf.Feature) => string | undefined;
+
 const generateGetIntersectedBoundaryName = ({
   boundaryFeatures,
   expectedBoundaryOfAllCheckedFeatures,
@@ -198,7 +269,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
 
       const floorCountAboveGround =
         parseInt(building.properties["building:levels"] ?? "") ||
-        deriveFloorCouuntAboveGroundFromBuildingTag(
+        deriveFloorCountAboveGroundFromBuildingTag(
           building.properties["building"],
         ) ||
         undefined;
@@ -222,7 +293,9 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         floorCountBelowGround,
         id: building.properties.id,
         knownAt: buildingCollection.fetchedAt,
-        name: building.properties["name"],
+        name:
+          building.properties["name"] ??
+          generateTrivialNameFromOsmTags(building.properties),
         url,
         wikipediaUrl,
       };

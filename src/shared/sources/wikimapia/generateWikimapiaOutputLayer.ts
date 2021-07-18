@@ -16,12 +16,20 @@ import {
 } from "./helpersForPaths";
 import { WikimapiaObjectInfoFile, WikimapiaObjectPhotoInfo } from "./types";
 
-const minAreaInMeters = 3;
+const minAreaInMeters = 10;
 const maxAreaInMeters = 50000;
 const maxPerimeterInMeters = 2000;
 const maxPerimeterToAreaSqrtRatio = 20;
 
 const maxIdDeltaForPhotosInOneBatch = 100;
+
+const checkIfNameIsAppropriateForBuilding = (name: string): boolean => {
+  if (name.match(/колонка/i)) {
+    return false;
+  }
+
+  return true;
+};
 
 /**
  * http://photos.wikimapia.org/p/00/08/38/48/20_big.jpg
@@ -110,6 +118,11 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
       continue;
     }
 
+    const name = objectInfoFile.data.name;
+    if (name && !checkIfNameIsAppropriateForBuilding(name)) {
+      continue;
+    }
+
     // Excludes 'long' features such as streets
     const perimeterInMeters =
       turf.length(turf.polygonToLine(objectFeature)) * 1000;
@@ -135,7 +148,7 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
         : undefined,
       knownAt: objectInfoFile.fetchedAt,
       completionDates: objectInfoFile.data.completionDates,
-      name: objectInfoFile.data.name,
+      name,
     };
 
     outputFeatures.push(

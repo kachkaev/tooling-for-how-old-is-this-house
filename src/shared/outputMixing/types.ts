@@ -108,8 +108,10 @@ export interface MixedPropertyVariants {
   wikipediaUrl?: string;
   wikipediaUrlSource?: string;
 
-  /** The value is derived from address. TODO: replace address normalization with beautification */
+  /** The value is derived from address */
   derivedBeautifiedAddress?: string;
+  /** The value is derived from name */
+  derivedBeautifiedName?: string;
   /** The value is derived from completionDates and is stored to simplify data visualization */
   derivedCompletionYear?: number;
 }

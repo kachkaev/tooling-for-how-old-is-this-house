@@ -9,7 +9,6 @@ import {
   buildCleanedAddressAst,
 } from "../../../shared/addresses";
 import { deepClean } from "../../../shared/deepClean";
-import { fixQuotes } from "../../../shared/fixQuotes";
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
   serializeTime,
@@ -55,11 +54,10 @@ const extractName = (
   rawInfo: string,
   addressHandlingConfig: AddressHandlingConfig,
 ) => {
-  const result = (
+  const result =
     rawInfo.match(
       /<meta property="og:title" {2}content="(.*) - Wikimapia"/,
-    )?.[1] ?? ""
-  ).trim();
+    )?.[1] ?? "";
 
   if (!result) {
     return undefined;
@@ -93,7 +91,7 @@ const extractName = (
     return undefined;
   }
 
-  return fixQuotes(result);
+  return result;
 };
 
 const extractCompletionDatesFromDescription = (

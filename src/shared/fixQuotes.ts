@@ -1,7 +1,11 @@
 const isLetter = (char: string | undefined): boolean =>
   Boolean(char?.match(/\p{L}/u));
+
 const isNumber = (char: string | undefined): boolean =>
   Boolean(char?.match(/\d/u));
+
+const isNameSymbol = (char: string | undefined): boolean =>
+  char === "+" || char === "!" || char === "?";
 
 export const fixQuotes = (input: string): string => {
   let nesting = 0;
@@ -17,6 +21,7 @@ export const fixQuotes = (input: string): string => {
 
         const prevCharIsLetter = isLetter(prevChar);
         const prevCharIsNumber = isNumber(prevChar);
+        const prevCharIsNameSymbol = isNameSymbol(prevChar);
         const prevCharIsQuote = prevQuoteIndex === charIndex - 1;
 
         const nextCharIsLetter = isLetter(nextChar);
@@ -27,7 +32,10 @@ export const fixQuotes = (input: string): string => {
         if (!prevCharIsLetter && (nextCharIsLetter || nextCharIsNumber)) {
           quoteType = "opening";
         } else if (
-          (prevCharIsQuote || prevCharIsNumber || prevCharIsLetter) &&
+          (prevCharIsQuote ||
+            prevCharIsNumber ||
+            prevCharIsLetter ||
+            prevCharIsNameSymbol) &&
           !nextCharIsLetter
         ) {
           quoteType = "closing";
