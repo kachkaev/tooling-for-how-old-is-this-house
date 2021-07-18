@@ -8,6 +8,14 @@ import {
   PropertyVariant,
 } from "./types";
 
+/**
+ * hello|42|world11
+ * ↓
+ * hello|0000000042|world0000000011
+ */
+const prependZerosToNumbersToImproveOrdering = (id: string): string =>
+  id.replace(/\d+/g, (match) => match.padStart(10, "0"));
+
 const calculatePercentageDifference = (a: number, b: number): number => {
   if (b > a) {
     return (b / a - 1) * 100;
@@ -63,9 +71,15 @@ export const prioritizeRelevantPropertyVariants = ({
       return sourceIndex;
     },
 
-    // Within each group, order by build area DESC and then id for consistency
+    // Within each group, start with geocoded objects...
+    ({ externalGeometrySource }) => (externalGeometrySource ? 1 : 0),
+    // ...order by build area DESC...
     ({ derivedBuildArea }) => (derivedBuildArea ? -derivedBuildArea : 0),
-    ({ source, id }) => buildGlobalFeatureOrVariantId(source, id),
+    // ...and finally by id consistency
+    ({ source, id }) =>
+      prependZerosToNumbersToImproveOrdering(
+        buildGlobalFeatureOrVariantId(source, id),
+      ),
   ]);
 
   const unrecognizedSources = _.orderBy([...unrecognizedSourcesSet]);
