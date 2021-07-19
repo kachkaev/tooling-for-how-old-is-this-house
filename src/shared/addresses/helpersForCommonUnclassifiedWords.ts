@@ -2,7 +2,7 @@ import { generateWordConfigLookup } from "./helpersForWords";
 import { CommonUnclassifiedWordConfig } from "./types";
 
 // prettier-ignore
-const commonUnclassifiedWordConfigs: CommonUnclassifiedWordConfig[] = [
+export const commonUnclassifiedWordConfigs: CommonUnclassifiedWordConfig[] = [
   { normalizedValue: "завод", aliases: ["з-д"] },
   { normalizedValue: "завода", aliases: ["з-да"] },
   { normalizedValue: "имени", aliases: ["им"], ignored: ["street"] },
@@ -23,6 +23,9 @@ const commonUnclassifiedWordConfigs: CommonUnclassifiedWordConfig[] = [
   { normalizedValue: "viii", canBeInStandardizedAddress: false },
   { normalizedValue: "ix", canBeInStandardizedAddress: false },
   { normalizedValue: "x", canBeInStandardizedAddress: false },
+
+  // Prevent upper case
+  { normalizedValue: "дивизии" },
 ];
 
 export const commonUnclassifiedWordConfigLookup = generateWordConfigLookup({

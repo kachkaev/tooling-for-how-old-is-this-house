@@ -26,7 +26,7 @@ const downloadFile = async (
 
     await response.data.pipe(fs.createWriteStream(downloadFilePath));
   } catch (err) {
-    throw new Error(err);
+    throw new Error(`${err}`);
   }
 };
 

@@ -175,7 +175,7 @@ export interface PostProcessWordsInStandardizedAddressSection {
 }
 
 export interface FinalizeWordSpelling {
-  (word: AddressNodeWithWord): string;
+  (word: AddressNodeWithWord, neighboringWords: AddressNodeWithWord[]): string;
 }
 
 export interface AddressNormalizationConfig

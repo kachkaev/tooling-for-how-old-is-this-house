@@ -1,4 +1,8 @@
-import { CleanedAddressAst, FinalizeWordSpelling } from "./types";
+import {
+  AddressNodeWithWord,
+  CleanedAddressAst,
+  FinalizeWordSpelling,
+} from "./types";
 
 export const printCleanedAddressAst = (
   cleanedAddressAst: CleanedAddressAst,
@@ -13,7 +17,17 @@ export const printCleanedAddressAst = (
     const nextNode = nodes[index + 1];
 
     if (node.nodeType === "word") {
-      chunks.push(finalizeWordSpelling(node));
+      chunks.push(
+        finalizeWordSpelling(
+          node,
+          nodes
+            .slice(index - 1, index + 1)
+            .filter(
+              (currentNode): currentNode is AddressNodeWithWord =>
+                currentNode.nodeType === "word",
+            ),
+        ),
+      );
       if (nextNode?.nodeType === "word") {
         chunks.push(" ");
       }

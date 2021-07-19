@@ -1,15 +1,19 @@
 import _ from "lodash";
 
 import { extractAtomicTokens } from "./extractAtomicTokens";
+import { commonUnclassifiedWordConfigs } from "./helpersForCommonUnclassifiedWords";
 import {
   designationConfigs,
   getDesignationConfig,
 } from "./helpersForDesignations";
+import { ordinalNumberEndingConfigLookup } from "./helpersForOrdinalNumbers";
 import { regionConfigs } from "./helpersForRegions";
 import { simplifySpelling } from "./helpersForWords";
 import { normalizeAddress } from "./normalizeAddress";
 import {
   AddressBeautificationConfig,
+  AddressNodeWithDesignation,
+  AddressNodeWithNumber,
   AddressNodeWithWord,
   FinalizeWordSpelling,
   PostProcessWordsInStandardizedAddressSection,
@@ -46,42 +50,77 @@ const orderForAdjectiveLikeName = ({
 const postProcessWordsInStandardizedAddressSection: PostProcessWordsInStandardizedAddressSection = (
   words,
 ) => {
-  let designationGoesBeforeName = false;
-  for (const word of words) {
-    if (word.wordType === "designation") {
-      const designationConfig = getDesignationConfig(word);
-      if (
-        designationConfig.designation === "house" ||
-        designationConfig.designation === "housePart"
-      ) {
-        return words;
-      }
-      if (designationConfig.alwaysGoesBeforeName) {
-        designationGoesBeforeName = true;
-        break;
-      }
-    }
+  const designationWord = words.find(
+    (word): word is AddressNodeWithDesignation =>
+      word.wordType === "designation",
+  );
+
+  const designationConfig = designationWord
+    ? getDesignationConfig(designationWord)
+    : undefined;
+  if (
+    designationConfig &&
+    (designationConfig.designation === "house" ||
+      designationConfig.designation === "housePart")
+  ) {
+    return words;
   }
 
+  const designationLikeWord = words.find((word) => {
+    if (word.wordType !== "unclassified") {
+      return false;
+    }
+    try {
+      return getDesignationConfig({ ...word, wordType: "designation" })
+        .canBePartOfName;
+    } catch {
+      // noop
+    }
+
+    return false;
+  });
+
   const adjectiveLikeOrdering =
-    !designationGoesBeforeName &&
-    words.some(
+    !designationLikeWord &&
+    !designationConfig?.alwaysGoesBeforeName &&
+    words.every(
       ({ value, wordType }) =>
-        wordType === "unclassified" &&
-        (value.endsWith("ья") ||
-          value.endsWith("ая") ||
-          (value.endsWith("ой") && !value.endsWith("ской")) || // "Кривой переулок" vs "переулок Космодемьянской"
-          value.endsWith("ий") ||
-          value.endsWith("ый") ||
-          value.endsWith("ое") ||
-          value.endsWith("ее") ||
-          value.endsWith("ье")),
+        wordType !== "unclassified" ||
+        value.endsWith("ья") ||
+        value.endsWith("ая") ||
+        (value.endsWith("ой") && !value.endsWith("ской")) || // "Кривой переулок" vs "переулок Космодемьянской"
+        value.endsWith("ий") ||
+        value.endsWith("ый") ||
+        value.endsWith("ое") ||
+        value.endsWith("ее") ||
+        value.endsWith("ье"),
     );
 
-  return _.orderBy(
+  const result = _.orderBy(
     words,
     adjectiveLikeOrdering ? orderForAdjectiveLikeName : orderForStandardName,
   );
+
+  const wordWithOrdinalNumber = result.find(
+    (word): word is AddressNodeWithNumber => word.wordType === "ordinalNumber",
+  );
+
+  const genderMismatch =
+    wordWithOrdinalNumber &&
+    designationConfig &&
+    ordinalNumberEndingConfigLookup[wordWithOrdinalNumber.ending]?.gender !==
+      designationConfig.gender;
+
+  // Special case:
+  // "улица 2-я Набережная"
+  // "улица 3-й Зелёный овраг"
+  // "улица 42-й дивизии"
+  if (wordWithOrdinalNumber && (designationLikeWord || genderMismatch)) {
+    result.splice(result.indexOf(wordWithOrdinalNumber), 1);
+    result.splice(1, 0, wordWithOrdinalNumber);
+  }
+
+  return result;
 };
 
 type LetterCasing = "allUpper" | "allLower" | "firstUpper";
@@ -202,6 +241,13 @@ export const createBeautifyAddress = (
     spellingLookup[simplifySpelling(normalizedValue)] =
       beautifiedValue ?? normalizedValue;
   }
+  for (const {
+    normalizedValue,
+    beautifiedValue,
+  } of commonUnclassifiedWordConfigs) {
+    spellingLookup[simplifySpelling(normalizedValue)] =
+      beautifiedValue ?? normalizedValue;
+  }
 
   if (addressBeautificationConfig.canonicalSpellings instanceof Array) {
     for (const canonicalSpelling of addressBeautificationConfig.canonicalSpellings) {
@@ -211,7 +257,12 @@ export const createBeautifyAddress = (
     }
   }
 
-  const finalizeWordSpelling: FinalizeWordSpelling = ({ value, wordType }) => {
+  const finalizeWordSpelling: FinalizeWordSpelling = (
+    word,
+    neighbouringWords,
+  ) => {
+    const { value, wordType } = word;
+
     // "42а" → "42А", "а." → "А.", "а" → "А"
     if (
       wordType === "cardinalNumber" ||
@@ -227,6 +278,29 @@ export const createBeautifyAddress = (
 
     // "Салтыкова-Щедрина"
     if (wordType === "unclassified") {
+      // улица набережная → улица Набережная
+      // улица зелёный овраг → улица Зелёный овраг
+      try {
+        if (
+          getDesignationConfig({ ...word, wordType: "designation" })
+            .canBePartOfName
+        ) {
+          const isLastWord =
+            neighbouringWords.indexOf(word) === neighbouringWords.length - 1;
+          const prevWordType =
+            neighbouringWords[neighbouringWords.length - 2]?.wordType;
+          if (
+            !isLastWord ||
+            prevWordType === "designation" ||
+            prevWordType === "ordinalNumber"
+          ) {
+            return _.capitalize(value);
+          }
+        }
+      } catch {
+        // noop
+      }
+
       return value
         .split(/(?=-)/g) // https://stackoverflow.com/a/25221523/1818285
         .map((valueChunk) => spellingLookup[valueChunk] ?? valueChunk)

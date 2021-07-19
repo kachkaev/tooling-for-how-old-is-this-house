@@ -9,7 +9,11 @@ export const printStandardizedAddressSection = (
   postProcessWordsInStandardizedAddressSection: PostProcessWordsInStandardizedAddressSection,
   finalizeWordSpelling: FinalizeWordSpelling,
 ): string => {
-  return postProcessWordsInStandardizedAddressSection(astNode.orderedWords)
-    .map((wordNode) => finalizeWordSpelling(wordNode))
+  const postProcessedWords = postProcessWordsInStandardizedAddressSection(
+    astNode.orderedWords,
+  );
+
+  return postProcessedWords
+    .map((wordNode) => finalizeWordSpelling(wordNode, postProcessedWords))
     .join(" ");
 };
