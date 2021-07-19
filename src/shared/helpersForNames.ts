@@ -1,6 +1,7 @@
 import { fixQuotes } from "./fixQuotes";
+import { normalizeSpacing } from "./normalizeSpacing";
 
-export const normalizedTrivialNames = [
+const normalizedTrivialNames = [
   "автосервис",
   "административное здание",
   "администрация",
@@ -123,12 +124,6 @@ const extractNormalizedTrivialName = (
 ): TrivialName | undefined => {
   return normalizedTrivialNameByLowerCaseVersion[name.toLowerCase()];
 };
-
-const normalizeSpacing = (name: string): string =>
-  name
-    .trim()
-    .replace(/\s{2,}/g, " ")
-    .replace(/№(\d)/g, "№ $1");
 
 export const beautifyName = (name: string | undefined): string | undefined => {
   if (!name) {

@@ -86,7 +86,8 @@ export const prepareUpload: Command = async ({ logger }) => {
       r_url: inputFeature.properties.url,
       r_wikipedia: inputFeature.properties.wikipediaUrl,
       r_year_int: inputFeature.properties.derivedCompletionYear,
-      r_years_str: inputFeature.properties.completionDates,
+      r_years_str:
+        inputFeature.properties.derivedCompletionDatesForGeosemantica,
       /* eslint-enable @typescript-eslint/naming-convention */
     };
     outputFeatures.push(

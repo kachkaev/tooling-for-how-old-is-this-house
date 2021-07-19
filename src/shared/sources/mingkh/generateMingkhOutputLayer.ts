@@ -1,6 +1,5 @@
 import * as turf from "@turf/turf";
 
-import { stringifyCompletionYear } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import {
   GenerateOutputLayer,
@@ -24,7 +23,9 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
         id: `${houseInfo.properties.id}`,
 
         address: houseInfo.properties.address,
-        completionDates: stringifyCompletionYear(houseInfo.properties.year),
+        completionDates: houseInfo.properties.year
+          ? `${houseInfo.properties.year}`
+          : undefined,
         floorCountAboveGround: houseInfo.properties.numberOfFloors,
         knownAt: houseInfo.properties.fetchedAt,
       };

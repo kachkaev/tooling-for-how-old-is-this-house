@@ -1,3 +1,5 @@
+import { normalizeSpacing } from "./normalizeSpacing";
+
 const toArabic = (romanNumber: string): number => {
   const map: Record<string, number> = {
     M: 1000,
@@ -98,7 +100,31 @@ export const cleanupCompletionDates = (
   return undefined;
 };
 
-export const deriveCompletionYearFromCompletionDates = (
+const deriveCompletionDatesForGeosemantica = (
+  completionDates: string | undefined,
+): string | undefined => {
+  if (typeof completionDates !== "string") {
+    return undefined;
+  }
+
+  let result = normalizeSpacing(completionDates);
+  if (!result.length) {
+    return undefined;
+  }
+
+  // "1990-е", "1990 - е" → "около 1995 (1990-е)"
+  const decade = result.match(/^(\d{3})0\s*[-—–−]е$/)?.[1];
+  if (decade) {
+    return `около ${decade}5 (${decade}0-е)`;
+  }
+
+  // "1900 - 1910" → "1900-1910"
+  result = result.replace(/(\d)\s+[-—–−]\s+(\d)/g, "$1-$2");
+
+  return result;
+};
+
+const deriveCompletionYearFromCompletionDatesUsingGeosemanticaRegexp = (
   completionDates: string | undefined,
 ): number | undefined => {
   if (!completionDates) {
@@ -117,6 +143,21 @@ export const deriveCompletionYearFromCompletionDates = (
   return undefined;
 };
 
-export const stringifyCompletionYear = (completionYear: number | undefined) => {
-  return completionYear ? `${completionYear}` : undefined;
+export const parseCompletionDates = (
+  completionDates: string | undefined,
+): {
+  derivedCompletionDatesForGeosemantica?: string;
+  derivedCompletionYear?: number;
+  precision?: number;
+} => {
+  const derivedCompletionDatesForGeosemantica = deriveCompletionDatesForGeosemantica(
+    completionDates,
+  );
+
+  return {
+    derivedCompletionDatesForGeosemantica,
+    derivedCompletionYear: deriveCompletionYearFromCompletionDatesUsingGeosemanticaRegexp(
+      derivedCompletionDatesForGeosemantica,
+    ),
+  };
 };

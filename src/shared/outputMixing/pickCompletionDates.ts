@@ -1,11 +1,14 @@
-import { deriveCompletionYearFromCompletionDates } from "../completionDates";
+import { parseCompletionDates } from "../parseCompletionDates";
 import { prioritizeRelevantPropertyVariants } from "./prioritizeRelevantPropertyVariants";
 import { PickFromPropertyVariants, PropertyVariant } from "./types";
 
 const usuallyAbnormalYears = [1800, 1900, 1910, 1917];
 
 export const pickCompletionDates: PickFromPropertyVariants<
-  "completionDates" | "completionDatesSource" | "derivedCompletionYear"
+  | "completionDates"
+  | "completionDatesSource"
+  | "derivedCompletionDatesForGeosemantica"
+  | "derivedCompletionYear"
 > = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     callingFilePath: __filename,
@@ -30,9 +33,10 @@ export const pickCompletionDates: PickFromPropertyVariants<
     if (typeof propertyVariant.completionDates !== "string") {
       continue;
     }
-    const derivedCompletionYear = deriveCompletionYearFromCompletionDates(
-      propertyVariant.completionDates,
-    );
+    const {
+      derivedCompletionDatesForGeosemantica,
+      derivedCompletionYear,
+    } = parseCompletionDates(propertyVariant.completionDates);
 
     if (propertyVariant.source !== "manual") {
       if (usuallyAbnormalYears.includes(derivedCompletionYear ?? 0)) {
@@ -48,6 +52,7 @@ export const pickCompletionDates: PickFromPropertyVariants<
     return {
       completionDates: propertyVariant.completionDates,
       completionDatesSource: propertyVariant.source,
+      derivedCompletionDatesForGeosemantica,
       derivedCompletionYear,
     };
   }
@@ -61,9 +66,7 @@ export const pickCompletionDates: PickFromPropertyVariants<
     return {
       completionDates: fallbackPropertyVariant.completionDates,
       completionDatesSource: fallbackPropertyVariant.source,
-      derivedCompletionYear: deriveCompletionYearFromCompletionDates(
-        fallbackPropertyVariant.completionDates,
-      ),
+      ...parseCompletionDates(fallbackPropertyVariant.completionDates),
     };
   }
 

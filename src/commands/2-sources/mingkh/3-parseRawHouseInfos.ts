@@ -5,12 +5,12 @@ import _ from "lodash";
 import path from "path";
 import sortKeys from "sort-keys";
 
-import { deriveCompletionYearFromCompletionDates } from "../../../shared/completionDates";
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
   serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
+import { parseCompletionDates } from "../../../shared/parseCompletionDates";
 import { processFiles } from "../../../shared/processFiles";
 import {
   getHouseFilePath,
@@ -71,9 +71,9 @@ export const parseRawHouseInfos: Command = async ({ logger }) => {
       const yearMatch = rawInfo.match(
         /<dt>Год постройки<\/dt>\s*<dd>(.*)<\/dd>/,
       );
-      const year = deriveCompletionYearFromCompletionDates(yearMatch?.[1]);
-      if (year) {
-        info.year = year;
+      const { derivedCompletionYear } = parseCompletionDates(yearMatch?.[1]);
+      if (derivedCompletionYear) {
+        info.year = derivedCompletionYear;
       }
 
       // extract numberOfFloors

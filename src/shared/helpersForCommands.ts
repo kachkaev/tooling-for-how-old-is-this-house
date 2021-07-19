@@ -3,7 +3,6 @@ import chalk from "chalk";
 import path from "path";
 import sortKeys from "sort-keys";
 
-import { deriveCompletionYearFromCompletionDates } from "./completionDates";
 import { geocodeAddress, loadCombinedGeocodeDictionary } from "./geocoding";
 import { writeFormattedJson } from "./helpersForJson";
 import { getSourceDirPath } from "./helpersForPaths";
@@ -14,6 +13,7 @@ import {
   OutputLayer,
   reportGeocodesInOutputLayer,
 } from "./outputLayers";
+import { parseCompletionDates } from "./parseCompletionDates";
 import { getTerritoryAddressHandlingConfig } from "./territory";
 
 export const generateProgress = (index: number, total: number) => {
@@ -89,9 +89,9 @@ export const generateExtractOutputLayer = ({
         ...feature,
         properties: sortKeys({
           ...feature.properties,
-          derivedCompletionYear: deriveCompletionYearFromCompletionDates(
+          derivedCompletionYear: parseCompletionDates(
             feature.properties.completionDates,
-          ),
+          ).derivedCompletionYear,
         }),
       })),
     };

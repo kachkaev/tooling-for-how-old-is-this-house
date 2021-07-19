@@ -2,7 +2,6 @@ import * as turf from "@turf/turf";
 import fs from "fs-extra";
 import wtf from "wtf_wikipedia";
 
-import { deriveCompletionYearFromCompletionDates } from "../../completionDates";
 import { deepClean } from "../../deepClean";
 import { extractJsonFromPrependedHtmlComment } from "../../helpersForHtml";
 import { serializeTime } from "../../helpersForJson";
@@ -11,6 +10,7 @@ import {
   OutputLayerFeature,
   OutputLayerProperties,
 } from "../../outputLayers";
+import { parseCompletionDates } from "../../parseCompletionDates";
 import { processFiles } from "../../processFiles";
 import { getTerritoryExtent } from "../../territory";
 import {
@@ -90,9 +90,8 @@ const extractCompletionDates = (
 
   return {
     completionDates,
-    derivedCompletionYear: deriveCompletionYearFromCompletionDates(
-      completionDates,
-    ),
+    derivedCompletionYear: parseCompletionDates(completionDates)
+      .derivedCompletionYear,
   };
 };
 
