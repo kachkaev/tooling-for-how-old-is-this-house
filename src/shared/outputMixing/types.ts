@@ -81,6 +81,9 @@ export interface MixedPropertyVariants {
   address?: string;
   addressSource?: string;
 
+  architect?: string;
+  architectSource?: string;
+
   buildingType?: string;
   buildingTypeSource?: string;
 
@@ -101,6 +104,9 @@ export interface MixedPropertyVariants {
   photoAuthorUrl?: string;
   photoSource?: string;
   photoUrl?: string;
+
+  style?: string;
+  styleSource?: string;
 
   url?: string;
   urlSource?: string;

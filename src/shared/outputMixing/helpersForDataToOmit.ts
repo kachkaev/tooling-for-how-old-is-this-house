@@ -12,6 +12,7 @@ const treatAsteriskAsUndefined = (
 
 const knownPropertySelectorLookup: Record<PropertySelector, true> = {
   address: true,
+  architect: true,
   buildingType: true,
   completionDates: true,
   documentedBuildArea: true,
@@ -19,6 +20,7 @@ const knownPropertySelectorLookup: Record<PropertySelector, true> = {
   name: true,
   photo: true,
   source: true,
+  style: true,
   url: true,
   wikipediaUrl: true,
 };

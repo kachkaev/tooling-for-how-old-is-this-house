@@ -80,9 +80,11 @@ export const prepareUpload: Command = async ({ logger }) => {
         inputFeature.properties.derivedBeautifiedAddress ??
           inputFeature.properties.address,
       ),
+      r_architect: inputFeature.properties.architect,
       r_floors: inputFeature.properties.floorCountAboveGround,
       r_name: inputFeature.properties.derivedBeautifiedName,
       r_photo_url: inputFeature.properties.photoUrl,
+      r_style: inputFeature.properties.style,
       r_url: inputFeature.properties.url,
       r_wikipedia: inputFeature.properties.wikipediaUrl,
       r_year_int: inputFeature.properties.derivedCompletionYear,

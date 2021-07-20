@@ -6,6 +6,7 @@ export type OutputLayerRole = "base" | "patch";
 
 export interface OutputLayerProperties {
   address?: string;
+  architect?: string;
   buildingType?: string;
   completionDates?: string;
   /** Only relevant to layers in "manual" sourc. @see README.md */
@@ -23,6 +24,7 @@ export interface OutputLayerProperties {
   photoAuthorName?: string;
   photoAuthorUrl?: string;
   photoUrl?: string;
+  style?: string;
   url?: string;
   wikipediaUrl?: string;
 }
