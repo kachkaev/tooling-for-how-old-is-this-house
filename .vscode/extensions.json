@@ -1,8 +1,16 @@
 {
   "recommendations": [
-    "esbenp.prettier-vscode",
+    // For data processing (mentioned in README)
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "mikestead.dotenv",
+    "RandomFractalsInc.geo-data-viewer",
+    "redhat.vscode-yaml",
+    "rowewilsonfrederiskholme.wikitext",
+
+    // For development
     "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
     "davidanson.vscode-markdownlint",
-    "redhat.vscode-yaml"
   ]
 }

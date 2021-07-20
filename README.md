@@ -40,11 +40,12 @@ Although some of the data sources are country-specific, parts of the repo can st
 - небольшой опыт работы с [гитом](https://ru.wikipedia.org/wiki/Git) (системой контроля версий),
 - поверхностное знакомство с форматами [GeoJSON](https://ru.wikipedia.org/wiki/GeoJSON) и [YAML](https://ru.wikipedia.org/wiki/YAML).
 
-В качестве текстового редактора рекомендуется [VSCode](https://code.visualstudio.com) с плагинами
+В качестве текстового редактора рекомендуется [VSCode](https://code.visualstudio.com) с расширениями
 [DotENV](https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv),
 [Geo Data Viewer](https://marketplace.visualstudio.com/items?itemName=RandomFractalsInc.geo-data-viewer),
 [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph),
-[Git Lens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) и
+[Git Lens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens),
+[Wikitext](https://marketplace.visualstudio.com/items?itemName=rowewilsonfrederiskholme.wikitext) и
 [Yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml).
 Для визуализации полученных данных подойдёт любая геоинформационная программа, например, [QGIS](https://qgis.org/ru/site/).
 
