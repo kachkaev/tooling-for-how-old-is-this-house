@@ -2,6 +2,18 @@ import deromanize from "deromanize";
 
 import { normalizeSpacing } from "./normalizeSpacing";
 
+export type ResultOfParseCompletionDates =
+  | {
+      derivedCompletionDatesForGeosemantica?: string;
+      derivedCompletionYear?: never;
+      derivedCompletionYearRange?: never;
+    }
+  | {
+      derivedCompletionDatesForGeosemantica: string;
+      derivedCompletionYear: number;
+      derivedCompletionYearRange: [number, number];
+    };
+
 const normalizeWording = (completionDates: string): string => {
   return (
     normalizeSpacing(completionDates)
@@ -80,67 +92,57 @@ const normalizeWording = (completionDates: string): string => {
   );
 };
 
-const centuryYearLookup: Record<string, number> = {
-  начало: 10,
-  середина: 50,
-  конец: 90,
-  "1-я половина": 25,
-  "2-я половина": 75,
-  "1-я треть": 20,
-  "2-я треть": 50,
-  "3-я треть": 80,
-  "1-я четверть": 15,
-  "2-я четверть": 35,
-  "3-я четверть": 65,
-  "4-я четверть": 85,
+const centuryYearAndRangeLookup: Record<string, [number, [number, number]]> = {
+  начало: [10, [0, 30]],
+  середина: [50, [30, 70]],
+  конец: [90, [70, 99]],
+  "1-я половина": [25, [0, 50]],
+  "2-я половина": [75, [50, 99]],
+  "1-я треть": [20, [0, 35]],
+  "2-я треть": [50, [30, 70]],
+  "3-я треть": [80, [65, 99]],
+  "1-я четверть": [15, [0, 30]],
+  "2-я четверть": [35, [20, 55]],
+  "3-я четверть": [65, [45, 80]],
+  "4-я четверть": [85, [70, 99]],
+};
+
+const decadeYearAndRangeLookup: Record<string, [number, [number, number]]> = {
+  начало: [2, [0, 4]],
+  середина: [5, [3, 7]],
+  конец: [8, [6, 9]],
 };
 
 const addAppliedYear = (originalValue: string, yearToAssume: number) =>
   `${originalValue} (применяется ${yearToAssume})`;
 
-export const extractApproximateYear = (
-  vaguelyWrittenCompletionDates: string,
-): number | undefined => {
-  const centuryMatch = vaguelyWrittenCompletionDates.match(/[XVI]+/i);
-  if (centuryMatch) {
-    const centStr = centuryMatch[0]!.toUpperCase();
-    const centPart = vaguelyWrittenCompletionDates
-      .substring(0, centuryMatch.index)
-      .trim();
-
-    for (const cp in centuryYearLookup) {
-      if (centPart.startsWith(cp)) {
-        const year = deromanize(centStr) * 100 - 100 + centuryYearLookup[cp]!;
-
-        return year;
-      }
-    }
-
-    const year = deromanize(centStr) * 100 - 50;
-
-    return year;
-  }
-
-  return undefined;
-};
-
-const deriveCompletionDatesForGeosemantica = (
+const doParseCompletionDates = (
   completionDates: string | undefined,
-): string | undefined => {
+): ResultOfParseCompletionDates => {
   if (typeof completionDates !== "string") {
-    return undefined;
+    return {};
   }
 
   let result = normalizeWording(completionDates);
   if (!result.length) {
-    return undefined;
+    return {};
   }
 
   // "1990-е"
+  // "1990-е годы"
   {
-    const decade = result.match(/^(\d{3})0-е$/)?.[1];
+    const decade = result.match(/^(\d{3})0-е/)?.[1];
     if (decade) {
-      return addAppliedYear(`${decade}0-е`, parseInt(decade) * 10 + 5);
+      const decadeStartYear = parseInt(decade) * 10;
+
+      return {
+        derivedCompletionDatesForGeosemantica: addAppliedYear(
+          `${decade}0-е`,
+          decadeStartYear + 5,
+        ),
+        derivedCompletionYear: decadeStartYear + 5,
+        derivedCompletionYearRange: [decadeStartYear, decadeStartYear + 9],
+      };
     }
   }
 
@@ -152,17 +154,59 @@ const deriveCompletionDatesForGeosemantica = (
     return `${yearStart}-${yearStart.substr(0, 4 - yearEnd.length)}${yearEnd}`;
   });
 
+  // "конец 1920-х"
+  {
+    const [, prefixmatch, decadeMatch] =
+      result.match(/^(начало|середина|конец) (\d{3}0)-х?$/) ?? [];
+    const decadeYearAndRange = decadeYearAndRangeLookup[prefixmatch ?? ""];
+    if (decadeYearAndRange && decadeMatch) {
+      const decadeStartYear = parseInt(decadeMatch);
+      const year = decadeStartYear + decadeYearAndRange[0];
+      result = `около ${year}`;
+    }
+  }
+
   // "конец 1920-х - начало 1930-х"
   {
     const [, decade1Match, , decade2Match] =
       result.match(/^конец (\d{3}0)(-х)? - начало (\d{3}0)(-х)?$/) ?? [];
     if (decade1Match && decade2Match) {
-      return `около ${decade2Match}`;
+      result = `около ${decade2Match}`;
     }
   }
 
-  if (result.match(/\d{4}/)) {
-    return result;
+  // "1842"
+  // "1842-1843"
+  // "около 1842"
+  // "около 1842-1843"
+  {
+    const [, from, , to] = result.match(/(\d{4})(-(\d{4}))?/) ?? [];
+
+    const extraAmbiguity = result.includes("около") ? 5 : 0;
+    if (from) {
+      const yearFrom = parseInt(from);
+      if (to) {
+        const yearTo = parseInt(to);
+
+        return {
+          derivedCompletionDatesForGeosemantica: result,
+          derivedCompletionYear: yearTo,
+          derivedCompletionYearRange: [
+            yearFrom - extraAmbiguity,
+            yearTo + extraAmbiguity,
+          ],
+        };
+      }
+
+      return {
+        derivedCompletionDatesForGeosemantica: result,
+        derivedCompletionYear: yearFrom,
+        derivedCompletionYearRange: [
+          yearFrom - extraAmbiguity,
+          yearFrom + extraAmbiguity,
+        ],
+      };
+    }
   }
 
   // "19 век"
@@ -171,7 +215,14 @@ const deriveCompletionDatesForGeosemantica = (
     if (centuryMatch) {
       const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
 
-      return addAppliedYear(result, centuryStartYear + 50);
+      return {
+        derivedCompletionDatesForGeosemantica: addAppliedYear(
+          result,
+          centuryStartYear + 50,
+        ),
+        derivedCompletionYear: centuryStartYear + 50,
+        derivedCompletionYearRange: [centuryStartYear, centuryStartYear + 99],
+      };
     }
   }
 
@@ -184,19 +235,31 @@ const deriveCompletionDatesForGeosemantica = (
       const from = centuryStartYear + parseInt(fromDecadeMatch);
       const to = centuryStartYear + parseInt(toDecadeMatch);
 
-      return `${from}-${to}`;
+      return {
+        derivedCompletionDatesForGeosemantica: `${from}-${to}`,
+        derivedCompletionYear: to,
+        derivedCompletionYearRange: [from, to],
+      };
     }
   }
 
   // "50-е года 19 века"
   {
-    const [, decadeMatch, , centuryMatch] =
-      result.match(/^(\d0)(-е)? года (\d{1,2}) века$/) ?? [];
+    const [, decadeMatch, , , centuryMatch] =
+      result.match(/^(\d0)(-е)? (года|годы|г|г\.|гг|гг\.) (\d{1,2}) века$/) ??
+      [];
     if (decadeMatch && centuryMatch) {
       const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
       const decadeStartYear = centuryStartYear + parseInt(decadeMatch);
 
-      return addAppliedYear(`${decadeStartYear}-е`, decadeStartYear + 5);
+      return {
+        derivedCompletionDatesForGeosemantica: addAppliedYear(
+          `${decadeStartYear}-е`,
+          decadeStartYear + 5,
+        ),
+        derivedCompletionYear: decadeStartYear + 5,
+        derivedCompletionYearRange: [decadeStartYear, decadeStartYear + 9],
+      };
     }
   }
 
@@ -208,17 +271,29 @@ const deriveCompletionDatesForGeosemantica = (
       result.match(/^(.*?) (\d{1,2}) века/) ?? [];
     if (centuryPartMatch && centuryMatch) {
       const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
-      const centuryYear = centuryYearLookup[centuryPartMatch];
-      if (centuryYear) {
-        return addAppliedYear(result, centuryStartYear + centuryYear);
+      const centuryYearAndRange = centuryYearAndRangeLookup[centuryPartMatch];
+      if (centuryYearAndRange) {
+        return {
+          derivedCompletionDatesForGeosemantica: addAppliedYear(
+            result,
+            centuryStartYear + centuryYearAndRange[0],
+          ),
+          derivedCompletionYear: centuryStartYear + centuryYearAndRange[0],
+          derivedCompletionYearRange: [
+            centuryStartYear + centuryYearAndRange[1][0],
+            centuryStartYear + centuryYearAndRange[1][1],
+          ],
+        };
       }
     }
   }
 
-  return result;
+  return {
+    derivedCompletionDatesForGeosemantica: result,
+  };
 };
 
-const deriveCompletionYearFromCompletionDatesUsingGeosemanticaRegexp = (
+const deriveCompletionYearUsingGeosemanticaRegexp = (
   completionDates: string | undefined,
 ): number | undefined => {
   if (!completionDates) {
@@ -226,7 +301,6 @@ const deriveCompletionYearFromCompletionDatesUsingGeosemanticaRegexp = (
   }
 
   const completionYearMatch = completionDates.match(
-    // Using the same regexp as on geosemantica.ru
     /\d{4}(?=,|\s|)(?!-)|\d(?:\s)\d{3}|\d{2}(?:\s)\d{2}/,
   );
 
@@ -239,19 +313,22 @@ const deriveCompletionYearFromCompletionDatesUsingGeosemanticaRegexp = (
 
 export const parseCompletionDates = (
   completionDates: string | undefined,
-): {
-  derivedCompletionDatesForGeosemantica?: string;
-  derivedCompletionYear?: number;
-  precision?: number;
-} => {
-  const derivedCompletionDatesForGeosemantica = deriveCompletionDatesForGeosemantica(
-    completionDates,
+): ResultOfParseCompletionDates => {
+  const result = doParseCompletionDates(completionDates);
+
+  const derivedCompletionYearUsingGeosemanticaRegexp = deriveCompletionYearUsingGeosemanticaRegexp(
+    result.derivedCompletionDatesForGeosemantica,
   );
 
-  return {
-    derivedCompletionDatesForGeosemantica,
-    derivedCompletionYear: deriveCompletionYearFromCompletionDatesUsingGeosemanticaRegexp(
-      derivedCompletionDatesForGeosemantica,
-    ),
-  };
+  if (
+    result.derivedCompletionYear !==
+    derivedCompletionYearUsingGeosemanticaRegexp
+  ) {
+    // It is safe to comment this line out if it blocks you
+    throw new Error(
+      `Unexpected completion year mismatch for string "${completionDates}". Local parser: ${result.derivedCompletionYear}, Geosemantica ${derivedCompletionYearUsingGeosemanticaRegexp}. This is a bug, please report it.`,
+    );
+  }
+
+  return result;
 };
