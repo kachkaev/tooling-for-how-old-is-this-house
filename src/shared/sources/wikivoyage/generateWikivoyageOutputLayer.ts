@@ -5,6 +5,7 @@ import wtf from "wtf_wikipedia";
 import { deepClean } from "../../deepClean";
 import { extractJsonFromPrependedHtmlComment } from "../../helpersForHtml";
 import { serializeTime } from "../../helpersForJson";
+import { normalizeSpacing } from "../../normalizeSpacing";
 import {
   GenerateOutputLayer,
   OutputLayerFeature,
@@ -28,23 +29,25 @@ interface MonumentTemplate {
   knid?: string;
   "knid-new"?: string;
 
-  region?: string; // ISO_3166-2 (lower case)
-  district?: string; // city name
-  municipality: string;
-  munid?: string; // municipality id
-  address?: string;
-  image?: string; // image name on Wikimedia commons
-  commonscat: string; // resource category on Wikimedia commons;
-  protection?: string; // protection category: Ф = федеральная (federal), Р = региональная (regional), М = местная (local), В = выявленный объект (?)
-  year?: string;
-  author?: string; // architect
-  link?: string;
-  description?: string;
-  wiki?: string; // Page name on Russian Wikipedia
   // location
   precise?: string; // "yes" / "no"
   lat?: string;
   long?: string;
+
+  address?: string;
+  author?: string; // architect
+  commonscat: string; // resource category on Wikimedia commons;
+  description?: string;
+  district?: string; // city name
+  image?: string; // image name on Wikimedia commons
+  link?: string;
+  municipality: string;
+  munid?: string; // municipality id
+  protection?: string; // protection category: Ф = федеральная (federal), Р = региональная (regional), М = местная (local), В = выявленный объект (?)
+  region?: string; // ISO_3166-2 (lower case)
+  style?: string;
+  wiki?: string; // Page name on Russian Wikipedia
+  year?: string;
 }
 
 interface UnknownTemplate {
@@ -80,6 +83,21 @@ const extractAddress = (
   };
 };
 
+const extractArchitect = (
+  templateJson: MonumentTemplate,
+): Partial<OutputLayerProperties> => {
+  const author = normalizeSpacing(templateJson.author ?? "");
+  if (!author) {
+    return {};
+  }
+
+  return {
+    architect: author
+      .replace(/арх(|.|итекторы?) /, "")
+      .replace(/(\p{L})\.\s?(\p{L})(\. | )/gu, "$1. $2. "),
+  };
+};
+
 const extractCompletionDates = (
   templateJson: MonumentTemplate,
 ): Partial<OutputLayerProperties> => {
@@ -106,7 +124,7 @@ const extractId = (
 const extractName = (
   templateJson: MonumentTemplate,
 ): Partial<OutputLayerProperties> => {
-  const name = templateJson.name?.trim();
+  const name = normalizeSpacing(templateJson.name ?? "");
   if (!name) {
     return {};
   }
@@ -129,6 +147,19 @@ const extractPhoto = (
     )}?width=1000`,
     photoAuthorName: "Wikimedia Commons",
     photoAuthorUrl: "https://commons.wikimedia.org",
+  };
+};
+
+const extractStyle = (
+  templateJson: MonumentTemplate,
+): Partial<OutputLayerProperties> => {
+  const style = normalizeSpacing(templateJson.style ?? "");
+  if (!style) {
+    return {};
+  }
+
+  return {
+    style: style.toLowerCase(),
   };
 };
 
@@ -192,10 +223,12 @@ export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
         const properties: OutputLayerProperties = {
           knownAt,
           ...extractAddress(templateJson),
+          ...extractArchitect(templateJson),
           ...extractCompletionDates(templateJson),
           ...extractId(templateJson),
           ...extractName(templateJson),
           ...extractPhoto(templateJson),
+          ...extractStyle(templateJson),
           ...extractUrl(templateJson),
           ...extractWikipediaUrl(templateJson),
         };
