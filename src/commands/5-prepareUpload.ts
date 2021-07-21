@@ -20,19 +20,39 @@ interface UploadFeatureProperties {
 
   /* eslint-disable @typescript-eslint/naming-convention */
   /** Using ‘adress’ instead of ‘address’ for consistency with first uploaded cities */
-  r_adress?: string;
-  r_architect?: string;
-  r_copyrights?: string;
-  r_floors?: number;
-  r_name?: string;
-  r_photo_url?: string;
-  r_style?: string;
-  r_url?: string;
-  r_wikipedia?: string;
-  r_year_int?: number;
-  r_years_str?: string;
+  r_adress?: null | string;
+  r_architect?: null | string;
+  r_copyrights?: null | string;
+  r_floors?: null | number;
+  r_name?: null | string;
+  r_photo_url?: null | string;
+  r_style?: null | string;
+  r_url?: null | string;
+  r_wikipedia?: null | string;
+  r_year_int?: null | number;
+  r_years_str?: null | string;
   /* eslint-enable @typescript-eslint/naming-convention */
 }
+
+// Placeholder properties are added to the first feature of the resulting feature collection.
+// This ensures property list completeness and order in apps like QGIS.
+const placeholderProperties: Record<keyof UploadFeatureProperties, null> = {
+  fid: null,
+
+  /* eslint-disable @typescript-eslint/naming-convention */
+  r_adress: null,
+  r_architect: null,
+  r_copyrights: null,
+  r_floors: null,
+  r_name: null,
+  r_photo_url: null,
+  r_style: null,
+  r_url: null,
+  r_wikipedia: null,
+  r_year_int: null,
+  r_years_str: null,
+  /* eslint-enable @typescript-eslint/naming-convention */
+};
 
 const generateCopyrights = ({
   photoUrl,
@@ -98,13 +118,15 @@ export const prepareUpload: Command = async ({ logger }) => {
 
   const outputFeatures: UploadFeature[] = [];
   for (const inputFeature of inputFeatureCollection.features) {
-    const outputFeatureProperties: UploadFeatureProperties = {
-      fid: 0,
+    const index = outputFeatures.length;
+    const outputFeatureProperties: UploadFeatureProperties = deepClean({
+      fid: index + 1,
 
       /* eslint-disable @typescript-eslint/naming-convention */
       r_adress: removeDefaultRegionFromAddress(
         inputFeature.properties.derivedBeautifiedAddress ??
-          inputFeature.properties.address,
+          inputFeature.properties.address ??
+          undefined,
       ),
       r_architect: inputFeature.properties.architect,
       r_copyrights: generateCopyrights(inputFeature.properties),
@@ -118,11 +140,16 @@ export const prepareUpload: Command = async ({ logger }) => {
       r_years_str:
         inputFeature.properties.derivedCompletionDatesForGeosemantica,
       /* eslint-enable @typescript-eslint/naming-convention */
-    };
+    });
+
     outputFeatures.push(
       turf.feature(
         inputFeature.geometry,
-        sortKeys(deepClean(outputFeatureProperties)),
+        sortKeys(
+          index === 0
+            ? { ...placeholderProperties, ...outputFeatureProperties }
+            : outputFeatureProperties,
+        ),
       ),
     );
   }

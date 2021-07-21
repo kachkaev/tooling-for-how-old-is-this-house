@@ -42,6 +42,40 @@ interface VariantInfo {
   parsedDataToOmitSelectors?: DataToOmitSelector[];
 }
 
+// Placeholder properties are added to the first feature of the resulting feature collection.
+// This ensures property list completeness and order in apps like QGIS.
+const placeholderProperties: Record<keyof MixedPropertyVariants, null> = {
+  address: null,
+  addressSource: null,
+  architect: null,
+  architectSource: null,
+  buildingType: null,
+  buildingTypeSource: null,
+  completionDates: null,
+  completionDatesSource: null,
+  derivedBeautifiedAddress: null,
+  derivedBeautifiedName: null,
+  derivedCompletionDatesForGeosemantica: null,
+  derivedCompletionYear: null,
+  floorCountAboveGround: null,
+  floorCountBelowGround: null,
+  floorCountSource: null,
+  geometryId: null,
+  geometrySource: null,
+  name: null,
+  nameSource: null,
+  photoAuthorName: null,
+  photoAuthorUrl: null,
+  photoSource: null,
+  photoUrl: null,
+  style: null,
+  styleSource: null,
+  url: null,
+  urlSource: null,
+  wikipediaUrl: null,
+  wikipediaUrlSource: null,
+};
+
 export const mixPropertyVariants: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing property variants"));
 
@@ -75,7 +109,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
         variantInfo = {
           instances: [variantInfoInstance],
           parsedDataToOmitSelectors: parseDataToOmit(
-            propertyVariant.dataToOmit,
+            propertyVariant.dataToOmit ?? undefined,
             (issue) => dataToOmitIssues.push(issue),
           ),
         };
@@ -231,7 +265,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
       targetBuildArea: turf.area(inputFeature),
     };
 
-    const mixedPropertyVariants: MixedPropertyVariants = {
+    const mixedPropertyVariants: MixedPropertyVariants = deepClean({
       geometryId: inputFeature.properties.geometryId,
       geometrySource: inputFeature.properties.geometrySource,
       ...pickAddress({ ...payloadForPick, addressHandlingConfig }),
@@ -243,12 +277,16 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
       ...pickStyle(payloadForPick),
       ...pickUrl(payloadForPick),
       ...pickWikipediaUrl(payloadForPick),
-    };
+    });
 
     outputFeatures.push(
       turf.feature(
         inputFeature.geometry,
-        deepClean(sortKeys(mixedPropertyVariants)),
+        sortKeys(
+          outputFeatures.length === 0
+            ? { ...placeholderProperties, ...mixedPropertyVariants }
+            : mixedPropertyVariants,
+        ),
       ),
     );
   }

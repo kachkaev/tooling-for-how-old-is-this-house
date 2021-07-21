@@ -2,8 +2,9 @@ import * as turf from "@turf/turf";
 
 import { OutputLayerProperties } from "../outputLayers";
 import { OutputGeometry } from "../outputLayers/types";
+import { OmitNulls } from "../types";
 
-export interface PropertyVariant extends OutputLayerProperties {
+export interface PropertyVariantWithNulls extends OutputLayerProperties {
   id: string;
   source: string;
   /** Build area as derived from geometry (if geometry is polygon / multipolygon) */
@@ -11,6 +12,8 @@ export interface PropertyVariant extends OutputLayerProperties {
   /** Distance to geometry in meters */
   distance: number;
 }
+
+export type PropertyVariant = OmitNulls<PropertyVariantWithNulls>;
 
 /**
  * Used in data to omit field & when picking property variants
@@ -78,50 +81,50 @@ export type MixedOutputLayersFeatureCollection = turf.FeatureCollection<
 // property variant mixing
 
 export interface MixedPropertyVariants {
-  address?: string;
-  addressSource?: string;
+  address?: null | string;
+  addressSource?: null | string;
 
-  architect?: string;
-  architectSource?: string;
+  architect?: null | string;
+  architectSource?: null | string;
 
-  buildingType?: string;
-  buildingTypeSource?: string;
+  buildingType?: null | string;
+  buildingTypeSource?: null | string;
 
-  completionDates?: string;
-  completionDatesSource?: string;
+  completionDates?: null | string;
+  completionDatesSource?: null | string;
 
-  floorCountAboveGround?: number;
-  floorCountBelowGround?: number;
-  floorCountSource?: string;
+  /** The value is derived from address */
+  derivedBeautifiedAddress?: null | string;
+  /** The value is derived from name */
+  derivedBeautifiedName?: null | string;
+  /** The value is derived from completionDates so that it is parsable by Geosemantica */
+  derivedCompletionDatesForGeosemantica?: null | string;
+  /** The value is derived from completionDates and is stored to simplify data visualization */
+  derivedCompletionYear?: null | number;
+
+  floorCountAboveGround?: null | number;
+  floorCountBelowGround?: null | number;
+  floorCountSource?: null | string;
 
   geometryId: string;
   geometrySource: string;
 
-  name?: string;
-  nameSource?: string;
+  name?: null | string;
+  nameSource?: null | string;
 
-  photoAuthorName?: string;
-  photoAuthorUrl?: string;
-  photoSource?: string;
-  photoUrl?: string;
+  photoAuthorName?: null | string;
+  photoAuthorUrl?: null | string;
+  photoSource?: null | string;
+  photoUrl?: null | string;
 
-  style?: string;
-  styleSource?: string;
+  style?: null | string;
+  styleSource?: null | string;
 
-  url?: string;
-  urlSource?: string;
+  url?: null | string;
+  urlSource?: null | string;
 
-  wikipediaUrl?: string;
-  wikipediaUrlSource?: string;
-
-  /** The value is derived from address */
-  derivedBeautifiedAddress?: string;
-  /** The value is derived from name */
-  derivedBeautifiedName?: string;
-  /** The value is derived from completionDates so that it is parsable by Geosemantica */
-  derivedCompletionDatesForGeosemantica?: string;
-  /** The value is derived from completionDates and is stored to simplify data visualization */
-  derivedCompletionYear?: number;
+  wikipediaUrl?: null | string;
+  wikipediaUrlSource?: null | string;
 }
 
 export type MixedPropertyVariantsFeature = turf.Feature<

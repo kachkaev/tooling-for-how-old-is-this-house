@@ -3,6 +3,7 @@ import chalk from "chalk";
 import path from "path";
 import sortKeys from "sort-keys";
 
+import { deepClean } from "./deepClean";
 import { geocodeAddress, loadCombinedGeocodeDictionary } from "./geocoding";
 import { writeFormattedJson } from "./helpersForJson";
 import { getSourceDirPath } from "./helpersForPaths";
@@ -11,6 +12,7 @@ import {
   GenerateOutputLayer,
   getOutputLayerFileName,
   OutputLayer,
+  OutputLayerProperties,
   reportGeocodesInOutputLayer,
 } from "./outputLayers";
 import { parseCompletionDates } from "./parseCompletionDates";
@@ -40,6 +42,30 @@ export const generateReportGeocodes = ({
       logger,
     });
   };
+};
+
+// Placeholder properties are added to the first feature of the resulting feature collection.
+// This ensures property list completeness and order in apps like QGIS.
+const placeholderProperties: Record<keyof OutputLayerProperties, null> = {
+  address: null,
+  architect: null,
+  buildingType: null,
+  completionDates: null,
+  dataToOmit: null,
+  derivedCompletionYear: null,
+  documentedBuildArea: null,
+  externalGeometrySource: null,
+  floorCountAboveGround: null,
+  floorCountBelowGround: null,
+  id: null,
+  knownAt: null,
+  name: null,
+  photoAuthorName: null,
+  photoAuthorUrl: null,
+  photoUrl: null,
+  style: null,
+  url: null,
+  wikipediaUrl: null,
 };
 
 export const generateExtractOutputLayer = ({
@@ -85,15 +111,23 @@ export const generateExtractOutputLayer = ({
 
     const outputLayerWithDerivedProperties: OutputLayer = {
       ...outputLayer,
-      features: outputLayer.features.map((feature) => ({
-        ...feature,
-        properties: sortKeys({
+      features: outputLayer.features.map((feature, index) => {
+        const propertiesWithDerivatives = deepClean({
           ...feature.properties,
           derivedCompletionYear: parseCompletionDates(
-            feature.properties.completionDates,
+            feature.properties.completionDates ?? undefined,
           ).derivedCompletionYear,
-        }),
-      })),
+        });
+
+        return {
+          ...feature,
+          properties: sortKeys(
+            index === 0
+              ? { ...placeholderProperties, ...propertiesWithDerivatives }
+              : propertiesWithDerivatives,
+          ),
+        };
+      }),
     };
 
     logger.log(` Done.`);

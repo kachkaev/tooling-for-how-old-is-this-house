@@ -43,7 +43,9 @@ export const GeoMapLayerWithBuildingCompletionYears: React.VoidFunctionComponent
     (feature: MixedPropertyVariantsFeature) => React.SVGProps<SVGPathElement>
   >(
     (feature) => ({
-      fill: mapCompletionYearToColor(feature.properties.derivedCompletionYear),
+      fill: mapCompletionYearToColor(
+        feature.properties.derivedCompletionYear ?? undefined,
+      ),
       stroke: "#0e0f12",
       paintOrder: "stroke",
       strokeOpacity: 0.3,

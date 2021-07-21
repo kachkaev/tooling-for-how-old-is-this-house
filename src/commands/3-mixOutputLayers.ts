@@ -8,7 +8,9 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
+import sortKeys from "sort-keys";
 
+import { deepClean } from "../shared/deepClean";
 import {
   addBufferToBbox,
   calculatePointDistanceToPolygonInMeters,
@@ -27,6 +29,7 @@ import {
   getMixedOutputLayersFilePath,
   MixedOutputLayersFeature,
   PropertyVariant,
+  PropertyVariantWithNulls,
 } from "../shared/outputMixing";
 import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
@@ -107,6 +110,9 @@ const ensureUniqueIdProperty = (
 
 const generateCommentWithMixedFeatures = (count: number) =>
   `mixed features: ${count.toString().padStart(3, " ")}`;
+
+const cleanPropertyVariant = (x: PropertyVariantWithNulls): PropertyVariant =>
+  sortKeys(deepClean(x));
 
 export const mixOutputLayers: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing output layers"));
@@ -291,12 +297,12 @@ export const mixOutputLayers: Command = async ({ logger }) => {
       for (const filteredBaseLayer of filteredBaseLayers) {
         for (const baseLayerFeature of filteredBaseLayer.features) {
           const propertiesVariants: PropertyVariant[] = [
-            {
+            cleanPropertyVariant({
               ...baseLayerFeature.properties,
               derivedBuildArea: Math.round(turf.area(baseLayerFeature)),
               distance: 0,
               source: filteredBaseLayer.source,
-            },
+            }),
           ];
 
           for (const filteredMixinLayer of filteredMixinLayers) {
@@ -321,11 +327,13 @@ export const mixOutputLayers: Command = async ({ logger }) => {
               );
 
               if (distance <= bufferSizeInMeters) {
-                propertiesVariants.push({
-                  ...mixinLayerFeature.properties,
-                  source: filteredMixinLayer.source,
-                  distance,
-                });
+                propertiesVariants.push(
+                  cleanPropertyVariant({
+                    ...mixinLayerFeature.properties,
+                    source: filteredMixinLayer.source,
+                    distance,
+                  }),
+                );
               }
             }
           }

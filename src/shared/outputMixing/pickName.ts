@@ -26,7 +26,9 @@ export const pickName: PickFromPropertyVariants<
   let fallbackTrivialResult: Result | undefined = undefined;
 
   for (const propertyVariant of propertyVariants) {
-    const derivedBeautifiedName = beautifyName(propertyVariant.name);
+    const derivedBeautifiedName = beautifyName(
+      propertyVariant.name ?? undefined,
+    );
     if (propertyVariant.name && derivedBeautifiedName) {
       const result: Result = {
         derivedBeautifiedName,
