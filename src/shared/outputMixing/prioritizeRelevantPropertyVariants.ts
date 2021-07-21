@@ -1,7 +1,6 @@
 import chalk from "chalk";
 import _ from "lodash";
 
-import { buildGlobalFeatureOrVariantId } from "./helpersForProperties";
 import {
   ListRelevantPropertyVariants,
   PropertySelector,
@@ -75,11 +74,8 @@ export const prioritizeRelevantPropertyVariants = ({
     ({ externalGeometrySource }) => (externalGeometrySource ? 1 : 0),
     // ...order by build area DESC...
     ({ derivedBuildArea }) => (derivedBuildArea ? -derivedBuildArea : 0),
-    // ...and finally by id consistency
-    ({ source, id }) =>
-      prependZerosToNumbersToImproveOrdering(
-        buildGlobalFeatureOrVariantId(source, id),
-      ),
+    // ...and finally by id within source for consistency
+    ({ id }) => prependZerosToNumbersToImproveOrdering(id),
   ]);
 
   const unrecognizedSources = _.orderBy([...unrecognizedSourcesSet]);
