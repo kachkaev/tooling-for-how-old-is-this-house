@@ -11,7 +11,6 @@ import {
   OutputLayerFeature,
   OutputLayerProperties,
 } from "../../outputLayers";
-import { parseCompletionDates } from "../../parseCompletionDates";
 import { processFiles } from "../../processFiles";
 import { getTerritoryExtent } from "../../territory";
 import {
@@ -108,8 +107,6 @@ const extractCompletionDates = (
 
   return {
     completionDates,
-    derivedCompletionYear: parseCompletionDates(completionDates)
-      .derivedCompletionYear,
   };
 };
 

@@ -10,7 +10,6 @@ import {
   serializeTime,
   writeFormattedJson,
 } from "../../../shared/helpersForJson";
-import { parseCompletionDates } from "../../../shared/parseCompletionDates";
 import { processFiles } from "../../../shared/processFiles";
 import {
   getHouseFilePath,
@@ -69,11 +68,11 @@ export const parseRawHouseInfos: Command = async ({ logger }) => {
 
       // extract year
       const yearMatch = rawInfo.match(
-        /<dt>Год постройки<\/dt>\s*<dd>(.*)<\/dd>/,
+        /<dt>Год постройки<\/dt>\s*<dd>(\d{4})<\/dd>/,
       );
-      const { derivedCompletionYear } = parseCompletionDates(yearMatch?.[1]);
-      if (derivedCompletionYear) {
-        info.year = derivedCompletionYear;
+      const year = parseInt(yearMatch?.[1] ?? "");
+      if (year) {
+        info.year = year;
       }
 
       // extract numberOfFloors
