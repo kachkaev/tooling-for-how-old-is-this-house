@@ -25,8 +25,8 @@ export const pickAddress: PickFromPropertyVariants<
     logger,
     prioritizedSources: [
       "manual",
-      "mkrf",
       "osm",
+      "mkrf",
       "mingkh",
       "rosreestr",
       "wikivoyage",
@@ -35,30 +35,28 @@ export const pickAddress: PickFromPropertyVariants<
     targetBuildArea,
   });
 
-  const fallbackResult: Result | undefined = undefined;
-
   for (const propertyVariant of propertyVariants) {
-    if (propertyVariant.address) {
-      const result: Result = {
-        address: propertyVariant.address,
-        addressSource: propertyVariant.source,
-      };
+    if (!propertyVariant.address) {
+      continue;
+    }
 
-      try {
-        buildStandardizedAddressAst(
-          buildCleanedAddressAst(
-            propertyVariant.address,
-            addressHandlingConfig,
-          ),
-          addressHandlingConfig,
-        );
+    const result: Result = {
+      address: propertyVariant.address,
+      addressSource: propertyVariant.source,
+    };
 
-        return result;
-      } catch {
-        // noop (continue)
-      }
+    try {
+      buildStandardizedAddressAst(
+        buildCleanedAddressAst(propertyVariant.address, addressHandlingConfig),
+        addressHandlingConfig,
+      );
+
+      return result;
+    } catch {
+      // TODO: Support non-standardized addresses as fallback option
+      // (need to exclude common issues like pointers to a specific garage)
     }
   }
 
-  return fallbackResult;
+  return undefined;
 };

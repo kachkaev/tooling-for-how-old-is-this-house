@@ -8,7 +8,13 @@ export const pickPhoto: PickFromPropertyVariants<
     callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "mkrf", "wikivoyage", "wikimapia"],
+    prioritizedSources: [
+      "manual",
+      "mkrf",
+      "wikidata",
+      "wikivoyage",
+      "wikimapia",
+    ],
     propertySelectors: ["photo"],
     targetBuildArea,
   });

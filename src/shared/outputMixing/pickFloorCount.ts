@@ -8,7 +8,7 @@ export const pickFloorCount: PickFromPropertyVariants<
     callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "osm", "rosreestr", "mingkh"],
+    prioritizedSources: ["manual", "osm", "mingkh", "rosreestr"],
     propertySelectors: ["floorCount"],
     targetBuildArea,
   });

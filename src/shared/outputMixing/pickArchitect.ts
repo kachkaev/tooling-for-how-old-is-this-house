@@ -8,7 +8,7 @@ export const pickArchitect: PickFromPropertyVariants<
     callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "wikivoyage"],
+    prioritizedSources: ["manual", "wikidata", "wikivoyage"],
     propertySelectors: ["architect"],
     targetBuildArea,
   });
