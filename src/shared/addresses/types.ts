@@ -128,6 +128,7 @@ export interface WordReplacementConfig {
   detached?: boolean;
   from: string | string[];
   to: string;
+  silenceNormalizationWarning?: boolean;
 }
 
 export interface WordReplacementDirective {

@@ -19,6 +19,7 @@ export const matchWordSequence = (): boolean => {
 const extractAndValidateWordsInWordReplacementConfig = (
   text: string,
   reportIssue?: ReportIssue,
+  silenceNormalizationWarning?: boolean,
 ): AddressNodeWithUnclassifiedWord[] | undefined => {
   const nodes = extractUnclassifiedWordsWithPunctuation(text);
   const words = nodes.filter(
@@ -39,9 +40,9 @@ const extractAndValidateWordsInWordReplacementConfig = (
     (word) => word.value,
   );
 
-  if (printedWords !== text) {
+  if (printedWords !== text && !silenceNormalizationWarning) {
     reportIssue?.(
-      `Please replace "${text}" with "${printedWords}" (provided value is not normalized)`,
+      `Provided value "${text}" is not normalized. Please replace it with "${printedWords}" or add silenceNormalizationWarning: true to word replacement config`,
     );
   }
 
@@ -61,10 +62,12 @@ const buildWordReplacementDirectiveTree = (
       const fromWords = extractAndValidateWordsInWordReplacementConfig(
         wordReplacementFrom,
         reportIssue,
+        wordReplacement.silenceNormalizationWarning,
       );
       const toWords = extractAndValidateWordsInWordReplacementConfig(
         wordReplacement.to,
         reportIssue,
+        wordReplacement.silenceNormalizationWarning,
       );
 
       if (!fromWords || !toWords) {
