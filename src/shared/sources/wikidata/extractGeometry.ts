@@ -1,11 +1,11 @@
 import * as turf from "@turf/turf";
 
+import { WikidataQueryItem } from "./types";
+
 /**
  * Converts "Point(lon, lat)" to Point geometry
  */
-export const parseCoordinateLocation = (
-  serializedPoint: string,
-): turf.Point => {
+const parseCoordinateLocation = (serializedPoint: string): turf.Point => {
   const [, lonMatch, latMatch] =
     serializedPoint.match(/^Point\(([-\d.]+) ([-\d.]+)\)$/) ?? [];
   if (!lonMatch || !latMatch) {
@@ -17,3 +17,6 @@ export const parseCoordinateLocation = (
     coordinates: [parseFloat(lonMatch), parseFloat(latMatch)],
   };
 };
+
+export const extractGeometry = (item: WikidataQueryItem): turf.Point =>
+  parseCoordinateLocation(item.coordinateLocation.value);

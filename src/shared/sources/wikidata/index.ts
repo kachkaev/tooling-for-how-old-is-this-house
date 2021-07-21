@@ -1,3 +1,4 @@
+export * from "./extractGeometry";
+export * from "./generateWikidataOutputLayer";
 export * from "./helpersForPaths";
-export * from "./parseCoordinateLocation";
 export * from "./types";

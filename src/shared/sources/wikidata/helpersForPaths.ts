@@ -6,6 +6,6 @@ export const getWikidataDirPath = () => {
   return path.resolve(getTerritoryDirPath(), "sources", "wikidata");
 };
 
-export const getWikidataFetchedRecordsFilePath = (): string => {
-  return path.resolve(getWikidataDirPath(), "fetched-records.json");
+export const getWikidataProcessedQueryResultFilePath = (): string => {
+  return path.resolve(getWikidataDirPath(), "processed-query-result.json");
 };

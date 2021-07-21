@@ -366,18 +366,13 @@ Although some of the data sources are country-specific, parts of the repo can st
     На каждый проблемный квартал достаточно ввести только один кадастровый номер (желательно максимальный из найденных).
     После обновления файла `territory-config.yml` надо перезапустить команду `4-generateInitialObjectInfoPages` и все последующие, которые связаны с Росреестром и смешиванием слоёв.
 
-<!--
+#### [Викиданные](https://www.wikidata.org)
 
-#### Викидата
-
-Этот источник не доделан, потому что для Пензы нашлось мало данных.
-
-1.  Скачайте данные:
+1.  Скачайте записи внутри территории:
 
     ```sh
-    yarn exe src/commands/2-sources/wikidata/1-fetchRawRecords.ts
+    yarn exe src/commands/2-sources/wikidata/1-fetchItems.ts
     ```
--->
 
 ##### [Викимапия](https://wikimapia.org)
 
@@ -423,6 +418,7 @@ yarn exe src/commands/2-sources/mingkh/8-reportGeocodes.ts
 yarn exe src/commands/2-sources/mkrf/8-reportGeocodes.ts
 yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
 yarn exe src/commands/2-sources/rosreestr/8-reportGeocodes.ts
+yarn exe src/commands/2-sources/wikidata/8-reportGeocodes.ts
 yarn exe src/commands/2-sources/wikimapia/8-reportGeocodes.ts
 yarn exe src/commands/2-sources/wikivoyage/8-reportGeocodes.ts
 ```
@@ -500,6 +496,7 @@ yarn exe src/commands/2-sources/mingkh/9-extractOutputLayer.ts
 yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts
 yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
 yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts
+yarn exe src/commands/2-sources/wikidata/9-extractOutputLayer.ts
 yarn exe src/commands/2-sources/wikimapia/9-extractOutputLayer.ts
 yarn exe src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts
 ```

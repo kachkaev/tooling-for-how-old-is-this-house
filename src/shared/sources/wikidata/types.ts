@@ -1,4 +1,4 @@
-export interface RecordInWikidataApiResponse {
+export interface WikidataQueryItem {
   architectLabel?: {
     "xml:lang": string;
     type: "literal";
@@ -22,12 +22,18 @@ export interface RecordInWikidataApiResponse {
     value: `Point(${number} ${number})`;
   };
 
+  dateModified: {
+    datatype: "http://www.w3.org/2001/XMLSchema#dateTime";
+    type: "literal";
+    value: string;
+  };
+
   image?: {
     type: "uri";
     value: string;
   };
 
-  item?: {
+  item: {
     type: "uri";
     value: string;
   };
@@ -44,11 +50,11 @@ export interface WikidataApiResponse {
     vars: string[];
   };
   results: {
-    bindings: RecordInWikidataApiResponse[];
+    bindings: WikidataQueryItem[];
   };
 }
 
-export interface WikidataRecordsFileContent {
+export interface ProcessedQueryResult {
   fetchedAt: string;
-  records: RecordInWikidataApiResponse[];
+  items: WikidataQueryItem[];
 }
