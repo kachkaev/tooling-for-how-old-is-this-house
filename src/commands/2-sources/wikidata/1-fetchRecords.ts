@@ -5,15 +5,20 @@ import chalk from "chalk";
 import dedent from "dedent";
 
 import { roughenBbox } from "../../../shared/helpersForGeometry";
-import { writeFormattedJson } from "../../../shared/helpersForJson";
 import {
-  getWikidataRecordsFilePath,
+  serializeTime,
+  writeFormattedJson,
+} from "../../../shared/helpersForJson";
+import {
+  getWikidataFetchedRecordsFilePath,
+  parseCoordinateLocation,
   WikidataApiResponse,
+  WikidataRecordsFileContent,
 } from "../../../shared/sources/wikidata";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-export const fetchRawRecords: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikidata: Fetch raw records (execute query)"));
+export const fetchRecords: Command = async ({ logger }) => {
+  logger.log(chalk.bold("sources/wikidata: Fetch records (execute query)"));
 
   process.stdout.write(chalk.green("Preparing to make the API query..."));
 
@@ -21,7 +26,8 @@ export const fetchRawRecords: Command = async ({ logger }) => {
   const roughBbox = roughenBbox(turf.bbox(territoryExtent), 3);
 
   const query = dedent`
-      SELECT ?item ?image ?coordinate_location ?itemLabel ?article ?architectLabel  ?architectural_styleLabel WHERE {
+      SELECT ?architectLabel ?architecturalStyleLabel ?article ?coordinateLocation ?image ?item  ?itemLabel
+       WHERE {
         ?item wdt:P31/wdt:P279* wd:Q41176 . # building
         SERVICE wikibase:label { bd:serviceParam wikibase:language "ru". }
         SERVICE wikibase:box {
@@ -30,9 +36,9 @@ export const fetchRawRecords: Command = async ({ logger }) => {
             wikibase:cornerNorthEast "Point(${roughBbox[2]} ${roughBbox[3]})"^^geo:wktLiteral.
         }
         OPTIONAL { ?item wdt:P84 ?architect. }
-        OPTIONAL { ?item wdt:P149 ?architectural_style. }
+        OPTIONAL { ?item wdt:P149 ?architecturalStyle. }
+        OPTIONAL { ?item wdt:P625 ?coordinateLocation. }
         OPTIONAL { ?item wdt:P18 ?image. }
-        OPTIONAL { ?item wdt:P625 ?coordinate_location. }
         OPTIONAL {
           ?article schema:about ?item;
             schema:inLanguage "ru".
@@ -52,17 +58,25 @@ export const fetchRawRecords: Command = async ({ logger }) => {
   ).data;
 
   process.stdout.write(" Done.\n");
-  // process.stdout.write(chalk.green("Post-processing..."));
+  process.stdout.write(chalk.green("Post-processing..."));
 
-  // TODO: Scan through objects, parse location and filter items outside region extent
+  const fileContent: WikidataRecordsFileContent = {
+    fetchedAt: serializeTime(),
+    // Scan through objects, parse location and filter items outside region extent
+    records: rawJsonData.results.bindings.filter((item) => {
+      const point = parseCoordinateLocation(item.coordinateLocation.value);
 
-  // process.stdout.write(" Done.\n");
+      return turf.booleanPointInPolygon(point, territoryExtent);
+    }),
+  };
+
+  process.stdout.write(" Done.\n");
   process.stdout.write(chalk.green("Saving..."));
 
-  const filePath = getWikidataRecordsFilePath();
-  await writeFormattedJson(filePath, rawJsonData);
+  const filePath = getWikidataFetchedRecordsFilePath();
+  await writeFormattedJson(filePath, fileContent);
 
   process.stdout.write(` Done: ${chalk.magenta(filePath)}\n`);
 };
 
-autoStartCommandIfNeeded(fetchRawRecords, __filename);
+autoStartCommandIfNeeded(fetchRecords, __filename);
