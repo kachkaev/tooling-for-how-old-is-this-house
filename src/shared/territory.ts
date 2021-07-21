@@ -53,6 +53,7 @@ export interface TerritoryConfig {
     };
     mkrf?: {
       fallbackAddressSelectorsForObjectsWithoutGeometry?: string[] | string[][];
+      fixedLonLatById?: Record<string, [number, number]>;
     };
     rosreestr?: {
       handpickedCnsForPageInfos?: string[];

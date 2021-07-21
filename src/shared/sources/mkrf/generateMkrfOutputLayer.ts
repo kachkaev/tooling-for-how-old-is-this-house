@@ -10,7 +10,7 @@ import {
   OutputLayerProperties,
 } from "../../outputLayers";
 import { processFiles } from "../../processFiles";
-import { getTerritoryExtent } from "../../territory";
+import { getTerritoryConfig, getTerritoryExtent } from "../../territory";
 import { getMkrfObjectDirPath } from "./helpersForPaths";
 import { MkrfObjectFile } from "./types";
 
@@ -42,6 +42,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
   geocodeAddress,
 }) => {
   const outputFeatures: OutputLayer["features"] = [];
+  const territoryConfig = await getTerritoryConfig();
   const territoryCentroid = turf.centroid(await getTerritoryExtent());
 
   await processFiles({
@@ -91,11 +92,28 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         logger?.log(`${warningPrefix}${chalk.yellow("No address")}`);
       }
 
+      // Id
+      const id = objectFile.nativeId;
+
       // Coordinates
-      const mapPosition = objectFile.data.general.address?.mapPosition;
-      let point = mapPosition ?? null;
-      let pointSource = "map position";
+      let point: turf.Point | null = null;
+      let pointSource: string = "unknown";
       let externalGeometrySource: string | undefined = undefined;
+
+      const fixedLonLat = territoryConfig.sources?.mkrf?.fixedLonLatById?.[id];
+      if (
+        typeof fixedLonLat?.[0] === "number" &&
+        typeof fixedLonLat[1] === "number"
+      ) {
+        point = { type: "Point", coordinates: fixedLonLat };
+        pointSource = "territory config";
+      }
+
+      const mapPosition = objectFile.data.general.address?.mapPosition;
+      if (!point && mapPosition) {
+        point = mapPosition;
+        pointSource = "map position";
+      }
 
       const additionalCoordinates =
         objectFile.data.general?.additionalCoordinates;
@@ -162,7 +180,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
 
       // Combined properties
       const outputLayerProperties: OutputLayerProperties = {
-        id: objectFile.nativeId,
+        id,
 
         address,
         completionDates,
