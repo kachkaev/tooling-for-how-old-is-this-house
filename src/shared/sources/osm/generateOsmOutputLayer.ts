@@ -7,6 +7,7 @@ import path from "path";
 
 import { deepClean } from "../../deepClean";
 import { TrivialName } from "../../helpersForNames";
+import { normalizeSpacing } from "../../normalizeSpacing";
 import {
   GenerateOutputLayer,
   OutputLayer,
@@ -51,6 +52,19 @@ const deriveFloorCountAboveGroundFromBuildingTag = (
   }
 
   return undefined;
+};
+
+// https://wiki.openstreetmap.org/wiki/Key:start_date
+const processStartDate = (startDate: string | undefined) => {
+  const result = normalizeSpacing(startDate ?? "")
+    .toLowerCase()
+    .replace(/^before /, "до ");
+
+  if (!result) {
+    return undefined;
+  }
+
+  return result;
 };
 
 // https://wiki.openstreetmap.org/wiki/Key:amenity
@@ -288,7 +302,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
       const outputLayerProperties: OutputLayerProperties = {
         address: generateAddress(building),
         buildingType,
-        completionDates: building.properties["start_date"],
+        completionDates: processStartDate(building.properties["start_date"]),
         floorCountAboveGround,
         floorCountBelowGround,
         id: building.properties.id,

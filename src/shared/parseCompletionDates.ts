@@ -128,6 +128,19 @@ const doParseCompletionDates = (
     return {};
   }
 
+  // "до 1917"
+  {
+    const yearMatch = result.match(/^до (\d{4})$/)?.[1];
+    if (yearMatch) {
+      const year = parseInt(yearMatch);
+
+      return {
+        derivedCompletionDatesForGeosemantica: result,
+        derivedCompletionYear: year,
+        derivedCompletionYearRange: [-Number.MAX_SAFE_INTEGER, year],
+      };
+    }
+  }
   // "1990-е"
   // "1990-е годы"
   {

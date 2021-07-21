@@ -9,6 +9,7 @@ import {
   buildStandardizedAddressAst,
 } from "../../addresses";
 import { deepClean } from "../../deepClean";
+import { normalizeSpacing } from "../../normalizeSpacing";
 import {
   GenerateOutputLayer,
   OutputLayer,
@@ -53,6 +54,18 @@ export const calculateFloorCounts = (
     floorCountAboveGround: floorCountTotal - (floorCountBelowGround || 0),
     floorCountBelowGround,
   };
+};
+
+const processCompletionDates = (completionDates: string | undefined) => {
+  const result = normalizeSpacing(completionDates ?? "")
+    .toLowerCase()
+    .replace(/^1917$/, "до 1917");
+
+  if (!result) {
+    return undefined;
+  }
+
+  return result;
 };
 
 const pickMostPromisingAddress = (
@@ -104,7 +117,9 @@ const extractPropertiesFromFirResponse = (
   return {
     id: cn,
     knownAt: firFetchedAt,
-    completionDates: extractCompletionDatesFromFirResponse(firResponse),
+    completionDates: processCompletionDates(
+      extractCompletionDatesFromFirResponse(firResponse),
+    ),
     documentedBuildArea: extractDocumentedBuildAreaFromFirResponse(firResponse),
     address: pickMostPromisingAddress(
       [
@@ -133,8 +148,9 @@ const extractPropertiesFromPkkResponse = (
     return "notBuilding";
   }
 
-  const completionDates =
-    attrs.year_built || (attrs.year_used ? `${attrs.year_used}` : undefined);
+  const completionDates = processCompletionDates(
+    attrs.year_built || (attrs.year_used ? `${attrs.year_used}` : undefined),
+  );
 
   const documentedBuildArea =
     attrs.area_dev_unit === "055"

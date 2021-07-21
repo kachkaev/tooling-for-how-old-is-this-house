@@ -19,17 +19,14 @@ const tweakYearRange = (range: YearRange, source: string): YearRange => {
   if (range[0] === range[1]) {
     const year = range[0];
 
-    if (year === 1917) {
-      // 1917 often refers to any year before the October Revolution
-      return [0, 1917];
-    } else if (year === 1900 && source === "rosreestr") {
+    if (year === 1900 && source === "rosreestr") {
       // 1900 in rosreestr often refers to a rough estimation of the year
       return [1840, 1930];
     } else if (year <= 1800 && year % 100 === 0 && source === "rosreestr") {
       // 1800 (and possibly 1700 etc) in rosreestr are often mistakes
       return [year - 20, Number.MAX_SAFE_INTEGER];
     } else if (year < 1920 && year % 10 === 0) {
-      // any year before 1920 can be approximate (± 10 years)
+      // any decade year before 1920 can be approximate (± 10 years)
       return [year - 10, year + 10];
     }
   }
