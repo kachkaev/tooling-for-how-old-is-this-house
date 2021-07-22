@@ -52,7 +52,7 @@ export const fetchItems: Command = async ({ logger }) => {
             wikibase:cornerNorthEast "Point(${roughBbox[2]} ${roughBbox[3]})"^^geo:wktLiteral.
         }
 
-        ?item wdt:P31/wdt:P279* wd:Q41176 . # building
+        ?item wdt:P31/wdt:P279* wd:Q41176 . ## instance of / subclass of building
         ?item schema:dateModified ?dateModified
 
         OPTIONAL { ?item wdt:P84 ?architect . }
