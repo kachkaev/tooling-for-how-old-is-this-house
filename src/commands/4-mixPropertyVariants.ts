@@ -321,6 +321,7 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
       outputFeature.properties.derivedBeautifiedAddress = beautifyAddress(
         address,
       );
+      outputFeature.properties = sortKeys(outputFeature.properties);
     }
   }
 
