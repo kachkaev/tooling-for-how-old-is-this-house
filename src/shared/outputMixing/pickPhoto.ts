@@ -10,9 +10,10 @@ export const pickPhoto: PickFromPropertyVariants<
     logger,
     prioritizedSources: [
       "manual",
-      "mkrf",
       "wikidata",
       "wikivoyage",
+      "osm",
+      "mkrf",
       "wikimapia",
     ],
     propertySelectors: ["photo"],

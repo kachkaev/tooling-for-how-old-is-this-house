@@ -62,6 +62,7 @@ const generateCopyrights = ({
   photoUrl,
   photoSource,
   photoAuthorName,
+  photoAuthorUrl,
 }: MixedPropertyVariants): string | undefined => {
   if (!photoSource || !photoUrl) {
     return undefined;
@@ -80,7 +81,9 @@ const generateCopyrights = ({
         : `фото: Викимапия`;
   }
 
-  return `фото: ${photoSource}`;
+  return `фото: ${[photoAuthorName, photoAuthorUrl]
+    .filter((v) => Boolean(v))
+    .join(", ")}`;
 };
 
 type UploadFeature = turf.Feature<OutputGeometry, UploadFeatureProperties>;

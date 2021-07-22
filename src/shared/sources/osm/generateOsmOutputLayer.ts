@@ -28,6 +28,44 @@ const buildWikidataUrl = (
   return `http://www.wikidata.org/entity/${wikidataId}`;
 };
 
+const extractPhoto = (
+  building: OsmFeature,
+):
+  | Pick<
+      OutputLayerProperties,
+      "photoUrl" | "photoAuthorName" | "photoAuthorUrl"
+    >
+  | undefined => {
+  const wikimediaCommons = building.properties["wikimedia_commons"];
+  if (wikimediaCommons?.startsWith("File:")) {
+    return {
+      photoUrl: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(
+        decodeURIComponent(wikimediaCommons).replace("File:", ""),
+      )}?width=1000`,
+      photoAuthorName: "Wikimedia Commons",
+      photoAuthorUrl: "https://commons.wikimedia.org",
+    };
+  }
+
+  const image = building.properties["image"];
+  try {
+    const parsedImageUrl = new URL(image ?? "");
+    const { host } = parsedImageUrl;
+
+    return {
+      photoUrl: parsedImageUrl.toString(),
+      photoAuthorUrl: host.match(/\.*.userapi.com$/) ? "ВК" : host,
+    };
+  } catch {
+    // noop
+  }
+
+  // Support more photo sources?
+  // https://wiki.openstreetmap.org/wiki/Photo_linking
+
+  return undefined;
+};
+
 const buildWikipediaUrl = (
   wikipediaTagValue: string | undefined,
   defaultLanguageSubdomain = "ru",
@@ -231,7 +269,9 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
     expectedBoundaryOfAllCheckedFeatures: territoryExtent,
   });
 
-  const generateAddress = (building: OsmFeature): string | undefined => {
+  const extractAddress = (
+    building: OsmFeature,
+  ): Pick<OutputLayerProperties, "address"> | undefined => {
     const streetOrPlace =
       building.properties["addr:street"] ?? building.properties["addr:place"];
 
@@ -278,7 +318,11 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
       ? `${houseNumber.split("/")[0]}/${houseNumber2}`
       : houseNumber;
 
-    return [region, settlement, fullStreetOrPlace, fullHouseNumber].join(", ");
+    return {
+      address: [region, settlement, fullStreetOrPlace, fullHouseNumber].join(
+        ", ",
+      ),
+    };
   };
 
   const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(
@@ -311,7 +355,8 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
       );
 
       const outputLayerProperties: OutputLayerProperties = {
-        address: generateAddress(building),
+        ...extractAddress(building),
+        // TODO: Move more properties to ...extract*() patterns for better code readability and composability
         buildingType,
         completionDates: processStartDate(building.properties["start_date"]),
         floorCountAboveGround,
@@ -323,6 +368,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
           generateTrivialNameFromOsmTags(building.properties),
         url,
         wikidataUrl,
+        ...extractPhoto(building),
         wikipediaUrl,
       };
 
