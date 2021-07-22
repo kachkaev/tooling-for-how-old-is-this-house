@@ -109,6 +109,9 @@ export interface MixedPropertyVariants {
   geometryId: string;
   geometrySource: string;
 
+  mkrfUrl?: null | string;
+  mkrfUrlSource?: null | string;
+
   name?: null | string;
   nameSource?: null | string;
 
@@ -122,6 +125,10 @@ export interface MixedPropertyVariants {
 
   url?: null | string;
   urlSource?: null | string;
+
+  // E.g. https://www.wikidata.org/wiki/Q3761480
+  wikidataUrl?: null | string;
+  wikidataUrlSource?: null | string;
 
   wikipediaUrl?: null | string;
   wikipediaUrlSource?: null | string;

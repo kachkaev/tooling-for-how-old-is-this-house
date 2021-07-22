@@ -20,12 +20,14 @@ export interface OutputLayerProperties {
   floorCountBelowGround?: null | number;
   id?: null | string;
   knownAt: string;
+  mkrfUrl?: null | string;
   name?: null | string;
   photoAuthorName?: null | string;
   photoAuthorUrl?: null | string;
   photoUrl?: null | string;
   style?: null | string;
   url?: null | string;
+  wikidataUrl?: null | string;
   wikipediaUrl?: null | string;
 }
 

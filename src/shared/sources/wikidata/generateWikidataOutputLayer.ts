@@ -19,9 +19,7 @@ const extractArchitect = (
     return {};
   }
 
-  return {
-    architect,
-  };
+  return { architect };
 };
 
 const extractId = (item: WikidataQueryItem): Partial<OutputLayerProperties> => {
@@ -30,9 +28,7 @@ const extractId = (item: WikidataQueryItem): Partial<OutputLayerProperties> => {
     throw new Error(`Unable to extract item id from ${item.item?.value}`);
   }
 
-  return {
-    id: idMatch,
-  };
+  return { id: idMatch };
 };
 
 const extractKnownAt = (
@@ -94,9 +90,13 @@ const extractWikipediaUrl = (
     return {};
   }
 
-  return {
-    wikipediaUrl,
-  };
+  return { wikipediaUrl };
+};
+
+const extractWikidataUrl = (
+  item: WikidataQueryItem,
+): Partial<OutputLayerProperties> => {
+  return { wikidataUrl: item.item.value };
 };
 
 export const generateWikidataOutputLayer: GenerateOutputLayer = async () => {
@@ -116,6 +116,7 @@ export const generateWikidataOutputLayer: GenerateOutputLayer = async () => {
       ...extractName(item),
       ...extractPhoto(item),
       ...extractStyle(item),
+      ...extractWikidataUrl(item),
       ...extractWikipediaUrl(item),
     };
 

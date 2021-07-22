@@ -17,11 +17,13 @@ const knownPropertySelectorLookup: Record<PropertySelector, true> = {
   completionDates: true,
   documentedBuildArea: true,
   floorCount: true,
+  mkrfUrl: true,
   name: true,
   photo: true,
   source: true,
   style: true,
   url: true,
+  wikidataUrl: true,
   wikipediaUrl: true,
 };
 

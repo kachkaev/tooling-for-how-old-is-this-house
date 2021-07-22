@@ -186,9 +186,9 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         completionDates,
         externalGeometrySource,
         knownAt: serializeTime(objectFile.modified),
+        mkrfUrl: `https://opendata.mkrf.ru/opendata/7705851331-egrkn/50/${objectFile.nativeId}`,
         name,
         photoUrl: objectFile.data?.general?.photo?.url,
-        url: `https://opendata.mkrf.ru/opendata/7705851331-egrkn/50/${objectFile.nativeId}`,
       };
 
       outputFeatures.push(

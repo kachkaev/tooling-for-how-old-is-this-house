@@ -18,6 +18,16 @@ import { getOsmDirPath } from "./helpersForPaths";
 import { readFetchedOsmFeatureCollection } from "./readFetchedOsmFeatureCollection";
 import { OsmFeature, OsmFeatureProperties } from "./types";
 
+const buildWikidataUrl = (
+  wikidataId: string | undefined,
+): string | undefined => {
+  if (!wikidataId) {
+    return undefined;
+  }
+
+  return `http://www.wikidata.org/entity/${wikidataId}`;
+};
+
 const buildWikipediaUrl = (
   wikipediaTagValue: string | undefined,
   defaultLanguageSubdomain = "ru",
@@ -33,9 +43,9 @@ const buildWikipediaUrl = (
     languageSubdomain = wikipediaTagValue.slice(0, 2);
   }
 
-  const articleSlug = articleName.replace(/ /g, "_");
-
-  return `https://${languageSubdomain}.wikipedia.org/wiki/${articleSlug}`;
+  return `https://${languageSubdomain}.wikipedia.org/wiki/${encodeURIComponent(
+    articleName,
+  )}`;
 };
 
 const deriveFloorCountAboveGroundFromBuildingTag = (
@@ -295,6 +305,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         building.properties["contact:website"] ??
         building.properties["website"];
 
+      const wikidataUrl = buildWikidataUrl(building.properties["wikidata"]);
       const wikipediaUrl = buildWikipediaUrl(
         building.properties["wikipedia"] ?? building.properties["wikipedia:ru"],
       );
@@ -311,6 +322,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
           building.properties["name"] ??
           generateTrivialNameFromOsmTags(building.properties),
         url,
+        wikidataUrl,
         wikipediaUrl,
       };
 

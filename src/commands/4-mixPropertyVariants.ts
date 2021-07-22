@@ -24,10 +24,12 @@ import {
   pickArchitect,
   pickCompletionDates,
   pickFloorCount,
+  pickMkrfUrl,
   pickName,
   pickPhoto,
   pickStyle,
   pickUrl,
+  pickWikidataUrl,
   pickWikipediaUrl,
   PropertyVariant,
 } from "../shared/outputMixing";
@@ -62,6 +64,8 @@ const placeholderProperties: Record<keyof MixedPropertyVariants, null> = {
   floorCountSource: null,
   geometryId: null,
   geometrySource: null,
+  mkrfUrl: null,
+  mkrfUrlSource: null,
   name: null,
   nameSource: null,
   photoAuthorName: null,
@@ -72,6 +76,8 @@ const placeholderProperties: Record<keyof MixedPropertyVariants, null> = {
   styleSource: null,
   url: null,
   urlSource: null,
+  wikidataUrl: null,
+  wikidataUrlSource: null,
   wikipediaUrl: null,
   wikipediaUrlSource: null,
 };
@@ -272,10 +278,12 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
       ...pickArchitect(payloadForPick),
       ...pickCompletionDates(payloadForPick),
       ...pickFloorCount(payloadForPick),
+      ...pickMkrfUrl(payloadForPick),
       ...pickName(payloadForPick),
       ...pickPhoto(payloadForPick),
       ...pickStyle(payloadForPick),
       ...pickUrl(payloadForPick),
+      ...pickWikidataUrl(payloadForPick),
       ...pickWikipediaUrl(payloadForPick),
     });
 

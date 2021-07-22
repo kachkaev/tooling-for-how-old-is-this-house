@@ -59,12 +59,14 @@ const placeholderProperties: Record<keyof OutputLayerProperties, null> = {
   floorCountBelowGround: null,
   id: null,
   knownAt: null,
+  mkrfUrl: null,
   name: null,
   photoAuthorName: null,
   photoAuthorUrl: null,
   photoUrl: null,
   style: null,
   url: null,
+  wikidataUrl: null,
   wikipediaUrl: null,
 };
 

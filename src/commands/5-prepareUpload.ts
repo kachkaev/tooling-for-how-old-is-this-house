@@ -24,10 +24,12 @@ interface UploadFeatureProperties {
   r_architect?: null | string;
   r_copyrights?: null | string;
   r_floors?: null | number;
+  r_mkrf?: null | string;
   r_name?: null | string;
   r_photo_url?: null | string;
   r_style?: null | string;
   r_url?: null | string;
+  r_wikidata?: null | string;
   r_wikipedia?: null | string;
   r_year_int?: null | number;
   r_years_str?: null | string;
@@ -44,10 +46,12 @@ const placeholderProperties: Record<keyof UploadFeatureProperties, null> = {
   r_architect: null,
   r_copyrights: null,
   r_floors: null,
+  r_mkrf: null,
   r_name: null,
   r_photo_url: null,
   r_style: null,
   r_url: null,
+  r_wikidata: null,
   r_wikipedia: null,
   r_year_int: null,
   r_years_str: null,
@@ -131,10 +135,12 @@ export const prepareUpload: Command = async ({ logger }) => {
       r_architect: inputFeature.properties.architect,
       r_copyrights: generateCopyrights(inputFeature.properties),
       r_floors: inputFeature.properties.floorCountAboveGround,
+      r_mkrf: inputFeature.properties.mkrfUrl,
       r_name: inputFeature.properties.derivedBeautifiedName,
       r_photo_url: inputFeature.properties.photoUrl,
       r_style: inputFeature.properties.style,
       r_url: inputFeature.properties.url,
+      r_wikidata: inputFeature.properties.wikidataUrl,
       r_wikipedia: inputFeature.properties.wikipediaUrl,
       r_year_int: inputFeature.properties.derivedCompletionYear,
       r_years_str:
