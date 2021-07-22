@@ -44,7 +44,7 @@ export interface DataToOmitSelector {
 }
 
 export interface ListRelevantPropertyVariants {
-  (propertyNames: PropertySelector[]): PropertyVariant[];
+  (propertySelectors: PropertySelector[]): PropertyVariant[];
 }
 
 export interface PickFromPropertyVariants<

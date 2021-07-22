@@ -44,7 +44,7 @@ export const parseDataToOmit = (
   const slices = dataToOmit.split(",").map((slice) => slice.trim());
 
   return slices
-    .map<DataToOmitSelector | undefined>((slice) => {
+    .map((slice): DataToOmitSelector | undefined => {
       const [source, rawId, rawPropertyName] = slice
         .split("|")
         .map((value) => value.trim());
@@ -72,7 +72,7 @@ export const parseDataToOmit = (
       return {
         source,
         id: treatAsteriskAsUndefined(rawId),
-        propertyName: propertySelector,
+        propertySelector,
       };
     })
     .filter((result): result is DataToOmitSelector => Boolean(result));
