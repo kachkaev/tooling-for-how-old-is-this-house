@@ -46,6 +46,7 @@ interface MonumentTemplate {
   region?: string; // ISO_3166-2 (lower case)
   style?: string;
   wiki?: string; // Page name on Russian Wikipedia
+  wdid?: string; // Wikidata id
   year?: string;
 }
 
@@ -168,6 +169,21 @@ const extractUrl = (
   };
 };
 
+const extractWikidataUrl = (
+  templateJson: MonumentTemplate,
+): Partial<OutputLayerProperties> => {
+  const wikidataId = templateJson.wdid;
+  if (!wikidataId) {
+    return {};
+  }
+
+  return {
+    wikidataUrl: `http://www.wikidata.org/entity/${encodeURIComponent(
+      wikidataId,
+    )}`,
+  };
+};
+
 const extractWikipediaUrl = (
   templateJson: MonumentTemplate,
 ): Partial<OutputLayerProperties> => {
@@ -227,6 +243,7 @@ export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
           ...extractPhoto(templateJson),
           ...extractStyle(templateJson),
           ...extractUrl(templateJson),
+          ...extractWikidataUrl(templateJson),
           ...extractWikipediaUrl(templateJson),
         };
 
