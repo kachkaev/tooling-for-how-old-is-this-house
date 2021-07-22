@@ -20,8 +20,8 @@ export const pickName: PickFromPropertyVariants<
     prioritizedSources: [
       "manual",
       "wikidata",
-      "mkrf",
       "osm",
+      "mkrf",
       "wikivoyage",
       "wikimapia",
     ],
