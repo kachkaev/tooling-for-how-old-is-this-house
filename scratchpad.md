@@ -97,8 +97,9 @@ cd -
 
     ```sh
     CUSTOM_PATH=sources/manual yarn exe src/commands/formatDataFiles.ts \
-      && yarn exe src/commands/3-mixOutputLayers.ts \
-      && yarn exe src/commands/4-mixPropertyVariants.ts
+      && yarn exe src/commands/3-mixing/1-mixOutputLayers.ts \
+      && yarn exe src/commands/3-mixing/2-mixPropertyVariants.ts \
+      && yarn exe src/commands/5-prepareUpload.ts
     ```
 
 ## Цикл обновления данных в ОСМ
@@ -113,9 +114,12 @@ cd -
     yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts \
       && yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts \
       && yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts \
+      && yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts \
       && yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts \
-      && yarn exe src/commands/3-mixOutputLayers.ts \
-      && yarn exe src/commands/4-mixPropertyVariants.ts
+      && yarn exe src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts \
+      && yarn exe src/commands/3-mixing/1-mixOutputLayers.ts \
+      && yarn exe src/commands/3-mixing/2-mixPropertyVariants.ts \
+      && yarn exe src/commands/5-prepareUpload.ts
     ```
 
 ## TODO
@@ -145,3 +149,44 @@ cd -
 
 JSON API:  
 <https://dom.gosuslugi.ru/homemanagement/api/rest/services/houses/public/1/481b5137-ae2f-44a8-a78b-22001a80114f>s
+
+## Геосемантика
+
+- Слой копирайты HTML
+
+```txt
+&copy; 2021 how-old-is-this.house, источники данных:
+<a target="_blank" href="https://www.openstreetmap.org">Опен-стрит-мап,</a>
+<a target="_blank" href="https://pkk.rosreestr.ru">Росреестр&nbsp;(ЕГРН),</a>
+<a target="_blank" href="https://opendata.mkrf.ru">Министерство&nbsp;Культуры,</a>
+<a target="_blank" href="https://dom.mingkh.ru">«МинЖКХ»,</a>
+<a target="_blank" href="https://ru.wikivoyage.org/wiki/Культурное_наследие_России">Викигид,</a>
+<a target="_blank" href="https://www.wikidata.org">Викиданные,</a>
+<a target="_blank" href="https://wikimapia.org">Викимапия</a>
+```
+
+- Слой семантика
+
+| поле            | семантика                      |
+| --------------- | ------------------------------ |
+| r_name          | название                       |
+| r_photo_url     | 🏞 фото                         |
+| r_adress        | адрес                          |
+| r_years_str     | время постройки                |
+| r_floors        | этажность                      |
+| r_architect     | архитектор                     |
+| r_style         | стиль                          |
+| r_wikidata      | 🔗 Викиданные                  |
+| r_wikipedia     | 🔗 Википедия                   |
+| r_mkrf          | 🔗 реестр Культурного наследия |
+| r_url           | 🔗 сайт                        |
+| r_copyrights    | " " (пробел)                   |
+| r_year_int      | ×                              |
+|                 |
+| fid             | ×                              |
+| геосементика ID | ×                              |
+| площадь         | ×                              |
+| периметр        | ×                              |
+
+При редактировании здания внизу карточки появится поле «комментарии».
+Оно относится к правке, а не самому объекту.
