@@ -51,23 +51,62 @@ interface SupplementaryLayerProperties {
 // Placeholder properties are added to the first feature of the resulting feature collection.
 // This ensures property list completeness and order in apps like QGIS.
 const placeholderProperties: Record<keyof MainLayerProperties, null> = {
-  fid: null,
-
   /* eslint-disable @typescript-eslint/naming-convention */
-  r_adress: null,
-  r_architect: null,
-  r_copyrights: null,
-  r_floors: null,
-  r_mkrf: null,
+
+  // Properties are ordered to match the desired layout of building cards
   r_name: null,
   r_photo_url: null,
+  r_adress: null,
+  r_years_str: null,
+  r_floors: null,
+  r_architect: null,
   r_style: null,
-  r_url: null,
   r_wikidata: null,
   r_wikipedia: null,
+  r_mkrf: null,
+  r_url: null,
+  r_copyrights: null,
+
   r_year_int: null,
-  r_years_str: null,
+  fid: null,
   /* eslint-enable @typescript-eslint/naming-convention */
+};
+
+const orderedPropertyKeys = Object.keys(placeholderProperties);
+const comparePropertyKeys = (a: string, b: string) => {
+  if (a === b) {
+    return 0;
+  }
+
+  return orderedPropertyKeys.indexOf(a) > orderedPropertyKeys.indexOf(b)
+    ? 1
+    : -1;
+};
+
+/**
+ * It has been noticed that Geosemantica breaks URLs with '. For example:
+ *
+ *    https://commons.wikimedia.org/wiki/Special:FilePath/Bishop's%20residence%20Penza.jpg?width=1000
+ *
+ * becomes
+ *
+ *   https://commons.wikimedia.org/wiki/Special:FilePath/Bishops%20residence%20Penza.jpg?width=1000
+ *
+ * and returns 404.
+ *
+ * This problem is avoided by replacing ' with %27. The same encoding trick
+ * is applied to a few more characters just in case.
+ *
+ * @see https://stackoverflow.com/a/18251730/1818285
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+ */
+const fixUrlForGeosemantica = (
+  url: string | undefined | null,
+): string | undefined | null => {
+  return url?.replace(
+    /[!'()*]/g,
+    (char) => `%${char.charCodeAt(0).toString(16)}`,
+  );
 };
 
 const generateCopyrights = ({
@@ -158,13 +197,13 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
       r_architect: inputFeature.properties.architect,
       r_copyrights: generateCopyrights(inputFeature.properties),
       r_floors: inputFeature.properties.floorCountAboveGround,
-      r_mkrf: inputFeature.properties.mkrfUrl,
+      r_mkrf: fixUrlForGeosemantica(inputFeature.properties.mkrfUrl),
       r_name: inputFeature.properties.derivedBeautifiedName,
-      r_photo_url: inputFeature.properties.photoUrl,
+      r_photo_url: fixUrlForGeosemantica(inputFeature.properties.photoUrl),
       r_style: inputFeature.properties.style,
-      r_url: inputFeature.properties.url,
-      r_wikidata: inputFeature.properties.wikidataUrl,
-      r_wikipedia: inputFeature.properties.wikipediaUrl,
+      r_url: fixUrlForGeosemantica(inputFeature.properties.url),
+      r_wikidata: fixUrlForGeosemantica(inputFeature.properties.wikidataUrl),
+      r_wikipedia: fixUrlForGeosemantica(inputFeature.properties.wikipediaUrl),
       r_year_int: inputFeature.properties.derivedCompletionYear,
       r_years_str:
         inputFeature.properties.derivedCompletionDatesForGeosemantica,
@@ -178,6 +217,7 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
           index === 0
             ? { ...placeholderProperties, ...outputFeatureProperties }
             : outputFeatureProperties,
+          { compare: comparePropertyKeys },
         ),
       ),
     );
