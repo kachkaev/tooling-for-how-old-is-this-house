@@ -17,7 +17,8 @@ const backgroundColor = "#fff";
 
 const Wrapper = styled.div`
   box-shadow: 5px 5px 10px #ddd;
-  display: inline-block;
+  display: block;
+  float: left;
   overflow: hidden;
   background-color: ${backgroundColor};
 
