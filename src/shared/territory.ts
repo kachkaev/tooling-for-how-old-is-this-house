@@ -30,6 +30,10 @@ export const getTerritoryDirPath = (): string => {
   return path.resolve(env.TERRITORY_DATA_DIR_PATH);
 };
 
+export const getTerritoryId = (): string => {
+  return path.basename(getTerritoryDirPath());
+};
+
 export interface TerritoryConfig {
   name?: string;
 

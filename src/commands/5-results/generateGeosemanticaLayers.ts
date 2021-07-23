@@ -2,20 +2,24 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
+import path from "path";
 import sortKeys from "sort-keys";
 
-import { deepClean } from "../shared/deepClean";
-import { writeFormattedJson } from "../shared/helpersForJson";
-import { OutputGeometry } from "../shared/outputLayers";
+import { deepClean } from "../../shared/deepClean";
+import { writeFormattedJson } from "../../shared/helpersForJson";
+import { OutputGeometry } from "../../shared/outputLayers";
 import {
   getMixedPropertyVariantsFilePath,
-  getUploadFilePath,
   MixedPropertyVariants,
   MixedPropertyVariantsFeatureCollection,
-} from "../shared/outputMixing";
-import { getTerritoryAddressHandlingConfig } from "../shared/territory";
+} from "../../shared/outputMixing";
+import { generateVersionSuffix, getResultsDirPath } from "../../shared/results";
+import {
+  getTerritoryAddressHandlingConfig,
+  getTerritoryId,
+} from "../../shared/territory";
 
-interface UploadFeatureProperties {
+interface MainLayerProperties {
   fid: number;
 
   /* eslint-disable @typescript-eslint/naming-convention */
@@ -36,9 +40,13 @@ interface UploadFeatureProperties {
   /* eslint-enable @typescript-eslint/naming-convention */
 }
 
+interface SupplementaryLayerProperties {
+  fid: number;
+}
+
 // Placeholder properties are added to the first feature of the resulting feature collection.
 // This ensures property list completeness and order in apps like QGIS.
-const placeholderProperties: Record<keyof UploadFeatureProperties, null> = {
+const placeholderProperties: Record<keyof MainLayerProperties, null> = {
   fid: null,
 
   /* eslint-disable @typescript-eslint/naming-convention */
@@ -86,10 +94,15 @@ const generateCopyrights = ({
     .join(", ")}`;
 };
 
-type UploadFeature = turf.Feature<OutputGeometry, UploadFeatureProperties>;
+type MainLayerFeature = turf.Feature<OutputGeometry, MainLayerProperties>;
 
-export const prepareUpload: Command = async ({ logger }) => {
-  logger.log(chalk.bold("Preparing upload file"));
+type SupplementaryLayerFeature = turf.Feature<
+  OutputGeometry,
+  SupplementaryLayerProperties
+>;
+
+export const generateGeosemanticaLayers: Command = async ({ logger }) => {
+  logger.log(chalk.bold("results: Generate Geosemantica layers"));
 
   process.stdout.write(chalk.green("Loading mixed property variants..."));
   const inputFileName = getMixedPropertyVariantsFilePath();
@@ -123,11 +136,14 @@ export const prepareUpload: Command = async ({ logger }) => {
     return address.substr(addressPrefixToRemove.length);
   };
 
-  const outputFeatures: UploadFeature[] = [];
+  const mainFeatures: MainLayerFeature[] = [];
+  const supplementaryFeatures: SupplementaryLayerFeature[] = [];
+
   for (const inputFeature of inputFeatureCollection.features) {
-    const index = outputFeatures.length;
-    const outputFeatureProperties: UploadFeatureProperties = deepClean({
-      fid: index + 1,
+    const index = mainFeatures.length;
+    const fid = index + 1;
+    const outputFeatureProperties: MainLayerProperties = deepClean({
+      fid,
 
       /* eslint-disable @typescript-eslint/naming-convention */
       r_adress: removeDefaultRegionFromAddress(
@@ -151,7 +167,7 @@ export const prepareUpload: Command = async ({ logger }) => {
       /* eslint-enable @typescript-eslint/naming-convention */
     });
 
-    outputFeatures.push(
+    mainFeatures.push(
       turf.feature(
         inputFeature.geometry,
         sortKeys(
@@ -161,16 +177,38 @@ export const prepareUpload: Command = async ({ logger }) => {
         ),
       ),
     );
+    supplementaryFeatures.push(turf.feature(inputFeature.geometry, { fid }));
   }
 
   process.stdout.write(` Done.\n`);
   process.stdout.write(chalk.green(`Saving...`));
 
-  const resultFilePath = getUploadFilePath();
-  const outputFeatureCollection = turf.featureCollection(outputFeatures);
-  await writeFormattedJson(resultFilePath, outputFeatureCollection);
+  const version = generateVersionSuffix();
+  const territoryId = getTerritoryId();
+  const mainLayerFilePath = path.resolve(
+    getResultsDirPath(),
+    `geosemantica-layer.${territoryId}.${version}.main.geojson`,
+  );
+  const supplementaryLayerFilePath = path.resolve(
+    getResultsDirPath(),
+    `geosemantica-layer.${territoryId}.${version}.supplementary.geojson`,
+  );
 
-  logger.log(` Result saved to ${chalk.magenta(resultFilePath)}`);
+  await writeFormattedJson(
+    mainLayerFilePath,
+    turf.featureCollection(mainFeatures),
+  );
+
+  await writeFormattedJson(
+    supplementaryLayerFilePath,
+    turf.featureCollection(supplementaryFeatures),
+  );
+
+  logger.log(
+    ` Result saved to:\n${chalk.magenta(mainLayerFilePath)}\n${chalk.magenta(
+      supplementaryLayerFilePath,
+    )}`,
+  );
 };
 
-autoStartCommandIfNeeded(prepareUpload, __filename);
+autoStartCommandIfNeeded(generateGeosemanticaLayers, __filename);

@@ -26,9 +26,7 @@ const IndexPage: NextPage = () => {
         </li>
         <li>
           <Link href="/poster">
-            <a>
-              <b>poster</b>
-            </a>
+            <a>poster</a>
           </Link>
         </li>
       </ul>
