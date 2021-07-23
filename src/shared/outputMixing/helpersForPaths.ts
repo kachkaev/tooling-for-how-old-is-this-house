@@ -1,12 +1,19 @@
 import path from "path";
 
-import { getTerritoryDirPath } from "../territory";
+import {
+  ensureTerritoryGitignoreContainsLine,
+  getTerritoryDirPath,
+} from "../territory";
 
-export const getOutputDirPath = (): string =>
-  path.resolve(getTerritoryDirPath(), "output");
+export const getMixingDirPath = (): string =>
+  path.resolve(getTerritoryDirPath(), "mixing");
 
 export const getMixedOutputLayersFilePath = (): string =>
-  path.resolve(getOutputDirPath(), "mixed-output-layers.geojson");
+  path.resolve(getMixingDirPath(), "mixed-output-layers.geojson");
 
 export const getMixedPropertyVariantsFilePath = (): string =>
-  path.resolve(getOutputDirPath(), "mixed-property-variants.geojson");
+  path.resolve(getMixingDirPath(), "mixed-property-variants.geojson");
+
+export const ensureTerritoryGitignoreContainsMixing = async (): Promise<void> => {
+  await ensureTerritoryGitignoreContainsLine("/mixing");
+};

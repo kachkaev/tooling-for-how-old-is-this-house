@@ -177,6 +177,8 @@ export const generateGeosemanticaLayerStyle: Command = async ({ logger }) => {
   logger.log(
     "Alternatively, save your styles as completion-year.sld and upload the file.",
   );
+
+  //  await ensureTerritoryGitignoreContainsResults();
 };
 
 autoStartCommandIfNeeded(generateGeosemanticaLayerStyle, __filename);

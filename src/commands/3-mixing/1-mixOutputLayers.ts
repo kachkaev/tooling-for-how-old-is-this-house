@@ -26,6 +26,7 @@ import {
   OutputLayerProperties,
 } from "../../shared/outputLayers";
 import {
+  ensureTerritoryGitignoreContainsMixing,
   getMixedOutputLayersFilePath,
   MixedOutputLayersFeature,
   PropertyVariant,
@@ -364,6 +365,8 @@ export const mixOutputLayers: Command = async ({ logger }) => {
   });
 
   process.stdout.write(chalk.green(`Saving...`));
+
+  await ensureTerritoryGitignoreContainsMixing();
 
   const resultFileName = getMixedOutputLayersFilePath();
   const mixedFeatureCollection = turf.featureCollection(mixedFeatures);

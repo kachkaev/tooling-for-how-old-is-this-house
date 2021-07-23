@@ -127,3 +127,18 @@ export const getTerritoryAddressHandlingConfig = async (
     ),
   );
 };
+
+export const ensureTerritoryGitignoreContainsLine = async (
+  line: string,
+): Promise<void> => {
+  const filePath = path.resolve(getTerritoryDirPath(), ".gitignore");
+  if (!(await fs.pathExists(filePath))) {
+    await fs.writeFile(filePath, "");
+  }
+  const lines = (await fs.readFile(filePath, "utf8")).split(/\n\r?/);
+  if (lines.includes(line)) {
+    return;
+  }
+
+  await fs.appendFile(filePath, `\n${line}`);
+};

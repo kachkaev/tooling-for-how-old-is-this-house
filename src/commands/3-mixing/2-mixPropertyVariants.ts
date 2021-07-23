@@ -11,6 +11,7 @@ import { writeFormattedJson } from "../../shared/helpersForJson";
 import {
   buildGlobalFeatureOrVariantId,
   DataToOmitSelector,
+  ensureTerritoryGitignoreContainsMixing,
   getMixedOutputLayersFilePath,
   getMixedPropertyVariantsFilePath,
   ListRelevantPropertyVariants,
@@ -327,6 +328,8 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
 
   process.stdout.write(` Done.\n`);
   process.stdout.write(chalk.green(`Saving...`));
+
+  await ensureTerritoryGitignoreContainsMixing();
 
   const resultFileName = getMixedPropertyVariantsFilePath();
   const outputFeatureCollection = turf.featureCollection(outputFeatures);

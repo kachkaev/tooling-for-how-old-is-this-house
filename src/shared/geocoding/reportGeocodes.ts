@@ -7,6 +7,7 @@ import { getTerritoryAddressHandlingConfig } from "../territory";
 import { debugAddressNormalizationIfEnabled } from "./debugAddressNormalizationIfEnabled";
 import {
   deriveNormalizedAddressSliceId,
+  ensureTerritoryGitignoreContainsGeocoding,
   getDictionaryFilePath,
 } from "./helpersForPaths";
 import { loadGeocodeDictionaryLookup } from "./loadGeocodeDictionaryLookup";
@@ -148,6 +149,8 @@ export const reportGeocodes = async ({
   if (logger) {
     process.stdout.write(chalk.green("Writing changes to dictionaries..."));
   }
+
+  ensureTerritoryGitignoreContainsGeocoding();
 
   let numberOfDictionariesCreated = 0;
   let numberOfDictionariesUpdated = 0;

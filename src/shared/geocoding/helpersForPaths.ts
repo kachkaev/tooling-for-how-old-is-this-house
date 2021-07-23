@@ -8,7 +8,10 @@ import {
   printStandardizedAddressSection,
 } from "../addresses";
 import { AddressInterpretationError } from "../addresses/AddressInterpretationError";
-import { getTerritoryDirPath } from "../territory";
+import {
+  ensureTerritoryGitignoreContainsLine,
+  getTerritoryDirPath,
+} from "../territory";
 
 export const getGeocodeDictionariesDirPath = () => {
   return path.resolve(getTerritoryDirPath(), "geocoding");
@@ -101,4 +104,8 @@ export const deriveNormalizedAddressSliceId = (
     .filter((slice): slice is string => typeof slice === "string")
     .map((slice) => slice.replace(/\//g, ""))
     .join("/");
+};
+
+export const ensureTerritoryGitignoreContainsGeocoding = async (): Promise<void> => {
+  await ensureTerritoryGitignoreContainsLine("/geocoding");
 };

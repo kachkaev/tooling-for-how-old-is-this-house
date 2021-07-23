@@ -13,7 +13,11 @@ import {
   MixedPropertyVariants,
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/outputMixing";
-import { generateVersionSuffix, getResultsDirPath } from "../../shared/results";
+import {
+  ensureTerritoryGitignoreContainsResults,
+  generateVersionSuffix,
+  getResultsDirPath,
+} from "../../shared/results";
 import {
   getTerritoryAddressHandlingConfig,
   getTerritoryId,
@@ -182,6 +186,8 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
 
   process.stdout.write(` Done.\n`);
   process.stdout.write(chalk.green(`Saving...`));
+
+  await ensureTerritoryGitignoreContainsResults();
 
   const version = generateVersionSuffix();
   const territoryId = getTerritoryId();

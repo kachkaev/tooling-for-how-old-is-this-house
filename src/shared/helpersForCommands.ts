@@ -16,7 +16,10 @@ import {
   reportGeocodesInOutputLayer,
 } from "./outputLayers";
 import { parseCompletionDates } from "./parseCompletionDates";
-import { getTerritoryAddressHandlingConfig } from "./territory";
+import {
+  ensureTerritoryGitignoreContainsLine,
+  getTerritoryAddressHandlingConfig,
+} from "./territory";
 
 export const generateProgress = (index: number, total: number) => {
   const totalLength = `${total}`.length;
@@ -140,6 +143,8 @@ export const generateExtractOutputLayer = ({
       getSourceDirPath(source),
       getOutputLayerFileName(),
     );
+
+    await ensureTerritoryGitignoreContainsLine(getOutputLayerFileName());
 
     await writeFormattedJson(
       outputLayerFilePath,

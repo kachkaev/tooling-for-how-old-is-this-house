@@ -2,6 +2,7 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 
 import { makePageSnapshot } from "../../shared/pageSnapshots";
 import { extractPosterConfig } from "../../shared/poster";
+import { ensureTerritoryGitignoreContainsResults } from "../../shared/results";
 import { getTerritoryConfig, getTerritoryExtent } from "../../shared/territory";
 
 export const generatePoster: Command = async ({ logger }) => {
@@ -12,6 +13,8 @@ export const generatePoster: Command = async ({ logger }) => {
 
   // TODO: link to environment variables
   const formats = ["pdf"];
+
+  await ensureTerritoryGitignoreContainsResults();
 
   await makePageSnapshot({
     pagePath: "poster",

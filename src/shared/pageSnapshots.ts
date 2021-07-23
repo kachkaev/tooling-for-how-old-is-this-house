@@ -4,12 +4,12 @@ import { DateTime } from "luxon";
 import path from "path";
 import puppeteer from "puppeteer";
 
-import { getOutputDirPath } from "./outputMixing";
+import { getMixingDirPath } from "./outputMixing";
 
 const nextJsPageSelector = "#__next *";
 
 export const getImageDirPath = (): string =>
-  path.resolve(getOutputDirPath(), "images");
+  path.resolve(getMixingDirPath(), "images");
 
 export const generatePageUrl = (pathname: string): string =>
   `http://localhost:3000/${pathname}`;
