@@ -5,7 +5,7 @@ import path from "path";
 import puppeteer from "puppeteer";
 
 import { cleanEnv } from "../../shared/cleanEnv";
-import { ensureLaunchedWebApp } from "../../shared/helpersForCommands";
+import { ensureLaunchedWebApp } from "../../shared/ensureLaunchedWebApp";
 import {
   ensureImageSnapshot,
   ensurePdfSnapshot,
