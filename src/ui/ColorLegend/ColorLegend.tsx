@@ -3,11 +3,11 @@ import styled from "styled-components";
 
 import { extractLegendEntries, PosterConfig } from "../../shared/poster";
 import { GlobalStyle } from "../shared/GlobalStyle";
+import { ColorLegendSvg } from "./ColorLegendSvg";
 import {
   colorBlindnessConditions,
   generateColorBlindnessCss,
 } from "./helpersForColorBlindness";
-import { LegendSvg } from "./LegendSvg";
 
 const backgroundColor = "#1e2023";
 const width = 366;
@@ -46,7 +46,7 @@ export interface LegendProps {
   posterConfig: PosterConfig;
 }
 
-export const Legend: React.VoidFunctionComponent<LegendProps> = ({
+export const ColorLegend: React.VoidFunctionComponent<LegendProps> = ({
   posterConfig,
 }) => {
   const legendEntries = extractLegendEntries(posterConfig);
@@ -55,7 +55,7 @@ export const Legend: React.VoidFunctionComponent<LegendProps> = ({
     <Wrapper>
       <GlobalStyle />
       <Figure>
-        <LegendSvg
+        <ColorLegendSvg
           width={width}
           height={height}
           legendEntries={legendEntries}
@@ -66,7 +66,7 @@ export const Legend: React.VoidFunctionComponent<LegendProps> = ({
         <ColorBlindness key={condition}>
           <ColorBlindnessTitle>{condition}</ColorBlindnessTitle>
           <Figure style={generateColorBlindnessCss(condition)}>
-            <LegendSvg
+            <ColorLegendSvg
               width={width}
               height={height}
               legendEntries={legendEntries}

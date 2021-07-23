@@ -15,13 +15,13 @@ const IndexPage: NextPage = () => {
       </h1>
       <ul>
         <li>
-          <Link href="/histogram">
-            <a>histogram</a>
+          <Link href="/color-legend">
+            <a>color legend</a>
           </Link>
         </li>
         <li>
-          <Link href="/legend">
-            <a>legend</a>
+          <Link href="/histogram">
+            <a>histogram</a>
           </Link>
         </li>
         <li>

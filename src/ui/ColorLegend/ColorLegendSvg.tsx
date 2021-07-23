@@ -20,7 +20,7 @@ export interface LegendSvgProps extends React.SVGAttributes<SVGSVGElement> {
   height: number;
 }
 
-export const LegendSvg: React.VoidFunctionComponent<LegendSvgProps> = ({
+export const ColorLegendSvg: React.VoidFunctionComponent<LegendSvgProps> = ({
   legendEntries,
   width,
   height,
