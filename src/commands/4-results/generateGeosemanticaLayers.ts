@@ -193,11 +193,11 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
   const territoryId = getTerritoryId();
   const mainLayerFilePath = path.resolve(
     getResultsDirPath(),
-    `geosemantica-layer.${territoryId}.${version}.main.geojson`,
+    `${territoryId}.geosemantica-layer.${version}.main.geojson`,
   );
   const supplementaryLayerFilePath = path.resolve(
     getResultsDirPath(),
-    `geosemantica-layer.${territoryId}.${version}.supplementary.geojson`,
+    `${territoryId}.geosemantica-layer.${version}.supplementary.geojson`,
   );
 
   await writeFormattedJson(

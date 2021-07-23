@@ -41,7 +41,7 @@ export const generatePoster: Command = async ({ logger }) => {
   const territoryId = getTerritoryId();
   const resultFilePath = path.resolve(
     getResultsDirPath(),
-    `poster.${territoryId}.${version}.${extension}`,
+    `${territoryId}.poster.${version}.${extension}`,
   );
 
   await ensureLaunchedWebApp({

@@ -53,6 +53,8 @@ export const ensureLaunchedWebApp = async ({
     chalk.green(`Starting a temporary web app at ${tempWebAppUrl}...`),
   );
 
+  // https://github.com/vercel/next.js/issues/4808
+  // https://github.com/vercel/next.js/pull/22587
   const originalConsole = global.console;
   global.console = { ...originalConsole, log: () => {} };
 

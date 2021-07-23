@@ -21,6 +21,8 @@ import {
 
 // Using html`` to enable Prettier for XML
 
+const defaultBuildingColor = "#1e2023";
+
 const sldBase = html`
   <StyledLayerDescriptor
     xmlns="http://www.opengis.net/sld"
@@ -37,10 +39,14 @@ const sldBase = html`
           <se:Rule>
             <se:PolygonSymbolizer>
               <Fill>
-                <se:SvgParameter name="fill">#3d424a</se:SvgParameter>
+                <se:SvgParameter name="fill"
+                  >${defaultBuildingColor}</se:SvgParameter
+                >
               </Fill>
               <Stroke>
-                <se:SvgParameter name="stroke">#3d424a</se:SvgParameter>
+                <se:SvgParameter name="stroke"
+                  >${defaultBuildingColor}</se:SvgParameter
+                >
                 <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
                 <se:SvgParameter name="stroke-width">0.25</se:SvgParameter>
               </Stroke>
@@ -152,7 +158,7 @@ const yearLabelRule = html`
         </PointPlacement>
       </LabelPlacement>
       <Fill>
-        <se:SvgParameter name="fill">#000000</se:SvgParameter>
+        <se:SvgParameter name="fill">#000</se:SvgParameter>
       </Fill>
       <VendorOption name="autoWrap">60</VendorOption>
       <VendorOption name="maxDisplacement">150</VendorOption>
@@ -161,7 +167,7 @@ const yearLabelRule = html`
 `;
 
 const formatSld = (rawSld: string): string =>
-  rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ");
+  rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
 
 export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica layer styles"));
@@ -206,30 +212,6 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
   );
 
   process.stdout.write(` Done.\n`);
-  process.stdout.write(chalk.green(`Saving...`));
-
-  await ensureTerritoryGitignoreContainsResults();
-
-  const version = generateVersionSuffix();
-  const territoryId = getTerritoryId();
-  const mainLayerStyleFilePath = path.resolve(
-    getResultsDirPath(),
-    `geosemantica-layer-style.${territoryId}.${version}.main.sld`,
-  );
-  const supplementaryLayerStyleFilePath = path.resolve(
-    getResultsDirPath(),
-    `geosemantica-layer-style.${territoryId}.${version}.supplementary.sld`,
-  );
-
-  await fs.ensureDir(getResultsDirPath());
-  await fs.writeFile(mainLayerStyleFilePath, mainSld, "utf8");
-  await fs.writeFile(supplementaryLayerStyleFilePath, supplementarySld, "utf8");
-
-  logger.log(
-    ` Result saved to:\n${chalk.magenta(
-      mainLayerStyleFilePath,
-    )}\n${chalk.magenta(supplementaryLayerStyleFilePath)}`,
-  );
 
   const { COPY_TO_CLIPBOARD: layerStyleToCopy } = cleanEnv({
     COPY_TO_CLIPBOARD: envalid.str<"main" | "supplementary" | "">({
@@ -243,11 +225,39 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
       layerStyleToCopy === "main" ? mainSld : supplementarySld,
     );
 
-    logger.log("");
     logger.log(
       `The content of your ${layerStyleToCopy} style file has been copied to clipboard.`,
     );
     logger.log("You can paste it directly to https://map.geosemantica.ru.");
+  } else {
+    process.stdout.write(chalk.green(`Saving...`));
+
+    await ensureTerritoryGitignoreContainsResults();
+
+    const version = generateVersionSuffix();
+    const territoryId = getTerritoryId();
+    const mainLayerStyleFilePath = path.resolve(
+      getResultsDirPath(),
+      `${territoryId}.geosemantica-layer-style.${version}.main.sld`,
+    );
+    const supplementaryLayerStyleFilePath = path.resolve(
+      getResultsDirPath(),
+      `${territoryId}.geosemantica-layer-style.${version}.supplementary.sld`,
+    );
+
+    await fs.ensureDir(getResultsDirPath());
+    await fs.writeFile(mainLayerStyleFilePath, mainSld, "utf8");
+    await fs.writeFile(
+      supplementaryLayerStyleFilePath,
+      supplementarySld,
+      "utf8",
+    );
+
+    logger.log(
+      ` Result saved to:\n${chalk.magenta(
+        mainLayerStyleFilePath,
+      )}\n${chalk.magenta(supplementaryLayerStyleFilePath)}`,
+    );
   }
 };
 

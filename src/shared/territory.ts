@@ -31,7 +31,10 @@ export const getTerritoryDirPath = (): string => {
 };
 
 export const getTerritoryId = (): string => {
-  return path.basename(getTerritoryDirPath()).replace(/_/g, "-");
+  return path
+    .basename(getTerritoryDirPath())
+    .replace(/_/g, "-")
+    .replace(/\s+/g, "-");
 };
 
 export interface TerritoryConfig {

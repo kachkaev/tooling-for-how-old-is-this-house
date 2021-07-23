@@ -23,7 +23,7 @@ export const generateHistogram: Command = async ({ logger }) => {
   const territoryId = getTerritoryId();
   const resultFilePath = path.resolve(
     getResultsDirPath(),
-    `histogram.${territoryId}.${version}.${extension}`,
+    `${territoryId}.histogram.${version}.${extension}`,
   );
 
   await ensureLaunchedWebApp({

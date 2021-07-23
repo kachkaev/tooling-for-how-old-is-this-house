@@ -21,7 +21,7 @@ export const generateGeosemanticaColorLegend: Command = async ({ logger }) => {
   const territoryId = getTerritoryId();
   const resultFilePath = path.resolve(
     getResultsDirPath(),
-    `color-legend.${territoryId}.${version}.svg`,
+    `${territoryId}.color-legend.${version}.svg`,
   );
 
   await ensureLaunchedWebApp({
