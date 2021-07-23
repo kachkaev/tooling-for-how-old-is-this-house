@@ -42,6 +42,7 @@
     "d3-scale": "^4.0.0",
     "d3-scale-chromatic": "^3.0.0",
     "deromanize": "^1.0.0",
+    "get-port": "^5.1.1",
     "lodash-es": "^4.17.21",
     "next": "^11.0.1",
     "next-remote-watch": "^1.0.0",

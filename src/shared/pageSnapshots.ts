@@ -1,34 +1,26 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import { DateTime } from "luxon";
-import path from "path";
 import puppeteer from "puppeteer";
-
-import { getMixingDirPath } from "./mixing";
 
 const nextJsPageSelector = "#__next *";
 
-export const getImageDirPath = (): string =>
-  path.resolve(getMixingDirPath(), "images");
-
-export const generatePageUrl = (pathname: string): string =>
-  `http://localhost:3000/${pathname}`;
-
-const ensureImageSnapshot = async ({
-  page,
+export const ensureImageSnapshot = async ({
   imageScaleFactor,
-  imagePath,
   logger,
+  page,
   quality,
+  resultFilePath,
+  selectorToWaitFor = nextJsPageSelector,
 }: {
-  page: puppeteer.Page;
   imageScaleFactor: number;
-  imagePath: string;
   logger: Console;
+  page: puppeteer.Page;
   quality?: number;
+  resultFilePath: string;
+  selectorToWaitFor?: string;
 }): Promise<void> => {
-  if (await fs.pathExists(imagePath)) {
-    logger.log(chalk.gray(imagePath));
+  if (await fs.pathExists(resultFilePath)) {
+    logger.log(chalk.gray(resultFilePath));
 
     return;
   }
@@ -39,30 +31,32 @@ const ensureImageSnapshot = async ({
     deviceScaleFactor: imageScaleFactor,
   });
 
-  await page.waitForSelector(nextJsPageSelector);
+  await page.waitForSelector(selectorToWaitFor);
 
   await page.screenshot({
-    path: imagePath,
+    path: resultFilePath,
     quality,
     fullPage: true,
   });
 
-  logger.log(chalk.magenta(imagePath));
+  logger.log(chalk.magenta(resultFilePath));
 };
 
-const ensurePdfSnapshot = async ({
-  page,
-  pdfPath,
+export const ensurePdfSnapshot = async ({
   logger,
+  page,
   pdfSizeInMillimeters,
+  resultFilePath,
+  selectorToWaitFor = nextJsPageSelector,
 }: {
-  page: puppeteer.Page;
-  pdfPath: string;
-  pdfSizeInMillimeters: [number, number];
   logger: Console;
+  page: puppeteer.Page;
+  pdfSizeInMillimeters: [number, number];
+  resultFilePath: string;
+  selectorToWaitFor?: string;
 }): Promise<void> => {
-  if (await fs.pathExists(pdfPath)) {
-    logger.log(chalk.gray(pdfPath));
+  if (await fs.pathExists(resultFilePath)) {
+    logger.log(chalk.gray(resultFilePath));
 
     return;
   }
@@ -73,75 +67,15 @@ const ensurePdfSnapshot = async ({
     deviceScaleFactor: 1,
   });
 
-  await page.waitForSelector(nextJsPageSelector);
+  await page.waitForSelector(selectorToWaitFor);
 
   await page.pdf({
-    path: pdfPath,
+    path: resultFilePath,
     width: `${pdfSizeInMillimeters[0]}mm`,
     height: `${pdfSizeInMillimeters[1]}mm`,
     pageRanges: "1",
     printBackground: true,
   });
 
-  logger.log(chalk.magenta(pdfPath));
-};
-
-export const makePageSnapshot = async ({
-  imageScaleFactor = 1,
-  imageExtension,
-  imageJpegQuality = 85,
-  logger,
-  pagePath,
-  pdfSizeInMillimeters,
-}: {
-  imageScaleFactor?: number;
-  imageExtension?: string;
-  imageJpegQuality?: number;
-  logger: Console;
-  pagePath: string;
-  pdfSizeInMillimeters?: [number, number];
-}) => {
-  if (!imageExtension && !pdfSizeInMillimeters) {
-    throw new Error("Expected imageExtension and/or pdfSizeInMillimeters");
-  }
-
-  const imageDirPath = getImageDirPath();
-
-  await fs.ensureDir(imageDirPath);
-
-  const resultVersion = `v${DateTime.now().toFormat("y-MM-dd-HHmmss")}`;
-
-  const browser = await puppeteer.launch();
-
-  const outputBasePath = path.resolve(
-    imageDirPath,
-    `${pagePath.replace(/(\/|\\)/g, "~")}.${resultVersion}`,
-  );
-
-  const page = await browser.newPage();
-  await page.goto(generatePageUrl(pagePath));
-
-  if (imageExtension) {
-    await ensureImageSnapshot({
-      page,
-      imageScaleFactor,
-      imagePath: `${outputBasePath}.${imageExtension}`,
-      logger,
-      quality: imageExtension === "jpg" ? imageJpegQuality : undefined,
-    });
-  }
-
-  if (pdfSizeInMillimeters) {
-    await ensurePdfSnapshot({
-      page,
-      pdfSizeInMillimeters,
-      pdfPath: `${outputBasePath}.pdf`,
-      logger,
-    });
-  }
-
-  await page.close();
-  await browser.close();
-
-  logger.log(`Done!`);
+  logger.log(chalk.magenta(resultFilePath));
 };
