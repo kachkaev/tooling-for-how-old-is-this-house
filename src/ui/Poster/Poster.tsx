@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 import * as React from "react";
 import styled from "styled-components";
 
-import { MixedPropertyVariantsFeatureCollection } from "../../shared/outputMixing";
+import { MixedPropertyVariantsFeatureCollection } from "../../shared/mixing";
 import { PosterConfig } from "../../shared/poster";
 import {
   OsmFeature,

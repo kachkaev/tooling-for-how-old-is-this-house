@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 import path from "path";
 import puppeteer from "puppeteer";
 
-import { getMixingDirPath } from "./outputMixing";
+import { getMixingDirPath } from "./mixing";
 
 const nextJsPageSelector = "#__next *";
 

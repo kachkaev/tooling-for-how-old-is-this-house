@@ -3,7 +3,7 @@ import { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import { getMixedPropertyVariantsFilePath } from "../shared/outputMixing";
+import { getMixedPropertyVariantsFilePath } from "../shared/mixing";
 import { getTerritoryExtent, TerritoryExtent } from "../shared/territory";
 import { HistogramProps } from "../ui/Histogram";
 import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";

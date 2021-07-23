@@ -9,7 +9,7 @@ import styled from "styled-components";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../../shared/outputMixing";
+} from "../../shared/mixing";
 import { PosterConfig } from "../../shared/poster";
 import { GlobalStyle } from "../shared/GlobalStyle";
 

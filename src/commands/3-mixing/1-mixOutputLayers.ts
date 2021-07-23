@@ -21,17 +21,17 @@ import {
 import { writeFormattedJson } from "../../shared/helpersForJson";
 import { getSourcesDirPath } from "../../shared/helpersForPaths";
 import {
-  getOutputLayerFileName,
-  OutputLayer,
-  OutputLayerProperties,
-} from "../../shared/outputLayers";
-import {
   ensureTerritoryGitignoreContainsMixing,
   getMixedOutputLayersFilePath,
   MixedOutputLayersFeature,
   PropertyVariant,
   PropertyVariantWithNulls,
-} from "../../shared/outputMixing";
+} from "../../shared/mixing";
+import {
+  getOutputLayerFileName,
+  OutputLayer,
+  OutputLayerProperties,
+} from "../../shared/outputLayers";
 import { processFiles } from "../../shared/processFiles";
 import {
   getTerritoryDirPath,

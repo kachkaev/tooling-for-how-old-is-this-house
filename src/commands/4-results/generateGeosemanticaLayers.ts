@@ -7,12 +7,12 @@ import sortKeys from "sort-keys";
 
 import { deepClean } from "../../shared/deepClean";
 import { writeFormattedJson } from "../../shared/helpersForJson";
-import { OutputGeometry } from "../../shared/outputLayers";
 import {
   getMixedPropertyVariantsFilePath,
   MixedPropertyVariants,
   MixedPropertyVariantsFeatureCollection,
-} from "../../shared/outputMixing";
+} from "../../shared/mixing";
+import { OutputGeometry } from "../../shared/outputLayers";
 import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,

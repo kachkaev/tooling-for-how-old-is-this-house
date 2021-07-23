@@ -3,7 +3,7 @@ import { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import { getMixedPropertyVariantsFilePath } from "../shared/outputMixing";
+import { getMixedPropertyVariantsFilePath } from "../shared/mixing";
 import { readFetchedOsmFeatureCollection } from "../shared/sources/osm/readFetchedOsmFeatureCollection";
 import { getTerritoryExtent } from "../shared/territory";
 import { PosterProps } from "../ui/Poster";

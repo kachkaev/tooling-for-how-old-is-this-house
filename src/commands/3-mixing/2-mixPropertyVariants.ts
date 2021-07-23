@@ -33,7 +33,7 @@ import {
   pickWikidataUrl,
   pickWikipediaUrl,
   PropertyVariant,
-} from "../../shared/outputMixing";
+} from "../../shared/mixing";
 import { getTerritoryAddressHandlingConfig } from "../../shared/territory";
 
 interface VariantInfoInstance {
