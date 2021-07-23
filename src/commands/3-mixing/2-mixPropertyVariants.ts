@@ -5,9 +5,9 @@ import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
 
-import { createBeautifyAddress } from "../shared/addresses";
-import { deepClean } from "../shared/deepClean";
-import { writeFormattedJson } from "../shared/helpersForJson";
+import { createBeautifyAddress } from "../../shared/addresses";
+import { deepClean } from "../../shared/deepClean";
+import { writeFormattedJson } from "../../shared/helpersForJson";
 import {
   buildGlobalFeatureOrVariantId,
   DataToOmitSelector,
@@ -32,8 +32,8 @@ import {
   pickWikidataUrl,
   pickWikipediaUrl,
   PropertyVariant,
-} from "../shared/outputMixing";
-import { getTerritoryAddressHandlingConfig } from "../shared/territory";
+} from "../../shared/outputMixing";
+import { getTerritoryAddressHandlingConfig } from "../../shared/territory";
 
 interface VariantInfoInstance {
   variant: PropertyVariant;

@@ -10,30 +10,33 @@ import fs from "fs-extra";
 import path from "path";
 import sortKeys from "sort-keys";
 
-import { deepClean } from "../shared/deepClean";
+import { deepClean } from "../../shared/deepClean";
 import {
   addBufferToBbox,
   calculatePointDistanceToPolygonInMeters,
   deriveBboxCenter,
   isPointInBbox,
   unionBboxes,
-} from "../shared/helpersForGeometry";
-import { writeFormattedJson } from "../shared/helpersForJson";
-import { getSourcesDirPath } from "../shared/helpersForPaths";
+} from "../../shared/helpersForGeometry";
+import { writeFormattedJson } from "../../shared/helpersForJson";
+import { getSourcesDirPath } from "../../shared/helpersForPaths";
 import {
   getOutputLayerFileName,
   OutputLayer,
   OutputLayerProperties,
-} from "../shared/outputLayers";
+} from "../../shared/outputLayers";
 import {
   getMixedOutputLayersFilePath,
   MixedOutputLayersFeature,
   PropertyVariant,
   PropertyVariantWithNulls,
-} from "../shared/outputMixing";
-import { processFiles } from "../shared/processFiles";
-import { getTerritoryDirPath, getTerritoryExtent } from "../shared/territory";
-import { processTiles } from "../shared/tiles";
+} from "../../shared/outputMixing";
+import { processFiles } from "../../shared/processFiles";
+import {
+  getTerritoryDirPath,
+  getTerritoryExtent,
+} from "../../shared/territory";
+import { processTiles } from "../../shared/tiles";
 
 const bufferSizeInMeters = 7;
 const tileZoom = 15;
