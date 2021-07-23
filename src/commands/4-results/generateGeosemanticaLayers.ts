@@ -106,7 +106,7 @@ type SupplementaryLayerFeature = turf.Feature<
 >;
 
 export const generateGeosemanticaLayers: Command = async ({ logger }) => {
-  logger.log(chalk.bold("results: Generate Geosemantica layers"));
+  logger.log(chalk.bold("results: Generating Geosemantica layers"));
 
   process.stdout.write(chalk.green("Loading mixed property variants..."));
   const inputFileName = getMixedPropertyVariantsFilePath();

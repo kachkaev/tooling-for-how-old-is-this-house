@@ -24,7 +24,7 @@ export const generateFetchOsmObjects = ({
   selectors: string[];
   title: string;
 }): Command => async ({ logger }) => {
-  logger.log(chalk.bold(`sources/osm: fetch ${title}`));
+  logger.log(chalk.bold(`sources/osm: Fetching ${title}`));
 
   const query = dedent`
     [out:json][timeout:60];

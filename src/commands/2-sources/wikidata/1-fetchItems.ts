@@ -20,7 +20,7 @@ import {
 import { getTerritoryExtent } from "../../../shared/territory";
 
 export const fetchItems: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikidata: Fetch items (execute query)"));
+  logger.log(chalk.bold("sources/wikidata: Fetching items (executing query)"));
 
   process.stdout.write(chalk.green("Preparing to make the API query..."));
 

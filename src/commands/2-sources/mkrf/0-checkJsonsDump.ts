@@ -9,7 +9,9 @@ import fs from "fs-extra";
 import { getMkrfJsonsDumpFilePath } from "../../../shared/sources/mkrf";
 
 export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/mkrf: Check presence of the JSONS dump"));
+  logger.log(
+    chalk.bold("sources/mkrf: Checking the presence of the JSONS dump"),
+  );
 
   const jsonsDumpFilePath = getMkrfJsonsDumpFilePath();
 

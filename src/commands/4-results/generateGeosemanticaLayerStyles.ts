@@ -164,7 +164,7 @@ const formatSld = (rawSld: string): string =>
   rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ");
 
 export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
-  logger.log(chalk.bold("results: Generate Geosemantica layer styles"));
+  logger.log(chalk.bold("results: Generating Geosemantica layer styles"));
 
   process.stdout.write(chalk.green("Creating sld styles..."));
 
