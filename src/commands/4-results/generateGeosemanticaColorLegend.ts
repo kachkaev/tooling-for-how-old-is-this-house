@@ -1,10 +1,10 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
+import fs from "fs-extra";
 import path from "path";
 import puppeteer from "puppeteer";
 
 import { ensureLaunchedWebApp } from "../../shared/ensureLaunchedWebApp";
-import { ensureImageSnapshot } from "../../shared/pageSnapshots";
 import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,
@@ -12,10 +12,8 @@ import {
 } from "../../shared/results";
 import { getTerritoryId } from "../../shared/territory";
 
-export const generateHistogram: Command = async ({ logger }) => {
-  logger.log(chalk.bold("results: Generating histogram"));
-
-  const extension = "png";
+export const generateGeosemanticaColorLegend: Command = async ({ logger }) => {
+  logger.log(chalk.bold("results: Generating Geosemantica color legend"));
 
   await ensureTerritoryGitignoreContainsResults();
 
@@ -23,28 +21,32 @@ export const generateHistogram: Command = async ({ logger }) => {
   const territoryId = getTerritoryId();
   const resultFilePath = path.resolve(
     getResultsDirPath(),
-    `histogram.${territoryId}.${version}.${extension}`,
+    `color-legend.${territoryId}.${version}.svg`,
   );
 
   await ensureLaunchedWebApp({
     logger,
     action: async (webAppUrl) => {
-      logger.log(chalk.green(`Making web page snapshot...`));
+      logger.log(chalk.green(`Crawling web page...`));
       const browser = await puppeteer.launch();
 
       const page = await browser.newPage();
-      await page.goto(`${webAppUrl}/histogram`);
+      await page.goto(`${webAppUrl}/color-legend`);
 
-      await ensureImageSnapshot({
-        imageScaleFactor: 2,
-        logger,
-        page,
-        resultFilePath,
-      });
+      const svgContainerSelector = "[data-testid=svgContainer]";
+      await page.waitForSelector(svgContainerSelector);
+      const svgHtml = await page.$eval(
+        svgContainerSelector,
+        (element) => element.innerHTML,
+      );
+
+      await fs.writeFile(resultFilePath, svgHtml, "utf8");
+
+      logger.log(chalk.magenta(resultFilePath));
 
       await browser.close();
     },
   });
 };
 
-autoStartCommandIfNeeded(generateHistogram, __filename);
+autoStartCommandIfNeeded(generateGeosemanticaColorLegend, __filename);

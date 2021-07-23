@@ -3,16 +3,16 @@ import dynamic from "next/dynamic";
 import * as React from "react";
 
 import { getTerritoryExtent, TerritoryExtent } from "../shared/territory";
-import { LegendProps } from "../ui/ColorLegend";
+import { ColorLegendProps } from "../ui/ColorLegend";
 import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
 import { usePosterConfig } from "../ui/shared/usePosterConfig";
 
-const Legend = dynamic<LegendProps>(
+const ColorLegend = dynamic<ColorLegendProps>(
   import("../ui/ColorLegend").then((m) => m.ColorLegend),
   { ssr: false },
 );
 
-type LegendPageProps = Omit<LegendProps, "posterConfig"> & {
+type LegendPageProps = Omit<ColorLegendProps, "posterConfig"> & {
   territoryExtent: TerritoryExtent;
 };
 
@@ -24,7 +24,7 @@ const LegendPage: NextPage<LegendPageProps> = ({ territoryExtent }) => {
     return null;
   }
 
-  return <Legend posterConfig={posterConfig} />;
+  return <ColorLegend posterConfig={posterConfig} />;
 };
 
 export const getStaticProps: GetStaticProps<LegendPageProps> = async () => {

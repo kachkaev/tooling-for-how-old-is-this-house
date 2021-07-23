@@ -132,9 +132,8 @@ export const ensureTerritoryGitignoreContainsLine = async (
   line: string,
 ): Promise<void> => {
   const filePath = path.resolve(getTerritoryDirPath(), ".gitignore");
-  if (!(await fs.pathExists(filePath))) {
-    await fs.writeFile(filePath, "");
-  }
+  await fs.ensureDir(path.dirname(filePath));
+  await fs.ensureFile(filePath);
   const lines = (await fs.readFile(filePath, "utf8")).split(/\n\r?/);
   if (lines.includes(line)) {
     return;

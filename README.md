@@ -626,6 +626,18 @@ yarn dev
 <!-- Перед выгрузкой данных на сайт [how-old-is-this.house](https://how-old-is-this.house) запустите эту команду: -->
 <!-- Она создаст копию результата в подходящем для сайта формате. -->
 
+##### Черновик постера
+
+```sh
+yarn exe src/commands/4-results/generatePoster.ts
+```
+
+##### Гистограмма годов постройки
+
+```sh
+yarn exe src/commands/4-results/generateHistogram.ts
+```
+
 ##### Слои для загрузки на Геосемантику
 
 ```sh
@@ -638,16 +650,10 @@ yarn exe src/commands/4-results/generateGeosemanticaLayers.ts
 yarn exe src/commands/4-results/generateGeosemanticaLayerStyles.ts
 ```
 
-##### Гистограмма годов постройки
+##### Цветовая легенда
 
 ```sh
-yarn exe src/commands/4-results/generateHistogram.ts
-```
-
-##### Черновик постера
-
-```sh
-yarn exe src/commands/4-results/generatePoster.ts
+yarn exe src/commands/4-results/generateGeosemanticaColorLegend.ts
 ```
 
 [опционально]: https://img.shields.io/badge/-опционально-white.svg

@@ -42,11 +42,11 @@ const ColorBlindnessTitle = styled.div`
   text-align: center;
 `;
 
-export interface LegendProps {
+export interface ColorLegendProps {
   posterConfig: PosterConfig;
 }
 
-export const ColorLegend: React.VoidFunctionComponent<LegendProps> = ({
+export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
   posterConfig,
 }) => {
   const legendEntries = extractLegendEntries(posterConfig);
@@ -54,7 +54,7 @@ export const ColorLegend: React.VoidFunctionComponent<LegendProps> = ({
   return (
     <Wrapper>
       <GlobalStyle />
-      <Figure>
+      <Figure data-testid="svgContainer">
         <ColorLegendSvg
           width={width}
           height={height}

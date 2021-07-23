@@ -47,7 +47,7 @@ export const generatePoster: Command = async ({ logger }) => {
   await ensureLaunchedWebApp({
     logger,
     action: async (webAppUrl) => {
-      logger.log(chalk.green(`Generating poster...`));
+      logger.log(chalk.green(`Making web page snapshot...`));
       const browser = await puppeteer.launch();
 
       const page = await browser.newPage();
@@ -75,7 +75,7 @@ export const generatePoster: Command = async ({ logger }) => {
         });
       }
 
-      browser.close();
+      await browser.close();
     },
   });
 };
