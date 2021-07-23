@@ -1,10 +1,10 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 
-import { makePageSnapshot } from "../shared/pageSnapshots";
-import { extractPosterConfig } from "../shared/poster";
-import { getTerritoryConfig, getTerritoryExtent } from "../shared/territory";
+import { makePageSnapshot } from "../../shared/pageSnapshots";
+import { extractPosterConfig } from "../../shared/poster";
+import { getTerritoryConfig, getTerritoryExtent } from "../../shared/territory";
 
-export const makePoster: Command = async ({ logger }) => {
+export const generatePoster: Command = async ({ logger }) => {
   const posterLayout = extractPosterConfig(
     await getTerritoryConfig(),
     await getTerritoryExtent(),
@@ -29,4 +29,4 @@ export const makePoster: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(makePoster, __filename);
+autoStartCommandIfNeeded(generatePoster, __filename);

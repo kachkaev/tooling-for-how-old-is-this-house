@@ -2,8 +2,8 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import clipboardy from "clipboardy";
 import html from "tagged-template-noop";
 
-import { extractLegendEntries, extractPosterConfig } from "../shared/poster";
-import { getTerritoryConfig, getTerritoryExtent } from "../shared/territory";
+import { extractLegendEntries, extractPosterConfig } from "../../shared/poster";
+import { getTerritoryConfig, getTerritoryExtent } from "../../shared/territory";
 
 // Using html`` enable Prettier for XML
 
@@ -143,7 +143,7 @@ const sldTemplateForYearRangeRule = html`
   </se:Rule>
 `;
 
-export const makeGeosemanticaLayerStyle: Command = async ({ logger }) => {
+export const generateGeosemanticaLayerStyle: Command = async ({ logger }) => {
   const posterConfig = extractPosterConfig(
     await getTerritoryConfig(),
     await getTerritoryExtent(),
@@ -179,4 +179,4 @@ export const makeGeosemanticaLayerStyle: Command = async ({ logger }) => {
   );
 };
 
-autoStartCommandIfNeeded(makeGeosemanticaLayerStyle, __filename);
+autoStartCommandIfNeeded(generateGeosemanticaLayerStyle, __filename);
