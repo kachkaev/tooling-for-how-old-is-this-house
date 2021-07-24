@@ -9,6 +9,6 @@ export const generateGeographicContextExtent = (
   properties: { category: "geographicContextExtent" };
 } => ({
   type: "Feature",
-  geometry: createBboxFeature(territoryExtent, 10000).geometry,
+  geometry: createBboxFeature(territoryExtent, 20000).geometry,
   properties: { category: "geographicContextExtent" },
 });
