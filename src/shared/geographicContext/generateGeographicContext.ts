@@ -52,6 +52,7 @@ const mapOsmPropertiesToGeographicContextProperties = (
 
   const level = mapOsmPropertiesToLevel(properties);
 
+  // https://wiki.openstreetmap.org/wiki/Key:waterway
   switch (waterway) {
     case undefined:
       break;
@@ -59,10 +60,13 @@ const mapOsmPropertiesToGeographicContextProperties = (
     case "riverbank":
     case "canal":
       return { category: "waterway", size: 1, level };
-    default:
+    case "stream":
       return { category: "waterway", size: 0.7, level };
+    default:
+      return undefined;
   }
 
+  // https://wiki.openstreetmap.org/wiki/Key:highway
   switch (highway) {
     case undefined:
       break;
@@ -74,6 +78,7 @@ const mapOsmPropertiesToGeographicContextProperties = (
     case "secondary":
     case "secondary_link":
       return { category: "roadway", size: 1, level };
+    case "construction":
     case "tertiary":
     case "tertiary_link":
       return { category: "roadway", size: 0.7, level };
@@ -81,15 +86,31 @@ const mapOsmPropertiesToGeographicContextProperties = (
       return undefined;
   }
 
+  // https://wiki.openstreetmap.org/wiki/Key:railway
   switch (railway) {
     case undefined:
       break;
-    default:
+
+    case "rail":
       return {
         category: "railway",
         size: properties.usage === "main" ? 1 : 0.5,
         level,
       };
+    case "abandoned":
+    case "construction":
+    case "disused":
+    case "funicular":
+    case "light_rail":
+    case "monorail":
+    case "narrow_gauge":
+    case "tram":
+      return {
+        category: "railway",
+        size: 0.5,
+        level,
+      };
+    default:
   }
 
   return undefined;

@@ -6,6 +6,13 @@ import path from "path";
 import sortKeys from "sort-keys";
 
 import { deepClean } from "../../shared/deepClean";
+import {
+  GeographicContextFeature,
+  GeographicContextFeatureGeometry,
+  GeographicContextFeatureProperties,
+  splitGeographicContext,
+} from "../../shared/geographicContext";
+import { generateGeographicContext } from "../../shared/geographicContext/generateGeographicContext";
 import { writeFormattedJson } from "../../shared/helpersForJson";
 import {
   getMixedPropertyVariantsFilePath,
@@ -20,6 +27,7 @@ import {
 } from "../../shared/results";
 import {
   getTerritoryAddressHandlingConfig,
+  getTerritoryExtent,
   getTerritoryId,
 } from "../../shared/territory";
 
@@ -44,9 +52,14 @@ interface MainLayerProperties {
   /* eslint-enable @typescript-eslint/naming-convention */
 }
 
-interface SupplementaryLayerProperties {
-  fid: number;
-}
+type BuildingsLayerFeature = turf.Feature<OutputGeometry, MainLayerProperties>;
+
+type BackgroundLayerFeature = turf.Feature<
+  GeographicContextFeatureGeometry,
+  GeographicContextFeatureProperties | { category: "building" }
+>;
+
+type ForegroundLayerFeature = GeographicContextFeature;
 
 // Placeholder properties are added to the first feature of the resulting feature collection.
 // This ensures property list completeness and order in apps like QGIS.
@@ -137,13 +150,6 @@ const generateCopyrights = ({
     .join(", ")}`;
 };
 
-type MainLayerFeature = turf.Feature<OutputGeometry, MainLayerProperties>;
-
-type SupplementaryLayerFeature = turf.Feature<
-  OutputGeometry,
-  SupplementaryLayerProperties
->;
-
 export const generateGeosemanticaLayers: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica layers"));
 
@@ -154,7 +160,26 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
   )) as MixedPropertyVariantsFeatureCollection;
 
   process.stdout.write(` Done.\n`);
+
+  process.stdout.write(chalk.green("Loading geographic context..."));
+  const geographicContextFeatureCollection = await generateGeographicContext(
+    await getTerritoryExtent(),
+  );
+
+  process.stdout.write(` Done.\n`);
+
   process.stdout.write(chalk.green("Processing..."));
+
+  const {
+    backgroundFeatureCollection,
+    foregroundFeatureCollection,
+  } = splitGeographicContext(geographicContextFeatureCollection);
+
+  const backgroundLayerFeatures: BackgroundLayerFeature[] =
+    backgroundFeatureCollection.features;
+  const buildingsLayerFeatures: BuildingsLayerFeature[] = [];
+  const foregroundLayerFeatures: ForegroundLayerFeature[] =
+    foregroundFeatureCollection.features;
 
   const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
 
@@ -179,11 +204,8 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
     return address.substr(addressPrefixToRemove.length);
   };
 
-  const mainFeatures: MainLayerFeature[] = [];
-  const supplementaryFeatures: SupplementaryLayerFeature[] = [];
-
   for (const inputFeature of inputFeatureCollection.features) {
-    const index = mainFeatures.length;
+    const index = buildingsLayerFeatures.length;
     const fid = index + 1;
     const outputFeatureProperties: MainLayerProperties = deepClean({
       fid,
@@ -210,7 +232,7 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
       /* eslint-enable @typescript-eslint/naming-convention */
     });
 
-    mainFeatures.push(
+    buildingsLayerFeatures.push(
       turf.feature(
         inputFeature.geometry,
         sortKeys(
@@ -221,7 +243,9 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
         ),
       ),
     );
-    supplementaryFeatures.push(turf.feature(inputFeature.geometry, { fid }));
+    backgroundLayerFeatures.push(
+      turf.feature(inputFeature.geometry, { category: "building" }),
+    );
   }
 
   process.stdout.write(` Done.\n`);
@@ -231,28 +255,37 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
 
   const version = generateVersionSuffix();
   const territoryId = getTerritoryId();
-  const mainLayerFilePath = path.resolve(
+  const backgroundLayerFilePath = path.resolve(
     getResultsDirPath(),
-    `${territoryId}.geosemantica-layer.${version}.main.geojson`,
+    `${territoryId}.geosemantica-layer.${version}.background.geojson`,
   );
-  const supplementaryLayerFilePath = path.resolve(
+  const buildingsLayerFilePath = path.resolve(
     getResultsDirPath(),
-    `${territoryId}.geosemantica-layer.${version}.supplementary.geojson`,
+    `${territoryId}.geosemantica-layer.${version}.buildings.geojson`,
+  );
+  const foregroundLayerFilePath = path.resolve(
+    getResultsDirPath(),
+    `${territoryId}.geosemantica-layer.${version}.foreground.geojson`,
   );
 
   await writeFormattedJson(
-    mainLayerFilePath,
-    turf.featureCollection(mainFeatures),
+    backgroundLayerFilePath,
+    turf.featureCollection(backgroundLayerFeatures),
   );
-
   await writeFormattedJson(
-    supplementaryLayerFilePath,
-    turf.featureCollection(supplementaryFeatures),
+    buildingsLayerFilePath,
+    turf.featureCollection(buildingsLayerFeatures),
+  );
+  await writeFormattedJson(
+    foregroundLayerFilePath,
+    turf.featureCollection(foregroundLayerFeatures),
   );
 
   logger.log(
-    ` Result saved to:\n${chalk.magenta(mainLayerFilePath)}\n${chalk.magenta(
-      supplementaryLayerFilePath,
+    ` Result saved to:\n${chalk.magenta(
+      backgroundLayerFilePath,
+    )}\n${chalk.magenta(buildingsLayerFilePath)}\n${chalk.magenta(
+      foregroundLayerFilePath,
     )}`,
   );
 };
