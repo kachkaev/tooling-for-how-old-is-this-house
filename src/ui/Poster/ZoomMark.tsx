@@ -27,6 +27,7 @@ const Text = styled.div`
   line-height: 1.4em;
   font-size: ${5 * 0.8}mm;
   text-align: center;
+  white-space: nowrap;
 `;
 
 export interface ZoomMarkProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -46,7 +47,7 @@ export const ZoomMark: React.VoidFunctionComponent<ZoomMarkProps> = ({
 
   return (
     <Wrapper {...rest} style={{ ...style, width: widthInPixels }}>
-      <Text>1 километр</Text>
+      <Text>1 {widthInPixels < 80 ? "км" : "километр"}</Text>
       {/* Rendering wrapper border instead of svg may produce thick lines at certain browser scales */}
       <Svg width={widthInPixels} height={heightInPixels}>
         <path
