@@ -1954,6 +1954,11 @@
   resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-3.0.1.tgz#0ff28ee7052a2e504cb951d17df7437c33d442d6"
   integrity sha512-D/G7oG0czeszALrkdUiV68CDiHDxXf+M2mLVqAyKktGd12VKQQljj1sHJGBKjcK4jRH1biBd6ZPQPHpJ0mNa0w==
 
+"@types/d3-color@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/d3-color/-/d3-color-3.0.2.tgz#53f2d6325f66ee79afd707c05ac849e8ae0edbb0"
+  integrity sha512-WVx6zBiz4sWlboCy7TCgjeyHpNjMsoF36yaagny1uXfbadc9f+5BeBf7U+lRmQqY3EHbGQpP8UdW8AC+cywSwQ==
+
 "@types/d3-geo@^1.11.1":
   version "1.12.3"
   resolved "https://registry.yarnpkg.com/@types/d3-geo/-/d3-geo-1.12.3.tgz#512ebe735cb1cdf5f87ad59608416e2e9e868c5a"
@@ -8981,6 +8986,11 @@ tsconfig-paths@^3.9.0:
     json5 "^2.2.0"
     minimist "^1.2.0"
     strip-bom "^3.0.0"
+
+tsimportlib@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/tsimportlib/-/tsimportlib-0.0.3.tgz#008453c0f0eea6f736f2a4431171de240b21fc0d"
+  integrity sha512-U9sW2/3D0P4IVRnhH2RCqjCP0sG66qvb4ahB0aQln5xGMphDjntz5rdk0rFZ6Fg+lW3L+i+gRnIl4VvNBvxiQw==
 
 tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"

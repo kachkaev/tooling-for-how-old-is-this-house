@@ -1,10 +1,12 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import clipboardy from "clipboardy";
+import type { ColorFactory } from "d3-color";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import path from "path";
 import html from "tagged-template-noop";
+import { dynamicImport } from "tsimportlib";
 
 import { cleanEnv } from "../../shared/cleanEnv";
 import { extractLegendEntries, extractPosterConfig } from "../../shared/poster";
@@ -19,9 +21,13 @@ import {
   getTerritoryId,
 } from "../../shared/territory";
 
-// Using html`` to enable Prettier for XML
+// TODO: Remove d3Color argument after migrating to ESM
+const formatColor = (d3Color: ColorFactory, color: string): string =>
+  d3Color(color)?.formatHex() ?? "#000";
 
 const defaultBuildingColor = "#1e2023";
+
+// Using html`` to enable Prettier for XML
 
 const sldBase = html`
   <StyledLayerDescriptor
@@ -172,6 +178,12 @@ const formatSld = (rawSld: string): string =>
 export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica layer styles"));
 
+  // TODO: Bring back normal import after migrating to ESM
+  const { color: d3Color } = (await dynamicImport(
+    "d3-color",
+    module,
+  )) as typeof import("d3-color");
+
   process.stdout.write(chalk.green("Creating sld styles..."));
 
   const posterConfig = extractPosterConfig(
@@ -190,7 +202,7 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
     return sldTemplateForYearRangeRule
       .replace("<!--{{ NAME }}-->", entryName)
       .replace("<!--{{ TITLE }}-->", entryName)
-      .replace(/<!--{{ COLOR }}-->/g, entry.color)
+      .replace(/<!--{{ COLOR }}-->/g, formatColor(d3Color, entry.color))
       .replace("<!--{{ YEAR_MIN }}-->", `${entry.completionYear}`)
       .replace(
         "<!--{{ YEAR_MAX }}-->",
