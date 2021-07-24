@@ -2,59 +2,29 @@ import { DateTime } from "luxon";
 import * as React from "react";
 import styled from "styled-components";
 
+import {
+  GeographicContextFeatureCollection,
+  geographicContextStyling,
+  splitGeographicContext,
+} from "../../shared/geographicContext";
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/mixing";
 import { PosterConfig } from "../../shared/poster";
-import {
-  OsmFeature,
-  OsmFeatureCollection,
-  OsmRailwayGeometry,
-  OsmRoadGeometry,
-  OsmWaterObjectGeometry,
-} from "../../shared/sources/osm/types";
 import { TerritoryExtent } from "../../shared/territory";
 import { GlobalStyle } from "../shared/GlobalStyle";
 import { CropMark } from "./CropMark";
 import { generateMapCompletionYearToColor } from "./generateMapCompletionYearToColor";
 import { GeoMap } from "./GeoMap";
 import { GeoMapLayerWithBuildingCompletionYears } from "./GeoMapLayerWithBuildingCompletionYears";
-import { GeoMapLayerWithRailways } from "./GeoMapLayerWithRailways";
-import { GeoMapLayerWithRoads } from "./GeoMapLayerWithRoads";
+import { GeoMapLayerWithGeographicContext } from "./GeoMapLayerWithGeographicContext";
 import { GeoMapLayerWithTerritoryExtent } from "./GeoMapLayerWithTerritoryExtent";
-import { GeoMapLayerWithWaterObjects } from "./GeoMapLayerWithWaterObjects";
 import { Timeline } from "./Timeline";
 import { ZoomMark } from "./ZoomMark";
-
-const backgroundColor = "#030D12";
-
-const filterOsmFeaturesBelowGround = (
-  osmFeature: OsmFeature<OsmRoadGeometry | OsmRailwayGeometry>,
-): boolean => {
-  const layer = parseInt(osmFeature.properties.layer ?? "");
-
-  return layer < 0 || Boolean(osmFeature.properties.tunnel);
-};
-
-const filterOsmFeaturesNotBelowGround = (
-  osmFeature: OsmFeature<OsmRoadGeometry | OsmRailwayGeometry>,
-): boolean => {
-  const layer = parseInt(osmFeature.properties.layer ?? "");
-
-  return !isFinite(layer) || layer >= 0;
-};
-
-const filterOsmFeaturesAboveGround = (
-  osmFeature: OsmFeature<OsmRoadGeometry | OsmRailwayGeometry>,
-): boolean => {
-  const layer = parseInt(osmFeature.properties.layer ?? "");
-
-  return layer > 0 || Boolean(osmFeature.properties.bridge);
-};
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;
   overflow: hidden;
   color: rgb(242, 246, 249);
-  background: ${backgroundColor};
+  background: #fff;
   position: relative;
 
   font-size: 5mm;
@@ -76,11 +46,11 @@ const Shadow: React.VoidFunctionComponent<{
     style: {
       ...children.props.style,
       filter: `brightness(0) opacity(0.7) blur(2mm)
-    drop-shadow(0 0 3mm ${backgroundColor})
-    drop-shadow(0 0 3mm ${backgroundColor})
-    drop-shadow(0 0 2mm ${backgroundColor})
-    drop-shadow(0 0 1mm ${backgroundColor})
-    drop-shadow(0 0 1mm ${backgroundColor})`,
+    drop-shadow(0 0 3mm ${geographicContextStyling.backgroundColor})
+    drop-shadow(0 0 3mm ${geographicContextStyling.backgroundColor})
+    drop-shadow(0 0 2mm ${geographicContextStyling.backgroundColor})
+    drop-shadow(0 0 1mm ${geographicContextStyling.backgroundColor})
+    drop-shadow(0 0 1mm ${geographicContextStyling.backgroundColor})`,
     },
   });
 
@@ -133,39 +103,27 @@ const DraftNotice2 = styled(DraftNotice)`
 `;
 
 export interface PosterProps {
-  posterConfig: PosterConfig;
   buildingCollection: MixedPropertyVariantsFeatureCollection;
+  geographicContext: GeographicContextFeatureCollection;
+  posterConfig: PosterConfig;
   territoryExtent: TerritoryExtent;
-
-  railwayCollection?: OsmFeatureCollection<OsmRailwayGeometry>;
-  roadCollection?: OsmFeatureCollection<OsmRoadGeometry>;
-  waterObjectCollection?: OsmFeatureCollection<OsmWaterObjectGeometry>;
 }
 
 export const Poster: React.VoidFunctionComponent<PosterProps> = ({
-  posterConfig,
   buildingCollection,
+  geographicContext,
+  posterConfig,
   territoryExtent,
-
-  railwayCollection,
-  roadCollection,
-  waterObjectCollection,
 }) => {
-  const {
-    colorByCompletionYear,
-    colorForUnknownCompletionYear,
-    layout,
-    map,
-    timeline,
-  } = posterConfig;
+  const { colorByCompletionYear, layout, map, timeline } = posterConfig;
 
   const mapCompletionYearToColor = React.useMemo(
     () =>
       generateMapCompletionYearToColor(
         colorByCompletionYear,
-        colorForUnknownCompletionYear,
+        geographicContextStyling.buildingColor,
       ),
-    [colorByCompletionYear, colorForUnknownCompletionYear],
+    [colorByCompletionYear],
   );
 
   const timelineStyle: React.CSSProperties = React.useMemo(
@@ -189,6 +147,13 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
     ],
   );
 
+  const {
+    backgroundFeatureCollection,
+    foregroundFeatureCollection,
+  } = React.useMemo(() => splitGeographicContext(geographicContext), [
+    geographicContext,
+  ]);
+
   return (
     <Figure
       style={{
@@ -205,49 +170,11 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
         {(layerProps) => {
           return (
             <>
-              {/* roads and railways below ground */}
-              {railwayCollection ? (
-                <GeoMapLayerWithRailways
-                  {...layerProps}
-                  featureFilter={filterOsmFeaturesBelowGround}
-                  opacity={0.7}
-                  data={railwayCollection}
-                />
-              ) : null}
-              {roadCollection ? (
-                <GeoMapLayerWithRoads
-                  {...layerProps}
-                  featureFilter={filterOsmFeaturesBelowGround}
-                  opacity={0.7}
-                  data={roadCollection}
-                />
-              ) : null}
+              <GeoMapLayerWithGeographicContext
+                {...layerProps}
+                data={backgroundFeatureCollection}
+              />
 
-              {/* water objects */}
-              {waterObjectCollection ? (
-                <GeoMapLayerWithWaterObjects
-                  {...layerProps}
-                  data={waterObjectCollection}
-                />
-              ) : null}
-
-              {/* roads and railways NOT below ground */}
-              {railwayCollection ? (
-                <GeoMapLayerWithRailways
-                  {...layerProps}
-                  featureFilter={filterOsmFeaturesNotBelowGround}
-                  data={railwayCollection}
-                />
-              ) : null}
-              {roadCollection ? (
-                <GeoMapLayerWithRoads
-                  {...layerProps}
-                  featureFilter={filterOsmFeaturesNotBelowGround}
-                  data={roadCollection}
-                />
-              ) : null}
-
-              {/* territory extent outline */}
               {map.territoryExtentOutline ? (
                 <GeoMapLayerWithTerritoryExtent
                   {...layerProps}
@@ -255,7 +182,6 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
                 />
               ) : null}
 
-              {/* buildings */}
               <GeoMapLayerWithBuildingCompletionYears
                 {...layerProps}
                 sampleSize={map.buildingSampleSize}
@@ -263,23 +189,12 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
                 data={buildingCollection}
               />
 
-              {/* roads and railways above ground */}
-              {railwayCollection ? (
-                <GeoMapLayerWithRailways
+              <g opacity={0.8}>
+                <GeoMapLayerWithGeographicContext
                   {...layerProps}
-                  featureFilter={filterOsmFeaturesAboveGround}
-                  opacity={0.5}
-                  data={railwayCollection}
+                  data={foregroundFeatureCollection}
                 />
-              ) : null}
-              {roadCollection ? (
-                <GeoMapLayerWithRoads
-                  {...layerProps}
-                  featureFilter={filterOsmFeaturesAboveGround}
-                  opacity={0.5}
-                  data={roadCollection}
-                />
-              ) : null}
+              </g>
             </>
           );
         }}

@@ -39,7 +39,6 @@ export interface PosterConfig {
     maxYear: number;
   };
   colorByCompletionYear: Record<string, string>;
-  colorForUnknownCompletionYear: string;
 }
 
 // https://observablehq.com/@d3/color-schemes - inspired by continuous spectral
@@ -88,7 +87,6 @@ const defaultPosterConfig: PosterConfig = {
     maxYear: 2021,
   },
   colorByCompletionYear: {},
-  colorForUnknownCompletionYear: "#3d424a",
 };
 
 export const extractPosterConfig = (

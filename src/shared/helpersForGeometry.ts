@@ -1,3 +1,4 @@
+import rewind from "@mapbox/geojson-rewind";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
@@ -20,7 +21,10 @@ export const deriveBboxCenter = (bbox: turf.BBox): Point2dCoordinates => {
 };
 
 export const createBboxFeature = (feature: turf.Feature, bufferInMeters = 0) =>
-  turf.bboxPolygon(addBufferToBbox(turf.bbox(feature), bufferInMeters));
+  rewind(
+    turf.bboxPolygon(addBufferToBbox(turf.bbox(feature), bufferInMeters)),
+    true,
+  );
 
 /**
  * Note that the inclusion is:

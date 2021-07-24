@@ -1,6 +1,6 @@
 import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { createBboxFeature } from "../../../shared/helpersForGeometry";
+import { generateGeographicContextExtent } from "../../../shared/geographicContext";
 import { getFetchedOsmRoadsFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
@@ -8,7 +8,8 @@ import { getTerritoryExtent } from "../../../shared/territory";
 export const fetchRoads = generateFetchOsmObjects({
   acceptedGeometryTypes: ["LineString"],
   filePath: getFetchedOsmRoadsFilePath(),
-  getExtent: async () => createBboxFeature(await getTerritoryExtent(), 5000),
+  getExtent: async () =>
+    generateGeographicContextExtent(await getTerritoryExtent()),
   selectors: [
     'way["highway"~"trunk"]', // ~ helps include "×_link"
     'way["highway"~"primary"]',

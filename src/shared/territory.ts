@@ -6,8 +6,11 @@ import fs from "fs-extra";
 import { load } from "js-yaml";
 import path from "path";
 
-import { AddressHandlingConfig, RawAddressHandlingConfig } from "./addresses";
-import { compileAddressHandlingConfig } from "./addresses/helpersForWordReplacements";
+import {
+  AddressHandlingConfig,
+  compileAddressHandlingConfig,
+  RawAddressHandlingConfig,
+} from "./addresses";
 import { cleanEnv } from "./cleanEnv";
 
 export type TerritoryExtent = turf.Feature<turf.Polygon>;

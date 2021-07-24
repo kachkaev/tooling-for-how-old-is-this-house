@@ -79,7 +79,7 @@ export const GeoMapLayerWithBuildingCompletionYears: React.VoidFunctionComponent
     <GeoMapLayer<MixedPropertyVariantsFeature>
       width={width}
       height={height}
-      featureProps={featureProps}
+      generateFeatureProps={featureProps}
       features={sampledAndOrderedBuildings}
       projectionConfig={projectionConfig}
     />

@@ -1,6 +1,6 @@
 import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { createBboxFeature } from "../../../shared/helpersForGeometry";
+import { generateGeographicContextExtent } from "../../../shared/geographicContext";
 import { getFetchedOsmWaterObjectsFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
@@ -13,7 +13,8 @@ export const fetchWaterObjects = generateFetchOsmObjects({
     "MultiPolygon",
   ],
   filePath: getFetchedOsmWaterObjectsFilePath(),
-  getExtent: async () => createBboxFeature(await getTerritoryExtent(), 5000),
+  getExtent: async () =>
+    generateGeographicContextExtent(await getTerritoryExtent()),
   selectors: [
     'way["waterway"]',
     'relation["waterway"]',

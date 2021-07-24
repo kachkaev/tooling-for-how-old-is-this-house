@@ -9,10 +9,14 @@ type BaseFeature = turf.Feature<
   turf.Polygon | turf.MultiPolygon | turf.LineString | turf.MultiLineString
 >;
 
+export type GenerateFeatureProps<Feature extends BaseFeature = BaseFeature> = (
+  feature: Feature,
+) => React.SVGProps<SVGPathElement>;
+
 export interface GeoMapLayerProps<Feature extends BaseFeature = BaseFeature>
   extends React.SVGAttributes<SVGGElement> {
   features: Feature[];
-  featureProps: (feature: Feature) => React.SVGProps<SVGPathElement>;
+  generateFeatureProps: GenerateFeatureProps<Feature>;
   projectionConfig: ProjectionConfig;
 }
 
@@ -24,7 +28,7 @@ const GeoMapLayer: GeoMapLayerType = ({
   width,
   height,
   features,
-  featureProps,
+  generateFeatureProps: featureProps,
 
   projectionConfig,
 

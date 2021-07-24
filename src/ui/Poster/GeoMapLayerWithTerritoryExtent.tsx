@@ -42,7 +42,7 @@ export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapL
       width={width}
       height={height}
       projectionConfig={projectionConfig}
-      featureProps={featureProps}
+      generateFeatureProps={featureProps}
       opacity={0.3}
       features={[dataToDraw]}
     />
