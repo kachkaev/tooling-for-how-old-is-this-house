@@ -189,7 +189,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
                 data={buildingCollection}
               />
 
-              <g opacity={0.8}>
+              <g opacity={geographicContextStyling.foregroundOpacity}>
                 <GeoMapLayerWithGeographicContext
                   {...layerProps}
                   data={foregroundFeatureCollection}

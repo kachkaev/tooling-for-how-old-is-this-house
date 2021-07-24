@@ -1,14 +1,14 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import clipboardy from "clipboardy";
-import type { ColorFactory } from "d3-color";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import path from "path";
-import html from "tagged-template-noop";
+import html from "tagged-template-noop"; // Usage of html`` enables Prettier within strings
 import { dynamicImport } from "tsimportlib";
 
 import { cleanEnv } from "../../shared/cleanEnv";
+import { geographicContextStyling } from "../../shared/geographicContext";
 import { extractLegendEntries, extractPosterConfig } from "../../shared/poster";
 import {
   ensureTerritoryGitignoreContainsResults,
@@ -21,74 +21,138 @@ import {
   getTerritoryId,
 } from "../../shared/territory";
 
-// TODO: Remove d3Color argument after migrating to ESM
-const formatColor = (d3Color: ColorFactory, color: string): string =>
-  d3Color(color)?.formatHex() ?? "#000";
+type FormatColor = (color: string) => string;
 
-const defaultBuildingColor = "#1e2023";
+const generateSld = ({ rules }: { rules: string | string[] }) =>
+  formatSld(html`
+    <StyledLayerDescriptor
+      xmlns="http://www.opengis.net/sld"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:ogc="http://www.opengis.net/ogc"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:se="http://www.opengis.net/se"
+      xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/StyledLayerDescriptor.xsd"
+      version="1.1.0"
+    >
+      <NamedLayer>
+        <UserStyle>
+          <se:FeatureTypeStyle>
+            ${[rules].flat().join(" ")}
+          </se:FeatureTypeStyle>
+        </UserStyle>
+      </NamedLayer>
+    </StyledLayerDescriptor>
+  `);
 
-// Using html`` to enable Prettier for XML
+const generateBaseBuildingRules = ({
+  filter = "",
+  formatColor,
+}: {
+  filter?: string;
+  formatColor: FormatColor;
+}) => [
+  html`
+    <se:Rule>
+      ${filter}
+      <se:PolygonSymbolizer>
+        <Fill>
+          <se:SvgParameter name="fill"
+            >${formatColor(
+              geographicContextStyling.buildingColor,
+            )}</se:SvgParameter
+          >
+        </Fill>
+        <Stroke>
+          <se:SvgParameter name="stroke"
+            >${formatColor(
+              geographicContextStyling.buildingColor,
+            )}</se:SvgParameter
+          >
+          <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+          <se:SvgParameter name="stroke-width">0.25</se:SvgParameter>
+        </Stroke>
+      </se:PolygonSymbolizer>
+    </se:Rule>
+    <se:Rule>
+      ${filter}
+      <se:MaxScaleDenominator>20000</se:MaxScaleDenominator>
+      <se:MinScaleDenominator>10000</se:MinScaleDenominator>
+      <se:PolygonSymbolizer>
+        <Stroke>
+          <se:SvgParameter name="stroke"
+            >${formatColor("#000")}</se:SvgParameter
+          >
+          <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+          <se:SvgParameter name="stroke-width">0.25</se:SvgParameter>
+        </Stroke>
+      </se:PolygonSymbolizer>
+    </se:Rule>
+    <se:Rule>
+      ${filter}
+      <se:MaxScaleDenominator>10000</se:MaxScaleDenominator>
+      <se:MinScaleDenominator>4000</se:MinScaleDenominator>
+      <se:PolygonSymbolizer>
+        <Stroke>
+          <se:SvgParameter name="stroke"
+            >${formatColor("#000")}</se:SvgParameter
+          >
+          <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+          <se:SvgParameter name="stroke-width">0.5</se:SvgParameter>
+        </Stroke>
+      </se:PolygonSymbolizer>
+    </se:Rule>
+    <se:Rule>
+      ${filter}
+      <se:MaxScaleDenominator>4000</se:MaxScaleDenominator>
+      <se:PolygonSymbolizer>
+        <Stroke>
+          <se:SvgParameter name="stroke"
+            >${formatColor("#000")}</se:SvgParameter
+          >
+          <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+          <se:SvgParameter name="stroke-width">0.75</se:SvgParameter>
+        </Stroke>
+      </se:PolygonSymbolizer>
+    </se:Rule>
+  `,
+];
 
-const sldBase = html`
-  <StyledLayerDescriptor
-    xmlns="http://www.opengis.net/sld"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:ogc="http://www.opengis.net/ogc"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:se="http://www.opengis.net/se"
-    xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/StyledLayerDescriptor.xsd"
-    version="1.1.0"
-  >
-    <NamedLayer>
-      <UserStyle>
-        <se:FeatureTypeStyle>
-          <se:Rule>
-            <se:PolygonSymbolizer>
-              <Fill>
-                <se:SvgParameter name="fill"
-                  >${defaultBuildingColor}</se:SvgParameter
-                >
-              </Fill>
-              <Stroke>
-                <se:SvgParameter name="stroke"
-                  >${defaultBuildingColor}</se:SvgParameter
-                >
-                <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
-                <se:SvgParameter name="stroke-width">0.25</se:SvgParameter>
-              </Stroke>
-            </se:PolygonSymbolizer>
-          </se:Rule>
-          <!--{{ CUSTOM_RULES }}-->
-        </se:FeatureTypeStyle>
-      </UserStyle>
-    </NamedLayer>
-  </StyledLayerDescriptor>
-`;
-
-const sldTemplateForYearRangeRule = html`
+const generateRuleForYearRange = ({
+  name,
+  yearMin,
+  yearMax,
+  color,
+  formatColor,
+}: {
+  name: string;
+  yearMin: number;
+  yearMax: number;
+  color: string;
+  formatColor: FormatColor;
+}) => html`
   <se:Rule>
-    <se:Name><!--{{ NAME }}--></se:Name>
+    <se:Name>${name}</se:Name>
     <se:Description>
-      <se:Title><!--{{ TITLE }}--></se:Title>
+      <se:Title>${name}</se:Title>
     </se:Description>
     <ogc:Filter>
       <ogc:And>
         <ogc:PropertyIsGreaterThanOrEqualTo>
           <ogc:PropertyName>r_year_int</ogc:PropertyName>
-          <ogc:Literal><!--{{ YEAR_MIN }}--></ogc:Literal>
+          <ogc:Literal>${yearMin}</ogc:Literal>
         </ogc:PropertyIsGreaterThanOrEqualTo>
         <ogc:PropertyIsLessThan>
           <ogc:PropertyName>r_year_int</ogc:PropertyName>
-          <ogc:Literal><!--{{ YEAR_MAX }}--></ogc:Literal>
+          <ogc:Literal>${yearMax}</ogc:Literal>
         </ogc:PropertyIsLessThan>
       </ogc:And>
     </ogc:Filter>
     <se:PolygonSymbolizer>
       <se:Fill>
-        <se:SvgParameter name="fill"><!--{{ COLOR }}--></se:SvgParameter>
+        <se:SvgParameter name="fill">${formatColor(color)}</se:SvgParameter>
       </se:Fill>
       <Stroke>
-        <se:SvgParameter name="stroke"><!--{{ COLOR }}--></se:SvgParameter>
+        <se:SvgParameter name="stroke">${formatColor(color)}</se:SvgParameter>
         <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
         <se:SvgParameter name="stroke-width">0.25</se:SvgParameter>
       </Stroke>
@@ -96,40 +160,76 @@ const sldTemplateForYearRangeRule = html`
   </se:Rule>
 `;
 
-const outlineRuleCollection = html`
-  <se:Rule>
-    <se:MaxScaleDenominator>20000</se:MaxScaleDenominator>
-    <se:MinScaleDenominator>10000</se:MinScaleDenominator>
-    <se:PolygonSymbolizer>
-      <Stroke>
-        <se:SvgParameter name="stroke">#000</se:SvgParameter>
-        <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
-        <se:SvgParameter name="stroke-width">0.25</se:SvgParameter>
-      </Stroke>
-    </se:PolygonSymbolizer>
-  </se:Rule>
-  <se:Rule>
-    <se:MaxScaleDenominator>10000</se:MaxScaleDenominator>
-    <se:MinScaleDenominator>4000</se:MinScaleDenominator>
-    <se:PolygonSymbolizer>
-      <Stroke>
-        <se:SvgParameter name="stroke">#000</se:SvgParameter>
-        <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
-        <se:SvgParameter name="stroke-width">0.5</se:SvgParameter>
-      </Stroke>
-    </se:PolygonSymbolizer>
-  </se:Rule>
-  <se:Rule>
-    <se:MaxScaleDenominator>4000</se:MaxScaleDenominator>
-    <se:PolygonSymbolizer>
-      <Stroke>
-        <se:SvgParameter name="stroke">#000</se:SvgParameter>
-        <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
-        <se:SvgParameter name="stroke-width">0.75</se:SvgParameter>
-      </Stroke>
-    </se:PolygonSymbolizer>
-  </se:Rule>
+const generateFilterForGeoraphicContextCategory = (category: string) => html`
+  <ogc:Filter>
+    <ogc:PropertyIsEqualTo>
+      <ogc:PropertyName>category</ogc:PropertyName>
+      <ogc:Literal>${category}</ogc:Literal>
+    </ogc:PropertyIsEqualTo>
+  </ogc:Filter>
 `;
+
+const generateRulesForGeographicContextAreas = ({
+  formatColor,
+}: {
+  formatColor: FormatColor;
+  opacity?: number;
+}) =>
+  ([
+    ["geographicContextExtent", geographicContextStyling.backgroundColor],
+    ["water", geographicContextStyling.waterColor],
+    ["wetland", geographicContextStyling.wetlandColor],
+  ] as const).map(
+    ([category, color]) =>
+      html`
+        <se:Rule>
+          ${generateFilterForGeoraphicContextCategory(category)}
+          <se:PolygonSymbolizer>
+            <Fill>
+              <se:SvgParameter name="fill"
+                >${formatColor(color)}</se:SvgParameter
+              >
+            </Fill>
+          </se:PolygonSymbolizer>
+        </se:Rule>
+      `,
+  );
+
+const generateRulesForGeographicContextWays = ({
+  opacity = 1,
+  formatColor,
+}: {
+  formatColor: FormatColor;
+  opacity?: number;
+}) =>
+  ([
+    ["waterway", geographicContextStyling.waterColor],
+    ["roadway", geographicContextStyling.roadColor],
+    ["railway", geographicContextStyling.railColor],
+  ] as const).map(
+    ([category, color]) =>
+      html`
+        <se:Rule>
+          ${generateFilterForGeoraphicContextCategory(category)}
+          <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/metre">
+            <Stroke>
+              <se:SvgParameter name="stroke"
+                >${formatColor(color)}</se:SvgParameter
+              >
+              <se:SvgParameter name="stroke-opacity"
+                >${opacity}</se:SvgParameter
+              >
+              <se:SvgParameter name="stroke-width"
+                ><ogc:Mul>
+                  <ogc:PropertyName>size</ogc:PropertyName>
+                  <ogc:Literal>10</ogc:Literal>
+                </ogc:Mul></se:SvgParameter
+              >
+            </Stroke>
+          </se:LineSymbolizer>
+        </se:Rule>
+      `,
+  );
 
 const yearLabelRule = html`
   <se:Rule>
@@ -178,11 +278,14 @@ const formatSld = (rawSld: string): string =>
 export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica layer styles"));
 
-  // TODO: Bring back normal import after migrating to ESM
+  // TODO: Bring back normal import after migrating to ESM & remove formatColor from function payloads
   const { color: d3Color } = (await dynamicImport(
     "d3-color",
     module,
   )) as typeof import("d3-color");
+
+  const formatColor: FormatColor = (color) =>
+    d3Color(color)?.formatHex() ?? "#000";
 
   process.stdout.write(chalk.green("Creating sld styles..."));
 
@@ -193,48 +296,75 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
 
   const legendEntries = extractLegendEntries(posterConfig);
 
-  const mainLayerRules = legendEntries.map((entry, index) => {
+  const buildingsLayerRules: string[] = generateBaseBuildingRules({
+    formatColor,
+  });
+
+  legendEntries.forEach((entry, index) => {
     const nextEntry = legendEntries[index + 1];
     const entryName = nextEntry
       ? `${entry.completionYear}...${nextEntry.completionYear - 1}`
       : `${entry.completionYear}+`;
 
-    return sldTemplateForYearRangeRule
-      .replace("<!--{{ NAME }}-->", entryName)
-      .replace("<!--{{ TITLE }}-->", entryName)
-      .replace(/<!--{{ COLOR }}-->/g, formatColor(d3Color, entry.color))
-      .replace("<!--{{ YEAR_MIN }}-->", `${entry.completionYear}`)
-      .replace(
-        "<!--{{ YEAR_MAX }}-->",
-        `${nextEntry?.completionYear ?? 10000}`,
-      );
+    buildingsLayerRules.push(
+      generateRuleForYearRange({
+        name: entryName,
+        color: entry.color,
+        yearMin: entry.completionYear,
+        yearMax: nextEntry?.completionYear ?? 10000,
+        formatColor,
+      }),
+    );
   });
 
-  mainLayerRules.push(outlineRuleCollection, yearLabelRule);
+  buildingsLayerRules.push(yearLabelRule);
 
-  const mainSld = formatSld(
-    sldBase.replace(
-      "<!--{{ CUSTOM_RULES }}-->",
-      `\n${mainLayerRules.join("\n")}\n`,
-    ),
+  const buildingsLayerSld = formatSld(
+    generateSld({
+      rules: buildingsLayerRules,
+    }),
   );
 
-  const supplementarySld = formatSld(
-    sldBase.replace("<!--{{ CUSTOM_RULES }}-->", ``),
+  const backgroundLevelSld = formatSld(
+    generateSld({
+      rules: [
+        ...generateBaseBuildingRules({
+          filter: generateFilterForGeoraphicContextCategory("building"),
+          formatColor,
+        }),
+        ...generateRulesForGeographicContextAreas({ formatColor }),
+        ...generateRulesForGeographicContextWays({ formatColor }),
+      ],
+    }),
+  );
+
+  const foregroundLayerSld = formatSld(
+    generateSld({
+      rules: generateRulesForGeographicContextWays({
+        formatColor,
+        opacity: geographicContextStyling.foregroundOpacity,
+      }),
+    }),
   );
 
   process.stdout.write(` Done.\n`);
 
   const { COPY_TO_CLIPBOARD: layerStyleToCopy } = cleanEnv({
-    COPY_TO_CLIPBOARD: envalid.str<"main" | "supplementary" | "">({
-      choices: ["main", "supplementary", ""],
+    COPY_TO_CLIPBOARD: envalid.str<
+      "background" | "buildings" | "foreground" | ""
+    >({
+      choices: ["background", "buildings", "foreground", ""],
       default: "",
     }),
   });
 
   if (layerStyleToCopy) {
     clipboardy.writeSync(
-      layerStyleToCopy === "main" ? mainSld : supplementarySld,
+      layerStyleToCopy === "background"
+        ? backgroundLevelSld
+        : layerStyleToCopy === "buildings"
+        ? buildingsLayerSld
+        : foregroundLayerSld,
     );
 
     logger.log(
@@ -248,27 +378,40 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
 
     const version = generateVersionSuffix();
     const territoryId = getTerritoryId();
-    const mainLayerStyleFilePath = path.resolve(
+    const backgroundLayerStyleFilePath = path.resolve(
       getResultsDirPath(),
-      `${territoryId}.geosemantica-layer-style.${version}.main.sld`,
+      `${territoryId}.geosemantica-layer-style.${version}.background.sld`,
     );
-    const supplementaryLayerStyleFilePath = path.resolve(
+    const buildingsLayerStyleFilePath = path.resolve(
       getResultsDirPath(),
-      `${territoryId}.geosemantica-layer-style.${version}.supplementary.sld`,
+      `${territoryId}.geosemantica-layer-style.${version}.buildings.sld`,
+    );
+    const foregroundLayerStyleFilePath = path.resolve(
+      getResultsDirPath(),
+      `${territoryId}.geosemantica-layer-style.${version}.foreground.sld`,
     );
 
     await fs.ensureDir(getResultsDirPath());
-    await fs.writeFile(mainLayerStyleFilePath, mainSld, "utf8");
     await fs.writeFile(
-      supplementaryLayerStyleFilePath,
-      supplementarySld,
+      backgroundLayerStyleFilePath,
+      backgroundLevelSld,
+      "utf8",
+    );
+    await fs.writeFile(buildingsLayerStyleFilePath, buildingsLayerSld, "utf8");
+    await fs.writeFile(
+      foregroundLayerStyleFilePath,
+      foregroundLayerSld,
       "utf8",
     );
 
     logger.log(
-      ` Result saved to:\n${chalk.magenta(
-        mainLayerStyleFilePath,
-      )}\n${chalk.magenta(supplementaryLayerStyleFilePath)}`,
+      ` Result saved to:\n${
+        chalk.magenta(backgroundLayerStyleFilePath) //
+      }\n${
+        chalk.magenta(buildingsLayerStyleFilePath) //
+      }\n${
+        chalk.magenta(foregroundLayerStyleFilePath) //
+      }`,
     );
   }
 };

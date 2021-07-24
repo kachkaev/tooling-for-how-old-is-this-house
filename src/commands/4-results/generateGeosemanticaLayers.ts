@@ -282,11 +282,13 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
   );
 
   logger.log(
-    ` Result saved to:\n${chalk.magenta(
-      backgroundLayerFilePath,
-    )}\n${chalk.magenta(buildingsLayerFilePath)}\n${chalk.magenta(
-      foregroundLayerFilePath,
-    )}`,
+    ` Result saved to:\n${
+      chalk.magenta(backgroundLayerFilePath) //
+    }\n${
+      chalk.magenta(buildingsLayerFilePath) //
+    }\n${
+      chalk.magenta(foregroundLayerFilePath) //
+    }`,
   );
 };
 

@@ -5,8 +5,10 @@ export const geographicContextStyling = {
   waterColor: "#151C28",
   // waterColor: "#1d3137"
   // waterColor: "#253a45"
+  wetlandColor: "#151C2888",
 
   roadColor: "#181c1f",
   railColor: "#000",
   buildingColor: "#3d424a",
+  foregroundOpacity: 0.7,
 } as const;
