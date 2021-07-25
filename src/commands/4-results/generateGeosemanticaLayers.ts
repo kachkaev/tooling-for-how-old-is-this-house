@@ -74,10 +74,12 @@ const placeholderProperties: Record<keyof MainLayerProperties, null> = {
   r_floors: null,
   r_architect: null,
   r_style: null,
-  r_wikidata: null,
-  r_wikipedia: null,
+
   r_mkrf: null,
+  r_wikipedia: null,
+  r_wikidata: null,
   r_url: null,
+
   r_copyrights: null,
 
   r_year_int: null,
