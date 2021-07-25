@@ -43,6 +43,7 @@ const wordsToCheckInHistoricMonuments = [
   "здание",
 
   "мечеть",
+  "собор",
   "храм",
   "церковь",
   "часовня",
