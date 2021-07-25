@@ -77,6 +77,7 @@ const normalizeWording = (completionDates: string): string => {
       .replace(/^([хivx]+) (в|в.|)\s?-\s?/, "$1 век - ")
       .replace(/ ([хivx]+) (в|в.|)\s?-\s?/, " $1 века - ")
       .replace(/^([хivx\d]+) в.?(?!(\d|\p{L}|\.))/u, "$1 век")
+      .replace(/, ([хivx\d]+) в.?(?!(\d|\p{L}|\.))/u, ", $1 век")
       .replace(/ в.?(?!(\d|\p{L}|\.))/gu, " века")
       .replace(/ вв?.?$/g, " века")
       .replace(/\s?(г|гг|год)\.?$/g, "")
