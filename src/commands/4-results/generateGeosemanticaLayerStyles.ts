@@ -219,10 +219,12 @@ const generateRulesForGeographicContextWays = ({
               <se:SvgParameter name="stroke-opacity"
                 >${opacity}</se:SvgParameter
               >
+              <se:SvgParameter name="stroke-linecap">round</se:SvgParameter>
+              <se:SvgParameter name="stroke-linejoin">round</se:SvgParameter>
               <se:SvgParameter name="stroke-width"
                 ><ogc:Mul>
                   <ogc:PropertyName>size</ogc:PropertyName>
-                  <ogc:Literal>10</ogc:Literal>
+                  <ogc:Literal>15</ogc:Literal>
                 </ogc:Mul></se:SvgParameter
               >
             </Stroke>
