@@ -91,11 +91,18 @@ const deriveFloorCountAboveGroundFromBuildingTag = (
 ): number | undefined => {
   switch (buildingType) {
     case "container":
+    case "cowshed":
+    case "fuel":
     case "garage":
     case "garages":
+    case "gazebo":
+    case "greenhouse":
     case "kiosk":
+    case "roof":
     case "service":
     case "shed":
+    case "stable":
+    case "sty":
       return 1;
   }
 
@@ -129,6 +136,7 @@ const trivialNameByTagValue: Record<string, TrivialName> = {
   community_centre: "центр культурного развития",
   construction: "строящийся объект",
   container: "контейнер",
+  cowshed: "коровник",
   detached: "жилой дом",
   dormitory: "общежитие",
   fire_station: "пожарная станция",
@@ -155,11 +163,11 @@ const trivialNameByTagValue: Record<string, TrivialName> = {
   roof: "навес",
   ruins: "разрушенный объект",
   semidetached_house: "жилой дом",
-  shed: "сарай",
+  shed: "хозяйственная постройка",
   sports_hall: "спортивный зал",
-  stable: "конюшни",
+  stable: "конюшня",
   storage_tank: "резервуар",
-  sty: "хлев",
+  sty: "свинарник",
   sub_station: "трансформаторная подстанция",
   supermarket: "супермаркет",
   swimming_pool: "бассейн",
