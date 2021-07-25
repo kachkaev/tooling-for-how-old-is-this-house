@@ -5,7 +5,7 @@ export const geographicContextStyling = {
   waterColor: "#151C28",
   // waterColor: "#1d3137"
   // waterColor: "#253a45"
-  wetlandColor: "#151C2888",
+  wetlandColor: "#0c141d", // mix of background and water color (Geosemantica styles don’t support transparency)
 
   roadColor: "#181c1f",
   railColor: "#000",
