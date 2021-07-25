@@ -111,6 +111,12 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
         parentFeature: inputFeature,
       };
 
+      if ("dataToIgnore" in propertyVariant) {
+        dataToOmitIssues.push(
+          `Property ‘dataToIgnore’ in feature ${globalVariantId} won’t be used. Did you mean ‘dataToOmit’?`,
+        );
+      }
+
       let variantInfo = variantInfoLookup[globalVariantId];
       if (!variantInfo) {
         variantInfo = {
