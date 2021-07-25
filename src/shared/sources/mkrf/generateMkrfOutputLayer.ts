@@ -4,6 +4,7 @@ import fs from "fs-extra";
 
 import { deepClean } from "../../deepClean";
 import { serializeTime } from "../../helpersForJson";
+import { normalizeSpacing } from "../../normalizeSpacing";
 import {
   GenerateOutputLayer,
   OutputLayer,
@@ -14,13 +15,12 @@ import { getTerritoryConfig, getTerritoryExtent } from "../../territory";
 import { getMkrfObjectDirPath } from "./helpersForPaths";
 import { MkrfObjectFile } from "./types";
 
-const extractName = (nativeName: string | undefined): string | undefined => {
-  const trimmedName = (nativeName ?? "").trim();
-  if (!trimmedName.length) {
+const extractName = (name: string | undefined): string | undefined => {
+  if (!name?.length) {
     return undefined;
   }
 
-  const lowerCaseName = trimmedName.toLowerCase();
+  const lowerCaseName = normalizeSpacing(name.toLowerCase());
 
   if (lowerCaseName === "дом") {
     return undefined;
@@ -30,13 +30,63 @@ const extractName = (nativeName: string | undefined): string | undefined => {
     return undefined;
   }
 
-  return trimmedName;
+  // Remove trivial names like “дом № 1 по улице Такой-то”
+  if (lowerCaseName.match(/^дом (№ )?([^\s]+) по /)) {
+    return undefined;
+  }
+
+  return name;
 };
 
-const acceptedTypologies = ["памятник градостроительства и архитектуры"];
+const wordsToCheckInHistoricMonuments = [
+  "дом",
+  "здание",
+
+  "мечеть",
+  "храм",
+  "церковь",
+  "часовня",
+
+  "башня",
+  "ворота",
+  "застава",
+  "усадьба",
+  "флигель",
+];
+const acceptedTypologies = [
+  "памятник градостроительства и архитектуры",
+  ...wordsToCheckInHistoricMonuments.map(
+    (wordToCheck) => `памятник истории (+ слово «${wordToCheck}»)`,
+  ),
+];
+
 const isTypologyExpected = (typologyValue: string) =>
   acceptedTypologies.includes(typologyValue);
 
+const deriveTypologies = (objectFile: MkrfObjectFile): string[] => {
+  const rawTypologies = (
+    objectFile.data.general.typologies ?? []
+  ).map((typologyEntry) => typologyEntry.value.toLowerCase());
+
+  const typologies = rawTypologies.map((rawTypology) => {
+    if (rawTypology === "памятник истории") {
+      for (const wordToCheck of wordsToCheckInHistoricMonuments) {
+        if (
+          objectFile.nativeName.toLowerCase().includes(wordToCheck) ||
+          objectFile.data.general?.securityInfo
+            ?.toLowerCase()
+            .includes(wordToCheck)
+        ) {
+          return `памятник истории (+ слово «${wordToCheck}»)`;
+        }
+      }
+    }
+
+    return rawTypology;
+  });
+
+  return typologies;
+};
 export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
   logger,
   geocodeAddress,
@@ -58,17 +108,14 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       const warningPrefix = chalk.yellow(`${" ".repeat(prefixLength - 1)}! `);
 
       const objectFile: MkrfObjectFile = await fs.readJson(filePath);
+      logger?.log(`${prefix}${objectFile.nativeName}`);
 
       // Filter by typology
-      const typologyValues = (
-        objectFile.data.general.typologies ?? []
-      ).map((typology) => typology.value.toLowerCase());
-
-      const hasRightTypology = typologyValues.some(isTypologyExpected);
-
+      const typologies = deriveTypologies(objectFile);
+      const hasRightTypology = typologies.some(isTypologyExpected);
       logger?.log(
         `${hasRightTypology ? prefix : shouldNotProceedPrefix}${
-          typologyValues
+          typologies
             .map((value) => {
               const color = isTypologyExpected(value) ? chalk.cyan : chalk.gray;
 
@@ -107,12 +154,13 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       ) {
         point = { type: "Point", coordinates: fixedLonLat };
         pointSource = "territory config";
+        externalGeometrySource = "territory-config";
       }
 
       const mapPosition = objectFile.data.general.address?.mapPosition;
       if (!point && mapPosition) {
         point = mapPosition;
-        pointSource = "map position";
+        pointSource = "object info";
       }
 
       const additionalCoordinates =
@@ -194,6 +242,15 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       outputFeatures.push(
         turf.feature(point, deepClean(outputLayerProperties)),
       );
+
+      if (!point && geocodeAddress) {
+        logger?.log(
+          chalk.yellow(
+            `${prefix}If the building still exists, please provide object coordinates via\n${prefix}territory-config.yml → sources → mkrf → fixedLonLatById → ${id}: [lon, lat]`,
+          ),
+        );
+      }
+
       logger?.log("");
     },
   });

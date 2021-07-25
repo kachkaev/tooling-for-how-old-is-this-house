@@ -5,6 +5,7 @@ export interface MkrfObjectData {
   modified: string;
   data: {
     general: {
+      securityInfo?: string;
       photo?: {
         url: string;
         preview: string;
