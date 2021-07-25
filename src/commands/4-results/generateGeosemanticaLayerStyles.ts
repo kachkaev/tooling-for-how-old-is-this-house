@@ -274,6 +274,47 @@ const yearLabelRule = html`
   </se:Rule>
 `;
 
+const generateMkrfHighlightRules = () => html`
+  <se:Rule>
+    <se:MaxScaleDenominator>15000</se:MaxScaleDenominator>
+    <ogc:Filter>
+      <ogc:Not>
+        <ogc:PropertyIsNull>
+          <ogc:PropertyName>r_mkrf</ogc:PropertyName>
+        </ogc:PropertyIsNull>
+      </ogc:Not>
+    </ogc:Filter>
+    <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/metre">
+      <se:PerpendicularOffset
+        ><ogc:Add
+          ><ogc:Mul>
+            <ogc:Function name="env">
+              <ogc:Literal>wms_scale_denominator</ogc:Literal>
+            </ogc:Function>
+            <ogc:Literal>-0.0001</ogc:Literal> </ogc:Mul
+          ><ogc:Literal>-0.5</ogc:Literal></ogc:Add
+        ></se:PerpendicularOffset
+      >
+      <Stroke>
+        <se:SvgParameter name="stroke-linecap">butt</se:SvgParameter>
+        <se:SvgParameter name="stroke-linejoin">bevel</se:SvgParameter>
+        <se:SvgParameter name="stroke-width"
+          ><ogc:Add
+            ><ogc:Mul>
+              <ogc:Function name="env">
+                <ogc:Literal>wms_scale_denominator</ogc:Literal>
+              </ogc:Function>
+              <ogc:Literal>0.0002</ogc:Literal> </ogc:Mul
+            ><ogc:Literal>1</ogc:Literal></ogc:Add
+          ></se:SvgParameter
+        >
+        <se:SvgParameter name="stroke">#ff0</se:SvgParameter>
+        <se:SvgParameter name="stroke-opacity">0.2</se:SvgParameter>
+      </Stroke>
+    </se:LineSymbolizer>
+  </se:Rule>
+`;
+
 const formatSld = (rawSld: string): string =>
   rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
 
@@ -319,13 +360,7 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
     );
   });
 
-  buildingsLayerRules.push(yearLabelRule);
-
-  const buildingsLayerSld = formatSld(
-    generateSld({
-      rules: buildingsLayerRules,
-    }),
-  );
+  buildingsLayerRules.push(yearLabelRule, generateMkrfHighlightRules());
 
   const backgroundLevelSld = formatSld(
     generateSld({
@@ -337,6 +372,12 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
         ...generateRulesForGeographicContextAreas({ formatColor }),
         ...generateRulesForGeographicContextWays({ formatColor }),
       ],
+    }),
+  );
+
+  const buildingsLayerSld = formatSld(
+    generateSld({
+      rules: buildingsLayerRules,
     }),
   );
 
