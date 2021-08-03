@@ -5,6 +5,7 @@ import { extractLegendEntries, PosterConfig } from "../../shared/poster";
 import { GlobalStyle } from "../shared/GlobalStyle";
 import { ColorLegendSvg } from "./ColorLegendSvg";
 import {
+  ColorBlindnessCondition,
   colorBlindnessConditions,
   generateColorBlindnessCss,
 } from "./helpersForColorBlindness";
@@ -39,12 +40,22 @@ const ColorBlindness = styled.div`
 const ColorBlindnessTitle = styled.div`
   opacity: 0.5;
   padding-bottom: 5px;
-  text-align: center;
+  font-size: 1.2em;
 `;
 
 export interface ColorLegendProps {
   posterConfig: PosterConfig;
 }
+
+const colorBlindnessConditionTitleLookup: Record<
+  ColorBlindnessCondition,
+  string
+> = {
+  protanopia: "протанопия",
+  deuteranopia: "дейтеранопия",
+  tritanopia: "тританопия",
+  achromatopsia: "ахромазия",
+};
 
 export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
   posterConfig,
@@ -64,7 +75,9 @@ export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
 
       {colorBlindnessConditions.map((condition) => (
         <ColorBlindness key={condition}>
-          <ColorBlindnessTitle>{condition}</ColorBlindnessTitle>
+          <ColorBlindnessTitle>
+            {colorBlindnessConditionTitleLookup[condition]}
+          </ColorBlindnessTitle>
           <Figure style={generateColorBlindnessCss(condition)}>
             <ColorLegendSvg
               width={width}
