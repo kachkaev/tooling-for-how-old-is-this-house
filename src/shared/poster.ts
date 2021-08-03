@@ -40,21 +40,23 @@ export interface PosterConfig {
   colorByCompletionYear: Record<string, string>;
 }
 
-// https://observablehq.com/@d3/color-schemes - inspired by continuous spectral
 const defaultColorByCompletionYear = {
-  0: "#9e0142",
-  1850: "#b51b47",
-  1900: "#D7444A",
-  1920: "#f46d43",
-  1940: "#fa9c5a",
-  1950: "#fed382",
-  1960: "#f7faaf",
-  1970: "#a8dca2",
-  1980: "#66c2a5",
-  1990: "#4CA5B1",
-  2000: "#4289b5",
-  2010: "#4c68ad",
-  2020: "#5e4fa2",
+  0: "hsl(105,100%, 12%)",
+  1700: "hsl(105, 99%, 15%)",
+  1800: "hsl( 95, 73%, 21%)",
+  1850: "hsl( 85, 61%, 27%)",
+  1900: "hsl( 75, 60%, 32%)",
+  1920: "hsl(  4, 60%, 65%)",
+  1930: "hsl(  8, 70%, 72%)",
+  1940: "hsl( 12, 80%, 81%)",
+  1950: "hsl(327, 24%, 87%)",
+  1960: "hsl(250, 40%, 81%)",
+  1970: "hsl(240, 45%, 72%)",
+  1980: "hsl(230, 50%, 65%)",
+  1990: "hsl(209, 65%, 49%)",
+  2000: "hsl(210, 70%, 42%)",
+  2010: "hsl(211, 80%, 34%)",
+  2020: "hsl(212, 90%, 28%)",
 };
 
 const defaultPosterConfig: PosterConfig = {
