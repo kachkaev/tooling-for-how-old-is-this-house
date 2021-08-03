@@ -70,7 +70,7 @@ export const ensureLaunchedWebApp = async ({
 
   process.stdout.write(
     chalk.blue(
-      'The above step is skipped if you run "yarn dev" in another terminal. Doing so speed up the command.\n',
+      'The above step is skipped if you run "yarn dev" in another terminal. Doing so can slightly speed up the command.\n',
     ),
   );
 
