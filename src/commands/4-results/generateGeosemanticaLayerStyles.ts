@@ -233,9 +233,26 @@ const generateRulesForGeographicContextWays = ({
       `,
   );
 
-const yearLabelRule = html`
+const generateYearLabelRule = ({
+  minScaleDenominator,
+  maxScaleDenominator,
+  buildingAreaInSquareMeters,
+}: {
+  minScaleDenominator: number;
+  maxScaleDenominator: number;
+  buildingAreaInSquareMeters: number;
+}) => html`
   <se:Rule>
-    <se:MaxScaleDenominator>4000</se:MaxScaleDenominator>
+    <se:MinScaleDenominator>${minScaleDenominator}</se:MinScaleDenominator>
+    <se:MaxScaleDenominator>${maxScaleDenominator}</se:MaxScaleDenominator>
+    <ogc:Filter>
+      <ogc:PropertyIsGreaterThanOrEqualTo>
+        <ogc:Function name="area">
+          <ogc:PropertyName>geom</ogc:PropertyName>
+        </ogc:Function>
+        <Literal>${buildingAreaInSquareMeters}</Literal>
+      </ogc:PropertyIsGreaterThanOrEqualTo>
+    </ogc:Filter>
     <se:TextSymbolizer>
       <se:Label>
         <ogc:PropertyName>r_year_int</ogc:PropertyName>
@@ -273,6 +290,25 @@ const yearLabelRule = html`
     </se:TextSymbolizer>
   </se:Rule>
 `;
+
+const generateYearLabelRules = () =>
+  [
+    {
+      minScaleDenominator: 0,
+      maxScaleDenominator: 4000,
+      buildingAreaInSquareMeters: 0,
+    },
+    {
+      minScaleDenominator: 4001,
+      maxScaleDenominator: 8000,
+      buildingAreaInSquareMeters: 2000,
+    },
+    {
+      minScaleDenominator: 8001,
+      maxScaleDenominator: 12000,
+      buildingAreaInSquareMeters: 20000,
+    },
+  ].map((payload) => generateYearLabelRule(payload));
 
 const generateMkrfHighlightRules = () => html`
   <se:Rule>
@@ -360,7 +396,10 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
     );
   });
 
-  buildingsLayerRules.push(yearLabelRule, generateMkrfHighlightRules());
+  buildingsLayerRules.push(
+    ...generateYearLabelRules(),
+    generateMkrfHighlightRules(),
+  );
 
   const backgroundLevelSld = formatSld(
     generateSld({
