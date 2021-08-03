@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import globby from "globby";
 import _ from "lodash";
+import { dynamicImport } from "tsimportlib";
 
 export const listFilePaths = async ({
   fileSearchDirPath,
@@ -16,6 +16,12 @@ export const listFilePaths = async ({
   if (logger) {
     process.stdout.write(chalk.green(`Listing ${filesNicknameToLog}...`));
   }
+
+  const { globby } = (await dynamicImport(
+    "globby",
+    module,
+  )) as typeof import("globby");
+
   const rawGlobbyResults = await globby(fileSearchPattern, {
     cwd: fileSearchDirPath,
     absolute: true,
