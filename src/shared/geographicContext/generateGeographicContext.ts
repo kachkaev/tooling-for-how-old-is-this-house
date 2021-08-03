@@ -35,14 +35,14 @@ const mapOsmPropertiesToGeographicContextProperties = (
   geometryType: turf.GeometryTypes,
   properties: OsmFeatureProperties,
 ): GeographicContextFeatureProperties | undefined => {
-  const { natural, highway, waterway, railway } = properties;
+  const { natural, landuse, highway, waterway, railway } = properties;
   const isArea = geometryType === "Polygon" || geometryType === "MultiPolygon";
 
   if (natural === "wetland" && isArea) {
     return { category: "wetland" };
   }
 
-  if ((natural === "water" || waterway) && isArea) {
+  if ((natural === "water" || landuse === "reservoir" || waterway) && isArea) {
     return { category: "water" };
   }
 
@@ -61,7 +61,7 @@ const mapOsmPropertiesToGeographicContextProperties = (
     case "canal":
       return { category: "waterway", size: 1, level };
     case "stream":
-      return { category: "waterway", size: 0.7, level };
+      return { category: "waterway", size: 0.5, level };
     default:
       return undefined;
   }
