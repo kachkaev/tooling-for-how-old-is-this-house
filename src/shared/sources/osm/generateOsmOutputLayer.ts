@@ -113,7 +113,8 @@ const deriveFloorCountAboveGroundFromBuildingTag = (
 const processStartDate = (startDate: string | undefined) => {
   const result = normalizeSpacing(startDate ?? "")
     .toLowerCase()
-    .replace(/^before /, "до ");
+    .replace(/^before (\d{4})$/, "до $1")
+    .replace(/^~(\d{4})$/, "около $1");
 
   if (!result) {
     return undefined;
