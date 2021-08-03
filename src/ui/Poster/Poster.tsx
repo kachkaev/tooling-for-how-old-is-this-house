@@ -8,7 +8,10 @@ import {
   splitGeographicContext,
 } from "../../shared/geographicContext";
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/mixing";
-import { PosterConfig } from "../../shared/poster";
+import {
+  extractPrinterBleedInMillimeters,
+  PosterConfig,
+} from "../../shared/poster";
 import { TerritoryExtent } from "../../shared/territory";
 import { GlobalStyle } from "../shared/GlobalStyle";
 import { CropMark } from "./CropMark";
@@ -126,21 +129,24 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
     [colorByCompletionYear],
   );
 
+  const printerBleedInMillimeters = extractPrinterBleedInMillimeters(
+    posterConfig,
+  );
+  const preprint = posterConfig.target === "preprint";
+
   const timelineStyle: React.CSSProperties = React.useMemo(
     () => ({
       position: "absolute",
       bottom: `${
-        timeline.marginBottomInMillimeters + layout.printerBleedInMillimeters
+        timeline.marginBottomInMillimeters + printerBleedInMillimeters
       }mm`,
-      left: `${
-        timeline.marginLeftInMillimeters + layout.printerBleedInMillimeters
-      }mm`,
+      left: `${timeline.marginLeftInMillimeters + printerBleedInMillimeters}mm`,
       right: `${
-        timeline.marginRightInMillimeters + layout.printerBleedInMillimeters
+        timeline.marginRightInMillimeters + printerBleedInMillimeters
       }mm`,
     }),
     [
-      layout.printerBleedInMillimeters,
+      printerBleedInMillimeters,
       timeline.marginBottomInMillimeters,
       timeline.marginLeftInMillimeters,
       timeline.marginRightInMillimeters,
@@ -157,11 +163,9 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   return (
     <Figure
       style={{
-        width: `${
-          layout.widthInMillimeters + layout.printerBleedInMillimeters * 2
-        }mm`,
+        width: `${layout.widthInMillimeters + printerBleedInMillimeters * 2}mm`,
         height: `${
-          layout.heightInMillimeters + layout.printerBleedInMillimeters * 2
+          layout.heightInMillimeters + printerBleedInMillimeters * 2
         }mm`,
       }}
     >
@@ -207,94 +211,95 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
           {...timeline}
         />
       </Shadow>
-      <Shadow>
-        <DraftNotice
-          style={{
-            top: `${
-              timeline.marginLeftInMillimeters +
-              layout.printerBleedInMillimeters
-            }mm`,
-            right: `${
-              timeline.marginLeftInMillimeters +
-              +layout.printerBleedInMillimeters
-            }mm`,
-          }}
-        >
-          <DraftNoticeHeader>черновик</DraftNoticeHeader>
-          {DateTime.now().toFormat("yyyy-MM-dd")}
-        </DraftNotice>
-      </Shadow>
-      <Shadow>
-        <DraftNotice2
-          style={{
-            left: `${
-              timeline.marginLeftInMillimeters +
-              layout.printerBleedInMillimeters
-            }mm`,
-            bottom: `${
-              timeline.marginBottomInMillimeters +
-              layout.printerBleedInMillimeters
-            }mm`,
-          }}
-        >
-          не для
-          <br />
-          распространения
-        </DraftNotice2>
-      </Shadow>
-      <Shadow>
-        <Footer
-          style={{
-            left: `${
-              timeline.marginLeftInMillimeters +
-              layout.printerBleedInMillimeters
-            }mm`,
-          }}
-        >
-          Этот черновик постера создан при помощи{" "}
-          <a href="https://github.com/kachkaev/tooling-for-how-old-is-this-house">
-            github.com/kachkaev/tooling-for-how-old-is-this-house
-          </a>
-          . Размеры, цвета и другие параметры задаются в territory-config.yml →
-          poster.
-          <br />
-          После настройки постера свяжитесь с администратором сайта{" "}
-          <a href="https://how-old-is-this.house">how-old-is-this.house</a> и
-          передайте экспортированную ПДФку. В чистовик добавят список источников
-          данных и логотип издательства.
-          <br />
-        </Footer>
-      </Shadow>
+      {preprint ? null : (
+        <>
+          <Shadow>
+            <DraftNotice
+              style={{
+                top: `${
+                  timeline.marginLeftInMillimeters + printerBleedInMillimeters
+                }mm`,
+                right: `${
+                  timeline.marginLeftInMillimeters + +printerBleedInMillimeters
+                }mm`,
+              }}
+            >
+              <DraftNoticeHeader>черновик</DraftNoticeHeader>
+              {DateTime.now().toFormat("yyyy-MM-dd")}
+            </DraftNotice>
+          </Shadow>
+          <Shadow>
+            <DraftNotice2
+              style={{
+                left: `${
+                  timeline.marginLeftInMillimeters + printerBleedInMillimeters
+                }mm`,
+                bottom: `${
+                  timeline.marginBottomInMillimeters + printerBleedInMillimeters
+                }mm`,
+              }}
+            >
+              не для
+              <br />
+              распространения
+            </DraftNotice2>
+          </Shadow>
+          <Shadow>
+            <Footer
+              style={{
+                left: `${
+                  timeline.marginLeftInMillimeters + printerBleedInMillimeters
+                }mm`,
+              }}
+            >
+              Этот черновик постера создан при помощи{" "}
+              <a href="https://github.com/kachkaev/tooling-for-how-old-is-this-house">
+                github.com/kachkaev/tooling-for-how-old-is-this-house
+              </a>
+              . Размеры, цвета и другие параметры задаются в
+              territory-config.yml → poster.
+              <br />
+              После настройки постера свяжитесь с администратором сайта{" "}
+              <a href="https://how-old-is-this.house">
+                how-old-is-this.house
+              </a>{" "}
+              и передайте экспортированную ПДФку. В чистовик добавят список
+              источников данных и логотип издательства.
+              <br />
+            </Footer>
+          </Shadow>
+        </>
+      )}
+
       <Shadow>
         <ZoomMark
           zoomInMillimetersPerKilometer={map.zoomInMillimetersPerKilometer}
           style={{
             position: "absolute",
             right: `${
-              timeline.marginRightInMillimeters +
-              layout.printerBleedInMillimeters
+              timeline.marginRightInMillimeters + printerBleedInMillimeters
             }mm`,
             bottom: "15mm",
           }}
         />
       </Shadow>
-      {layout.printerBleedInMillimeters && layout.printerCropMarks ? (
+      {preprint ? (
         <>
           <CropMark
             corner="topLeft"
-            printerBleedInMillimeters={layout.printerBleedInMillimeters}
+            printerBleedInMillimeters={printerBleedInMillimeters}
           />
           <CropMark
             corner="topRight"
-            printerBleedInMillimeters={layout.printerBleedInMillimeters}
+            printerBleedInMillimeters={printerBleedInMillimeters}
           />
           <CropMark
             corner="bottomLeft"
-            printerBleedInMillimeters={layout.printerBleedInMillimeters}
+            printerBleedInMillimeters={printerBleedInMillimeters}
           />
           <CropMark
             corner="bottomRight"
-            printerBleedInMillimeters={layout.printerBleedInMillimeters}
+            printerBleedInMillimeters={printerBleedInMillimeters}
           />
         </>
       ) : null}

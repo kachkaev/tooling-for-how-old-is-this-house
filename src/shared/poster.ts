@@ -11,11 +11,10 @@ const nilMergeDeep = <T>(a: T, b: T): T =>
     : nilMerge(a, b);
 
 export interface PosterConfig {
+  target: "draft" | "preprint";
   layout: {
     widthInMillimeters: number;
     heightInMillimeters: number;
-    printerBleedInMillimeters: number;
-    printerCropMarks: boolean;
   };
   map: {
     buildingSampleSize?: number;
@@ -64,8 +63,6 @@ const defaultPosterConfig: PosterConfig = {
     // 610x910, 500×700, 400×500, 300×400, 210×300
     widthInMillimeters: 700,
     heightInMillimeters: 500,
-    printerBleedInMillimeters: 0,
-    printerCropMarks: false,
   },
   map: {
     zoomInMillimetersPerKilometer: 30,
@@ -74,6 +71,8 @@ const defaultPosterConfig: PosterConfig = {
     centerLonLat: [0, 0],
     territoryExtentOutline: false,
   },
+  target: "draft",
+
   timeline: {
     abnormalYears: [],
     abnormalYearBuildingCountCap: 200,
@@ -131,4 +130,10 @@ export const extractLegendEntries = (
       color,
     }),
   );
+};
+
+export const extractPrinterBleedInMillimeters = (
+  posterConfig: PosterConfig,
+): number => {
+  return posterConfig.target === "preprint" ? 5 : 0;
 };

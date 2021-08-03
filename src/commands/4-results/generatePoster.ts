@@ -10,7 +10,10 @@ import {
   ensureImageSnapshot,
   ensurePdfSnapshot,
 } from "../../shared/pageSnapshots";
-import { extractPosterConfig } from "../../shared/poster";
+import {
+  extractPosterConfig,
+  extractPrinterBleedInMillimeters,
+} from "../../shared/poster";
 import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,
@@ -23,10 +26,10 @@ import {
 } from "../../shared/territory";
 
 export const generatePoster: Command = async ({ logger }) => {
-  const posterLayout = extractPosterConfig(
+  const posterConfig = extractPosterConfig(
     await getTerritoryConfig(),
     await getTerritoryExtent(),
-  ).layout;
+  );
 
   const { EXTENSION: extension } = cleanEnv({
     EXTENSION: envalid.str<"pdf" | "jpg" | "png">({
@@ -41,7 +44,7 @@ export const generatePoster: Command = async ({ logger }) => {
   const territoryId = getTerritoryId();
   const resultFilePath = path.resolve(
     getResultsDirPath(),
-    `${territoryId}.poster.${version}.${extension}`,
+    `${territoryId}.poster.${version}.${posterConfig.target}.${extension}`,
   );
 
   await ensureLaunchedWebApp({
@@ -58,10 +61,10 @@ export const generatePoster: Command = async ({ logger }) => {
           logger,
           page,
           pdfSizeInMillimeters: [
-            posterLayout.widthInMillimeters +
-              posterLayout.printerBleedInMillimeters * 2,
-            posterLayout.heightInMillimeters +
-              posterLayout.printerBleedInMillimeters * 2,
+            posterConfig.layout.widthInMillimeters +
+              extractPrinterBleedInMillimeters(posterConfig) * 2,
+            posterConfig.layout.heightInMillimeters +
+              extractPrinterBleedInMillimeters(posterConfig) * 2,
           ],
           resultFilePath,
         });
