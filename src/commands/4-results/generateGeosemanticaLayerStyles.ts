@@ -236,11 +236,11 @@ const generateRulesForGeographicContextWays = ({
 const generateYearLabelRule = ({
   minScaleDenominator,
   maxScaleDenominator,
-  buildingAreaInSquareMeters,
+  buildingArea,
 }: {
   minScaleDenominator: number;
   maxScaleDenominator: number;
-  buildingAreaInSquareMeters: number;
+  buildingArea: number;
 }) => html`
   <se:Rule>
     <se:MinScaleDenominator>${minScaleDenominator}</se:MinScaleDenominator>
@@ -250,7 +250,7 @@ const generateYearLabelRule = ({
         <ogc:Function name="area">
           <ogc:PropertyName>geom</ogc:PropertyName>
         </ogc:Function>
-        <Literal>${buildingAreaInSquareMeters}</Literal>
+        <Literal>${buildingArea}</Literal>
       </ogc:PropertyIsGreaterThanOrEqualTo>
     </ogc:Filter>
     <se:TextSymbolizer>
@@ -258,14 +258,15 @@ const generateYearLabelRule = ({
         <ogc:PropertyName>r_year_int</ogc:PropertyName>
       </se:Label>
       <Halo>
-        <Radius>.5</Radius>
+        <Radius>.6</Radius>
         <Fill>
-          <se:SvgParameter name="fill">#fff</se:SvgParameter>
+          <se:SvgParameter name="fill">#000</se:SvgParameter>
+          <se:SvgParameter name="fill-opacity">0.5</se:SvgParameter>
         </Fill>
       </Halo>
       <se:Font>
         <se:SvgParameter name="font-family">Arial</se:SvgParameter>
-        <se:SvgParameter name="font-size">12</se:SvgParameter>
+        <se:SvgParameter name="font-size">11</se:SvgParameter>
         <se:SvgParameter name="font-style">normal</se:SvgParameter>
         <se:SvgParameter name="font-weight">bold</se:SvgParameter>
       </se:Font>
@@ -283,7 +284,8 @@ const generateYearLabelRule = ({
         </PointPlacement>
       </LabelPlacement>
       <Fill>
-        <se:SvgParameter name="fill">#000</se:SvgParameter>
+        <se:SvgParameter name="fill">#fff</se:SvgParameter>
+        <se:SvgParameter name="fill-opacity">0.8</se:SvgParameter>
       </Fill>
       <VendorOption name="autoWrap">60</VendorOption>
       <VendorOption name="maxDisplacement">150</VendorOption>
@@ -293,20 +295,22 @@ const generateYearLabelRule = ({
 
 const generateYearLabelRules = () =>
   [
+    // Building area units are off from square meters by a factor of ≈2-3 (not sure why).
+    // E.g. 1200 is about 500 m²
     {
       minScaleDenominator: 0,
+      maxScaleDenominator: 2000,
+      buildingArea: 0, // All buildings
+    },
+    {
+      minScaleDenominator: 2001,
       maxScaleDenominator: 4000,
-      buildingAreaInSquareMeters: 0,
+      buildingArea: 200, // Most private houses
     },
     {
       minScaleDenominator: 4001,
       maxScaleDenominator: 8000,
-      buildingAreaInSquareMeters: 2000,
-    },
-    {
-      minScaleDenominator: 8001,
-      maxScaleDenominator: 12000,
-      buildingAreaInSquareMeters: 20000,
+      buildingArea: 1200, // Most blocks of flats
     },
   ].map((payload) => generateYearLabelRule(payload));
 
