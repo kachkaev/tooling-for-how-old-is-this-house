@@ -6,15 +6,21 @@ import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFet
 import { getTerritoryExtent } from "../../../shared/territory";
 
 export const fetchRoads = generateFetchOsmObjects({
-  acceptedGeometryTypes: ["LineString"],
+  acceptedGeometryTypes: ["LineString", "Polygon"],
   filePath: getFetchedOsmRoadsFilePath(),
   getExtent: async () =>
     generateGeographicContextExtent(await getTerritoryExtent()),
   selectors: [
-    'way["highway"~"trunk"]', // ~ helps include "×_link"
+    'way["highway"~"motorway"]', // ~ helps include "×_link"
+    'way["highway"~"trunk"]',
     'way["highway"~"primary"]',
     'way["highway"~"secondary"]',
-    'way["highway"~"tertiary"]',
+
+    'way["highway"="living_street"]',
+    'way["highway"="pedestrian"]',
+    'way["highway"="residential"]',
+    'way["highway"="tertiary"]',
+    'way["highway"="unclassified"]',
   ],
   title: "roads",
 });
