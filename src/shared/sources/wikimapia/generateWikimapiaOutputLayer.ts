@@ -147,7 +147,9 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
         ? `https://wikimapia.org/user/${pickedPhotoInfo.userId}`
         : undefined,
       knownAt: objectInfoFile.fetchedAt,
-      completionDates: objectInfoFile.data.completionDates,
+      completionTime:
+        objectInfoFile.data.completionTime ??
+        objectInfoFile.data.completionDates,
       name,
     };
 

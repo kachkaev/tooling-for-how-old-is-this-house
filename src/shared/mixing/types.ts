@@ -90,16 +90,16 @@ export interface MixedPropertyVariants {
   buildingType?: null | string;
   buildingTypeSource?: null | string;
 
-  completionDates?: null | string;
-  completionDatesSource?: null | string;
+  completionTime?: null | string;
+  completionTimeSource?: null | string;
 
   /** The value is derived from address */
   derivedBeautifiedAddress?: null | string;
   /** The value is derived from name */
   derivedBeautifiedName?: null | string;
-  /** The value is derived from completionDates so that it is parsable by Geosemantica */
-  derivedCompletionDatesForGeosemantica?: null | string;
-  /** The value is derived from completionDates and is stored to simplify data visualization */
+  /** The value is derived from completionTime so that it is parsable by Geosemantica */
+  derivedCompletionTimeForGeosemantica?: null | string;
+  /** The value is derived from completionTime and is stored to simplify data visualization */
   derivedCompletionYear?: null | number;
 
   floorCountAboveGround?: null | number;

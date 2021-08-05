@@ -15,7 +15,7 @@ import {
   OutputLayerProperties,
   reportGeocodesInOutputLayer,
 } from "./outputLayers";
-import { parseCompletionDates } from "./parseCompletionDates";
+import { parseCompletionTime } from "./parseCompletionTime";
 import {
   ensureTerritoryGitignoreContainsLine,
   getTerritoryAddressHandlingConfig,
@@ -53,7 +53,7 @@ const placeholderProperties: Record<keyof OutputLayerProperties, null> = {
   address: null,
   architect: null,
   buildingType: null,
-  completionDates: null,
+  completionTime: null,
   dataToOmit: null,
   derivedCompletionYear: null,
   documentedBuildArea: null,
@@ -119,8 +119,8 @@ export const generateExtractOutputLayer = ({
       features: outputLayer.features.map((feature, index) => {
         const propertiesWithDerivatives = deepClean({
           ...feature.properties,
-          derivedCompletionYear: parseCompletionDates(
-            feature.properties.completionDates ?? undefined,
+          derivedCompletionYear: parseCompletionTime(
+            feature.properties.completionTime ?? undefined,
           ).derivedCompletionYear,
         });
 

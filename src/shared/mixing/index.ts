@@ -3,7 +3,7 @@ export * from "./helpersForPaths";
 export * from "./helpersForProperties";
 export * from "./pickAddress";
 export * from "./pickArchitect";
-export * from "./pickCompletionDates";
+export * from "./pickCompletionTime";
 export * from "./pickFloorCount";
 export * from "./pickMkrfUrl";
 export * from "./pickName";

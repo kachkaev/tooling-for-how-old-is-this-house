@@ -229,8 +229,7 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
       r_wikidata: fixUrlForGeosemantica(inputFeature.properties.wikidataUrl),
       r_wikipedia: fixUrlForGeosemantica(inputFeature.properties.wikipediaUrl),
       r_year_int: inputFeature.properties.derivedCompletionYear,
-      r_years_str:
-        inputFeature.properties.derivedCompletionDatesForGeosemantica,
+      r_years_str: inputFeature.properties.derivedCompletionTimeForGeosemantica,
       /* eslint-enable @typescript-eslint/naming-convention */
     });
 

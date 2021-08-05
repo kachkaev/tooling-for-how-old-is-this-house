@@ -18,7 +18,7 @@ export const compressRosreestrExtent = (
   return [extent.xmin, extent.ymin, extent.xmax, extent.ymax];
 };
 
-export const extractCompletionDatesFromFirResponse = (
+export const extractCompletionTimeFromFirResponse = (
   firResponse: SuccessfulFirObjectResponse,
 ): string | undefined => {
   const result =

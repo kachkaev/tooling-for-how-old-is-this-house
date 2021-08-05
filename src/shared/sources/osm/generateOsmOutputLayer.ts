@@ -367,7 +367,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         ...extractAddress(building),
         // TODO: Move more properties to ...extract*() patterns for better code readability and composability
         buildingType,
-        completionDates: processStartDate(building.properties["start_date"]),
+        completionTime: processStartDate(building.properties["start_date"]),
         floorCountAboveGround,
         floorCountBelowGround,
         id: building.properties.id,

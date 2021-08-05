@@ -223,7 +223,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         return;
       }
 
-      const completionDates = objectFile?.data.general.createDate;
+      const completionTime = objectFile?.data.general.createDate;
 
       const name = extractName(objectFile?.nativeName);
 
@@ -232,7 +232,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         id,
 
         address,
-        completionDates,
+        completionTime,
         externalGeometrySource,
         knownAt: serializeTime(objectFile.modified),
         mkrfUrl: `https://opendata.mkrf.ru/opendata/7705851331-egrkn/50/${objectFile.nativeId}`,

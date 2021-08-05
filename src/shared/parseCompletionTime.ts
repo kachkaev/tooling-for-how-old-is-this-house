@@ -2,21 +2,21 @@ import deromanize from "deromanize";
 
 import { normalizeSpacing } from "./normalizeSpacing";
 
-export type ResultOfParseCompletionDates =
+export type ResultOfParseCompletionTime =
   | {
-      derivedCompletionDatesForGeosemantica?: string;
+      derivedCompletionTimeForGeosemantica?: string;
       derivedCompletionYear?: never;
       derivedCompletionYearRange?: never;
     }
   | {
-      derivedCompletionDatesForGeosemantica: string;
+      derivedCompletionTimeForGeosemantica: string;
       derivedCompletionYear: number;
       derivedCompletionYearRange: [number, number];
     };
 
-const normalizeWording = (completionDates: string): string => {
+const normalizeWording = (completionTime: string): string => {
   return (
-    normalizeSpacing(completionDates)
+    normalizeSpacing(completionTime)
       .toLowerCase()
       .replace(/[–—−]/g, "-") // Convert different kind of dashes to hyphen
       // English letters
@@ -117,14 +117,14 @@ const decadeYearAndRangeLookup: Record<string, [number, [number, number]]> = {
 const addAppliedYear = (originalValue: string, yearToAssume: number) =>
   `${originalValue} (применяется ${yearToAssume})`;
 
-const doParseCompletionDates = (
-  completionDates: string | undefined,
-): ResultOfParseCompletionDates => {
-  if (typeof completionDates !== "string") {
+const doParseCompletionTime = (
+  completionTime: string | undefined,
+): ResultOfParseCompletionTime => {
+  if (typeof completionTime !== "string") {
     return {};
   }
 
-  let result = normalizeWording(completionDates);
+  let result = normalizeWording(completionTime);
   if (!result.length) {
     return {};
   }
@@ -136,7 +136,7 @@ const doParseCompletionDates = (
       const year = parseInt(yearMatch);
 
       return {
-        derivedCompletionDatesForGeosemantica: result,
+        derivedCompletionTimeForGeosemantica: result,
         derivedCompletionYear: year,
         derivedCompletionYearRange: [-Number.MAX_SAFE_INTEGER, year],
       };
@@ -150,7 +150,7 @@ const doParseCompletionDates = (
       const decadeStartYear = parseInt(decade) * 10;
 
       return {
-        derivedCompletionDatesForGeosemantica: addAppliedYear(
+        derivedCompletionTimeForGeosemantica: addAppliedYear(
           `${decade}0-е`,
           decadeStartYear + 5,
         ),
@@ -203,7 +203,7 @@ const doParseCompletionDates = (
         const yearTo = parseInt(to);
 
         return {
-          derivedCompletionDatesForGeosemantica: result,
+          derivedCompletionTimeForGeosemantica: result,
           derivedCompletionYear: yearTo,
           derivedCompletionYearRange: [
             yearFrom - extraAmbiguity,
@@ -213,7 +213,7 @@ const doParseCompletionDates = (
       }
 
       return {
-        derivedCompletionDatesForGeosemantica: result,
+        derivedCompletionTimeForGeosemantica: result,
         derivedCompletionYear: yearFrom,
         derivedCompletionYearRange: [
           yearFrom - extraAmbiguity,
@@ -230,7 +230,7 @@ const doParseCompletionDates = (
       const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
 
       return {
-        derivedCompletionDatesForGeosemantica: addAppliedYear(
+        derivedCompletionTimeForGeosemantica: addAppliedYear(
           result,
           centuryStartYear + 50,
         ),
@@ -250,7 +250,7 @@ const doParseCompletionDates = (
       const to = centuryStartYear + parseInt(toDecadeMatch);
 
       return {
-        derivedCompletionDatesForGeosemantica: `${from}-${to}`,
+        derivedCompletionTimeForGeosemantica: `${from}-${to}`,
         derivedCompletionYear: to,
         derivedCompletionYearRange: [from, to],
       };
@@ -267,7 +267,7 @@ const doParseCompletionDates = (
       const decadeStartYear = centuryStartYear + parseInt(decadeMatch);
 
       return {
-        derivedCompletionDatesForGeosemantica: addAppliedYear(
+        derivedCompletionTimeForGeosemantica: addAppliedYear(
           `${decadeStartYear}-е`,
           decadeStartYear + 5,
         ),
@@ -288,7 +288,7 @@ const doParseCompletionDates = (
       const centuryYearAndRange = centuryYearAndRangeLookup[centuryPartMatch];
       if (centuryYearAndRange) {
         return {
-          derivedCompletionDatesForGeosemantica: addAppliedYear(
+          derivedCompletionTimeForGeosemantica: addAppliedYear(
             result,
             centuryStartYear + centuryYearAndRange[0],
           ),
@@ -303,18 +303,18 @@ const doParseCompletionDates = (
   }
 
   return {
-    derivedCompletionDatesForGeosemantica: result,
+    derivedCompletionTimeForGeosemantica: result,
   };
 };
 
 const deriveCompletionYearUsingGeosemanticaRegexp = (
-  completionDates: string | undefined,
+  completionTime: string | undefined,
 ): number | undefined => {
-  if (!completionDates) {
+  if (!completionTime) {
     return undefined;
   }
 
-  const completionYearMatch = completionDates.match(
+  const completionYearMatch = completionTime.match(
     /\d{4}(?=,|\s|)(?!-)|\d(?:\s)\d{3}|\d{2}(?:\s)\d{2}/,
   );
 
@@ -325,13 +325,13 @@ const deriveCompletionYearUsingGeosemanticaRegexp = (
   return undefined;
 };
 
-export const parseCompletionDates = (
-  completionDates: string | undefined,
-): ResultOfParseCompletionDates => {
-  const result = doParseCompletionDates(completionDates);
+export const parseCompletionTime = (
+  completionTime: string | undefined,
+): ResultOfParseCompletionTime => {
+  const result = doParseCompletionTime(completionTime);
 
   const derivedCompletionYearUsingGeosemanticaRegexp = deriveCompletionYearUsingGeosemanticaRegexp(
-    result.derivedCompletionDatesForGeosemantica,
+    result.derivedCompletionTimeForGeosemantica,
   );
 
   if (
@@ -340,7 +340,7 @@ export const parseCompletionDates = (
   ) {
     // It is safe to comment this line out if it blocks you
     throw new Error(
-      `Unexpected completion year mismatch for string "${completionDates}". Local parser: ${result.derivedCompletionYear}, Geosemantica ${derivedCompletionYearUsingGeosemanticaRegexp}. This is a bug, please report it.`,
+      `Unexpected completion year mismatch for string "${completionTime}". Local parser: ${result.derivedCompletionYear}, Geosemantica ${derivedCompletionYearUsingGeosemanticaRegexp}. This is a bug, please report it.`,
     );
   }
 

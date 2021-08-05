@@ -23,7 +23,7 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
         id: `${houseInfo.properties.id}`,
 
         address: houseInfo.properties.address,
-        completionDates: houseInfo.properties.year
+        completionTime: houseInfo.properties.year
           ? `${houseInfo.properties.year}`
           : undefined,
         floorCountAboveGround: houseInfo.properties.numberOfFloors,

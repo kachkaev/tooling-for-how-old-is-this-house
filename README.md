@@ -600,9 +600,9 @@ yarn dev
 ```json
 "dataToOmit": "mkrf"
 "dataToOmit": "mkrf|id12345"
-"dataToOmit": "mkrf|id12345|completionDates"
-"dataToOmit": "mkrf|*|completionDates"
-"dataToOmit": "mkrf|id12345,mingkh|*|completionDates"
+"dataToOmit": "mkrf|id12345|completionTime"
+"dataToOmit": "mkrf|*|completionTime"
+"dataToOmit": "mkrf|id12345,mingkh|*|completionTime"
 ```
 
 После обновления файлов `/path/to/data/territories/TERRITORY_NAME/sources/manual/*.geojson`, следует повторить команды в разделе «Смешивание слоёв».

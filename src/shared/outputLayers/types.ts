@@ -8,7 +8,7 @@ export interface OutputLayerProperties {
   address?: null | string;
   architect?: null | string;
   buildingType?: null | string;
-  completionDates?: null | string;
+  completionTime?: null | string;
   /** Only relevant to layers in "manual" sourc. @see README.md */
   dataToOmit?: null | string;
   derivedCompletionYear?: null | number;

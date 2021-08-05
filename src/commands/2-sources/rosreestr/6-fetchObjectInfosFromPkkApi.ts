@@ -13,7 +13,7 @@ import {
   compressRosreestrCenter,
   compressRosreestrExtent,
   convertCnToId,
-  extractCompletionDatesFromFirResponse,
+  extractCompletionTimeFromFirResponse,
   fetchJsonFromRosreestr,
   InfoPageObject,
   PkkFeatureResponse,
@@ -30,16 +30,16 @@ const checkIfNeedsProcessing = (infoPageObject: InfoPageObject): boolean => {
   }
 
   // Responses in PKK and FIR API may vary.
-  // If FIR API does not report completion dates, the value might still be found via PKK API.
+  // If FIR API does not report completion time, the value might still be found via PKK API.
   // Example: 58:29:1007003:5108
   const firResponse = infoPageObject.firResponse;
   if (typeof firResponse === "object") {
     if (!checkIfFirResponseContainsExistingBuilding(firResponse)) {
       return false;
     }
-    const completionDates = extractCompletionDatesFromFirResponse(firResponse);
+    const completionTime = extractCompletionTimeFromFirResponse(firResponse);
 
-    if (completionDates) {
+    if (completionTime) {
       return false;
     }
 

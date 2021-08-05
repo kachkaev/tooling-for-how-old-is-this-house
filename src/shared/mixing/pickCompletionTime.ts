@@ -1,16 +1,16 @@
 import chalk from "chalk";
 
 import {
-  parseCompletionDates,
-  ResultOfParseCompletionDates,
-} from "../parseCompletionDates";
+  parseCompletionTime,
+  ResultOfParseCompletionTime,
+} from "../parseCompletionTime";
 import { prioritizeRelevantPropertyVariants } from "./prioritizeRelevantPropertyVariants";
 import { PickFromPropertyVariants } from "./types";
 
 type PropertiesToPick =
-  | "completionDates"
-  | "completionDatesSource"
-  | "derivedCompletionDatesForGeosemantica"
+  | "completionTime"
+  | "completionTimeSource"
+  | "derivedCompletionTimeForGeosemantica"
   | "derivedCompletionYear";
 
 type YearRange = [number, number];
@@ -44,7 +44,7 @@ const getRangeDuration = (range: YearRange): number => {
   return range[1] - range[0];
 };
 
-export const pickCompletionDates: PickFromPropertyVariants<PropertiesToPick> = ({
+export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
   listRelevantPropertyVariants,
   logger,
   targetBuildArea,
@@ -62,31 +62,31 @@ export const pickCompletionDates: PickFromPropertyVariants<PropertiesToPick> = (
       "rosreestr",
       "wikimapia",
     ],
-    propertySelectors: ["completionDates"],
+    propertySelectors: ["completionTime"],
     targetBuildArea,
   });
 
   let candidate:
-    | (ResultOfParseCompletionDates & {
-        completionDates: string;
+    | (ResultOfParseCompletionTime & {
+        completionTime: string;
         source: string;
       })
     | undefined = undefined;
 
   for (const propertyVariant of propertyVariants) {
-    const { source, completionDates } = propertyVariant;
-    if (typeof completionDates !== "string") {
+    const { source, completionTime } = propertyVariant;
+    if (typeof completionTime !== "string") {
       continue;
     }
 
-    let resultOfParsing: ResultOfParseCompletionDates;
+    let resultOfParsing: ResultOfParseCompletionTime;
     try {
-      resultOfParsing = parseCompletionDates(completionDates);
+      resultOfParsing = parseCompletionTime(completionTime);
     } catch (e) {
       logger.log(chalk.yellow(e));
       if (!candidate) {
         candidate = {
-          completionDates,
+          completionTime,
           source,
         };
       }
@@ -95,7 +95,7 @@ export const pickCompletionDates: PickFromPropertyVariants<PropertiesToPick> = (
 
     if (!resultOfParsing.derivedCompletionYearRange) {
       if (!candidate) {
-        candidate = { ...resultOfParsing, completionDates, source };
+        candidate = { ...resultOfParsing, completionTime, source };
       }
       if (propertyVariant.source === "manual") {
         break;
@@ -117,7 +117,7 @@ export const pickCompletionDates: PickFromPropertyVariants<PropertiesToPick> = (
       candidate = {
         ...resultOfParsing,
         derivedCompletionYearRange: currentRange,
-        completionDates,
+        completionTime,
         source,
       };
     }
@@ -132,10 +132,10 @@ export const pickCompletionDates: PickFromPropertyVariants<PropertiesToPick> = (
 
   if (candidate) {
     return {
-      completionDates: candidate.completionDates,
-      completionDatesSource: candidate.source,
-      derivedCompletionDatesForGeosemantica:
-        candidate.derivedCompletionDatesForGeosemantica,
+      completionTime: candidate.completionTime,
+      completionTimeSource: candidate.source,
+      derivedCompletionTimeForGeosemantica:
+        candidate.derivedCompletionTimeForGeosemantica,
       derivedCompletionYear: candidate.derivedCompletionYear,
     };
   }

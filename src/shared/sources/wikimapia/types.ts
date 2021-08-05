@@ -46,7 +46,9 @@ export interface WikimapiaObjectPhotoInfo {
 export interface WikimapiaObjectInfo {
   wikimapiaId: number;
 
+  /** @deprecated Used before 2021-04-05 */
   completionDates?: string;
+  completionTime?: string;
   name?: string;
   photos?: WikimapiaObjectPhotoInfo[];
   demolished?: boolean;

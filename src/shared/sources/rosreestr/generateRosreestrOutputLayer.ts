@@ -23,7 +23,7 @@ import {
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import {
   checkIfFirResponseContainsExistingBuilding,
-  extractCompletionDatesFromFirResponse,
+  extractCompletionTimeFromFirResponse,
   extractDocumentedBuildAreaFromFirResponse,
 } from "./helpersForApiResponses";
 import { normalizeCnForSorting } from "./helpersForCn";
@@ -56,8 +56,8 @@ export const calculateFloorCounts = (
   };
 };
 
-const processCompletionDates = (completionDates: string | undefined) => {
-  const result = normalizeSpacing(completionDates ?? "")
+const processCompletionTime = (completionTime: string | undefined) => {
+  const result = normalizeSpacing(completionTime ?? "")
     .toLowerCase()
     .replace(/^1917$/, "до 1917");
 
@@ -117,8 +117,8 @@ const extractPropertiesFromFirResponse = (
   return {
     id: cn,
     knownAt: firFetchedAt,
-    completionDates: processCompletionDates(
-      extractCompletionDatesFromFirResponse(firResponse),
+    completionTime: processCompletionTime(
+      extractCompletionTimeFromFirResponse(firResponse),
     ),
     documentedBuildArea: extractDocumentedBuildAreaFromFirResponse(firResponse),
     address: pickMostPromisingAddress(
@@ -148,7 +148,7 @@ const extractPropertiesFromPkkResponse = (
     return "notBuilding";
   }
 
-  const completionDates = processCompletionDates(
+  const completionTime = processCompletionTime(
     attrs.year_built || (attrs.year_used ? `${attrs.year_used}` : undefined),
   );
 
@@ -164,7 +164,7 @@ const extractPropertiesFromPkkResponse = (
     knownAt: pkkFetchedAt,
     documentedBuildArea,
     address: attrs.address,
-    completionDates,
+    completionTime,
     ...calculateFloorCounts(attrs.floors, attrs.underground_floors),
   };
 };

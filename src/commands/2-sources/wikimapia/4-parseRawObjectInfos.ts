@@ -25,7 +25,7 @@ import {
 } from "../../../shared/sources/wikimapia";
 import { getTerritoryAddressHandlingConfig } from "../../../shared/territory";
 
-const cleanCompletionDatesMatch = (match?: string): string | undefined => {
+const cleanCompletionTimeMatch = (match?: string): string | undefined => {
   const result = (match ?? "")
     .toLowerCase()
     .replace(/(годах?|году|годов|гг)\.?/, "")
@@ -40,14 +40,12 @@ const cleanCompletionDatesMatch = (match?: string): string | undefined => {
   return result && result.length < 20 ? result : undefined;
 };
 
-const extractCompletionDatesFromTags = (
-  rawInfo: string,
-): string | undefined => {
-  const completionDatesMatch = rawInfo.match(
+const extractCompletionTimeFromTags = (rawInfo: string): string | undefined => {
+  const completionTimeMatch = rawInfo.match(
     /lng=1">строение ([^<]*)<\/strong>/,
   )?.[1];
 
-  return cleanCompletionDatesMatch(completionDatesMatch);
+  return cleanCompletionTimeMatch(completionTimeMatch);
 };
 
 const extractName = (
@@ -94,17 +92,17 @@ const extractName = (
   return result;
 };
 
-const extractCompletionDatesFromDescription = (
+const extractCompletionTimeFromDescription = (
   rawInfo: string,
 ): string | undefined => {
   const descriptionContentMatch =
     rawInfo.match(/<meta name="description" content="(.*)"/)?.[1] ?? "";
 
-  const completionDatesMatch = descriptionContentMatch.match(
+  const completionTimeMatch = descriptionContentMatch.match(
     /остроен.? в ([^.,]*)/,
   )?.[1];
 
-  return cleanCompletionDatesMatch(completionDatesMatch);
+  return cleanCompletionTimeMatch(completionTimeMatch);
 };
 
 export const parseRawObjectInfos: Command = async ({ logger }) => {
@@ -186,10 +184,10 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
         info.photos = photoInfos;
       }
 
-      // Extract completion dates
-      info.completionDates =
-        extractCompletionDatesFromTags(rawInfo) ??
-        extractCompletionDatesFromDescription(rawInfo);
+      // Extract completion time
+      info.completionTime =
+        extractCompletionTimeFromTags(rawInfo) ??
+        extractCompletionTimeFromDescription(rawInfo);
 
       // Extract title
       info.name = extractName(rawInfo, addressHandlingConfig);

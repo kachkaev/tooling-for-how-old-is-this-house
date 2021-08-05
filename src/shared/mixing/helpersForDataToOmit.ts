@@ -14,7 +14,7 @@ const knownPropertySelectorLookup: Record<PropertySelector, true> = {
   address: true,
   architect: true,
   buildingType: true,
-  completionDates: true,
+  completionTime: true,
   documentedBuildArea: true,
   floorCount: true,
   mkrfUrl: true,

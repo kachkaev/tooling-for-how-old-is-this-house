@@ -1,8 +1,8 @@
-import { parseCompletionDates } from "./parseCompletionDates";
+import { parseCompletionTime } from "./parseCompletionTime";
 
-describe("parseCompletionDates", () => {
+describe("parseCompletionTime", () => {
   it.each`
-    input                                        | derivedCompletionDatesForGeosemantica                        | derivedCompletionYear | derivedCompletionYearRange
+    input                                        | derivedCompletionTimeForGeosemantica                         | derivedCompletionYear | derivedCompletionYearRange
     ${undefined}                                 | ${undefined}                                                 | ${undefined}          | ${undefined}
     ${"1999"}                                    | ${"1999"}                                                    | ${1999}               | ${[1999, 1999]}
     ${"1999 г"}                                  | ${"1999"}                                                    | ${1999}               | ${[1999, 1999]}
@@ -53,15 +53,15 @@ describe("parseCompletionDates", () => {
     ${"1791 г., XIX в., начало ХХ в."}           | ${"1791, 19 век, начало 20 века"}                            | ${1791}               | ${[1791, 1791]}
     ${"что-то пошло НЕ ТАК"}                     | ${"что-то пошло не так"}                                     | ${undefined}          | ${undefined}
   `(
-    `returns "$derivedCompletionDatesForGeosemantica" / $derivedCompletionYear / $derivedCompletionYearRange for "$input"`,
+    `returns "$derivedCompletionTimeForGeosemantica" / $derivedCompletionYear / $derivedCompletionYearRange for "$input"`,
     ({
       input,
-      derivedCompletionDatesForGeosemantica,
+      derivedCompletionTimeForGeosemantica,
       derivedCompletionYear,
       derivedCompletionYearRange,
     }) => {
-      expect(parseCompletionDates(input)).toEqual({
-        derivedCompletionDatesForGeosemantica,
+      expect(parseCompletionTime(input)).toEqual({
+        derivedCompletionTimeForGeosemantica,
         derivedCompletionYear,
         derivedCompletionYearRange,
       });

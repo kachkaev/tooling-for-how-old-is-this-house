@@ -98,16 +98,16 @@ const extractArchitect = (
   };
 };
 
-const extractCompletionDates = (
+const extractCompletionTime = (
   templateJson: MonumentTemplate,
 ): Partial<OutputLayerProperties> => {
-  const completionDates = templateJson.year;
-  if (!completionDates) {
+  const completionTime = templateJson.year;
+  if (!completionTime) {
     return {};
   }
 
   return {
-    completionDates,
+    completionTime,
   };
 };
 
@@ -237,7 +237,7 @@ export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
           knownAt,
           ...extractAddress(templateJson),
           ...extractArchitect(templateJson),
-          ...extractCompletionDates(templateJson),
+          ...extractCompletionTime(templateJson),
           ...extractId(templateJson),
           ...extractName(templateJson),
           ...extractPhoto(templateJson),
