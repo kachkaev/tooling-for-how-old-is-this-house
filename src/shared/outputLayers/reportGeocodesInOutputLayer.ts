@@ -1,4 +1,5 @@
 import * as turf from "@turf/turf";
+import chalk from "chalk";
 
 import { ReportedGeocode, reportGeocodes } from "../geocoding";
 import { OutputLayer, OutputLayerGeometry } from "./types";
@@ -34,6 +35,16 @@ export const reportGeocodesInOutputLayer = async ({
     } else {
       reportedGeocodes.push({ address });
     }
+  }
+
+  if (!reportedGeocodes.length) {
+    logger.log(
+      chalk.blue(
+        `There are no geocodes to report. This is because none of the ${source} features have ‘address’ property.`,
+      ),
+    );
+
+    return;
   }
 
   await reportGeocodes({
