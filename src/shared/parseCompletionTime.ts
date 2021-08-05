@@ -142,6 +142,7 @@ const doParseCompletionTime = (
       };
     }
   }
+
   // "1990-е"
   // "1990-е годы"
   {
@@ -156,6 +157,25 @@ const doParseCompletionTime = (
         ),
         derivedCompletionYear: decadeStartYear + 5,
         derivedCompletionYearRange: [decadeStartYear, decadeStartYear + 9],
+      };
+    }
+  }
+
+  // "YYYY-MM-DD"
+  // "DD.MM.YYYY"
+  // "DD/MM/YYYY"
+  // "MM/DD/YYYY"
+  {
+    const yearMatch =
+      result.match(/(\d{4})-(\d{2})-(\d{2})/)?.[1] ??
+      result.match(/(\d{2})[./](\d{2})[./](\d{4})/)?.[3];
+    if (yearMatch) {
+      const year = parseInt(yearMatch);
+
+      return {
+        derivedCompletionTimeForGeosemantica: yearMatch,
+        derivedCompletionYear: year,
+        derivedCompletionYearRange: [year, year],
       };
     }
   }
