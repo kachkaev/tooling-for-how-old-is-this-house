@@ -6,8 +6,9 @@ export type GeographicContextWaySize = number;
 
 export interface GeographicContextWayProperties {
   category: GeographicContextWayCategory;
-  size: GeographicContextWaySize;
   level?: GeographicContextWayLevel;
+  name?: string;
+  relativeSize: GeographicContextWaySize;
 }
 
 export type GeographicContextFeatureProperties =

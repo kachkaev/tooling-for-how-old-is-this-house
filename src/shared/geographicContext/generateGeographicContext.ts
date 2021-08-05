@@ -35,7 +35,7 @@ const mapOsmPropertiesToGeographicContextProperties = (
   geometryType: turf.GeometryTypes,
   properties: OsmFeatureProperties,
 ): GeographicContextFeatureProperties | undefined => {
-  const { natural, landuse, highway, waterway, railway } = properties;
+  const { natural, landuse, highway, waterway, railway, name } = properties;
   const isArea = geometryType === "Polygon" || geometryType === "MultiPolygon";
 
   if (natural === "wetland" && isArea) {
@@ -59,9 +59,9 @@ const mapOsmPropertiesToGeographicContextProperties = (
     case "river":
     case "riverbank":
     case "canal":
-      return { category: "waterway", size: 1, level };
+      return { category: "waterway", name, level, relativeSize: 1 };
     case "stream":
-      return { category: "waterway", size: 0.5, level };
+      return { category: "waterway", name, level, relativeSize: 0.5 };
     default:
       return undefined;
   }
@@ -70,18 +70,26 @@ const mapOsmPropertiesToGeographicContextProperties = (
   switch (highway) {
     case undefined:
       break;
+    case "motorway":
     case "trunk":
     case "trunk_link":
-      return { category: "roadway", size: 2, level };
+      return { category: "roadway", name, level, relativeSize: 2 };
     case "primary":
     case "primary_link":
     case "secondary":
     case "secondary_link":
-      return { category: "roadway", size: 1, level };
-    case "construction":
+      return { category: "roadway", name, level, relativeSize: 1 };
     case "tertiary":
     case "tertiary_link":
-      return { category: "roadway", size: 0.7, level };
+      return { category: "roadway", name, level, relativeSize: 0.7 };
+    case "construction":
+    case "residential":
+    case "unclassified":
+      return { category: "roadway", name, level, relativeSize: 0.5 };
+    case "pedestrian": // highway=pedestrian + no name is likely a service road
+      return name
+        ? { category: "roadway", name, level, relativeSize: 0.5 }
+        : undefined;
     default:
       return undefined;
   }
@@ -94,7 +102,7 @@ const mapOsmPropertiesToGeographicContextProperties = (
     case "rail":
       return {
         category: "railway",
-        size: properties.usage === "main" ? 1 : 0.5,
+        relativeSize: properties.usage === "main" ? 1 : 0.7,
         level,
       };
     case "abandoned":
@@ -107,7 +115,7 @@ const mapOsmPropertiesToGeographicContextProperties = (
     case "tram":
       return {
         category: "railway",
-        size: 0.5,
+        relativeSize: 0.5,
         level,
       };
     default:
