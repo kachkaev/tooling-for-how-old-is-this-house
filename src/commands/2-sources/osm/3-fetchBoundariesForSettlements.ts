@@ -25,6 +25,9 @@ export const fetchBoundaries = generateFetchOsmObjects({
   selectors: [
     'way["place"~"^(city|town|village)$"]',
     'relation["place"~"^(city|town|village)$"]',
+    // https://wiki.openstreetmap.org/wiki/RU:Tag:boundary%3Dadministrative
+    'way["admin_level"~"^(6|8)$"]',
+    'relation["admin_level"~"^(6|8)$"]',
   ],
 
   title: "boundaries for settlements",
