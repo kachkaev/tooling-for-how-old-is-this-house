@@ -3,6 +3,7 @@ import chalk from "chalk";
 import _ from "lodash";
 import path from "path";
 
+import { ensureTerritoryGitignoreContainsPreview } from "../../helpersForCommands";
 import { writeFormattedJson } from "../../helpersForJson";
 import { combineRosreestrTiles } from "./combineRosreestrTiles";
 import { getObjectDirPath } from "./helpersForPaths";
@@ -25,6 +26,8 @@ export const combineRosreestrTilesAndSavePreviews = async ({
   });
 
   logger.log(chalk.green("Saving..."));
+
+  await ensureTerritoryGitignoreContainsPreview();
 
   for (const [features, name] of [
     [objectCenterFeatures, "Object centers"],

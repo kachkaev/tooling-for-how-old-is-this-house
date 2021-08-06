@@ -140,10 +140,27 @@ export const ensureTerritoryGitignoreContainsLine = async (
   const filePath = path.resolve(getTerritoryDirPath(), ".gitignore");
   await fs.ensureDir(path.dirname(filePath));
   await fs.ensureFile(filePath);
-  const lines = (await fs.readFile(filePath, "utf8")).split(/\n\r?/);
-  if (lines.includes(line)) {
+  const fileContent = await fs.readFile(filePath, "utf8");
+  let linesInFile = fileContent.trim().split(/\n\r?/);
+  if (linesInFile.includes(line)) {
     return;
   }
 
-  await fs.appendFile(filePath, `\n${line}`);
+  linesInFile.push(line);
+
+  const fileHasCommentsOrGaps = linesInFile.find(
+    (lineInFile) => lineInFile.startsWith("#") || lineInFile.trim() === "",
+  );
+
+  if (!fileHasCommentsOrGaps) {
+    linesInFile = linesInFile
+      .map((lineInFile) => lineInFile.trim())
+      .filter((lineInFile) => lineInFile.length)
+      .sort();
+  }
+
+  const desiredFileContent = `${linesInFile.join("\n")}\n`;
+  if (desiredFileContent !== fileContent) {
+    await fs.writeFile(filePath, desiredFileContent);
+  }
 };

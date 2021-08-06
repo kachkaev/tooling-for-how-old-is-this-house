@@ -2,6 +2,7 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import path from "path";
 
+import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpersForCommands";
 import { writeFormattedJson } from "../../../shared/helpersForJson";
 import {
   generateMingkhHouseInfoCollection,
@@ -14,6 +15,8 @@ export const previewHouseInfos: Command = async ({ logger }) => {
   const houseInfoCollection = await generateMingkhHouseInfoCollection({
     logger,
   });
+
+  await ensureTerritoryGitignoreContainsPreview();
 
   const previewHouseInfosFilePath = path.resolve(
     getMingkhDirPath(),

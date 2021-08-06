@@ -161,3 +161,7 @@ export const eraseLastLineInOutput = (logger: Console) => {
     process.stdout.clearScreenDown?.();
   }
 };
+
+export const ensureTerritoryGitignoreContainsPreview = async (): Promise<void> => {
+  await ensureTerritoryGitignoreContainsLine("preview--*.*");
+};

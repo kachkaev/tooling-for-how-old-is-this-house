@@ -4,6 +4,7 @@ import chalk from "chalk";
 import _ from "lodash";
 import path from "path";
 
+import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpersForCommands";
 import { writeFormattedJson } from "../../../shared/helpersForJson";
 import { getWikimapiaDirPath } from "../../../shared/sources/wikimapia";
 import { combineWikimapiaTiles } from "../../../shared/sources/wikimapia/combineWikimapiaTiles";
@@ -18,6 +19,8 @@ export const previewTileData: Command = async ({ logger }) => {
   } = await combineWikimapiaTiles({ logger });
 
   logger.log(chalk.green("Saving..."));
+
+  await ensureTerritoryGitignoreContainsPreview();
 
   for (const [features, name] of [
     [objectPointFeatures, "Object points"],
