@@ -12,6 +12,7 @@ import {
   compressRosreestrExtent,
 } from "./helpersForApiResponses";
 import { getTileDataFilePath } from "./helpersForPaths";
+import { pauseBetweenPkkApiRequestsToAvoid403 } from "./pauseBetweenPkkApiRequestsToAvoid403";
 import {
   RawRosreestrTileResponse,
   RosreestrObjectType,
@@ -112,6 +113,8 @@ export const generateProcessTile = (
       },
     )
   ).data;
+
+  await pauseBetweenPkkApiRequestsToAvoid403();
 
   const compressedTileResponse: RosreestrTileResponse = {
     ...rawTileResponse,

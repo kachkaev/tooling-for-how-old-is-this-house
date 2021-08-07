@@ -2,7 +2,6 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import { AxiosResponse } from "axios";
 import chalk from "chalk";
 import * as envalid from "envalid";
-import sleep from "sleep-promise";
 import sortKeys from "sort-keys";
 
 import { cleanEnv } from "../../../shared/cleanEnv";
@@ -16,6 +15,7 @@ import {
   extractCompletionTimeFromFirResponse,
   fetchJsonFromRosreestr,
   InfoPageObject,
+  pauseBetweenPkkApiRequestsToAvoid403,
   PkkFeatureResponse,
   PkkResponseInInfoPageResponse,
   processRosreestrPages,
@@ -105,11 +105,6 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
       default: 0,
       desc: "Number of CNs to fetch around anchor CNs",
     }),
-    DELAY: envalid.num({
-      default: 500,
-      desc:
-        "Recommended: 500. The lower the value, the higher the risk of getting banned for a few hours.",
-    }),
   });
 
   await processRosreestrPages({
@@ -139,7 +134,7 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
         ),
       );
 
-      await sleep(env.DELAY); // Protection against 403
+      await pauseBetweenPkkApiRequestsToAvoid403();
 
       return sortKeys({
         ...infoPageObject,
