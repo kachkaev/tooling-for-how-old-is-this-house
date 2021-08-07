@@ -325,9 +325,12 @@ const parseSingleCompletionTime = (
     }
   }
 
-  return {
-    cleanedCompletionTime: result,
-  };
+  if (result.match(/[\d\p{L}]/u)) {
+    // result contains at least one digit or letter
+    return { cleanedCompletionTime: result };
+  }
+
+  return {};
 };
 
 const deriveCompletionYearUsingGeosemanticaRegexp = (
@@ -354,7 +357,7 @@ const addAssumedYear = (originalValue: string, yearToAssume: number) =>
 const doParseCompletionTime = (
   completionTime: string | undefined,
 ): ResultOfParseCompletionTime => {
-  if (typeof completionTime !== "string") {
+  if (typeof completionTime !== "string" || !completionTime.trim().length) {
     return {};
   }
 
@@ -362,7 +365,8 @@ const doParseCompletionTime = (
     .split(",")
     .map((singleCompletionTime) =>
       parseSingleCompletionTime(singleCompletionTime),
-    );
+    )
+    .filter((singleResult) => singleResult.cleanedCompletionTime);
 
   const [firstResult, ...otherResults] = singleResults;
   if (!firstResult) {

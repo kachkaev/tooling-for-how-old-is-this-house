@@ -3,7 +3,6 @@ import { parseCompletionTime } from "./parseCompletionTime";
 describe("parseCompletionTime", () => {
   it.each`
     input                                        | derivedCompletionTimeForGeosemantica                         | derivedCompletionYear | derivedCompletionYearRange
-    ${undefined}                                 | ${undefined}                                                 | ${undefined}          | ${undefined}
     ${"1999"}                                    | ${"1999"}                                                    | ${1999}               | ${[1999, 1999]}
     ${"1999 г"}                                  | ${"1999"}                                                    | ${1999}               | ${[1999, 1999]}
     ${"1999 г."}                                 | ${"1999"}                                                    | ${1999}               | ${[1999, 1999]}
@@ -61,6 +60,12 @@ describe("parseCompletionTime", () => {
     ${"сер. XIX в., 1870-е гг., 1882-1895 гг"}   | ${"середина 19 века (применяется 1850), 1870-е, 1882-1895"}  | ${1850}               | ${[1830, 1870]}
     ${"1 пол. XIX в., 1880-е гг."}               | ${"1-я половина 19 века (применяется 1825), 1880-е"}         | ${1825}               | ${[1800, 1850]}
     ${"что-то пошло НЕ ТАК"}                     | ${"что-то пошло не так"}                                     | ${undefined}          | ${undefined}
+    ${"42"}                                      | ${"42"}                                                      | ${undefined}          | ${undefined}
+    ${"-"}                                       | ${undefined}                                                 | ${undefined}          | ${undefined}
+    ${",='"}                                     | ${undefined}                                                 | ${undefined}          | ${undefined}
+    ${""}                                        | ${undefined}                                                 | ${undefined}          | ${undefined}
+    ${"  "}                                      | ${undefined}                                                 | ${undefined}          | ${undefined}
+    ${undefined}                                 | ${undefined}                                                 | ${undefined}          | ${undefined}
   `(
     `returns "$derivedCompletionTimeForGeosemantica" / $derivedCompletionYear / $derivedCompletionYearRange for "$input"`,
     ({
