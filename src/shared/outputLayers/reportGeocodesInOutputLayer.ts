@@ -44,6 +44,8 @@ export const reportGeocodesInOutputLayer = async ({
       ),
     );
 
+    // We assume that if there are no geocodes to report, the layer had no geocodes in the past as well.
+    // If this assumption no longer holds true, we should remove the return statement to clean up the catalog.
     return;
   }
 
