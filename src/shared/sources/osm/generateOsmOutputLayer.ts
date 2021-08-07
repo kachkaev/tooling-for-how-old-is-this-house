@@ -230,11 +230,15 @@ const generateGetIntersectedBoundaryName = ({
     }
   }
 
-  const orderedBoundaryFeatures = _.orderBy(
-    filteredBoundaryFeatures,
-    (boundaryFeature) => turf.area(boundaryFeature.geometry),
-    "desc",
-  );
+  const orderedBoundaryFeatures = _.orderBy(filteredBoundaryFeatures, [
+    // We prioritize boundaries that have no admin level (e.g. place=town/village)
+    // to get higher quality settlement names. Examples:
+    // - https://www.openstreetmap.org/relation/2552696 (goes first, so will be used)
+    // - https://www.openstreetmap.org/relation/1846781 (goes second, so won’t be used)
+    (boundaryFeature) => boundaryFeature.properties["admin_level"] ?? "0",
+    // Within each group, we start by trying the largest boundaries to improve performance
+    (boundaryFeature) => -turf.area(boundaryFeature.geometry),
+  ]);
 
   return (feature: turf.Feature) =>
     orderedBoundaryFeatures.find(
