@@ -117,11 +117,19 @@ export const generateExtractOutputLayer = ({
     const outputLayerWithDerivedProperties: OutputLayer = {
       ...outputLayer,
       features: outputLayer.features.map((feature, index) => {
+        let derivedCompletionYear: number | undefined = undefined;
+
+        try {
+          derivedCompletionYear = parseCompletionTime(
+            feature.properties.completionTime ?? undefined,
+          ).derivedCompletionYear;
+        } catch (e) {
+          logger.log(chalk.yellow(e.message));
+        }
+
         const propertiesWithDerivatives = deepClean({
           ...feature.properties,
-          derivedCompletionYear: parseCompletionTime(
-            feature.properties.completionTime ?? undefined,
-          ).derivedCompletionYear,
+          derivedCompletionYear,
         });
 
         return {

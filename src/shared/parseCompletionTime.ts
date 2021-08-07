@@ -14,6 +14,20 @@ export type ResultOfParseCompletionTime =
       derivedCompletionYearRange: [number, number];
     };
 
+type ResultOfParseSingleCompletionTime =
+  | {
+      cleanedCompletionTime?: string;
+      completionYear?: never;
+      completionYearRange?: never;
+      assumedYear?: never;
+    }
+  | {
+      cleanedCompletionTime: string;
+      completionYear: number;
+      completionYearRange: [number, number];
+      assumedYear?: number;
+    };
+
 const normalizeWording = (completionTime: string): string => {
   return (
     normalizeSpacing(completionTime)
@@ -114,17 +128,10 @@ const decadeYearAndRangeLookup: Record<string, [number, [number, number]]> = {
   конец: [8, [6, 9]],
 };
 
-const addAppliedYear = (originalValue: string, yearToAssume: number) =>
-  `${originalValue} (применяется ${yearToAssume})`;
-
-const doParseCompletionTime = (
-  completionTime: string | undefined,
-): ResultOfParseCompletionTime => {
-  if (typeof completionTime !== "string") {
-    return {};
-  }
-
-  let result = normalizeWording(completionTime);
+const parseSingleCompletionTime = (
+  singleCompletionTime: string,
+): ResultOfParseSingleCompletionTime => {
+  let result = normalizeWording(singleCompletionTime);
   if (!result.length) {
     return {};
   }
@@ -136,9 +143,9 @@ const doParseCompletionTime = (
       const year = parseInt(yearMatch);
 
       return {
-        derivedCompletionTimeForGeosemantica: result,
-        derivedCompletionYear: year,
-        derivedCompletionYearRange: [-Number.MAX_SAFE_INTEGER, year],
+        cleanedCompletionTime: result,
+        completionYear: year,
+        completionYearRange: [-Number.MAX_SAFE_INTEGER, year],
       };
     }
   }
@@ -151,12 +158,10 @@ const doParseCompletionTime = (
       const decadeStartYear = parseInt(decade) * 10;
 
       return {
-        derivedCompletionTimeForGeosemantica: addAppliedYear(
-          `${decade}0-е`,
-          decadeStartYear + 5,
-        ),
-        derivedCompletionYear: decadeStartYear + 5,
-        derivedCompletionYearRange: [decadeStartYear, decadeStartYear + 9],
+        cleanedCompletionTime: `${decade}0-е`,
+        completionYear: decadeStartYear + 5,
+        completionYearRange: [decadeStartYear, decadeStartYear + 9],
+        assumedYear: decadeStartYear + 5,
       };
     }
   }
@@ -173,9 +178,9 @@ const doParseCompletionTime = (
       const year = parseInt(yearMatch);
 
       return {
-        derivedCompletionTimeForGeosemantica: yearMatch,
-        derivedCompletionYear: year,
-        derivedCompletionYearRange: [year, year],
+        cleanedCompletionTime: yearMatch,
+        completionYear: year,
+        completionYearRange: [year, year],
       };
     }
   }
@@ -210,22 +215,26 @@ const doParseCompletionTime = (
   }
 
   // "1842"
+  // "1842-й"
+  // "1842-м"
   // "1842-1843"
   // "около 1842"
   // "около 1842-1843"
+  // "1842-1843-е"
   {
     const [, from, , to] = result.match(/(\d{4})(-(\d{4}))?/) ?? [];
 
     const extraAmbiguity = result.includes("около") ? 5 : 0;
+    const ambiguityPrefix = extraAmbiguity ? "около " : "";
     if (from) {
       const yearFrom = parseInt(from);
       if (to) {
         const yearTo = parseInt(to);
 
         return {
-          derivedCompletionTimeForGeosemantica: result,
-          derivedCompletionYear: yearTo,
-          derivedCompletionYearRange: [
+          cleanedCompletionTime: `${ambiguityPrefix}${yearFrom}-${yearTo}`,
+          completionYear: yearTo,
+          completionYearRange: [
             yearFrom - extraAmbiguity,
             yearTo + extraAmbiguity,
           ],
@@ -233,9 +242,9 @@ const doParseCompletionTime = (
       }
 
       return {
-        derivedCompletionTimeForGeosemantica: result,
-        derivedCompletionYear: yearFrom,
-        derivedCompletionYearRange: [
+        cleanedCompletionTime: `${ambiguityPrefix}${yearFrom}`,
+        completionYear: yearFrom,
+        completionYearRange: [
           yearFrom - extraAmbiguity,
           yearFrom + extraAmbiguity,
         ],
@@ -250,12 +259,10 @@ const doParseCompletionTime = (
       const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
 
       return {
-        derivedCompletionTimeForGeosemantica: addAppliedYear(
-          result,
-          centuryStartYear + 50,
-        ),
-        derivedCompletionYear: centuryStartYear + 50,
-        derivedCompletionYearRange: [centuryStartYear, centuryStartYear + 99],
+        cleanedCompletionTime: result,
+        completionYear: centuryStartYear + 50,
+        completionYearRange: [centuryStartYear, centuryStartYear + 99],
+        assumedYear: centuryStartYear + 50,
       };
     }
   }
@@ -270,9 +277,9 @@ const doParseCompletionTime = (
       const to = centuryStartYear + parseInt(toDecadeMatch);
 
       return {
-        derivedCompletionTimeForGeosemantica: `${from}-${to}`,
-        derivedCompletionYear: to,
-        derivedCompletionYearRange: [from, to],
+        cleanedCompletionTime: `${from}-${to}`,
+        completionYear: to,
+        completionYearRange: [from, to],
       };
     }
   }
@@ -287,12 +294,10 @@ const doParseCompletionTime = (
       const decadeStartYear = centuryStartYear + parseInt(decadeMatch);
 
       return {
-        derivedCompletionTimeForGeosemantica: addAppliedYear(
-          `${decadeStartYear}-е`,
-          decadeStartYear + 5,
-        ),
-        derivedCompletionYear: decadeStartYear + 5,
-        derivedCompletionYearRange: [decadeStartYear, decadeStartYear + 9],
+        cleanedCompletionTime: `${decadeStartYear}-е`,
+        completionYear: decadeStartYear + 5,
+        completionYearRange: [decadeStartYear, decadeStartYear + 9],
+        assumedYear: decadeStartYear + 5,
       };
     }
   }
@@ -308,22 +313,20 @@ const doParseCompletionTime = (
       const centuryYearAndRange = centuryYearAndRangeLookup[centuryPartMatch];
       if (centuryYearAndRange) {
         return {
-          derivedCompletionTimeForGeosemantica: addAppliedYear(
-            result,
-            centuryStartYear + centuryYearAndRange[0],
-          ),
-          derivedCompletionYear: centuryStartYear + centuryYearAndRange[0],
-          derivedCompletionYearRange: [
+          cleanedCompletionTime: result,
+          completionYear: centuryStartYear + centuryYearAndRange[0],
+          completionYearRange: [
             centuryStartYear + centuryYearAndRange[1][0],
             centuryStartYear + centuryYearAndRange[1][1],
           ],
+          assumedYear: centuryStartYear + centuryYearAndRange[0],
         };
       }
     }
   }
 
   return {
-    derivedCompletionTimeForGeosemantica: result,
+    cleanedCompletionTime: result,
   };
 };
 
@@ -343,6 +346,50 @@ const deriveCompletionYearUsingGeosemanticaRegexp = (
   }
 
   return undefined;
+};
+
+const addAssumedYear = (originalValue: string, yearToAssume: number) =>
+  `${originalValue} (применяется ${yearToAssume})`;
+
+const doParseCompletionTime = (
+  completionTime: string | undefined,
+): ResultOfParseCompletionTime => {
+  if (typeof completionTime !== "string") {
+    return {};
+  }
+
+  const singleResults = completionTime
+    .split(",")
+    .map((singleCompletionTime) =>
+      parseSingleCompletionTime(singleCompletionTime),
+    );
+
+  const [firstResult, ...otherResults] = singleResults;
+  if (!firstResult) {
+    return {};
+  }
+
+  const stringChunks = [
+    firstResult.assumedYear
+      ? addAssumedYear(
+          firstResult.cleanedCompletionTime,
+          firstResult.assumedYear,
+        )
+      : firstResult.cleanedCompletionTime,
+    ...otherResults.map((singleResult) => singleResult.cleanedCompletionTime),
+  ];
+
+  const derivedCompletionTimeForGeosemantica = stringChunks.join(", ");
+
+  if (firstResult.completionYear && firstResult.completionYearRange) {
+    return {
+      derivedCompletionTimeForGeosemantica,
+      derivedCompletionYear: firstResult.completionYear,
+      derivedCompletionYearRange: firstResult.completionYearRange,
+    };
+  }
+
+  return { derivedCompletionTimeForGeosemantica };
 };
 
 export const parseCompletionTime = (
