@@ -40,6 +40,7 @@ export const generateGeosemanticaColorLegend: Command = async ({ logger }) => {
         (element) => element.innerHTML,
       );
 
+      await fs.ensureDir(getResultsDirPath());
       await fs.writeFile(resultFilePath, svgHtml, "utf8");
 
       logger.log(chalk.magenta(resultFilePath));
