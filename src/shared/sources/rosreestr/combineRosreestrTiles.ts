@@ -40,9 +40,6 @@ export const combineRosreestrTiles = async ({
     statusReportFrequency: 1000,
     processFile: async (filePath) => {
       const tileData = (await fs.readJson(filePath)) as RosreestrTileData;
-      if (deriveRosreestrTileDataStatus(tileData) !== "complete") {
-        return;
-      }
 
       const tileId = stringifyTile(tileData.tile);
 
@@ -53,6 +50,10 @@ export const combineRosreestrTiles = async ({
           fetchedFeatureCount: tileData.response.features.length,
         }),
       );
+
+      if (deriveRosreestrTileDataStatus(tileData) !== "complete") {
+        return;
+      }
 
       tileData.response.features.forEach((responseFeature) => {
         const { cn, id } = responseFeature.attrs;
