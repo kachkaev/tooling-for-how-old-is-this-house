@@ -83,7 +83,7 @@ export const generateInitialObjectInfoPages: Command = async ({ logger }) => {
     const cn = ccoFeature.properties?.cn;
     if (!isValidObjectCn(cn)) {
       throw new CommandError(
-        `Found CCO without cn property (cadastral number): ${JSON.stringify(
+        `Found CCO without a valid cn property (cadastral number): ${JSON.stringify(
           ccoFeature,
         )}`,
       );
