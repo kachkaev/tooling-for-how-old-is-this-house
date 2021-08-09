@@ -10,7 +10,7 @@ export const pickStyle: PickFromPropertyVariants<"style" | "styleSource"> = ({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual"],
+    prioritizedSources: ["manual", "wikidata", "wikivoyage"],
     propertySelectors: ["style"],
     targetBuildArea,
   });

@@ -10,7 +10,7 @@ export const pickUrl: PickFromPropertyVariants<"url" | "urlSource"> = ({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
     logger,
-    prioritizedSources: ["manual", "mkrf", "wikivoyage", "osm"],
+    prioritizedSources: ["manual", "wikivoyage", "osm"],
     propertySelectors: ["url"],
     targetBuildArea,
   });
