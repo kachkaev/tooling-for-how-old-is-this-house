@@ -148,8 +148,11 @@ const extractPropertiesFromPkkResponse = (
     return "notBuilding";
   }
 
+  const rawYear: number | string | undefined =
+    attrs.year_built ?? attrs.year_used;
+
   const completionTime = processCompletionTime(
-    attrs.year_built || (attrs.year_used ? `${attrs.year_used}` : undefined),
+    rawYear ? `${rawYear}` : undefined,
   );
 
   const documentedBuildArea =

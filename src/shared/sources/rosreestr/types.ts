@@ -178,8 +178,8 @@ export interface SuccessfulPkkFeatureResponse {
       statecd?: string;
       underground_floors?: string;
       volume?: unknown;
-      year_built?: string;
-      year_used?: number;
+      year_built?: string | number; // string observed in early 2021, number observed in mid 2021
+      year_used?: string | number; // string observed in early 2021, number observed in mid 2021
     };
     center?: RawRosreestrCenter;
     extent_parent: RawRosreestrExtent;

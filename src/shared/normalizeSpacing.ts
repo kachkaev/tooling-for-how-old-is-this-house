@@ -1,5 +1,5 @@
-export const normalizeSpacing = (name: string): string =>
-  name
+export const normalizeSpacing = (value: string): string =>
+  value
     .trim()
     .replace(/\s{2,}/g, " ")
     .replace(/№(\d)/g, "№ $1");
