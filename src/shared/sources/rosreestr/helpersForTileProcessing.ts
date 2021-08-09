@@ -35,12 +35,6 @@ const featureNumericIdLookup: Record<RosreestrObjectType, number> = {
 export const deriveRosreestrTileDataStatus = (
   tileData: RosreestrTileData,
 ): TileStatus => {
-  // Hotfix for https://github.com/kachkaev/tooling-for-how-old-is-this-house/issues/16
-  // Until we can bring the old API behaviour, we do a hard stop at zoom level 15.
-  if (tileData.tile[2] === 15) {
-    return "complete";
-  }
-
   const numberOfFeatures = tileData.response.features.length;
   if (numberOfFeatures > maxSupportedFeaturesPerTileRequest) {
     throw new Error(`Unexpected number of features ${numberOfFeatures}`);
@@ -114,7 +108,7 @@ export const generateProcessTile = (
       `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[objectType]}`,
       {
         sq: JSON.stringify(tileExtentGeometry),
-        tolerance: 100,
+        tolerance: 16, // Needs to be a power of two
         limit: maxSupportedFeaturesPerTileRequest,
       },
     )
