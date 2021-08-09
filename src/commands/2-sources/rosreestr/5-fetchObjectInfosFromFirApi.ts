@@ -38,6 +38,16 @@ const processRawFirApiResponse = (
     Object.entries(rawResponseData).filter(([key]) => key !== "oldNumbers"),
   ) as SuccessfulFirObjectResponseInInfoPage;
 
+  // https://github.com/kachkaev/tooling-for-how-old-is-this-house/issues/17
+  // TODO: Fix retry logic in fetchJsonFromRosreestr once API response is known.
+  if (!responseData.parcelData) {
+    throw new Error(
+      `Unexpected empty parcel data in response.\nContext: https://github.com/kachkaev/tooling-for-how-old-is-this-house/issues/17\nData: ${JSON.stringify(
+        responseData,
+      )}`,
+    );
+  }
+
   if (responseData.parcelData.oksType === "flat") {
     assertNoUsefulData(responseData);
 
