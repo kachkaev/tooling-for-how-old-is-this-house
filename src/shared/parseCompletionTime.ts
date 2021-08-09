@@ -94,8 +94,8 @@ const normalizeWording = (completionTime: string): string => {
       .replace(/, ([хivx\d]+) в.?(?!(\d|\p{L}|\.))/u, ", $1 век")
       .replace(/ в.?(?!(\d|\p{L}|\.))/gu, " века")
       .replace(/ вв?.?$/g, " века")
-      .replace(/\s?(г|гг|год)\.?$/g, "")
-      .replace(/\s?(г|гг|год)\.?([^\p{L}])/gu, "$2")
+      .replace(/\s?(г|гг|год|года|годы)\.?$/g, "")
+      .replace(/\s?(г|гг|год|года|годы)\.?([^\p{L}])/gu, "$2")
       .replace(
         /([хivx]+) /g,
         (match) =>
@@ -267,10 +267,11 @@ const parseSingleCompletionTime = (
     }
   }
 
-  // "50-60 года 19 века"
+  // "50-60 [года - removed] 19 века"
+  // "50 - 60 [гг - removed] 19 века"
   {
     const [, fromDecadeMatch, toDecadeMatch, centuryMatch] =
-      result.match(/^(\d0)-(\d0) года (\d{1,2}) века$/) ?? [];
+      result.match(/^(\d0)\s?-\s?(\d0) (\d{1,2}) века$/) ?? [];
     if (fromDecadeMatch && toDecadeMatch && centuryMatch) {
       const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
       const from = centuryStartYear + parseInt(fromDecadeMatch);
@@ -284,11 +285,10 @@ const parseSingleCompletionTime = (
     }
   }
 
-  // "50-е года 19 века"
+  // "50-е [года - removed] 19 века"
   {
-    const [, decadeMatch, , , centuryMatch] =
-      result.match(/^(\d0)(-е)? (года|годы|г|г\.|гг|гг\.) (\d{1,2}) века$/) ??
-      [];
+    const [, decadeMatch, , centuryMatch] =
+      result.match(/^(\d0)(-е)? (\d{1,2}) века$/) ?? [];
     if (decadeMatch && centuryMatch) {
       const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
       const decadeStartYear = centuryStartYear + parseInt(decadeMatch);
