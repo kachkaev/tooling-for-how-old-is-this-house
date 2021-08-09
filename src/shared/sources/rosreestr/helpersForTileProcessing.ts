@@ -58,15 +58,12 @@ const generateRosreestrTileComment = (
 
 const getTileBufferInMeters = (zoom: number): number => {
   if (zoom < 19) {
-    return 10;
-  }
-  if (zoom === 19) {
     return 5;
   }
-  if (zoom === 20) {
+  if (zoom === 19) {
     return 2;
   }
-  if (zoom === 21) {
+  if (zoom === 20) {
     return 1;
   }
 
