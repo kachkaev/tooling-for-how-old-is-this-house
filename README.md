@@ -4,6 +4,10 @@ This repository helps assemble and share a dataset with building ages.
 The commands collect and mix data from various publicly available sources and turn the result into the uploadable and printable artifacts.
 To run the commands, you need to specify a geographic territory, which is usually a single town or a city.
 
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.en.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
+
 Because [how-old-is-this.house](https://how-old-is-this.house/en) focuses on cities in Russia, the instructions below are in Russian.
 Although some of the data sources are country-specific, parts of the repo can still be recycled for a global re-use.
 
