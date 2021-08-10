@@ -1,7 +1,8 @@
-# Tooling for adding new cities to [how-old-is-this.house](https://how-old-is-this.house/en)
+# Tooling for [how-old-is-this.house](https://how-old-is-this.house/en)
 
-This repository contains commands for assembling a dataset with building ages for a specified area.
-The commands collect data from various publicly available sources, process it and combine together into a single map layer.
+This repository helps assemble and share a dataset with building ages.
+The commands collect and mix data from various publicly available sources and turn the result into the uploadable and printable artifacts.
+To run the commands, you need to specify a geographic territory, which is usually a single town or a city.
 
 Because [how-old-is-this.house](https://how-old-is-this.house/en) focuses on cities in Russia, the instructions below are in Russian.
 Although some of the data sources are country-specific, parts of the repo can still be recycled for a global re-use.
@@ -163,6 +164,10 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 ### Обработка выбранной территории
 
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
+
 Команды в этом репозитории подходят для обработки любой части РФ.
 Рекомендуется ограничиваться компактной территорией, например, одной городской агломерацией.
 Из-за особенностей процесса получения данных, попытка за раз охватить большую, но при этом малонаселённую территорию, будет неэффективной.
@@ -181,7 +186,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 1.  Клонируйте соответствующую ветку репозитория с данными в папку `/path/to/data/territories/TERRITORY_NAME`.
 
-    `TERRITORY_NAME` — это название города или части субъекта РФ (например, `penza` или `penza_oblast_kuznetsk`).
+    `TERRITORY_NAME` — это название города или части субъекта РФ (например, `pnz-penza` или `mo-saransk`).
     Название папки соответствует названию ветки репозитория (`territories/TERRITORY_NAME`).
 
 1.  Откройте файл `/path/to/tooling/.env.local` как текстовый и укажите путь к выбранной территории.
@@ -211,7 +216,7 @@ Although some of the data sources are country-specific, parts of the repo can st
     Желательно подбирать границы территории так, чтобы они повторяли контуры кадастровых кварталов.
     Это повысит эффективность работы с АПИ Росреестра.
 
-1.  Закоммитить и запушить изменения в файлах `territory-config.yml` и `territory-extent.yml` при помощи гита.
+1.  Закоммитьте и запушьте изменения в файлах `territory-config.yml` и `territory-extent.yml` при помощи гита.
 
     Этот шаг упростит дальнейшую работу над территорий и избавит вас от необходимости делать резервные копии данных.
 
