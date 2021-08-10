@@ -57,6 +57,9 @@ const generateRosreestrTileComment = (
 };
 
 const getTileBufferInMeters = (zoom: number): number => {
+  if (zoom < 17) {
+    return 10;
+  }
   if (zoom < 19) {
     return 5;
   }
@@ -105,7 +108,7 @@ export const generateProcessTile = (
       `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[objectType]}`,
       {
         sq: JSON.stringify(tileExtentGeometry),
-        tolerance: 16, // Needs to be a power of two
+        tolerance: 2, // Needs to be a power of two. The smaller the number, the fewer features outside the polygon are returned.
         limit: maxSupportedFeaturesPerTileRequest,
       },
     )
