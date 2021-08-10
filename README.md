@@ -182,6 +182,10 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 #### Подготовка территории
 
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.stage-territory.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
+
 Перед выполнением шагов в этом разделе вам надо получить доступ к репозиторию с данными.
 Для вас будет создана новая гит-ветка из специальной ветки-шаблона `territories/_blank`.
 После этого:
@@ -225,6 +229,10 @@ Although some of the data sources are country-specific, parts of the repo can st
     Этот шаг упростит дальнейшую работу над территорий и избавит вас от необходимости делать резервные копии данных.
 
 #### Получение исходных данных
+
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.stage-sources.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
 
 Все нижеперечисленные команды выполняются из папки `/path/to/tooling`.
 Перед их запуском важно выполнить инструкции в предыдущих разделах.
@@ -416,6 +424,10 @@ Although some of the data sources are country-specific, parts of the repo can st
 
 #### Создание каталога геокодов
 
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.stage-geocoding-local.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
+
 Геокодирование — процесс связывания адреса объекта и его координат.
 В собранных нами данных есть здания с адресом и координатами, а также записи, где координаты отсутствуют.
 Собрав каталог геокодов, мы уменьшим количество объектов без координат.
@@ -441,6 +453,10 @@ yarn exe src/commands/2-sources/wikivoyage/8-reportGeocodes.ts
 #### Заполнение пробелов в каталоге геокодов
 
 ![][опционально]
+
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.stage-geocoding-external.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
 
 Сопоставление адресов и географических координат из разных источников существенно улучшает качество смешивания данных.
 Тем не менее, координаты некоторых зданий по-прежнему остаются неизвестными.
@@ -492,6 +508,10 @@ yarn exe src/commands/2-sources/yandex/2-deleteCacheEntriesForUnusedAddresses.ts
 
 #### Подготовка к смешиванию данных
 
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.stage-output-layers.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
+
 У нас есть исходные данные из нескольких источников, а также локальный каталог геокодов.
 Чтобы склеить источники, нам нужно привести все данные к единому формату, заполнив при этом недостающие геокоды.
 
@@ -518,6 +538,10 @@ yarn exe src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts
 <!-- TODO: добавить про territory-config → sources → mkrf → fixedLonLatById -->
 
 #### Смешивание данных
+
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.stage-mixing.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
 
 Этот финальный этап обработки данных комбинирует слои, которые мы получили на предыдущем шаге.
 
@@ -559,6 +583,10 @@ yarn dev
 #### Корректировка результата
 
 ![][опционально]
+
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.stage-manual-layers.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
 
 Запуск команд не требует ручных шагов по обработке данных.
 Как следствие, ошибки в источниках неизбежно попадают в итоговый файл.
@@ -627,6 +655,10 @@ yarn dev
 #### Публикация результата
 
 ![][опционально]
+
+<!--markdownlint-disable no-inline-html -->
+<center><img src="docs/assets/tooling-diagram.stage-results.drawio.svg" /></center>
+<!--markdownlint-enable no-inline-html -->
 
 > 🚧 Эта часть документации не завершена
 
