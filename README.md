@@ -5,7 +5,7 @@ The commands collect and mix data from various publicly available sources and tu
 To run the commands, you need to specify a geographic territory, which is usually a single town or a city.
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.en.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.en@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 Because [how-old-is-this.house](https://how-old-is-this.house/en) focuses on cities in Russia, the instructions below are in Russian.
@@ -169,7 +169,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 ### Обработка выбранной территории
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 Команды в этом репозитории подходят для обработки любой части РФ.
@@ -183,7 +183,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 #### Подготовка территории
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.stage-territory.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.stage-territory@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 Перед выполнением шагов в этом разделе вам надо получить доступ к репозиторию с данными.
@@ -231,7 +231,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 #### Получение исходных данных
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.stage-sources.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.stage-sources@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 Все нижеперечисленные команды выполняются из папки `/path/to/tooling`.
@@ -425,7 +425,7 @@ Although some of the data sources are country-specific, parts of the repo can st
 #### Создание каталога геокодов
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.stage-geocoding-local.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.stage-geocoding-local@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 Геокодирование — процесс связывания адреса объекта и его координат.
@@ -455,7 +455,7 @@ yarn exe src/commands/2-sources/wikivoyage/8-reportGeocodes.ts
 ![][опционально]
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.stage-geocoding-external.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.stage-geocoding-external@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 Сопоставление адресов и географических координат из разных источников существенно улучшает качество смешивания данных.
@@ -509,7 +509,7 @@ yarn exe src/commands/2-sources/yandex/2-deleteCacheEntriesForUnusedAddresses.ts
 #### Подготовка к смешиванию данных
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.stage-output-layers.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.stage-output-layers@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 У нас есть исходные данные из нескольких источников, а также локальный каталог геокодов.
@@ -540,7 +540,7 @@ yarn exe src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts
 #### Смешивание данных
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.stage-mixing.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.stage-mixing@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 Этот финальный этап обработки данных комбинирует слои, которые мы получили на предыдущем шаге.
@@ -585,7 +585,7 @@ yarn dev
 ![][опционально]
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.stage-manual-layers.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.stage-manual-layers@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 Запуск команд не требует ручных шагов по обработке данных.
@@ -657,7 +657,7 @@ yarn dev
 ![][опционально]
 
 <!--markdownlint-disable no-inline-html -->
-<center><img src="docs/assets/tooling-diagram.stage-results.drawio.svg" /></center>
+<center><img width="846" src="docs/assets/tooling-diagram.stage-results@2x.drawio.png" /></center>
 <!--markdownlint-enable no-inline-html -->
 
 > 🚧 Эта часть документации не завершена
