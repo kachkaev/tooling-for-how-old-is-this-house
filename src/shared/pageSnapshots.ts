@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import fs from "fs-extra";
+import path from "path";
 import puppeteer from "puppeteer";
 
 const nextJsPageSelector = "#__next *";
@@ -32,6 +33,8 @@ export const ensureImageSnapshot = async ({
   });
 
   await page.waitForSelector(selectorToWaitFor);
+
+  await fs.ensureDir(path.dirname(resultFilePath));
 
   await page.screenshot({
     path: resultFilePath,
@@ -68,6 +71,8 @@ export const ensurePdfSnapshot = async ({
   });
 
   await page.waitForSelector(selectorToWaitFor);
+
+  await fs.ensureDir(path.dirname(resultFilePath));
 
   await page.pdf({
     path: resultFilePath,
