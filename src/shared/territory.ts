@@ -4,6 +4,7 @@ import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import { load } from "js-yaml";
+import _ from "lodash";
 import path from "path";
 
 import {
@@ -153,10 +154,12 @@ export const ensureTerritoryGitignoreContainsLine = async (
   );
 
   if (!fileHasCommentsOrGaps) {
-    linesInFile = linesInFile
-      .map((lineInFile) => lineInFile.trim())
-      .filter((lineInFile) => lineInFile.length)
-      .sort();
+    linesInFile = _.uniq(
+      linesInFile
+        .map((lineInFile) => lineInFile.trim())
+        .filter((lineInFile) => lineInFile.length)
+        .sort(),
+    );
   }
 
   const desiredFileContent = `${linesInFile.join("\n")}\n`;
