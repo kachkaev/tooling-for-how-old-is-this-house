@@ -91,7 +91,7 @@ export const addExtraObjectInfoPages: Command = async ({ logger }) => {
       (infoPageObject) => infoPageObject.firResponse === "flat",
     );
 
-    const numberOfPagesToAdd = tailIsFullOfFlats ? 5 : 1;
+    const numberOfPagesToAdd = tailIsFullOfFlats ? 5 : 3;
 
     for (let i = 1; i <= numberOfPagesToAdd; i += 1) {
       pagesToCreate.push({
