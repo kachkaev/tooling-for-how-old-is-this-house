@@ -205,7 +205,12 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
       ),
     ) ?? 0;
 
-  const maxY = Math.ceil(maxBuildingsPerYear / barTick) * barTick;
+  const maxY =
+    Math.ceil(
+      (maxBuildingsPerYear - barTick) / barTick / barTickLabelFrequency,
+    ) *
+    barTick *
+    barTickLabelFrequency;
 
   const xScale = scaleLinear()
     .domain([minYear, maxYear])
