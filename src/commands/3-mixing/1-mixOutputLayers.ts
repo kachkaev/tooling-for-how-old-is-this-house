@@ -167,7 +167,11 @@ export const mixOutputLayers: Command = async ({ logger }) => {
         logger.log(
           `${prefix}picked features (${geometryTypes}): ${chalk.cyan(
             featureCount,
-          )} (${Math.round((featureCount / totalFeatureCount) * 100)}%)`,
+          )}${
+            totalFeatureCount > 0
+              ? ` (${Math.round((featureCount / totalFeatureCount) * 100)}%)`
+              : ""
+          }`,
         );
 
       if (layerRole === "base") {
