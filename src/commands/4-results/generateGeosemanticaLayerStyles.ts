@@ -3,6 +3,7 @@ import chalk from "chalk";
 import clipboardy from "clipboardy";
 import * as envalid from "envalid";
 import fs from "fs-extra";
+import _ from "lodash";
 import path from "path";
 import html from "tagged-template-noop"; // Usage of html`` enables Prettier within strings
 import { dynamicImport } from "tsimportlib";
@@ -223,7 +224,9 @@ const generateRulesForGeographicContextWays = ({
               <se:SvgParameter name="stroke-linejoin">round</se:SvgParameter>
               <se:SvgParameter name="stroke-width"
                 ><ogc:Mul>
-                  <ogc:PropertyName>size</ogc:PropertyName>
+                  <ogc:PropertyName
+                    >${_.snakeCase("relativeSize")}</ogc:PropertyName
+                  >
                   <ogc:Literal>15</ogc:Literal>
                 </ogc:Mul></se:SvgParameter
               >

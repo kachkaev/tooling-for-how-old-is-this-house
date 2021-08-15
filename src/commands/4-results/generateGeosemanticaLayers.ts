@@ -2,6 +2,7 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
+import _ from "lodash";
 import path from "path";
 import sortKeys from "sort-keys";
 
@@ -10,6 +11,7 @@ import {
   GeographicContextFeature,
   GeographicContextFeatureGeometry,
   GeographicContextFeatureProperties,
+  GeographicContextWaySize,
   splitGeographicContext,
 } from "../../shared/geographicContext";
 import { generateGeographicContext } from "../../shared/geographicContext/generateGeographicContext";
@@ -54,12 +56,20 @@ interface MainLayerProperties {
 
 type BuildingsLayerFeature = turf.Feature<OutputGeometry, MainLayerProperties>;
 
-type BackgroundLayerFeature = turf.Feature<
-  GeographicContextFeatureGeometry,
-  GeographicContextFeatureProperties | { category: "building" }
->;
+// Geosemantica has issues with applying styles when properties use camelCase.
+// We replace relativeSize with relative_size as a workaround.
+// TODO: Improve typings (may via template literal types?)
+type GeographicContextLayerFeatureProperties =
+  | (Omit<GeographicContextFeatureProperties, "relativeSize"> & {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      relative_size?: GeographicContextWaySize;
+    })
+  | { category: "building" };
 
-type ForegroundLayerFeature = GeographicContextFeature;
+type GeographicContextLayerFeature = turf.Feature<
+  GeographicContextFeatureGeometry,
+  GeographicContextLayerFeatureProperties
+>;
 
 // Placeholder properties are added to the first feature of the resulting feature collection.
 // This ensures property list completeness and order in apps like QGIS.
@@ -152,6 +162,14 @@ const generateCopyrights = ({
     .join(", ")}`;
 };
 
+const mapBackgroundOrForegroundFeatureProperties = (
+  features: GeographicContextFeature[],
+): GeographicContextLayerFeature[] =>
+  (features.map((feature) => ({
+    ...feature,
+    properties: _.mapKeys(feature.properties, (value, key) => _.snakeCase(key)),
+  })) as unknown[]) as GeographicContextLayerFeature[];
+
 export const generateGeosemanticaLayers: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica layers"));
 
@@ -177,11 +195,13 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
     foregroundFeatureCollection,
   } = splitGeographicContext(geographicContextFeatureCollection);
 
-  const backgroundLayerFeatures: BackgroundLayerFeature[] =
-    backgroundFeatureCollection.features;
+  const backgroundLayerFeatures: GeographicContextLayerFeature[] = mapBackgroundOrForegroundFeatureProperties(
+    backgroundFeatureCollection.features,
+  );
   const buildingsLayerFeatures: BuildingsLayerFeature[] = [];
-  const foregroundLayerFeatures: ForegroundLayerFeature[] =
-    foregroundFeatureCollection.features;
+  const foregroundLayerFeatures: GeographicContextLayerFeature[] = mapBackgroundOrForegroundFeatureProperties(
+    foregroundFeatureCollection.features,
+  );
 
   const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
 
