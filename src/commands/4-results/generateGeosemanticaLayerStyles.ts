@@ -182,6 +182,7 @@ const generateRulesForGeographicContextAreas = ({
     ["wetland", geographicContextStyling.wetlandColor],
   ] as const).map(
     ([category, color]) =>
+      // Adding thin stroke prevents subtle gaps between parts of rivers and lakes caused by geometry simplification
       html`
         <se:Rule>
           ${generateFilterForGeoraphicContextCategory(category)}
@@ -191,6 +192,12 @@ const generateRulesForGeographicContextAreas = ({
                 >${formatColor(color)}</se:SvgParameter
               >
             </Fill>
+            <Stroke>
+              <se:SvgParameter name="stroke"
+                >${formatColor(color)}</se:SvgParameter
+              >
+              <se:SvgParameter name="stroke-width">.3</se:SvgParameter>
+            </Stroke>
           </se:PolygonSymbolizer>
         </se:Rule>
       `,
