@@ -3,6 +3,7 @@ import { bin } from "d3-array";
 import { ScaleLinear, scaleLinear, scaleThreshold } from "d3-scale";
 import { schemeYlGnBu } from "d3-scale-chromatic";
 import _ from "lodash";
+import { useRouter } from "next/dist/client/router";
 import * as React from "react";
 import styled from "styled-components";
 
@@ -59,9 +60,9 @@ const buildAreaThresholds = [
   2000,
   Number.MAX_SAFE_INTEGER,
 ];
-const builtAreaColors =
+const buildAreaColors =
   schemeYlGnBu[buildAreaThresholds.length + 1]?.slice(1) ?? [];
-const buildAreaColor = scaleThreshold(buildAreaThresholds, builtAreaColors);
+const buildAreaColor = scaleThreshold(buildAreaThresholds, buildAreaColors);
 const binByBuiltArea = bin().domain([0, 10000]).thresholds(buildAreaThresholds);
 
 const gapOverlap = 0.2;
@@ -227,6 +228,8 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
   const hasLabel = (year: number): boolean =>
     year === minYear || Math.round(year / 10) === year / 10;
 
+  const { locale } = useRouter();
+
   return (
     <>
       <GlobalStyle />
@@ -309,7 +312,7 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
                       {value}
                       {index === yAxisTicks.length - 1 ? (
                         <tspan x={0} dy={labelFontSize}>
-                          зданий
+                          {locale === "en" ? "buildings" : "зданий"}
                         </tspan>
                       ) : null}
                     </text>
@@ -334,7 +337,9 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
               fill={labelColor}
               dominantBaseline="middle"
             >
-              площадь застройки, м²
+              {locale === "en"
+                ? "building footprint, m²"
+                : "площадь застройки, м²"}
             </text>
             {buildAreaThresholds.map((threshold, index) => {
               return (

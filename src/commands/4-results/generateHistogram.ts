@@ -8,6 +8,7 @@ import { ensureImageSnapshot } from "../../shared/pageSnapshots";
 import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,
+  getLocaleFromEnv,
   getResultsDirPath,
 } from "../../shared/results";
 import { getTerritoryId } from "../../shared/territory";
@@ -21,19 +22,25 @@ export const generateHistogram: Command = async ({ logger }) => {
 
   const version = generateVersionSuffix();
   const territoryId = getTerritoryId();
-  const resultFilePath = path.resolve(
-    getResultsDirPath(),
-    `${territoryId}.histogram.${version}.${extension}`,
-  );
+
+  const locale = getLocaleFromEnv();
 
   await ensureLaunchedWebApp({
     logger,
     action: async (webAppUrl) => {
-      logger.log(chalk.green(`Making web page snapshot...`));
       const browser = await puppeteer.launch();
 
+      const resultFilePath = path.resolve(
+        getResultsDirPath(),
+        `${territoryId}.histogram.${version}${
+          locale === "ru" ? "" : `.${locale}`
+        }.${extension}`,
+      );
+
+      logger.log(chalk.green(`Making web page snapshot (LOCALE=${locale})...`));
+
       const page = await browser.newPage();
-      await page.goto(`${webAppUrl}/histogram`);
+      await page.goto(`${webAppUrl}/${locale}/histogram`);
 
       await ensureImageSnapshot({
         imageScaleFactor: 2,
