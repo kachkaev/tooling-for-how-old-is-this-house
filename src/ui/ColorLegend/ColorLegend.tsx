@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import * as React from "react";
 import styled from "styled-components";
 
@@ -14,9 +15,9 @@ const backgroundColor = "#1e2023";
 const width = 366;
 const height = 70;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ spaced?: boolean }>`
   width: ${width}px;
-  padding: 20px;
+  ${(p) => (p.spaced ? "padding: 20px;" : "")};
 `;
 
 const Figure = styled.div`
@@ -48,22 +49,26 @@ export interface ColorLegendProps {
 }
 
 const colorBlindnessConditionTitleLookup: Record<
-  ColorBlindnessCondition,
-  string
+  string,
+  Record<ColorBlindnessCondition, string>
 > = {
-  protanopia: "протанопия",
-  deuteranopia: "дейтеранопия",
-  tritanopia: "тританопия",
-  achromatopsia: "ахромазия",
+  ru: {
+    protanopia: "протанопия",
+    deuteranopia: "дейтеранопия",
+    tritanopia: "тританопия",
+    achromatopsia: "ахромазия",
+  },
 };
 
 export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
   posterConfig,
 }) => {
   const legendEntries = extractLegendEntries(posterConfig);
+  const { locale, query } = useRouter();
+  const snapshot = query.snapshot;
 
   return (
-    <Wrapper>
+    <Wrapper spaced={!snapshot}>
       <GlobalStyle />
       <Figure data-testid="svgContainer">
         <ColorLegendSvg
@@ -73,20 +78,22 @@ export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
         />
       </Figure>
 
-      {colorBlindnessConditions.map((condition) => (
-        <ColorBlindness key={condition}>
-          <ColorBlindnessTitle>
-            {colorBlindnessConditionTitleLookup[condition]}
-          </ColorBlindnessTitle>
-          <Figure style={generateColorBlindnessCss(condition)}>
-            <ColorLegendSvg
-              width={width}
-              height={height}
-              legendEntries={legendEntries}
-            />
-          </Figure>
-        </ColorBlindness>
-      ))}
+      {(!snapshot || snapshot === "color-blindness") &&
+        colorBlindnessConditions.map((condition) => (
+          <ColorBlindness key={condition}>
+            <ColorBlindnessTitle>
+              {colorBlindnessConditionTitleLookup[locale ?? ""]?.[condition] ??
+                condition}
+            </ColorBlindnessTitle>
+            <Figure style={generateColorBlindnessCss(condition)}>
+              <ColorLegendSvg
+                width={width}
+                height={height}
+                legendEntries={legendEntries}
+              />
+            </Figure>
+          </ColorBlindness>
+        ))}
     </Wrapper>
   );
 };

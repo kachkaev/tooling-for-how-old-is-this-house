@@ -8,6 +8,7 @@ const nextJsPageSelector = "#__next *";
 export const ensureImageSnapshot = async ({
   imageScaleFactor,
   logger,
+  omitBackground,
   page,
   quality,
   resultFilePath,
@@ -15,6 +16,7 @@ export const ensureImageSnapshot = async ({
 }: {
   imageScaleFactor: number;
   logger: Console;
+  omitBackground?: boolean;
   page: puppeteer.Page;
   quality?: number;
   resultFilePath: string;
@@ -27,8 +29,8 @@ export const ensureImageSnapshot = async ({
   }
 
   await page.setViewport({
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
     deviceScaleFactor: imageScaleFactor,
   });
 
@@ -36,10 +38,18 @@ export const ensureImageSnapshot = async ({
 
   await fs.ensureDir(path.dirname(resultFilePath));
 
+  // Inspired by https://stackoverflow.com/a/55107065/1818285
+  if (omitBackground) {
+    await page.evaluate(() => {
+      document.body.style.background = "transparent";
+    });
+  }
+
   await page.screenshot({
     path: resultFilePath,
     quality,
     fullPage: true,
+    omitBackground,
   });
 
   logger.log(chalk.magenta(resultFilePath));
@@ -65,8 +75,8 @@ export const ensurePdfSnapshot = async ({
   }
 
   await page.setViewport({
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
     deviceScaleFactor: 1,
   });
 

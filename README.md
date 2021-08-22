@@ -707,4 +707,10 @@ yarn exe src/commands/4-results/generateGeosemanticaLayerStyles.ts
 yarn exe src/commands/4-results/generateGeosemanticaColorLegend.ts
 ```
 
+```sh
+yarn exe src/commands/4-results/generateGeosemanticaColorLegendDemo.ts
+```
+
+↑ Команда поддерживает переменную окружения `LOCALE=en`.
+
 [опционально]: https://img.shields.io/badge/-опционально-white.svg
