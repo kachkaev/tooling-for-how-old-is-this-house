@@ -142,12 +142,11 @@ export const ensureTerritoryGitignoreContainsLine = async (
   await fs.ensureDir(path.dirname(filePath));
   await fs.ensureFile(filePath);
   const fileContent = await fs.readFile(filePath, "utf8");
-  let linesInFile = fileContent.trim().split(/\n\r?/);
-  if (linesInFile.includes(line)) {
-    return;
-  }
+  let linesInFile = fileContent.trim().split(/\r?\n/);
 
-  linesInFile.push(line);
+  if (!linesInFile.includes(line)) {
+    linesInFile.push(line);
+  }
 
   const fileHasCommentsOrGaps = linesInFile.find(
     (lineInFile) => lineInFile.startsWith("#") || lineInFile.trim() === "",
