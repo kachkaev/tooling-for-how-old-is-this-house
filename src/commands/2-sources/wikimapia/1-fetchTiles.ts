@@ -3,12 +3,12 @@ import * as tilebelt from "@mapbox/tilebelt";
 // @ts-ignore https://github.com/tmcw/togeojson/issues/46
 import * as tj from "@tmcw/togeojson";
 import * as turf from "@turf/turf";
+import { DOMParser } from "@xmldom/xmldom";
 import axios from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import fs from "fs-extra";
 import sortKeys from "sort-keys";
-import { DOMParser } from "xmldom";
 
 import {
   serializeTime,
