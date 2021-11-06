@@ -21,6 +21,12 @@ import {
   getTerritoryId,
 } from "../../shared/territory";
 
+// We can show year labels when the map is zoomed in. Example:
+// https://twitter.com/kachkaev_ru/status/1427919578525577217/photo/2
+// This is currently disabled to avoid the usage of Arial font in the project.
+// The option can be set to true before map publishing for debugging.
+const yearLabelsWhenZoomedIn = false;
+
 type FormatColor = (color: string) => string;
 
 const generateSld = ({ rules }: { rules: string | string[] }) =>
@@ -410,7 +416,7 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
   });
 
   buildingsLayerRules.push(
-    ...generateYearLabelRules(),
+    ...(yearLabelsWhenZoomedIn ? generateYearLabelRules() : []),
     generateMkrfHighlightRules(),
   );
 
