@@ -124,7 +124,7 @@ export const generateExtractOutputLayer = ({
             feature.properties.completionTime ?? undefined,
           ).derivedCompletionYear;
         } catch (e) {
-          logger.log(chalk.yellow(e.message));
+          logger.log(chalk.yellow(e instanceof Error ? e.message : `${e}`));
         }
 
         const propertiesWithDerivatives = deepClean({

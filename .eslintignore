@@ -16,6 +16,7 @@ node_modules
 /.next/
 /.vercel/
 /out/
+tsconfig.tsbuildinfo
 
 # production
 /build

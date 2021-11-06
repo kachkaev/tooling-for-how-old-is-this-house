@@ -1,6 +1,5 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
-import clipboardy from "clipboardy";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import _ from "lodash";
@@ -453,6 +452,12 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
       default: "",
     }),
   });
+
+  // TODO: Bring back normal import after migrating to ESM & remove formatColor from function payloads
+  const { default: clipboardy } = (await dynamicImport(
+    "clipboardy",
+    module,
+  )) as typeof import("clipboardy");
 
   if (layerStyleToCopy) {
     clipboardy.writeSync(

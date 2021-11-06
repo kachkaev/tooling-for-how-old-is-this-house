@@ -1,10 +1,10 @@
 import { CommandError } from "@kachkaev/commands";
 import axios from "axios";
 import chalk from "chalk";
-import getPort from "get-port";
 import { createServer } from "http";
 import _ from "lodash";
 import next from "next";
+import { dynamicImport } from "tsimportlib";
 import { parse } from "url"; // https://github.com/vercel/next.js/discussions/21283
 
 import { getTerritoryConfig, TerritoryConfig } from "./territory";
@@ -45,6 +45,12 @@ export const ensureLaunchedWebApp = async ({
 
     return;
   }
+
+  // TODO: Bring back normal import after migrating to ESM & remove formatColor from function payloads
+  const { default: getPort } = (await dynamicImport(
+    "get-port",
+    module,
+  )) as typeof import("get-port");
 
   const tempAppPort = await getPort();
   const tempWebAppUrl = generateAppUrl(tempAppPort);
