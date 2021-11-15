@@ -8,7 +8,7 @@ import { ColorLegendSvg } from "./ColorLegendSvg";
 import {
   ColorBlindnessCondition,
   colorBlindnessConditions,
-  generateColorBlindnessCss,
+  generateColorBlindnessFilterCssProperty,
 } from "./helpersForColorBlindness";
 
 const backgroundColor = "#1e2023";
@@ -85,7 +85,11 @@ export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
               {colorBlindnessConditionTitleLookup[locale ?? ""]?.[condition] ??
                 condition}
             </ColorBlindnessTitle>
-            <Figure style={generateColorBlindnessCss(condition)}>
+            <Figure
+              style={{
+                filter: generateColorBlindnessFilterCssProperty(condition),
+              }}
+            >
               <ColorLegendSvg
                 width={width}
                 height={height}

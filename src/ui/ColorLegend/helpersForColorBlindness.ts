@@ -1,5 +1,3 @@
-import * as React from "styled-components";
-
 // Inspired by:
 // https://dev.to/ndesmic/exploring-color-math-through-color-blindness-2m2h
 // https://developer.chrome.com/blog/cvd/
@@ -54,14 +52,12 @@ const stringifyColorTransformMatrix = (matrixRows: number[][]) => {
     .join("\n ");
 };
 
-export const generateColorBlindnessCss = (
+export const generateColorBlindnessFilterCssProperty = (
   condition: ColorBlindnessCondition,
-): React.CSSProperties => {
+): string => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg"><filter id="f" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${stringifyColorTransformMatrix(
     getColorTransformMatrix(condition),
   )}" /></filter></svg>`;
 
-  const filter = `url('data:image/svg+xml;utf8,${encodeURI(svg)}#f')`;
-
-  return { filter };
+  return `url('data:image/svg+xml;utf8,${encodeURI(svg)}#f')`;
 };
