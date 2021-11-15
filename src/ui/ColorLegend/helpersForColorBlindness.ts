@@ -1,6 +1,9 @@
 // Inspired by:
 // https://dev.to/ndesmic/exploring-color-math-through-color-blindness-2m2h
 // https://developer.chrome.com/blog/cvd/
+//
+// Related:
+// https://daltonlens.org/opensource-cvd-simulation/
 
 export const colorBlindnessConditions = [
   "protanopia",
