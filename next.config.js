@@ -1,7 +1,5 @@
 module.exports = {
-  experimental: {
-    styledComponents: true,
-  },
+  styledComponents: true,
   i18n: {
     defaultLocale: "ru",
     localeDetection: false,
