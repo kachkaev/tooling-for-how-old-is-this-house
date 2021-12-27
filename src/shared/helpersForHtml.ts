@@ -27,7 +27,7 @@ export const prependCommentWithJsonToHtml = (
 export const extractSerializedTimeFromPrependedHtmlComment = (
   html: string,
 ): string => {
-  const rawFetchedAtMatch = html.match(/^<!-- \w+: (.*) -->/);
+  const rawFetchedAtMatch = html.match(/^<!-- \w+: (.*?) -->/);
 
   if (!rawFetchedAtMatch?.[1]) {
     throw new Error("Unable to find prepended serialized time in html");
@@ -41,7 +41,7 @@ export const extractJsonFromPrependedHtmlComment = <
 >(
   html: string,
 ): T => {
-  const match = html.match(/^<!--(.*)-->/s);
+  const match = html.match(/^<!--(.*?)-->/s);
 
   if (!match?.[1]) {
     throw new Error(`Unable to find prepended comment in html`);
