@@ -1,12 +1,11 @@
 import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
+import { generateReportGeocodes } from "../../../shared/helpersForScripts";
 import { generateRosreestrOutputLayer } from "../../../shared/sources/rosreestr";
 
-const command = generateExtractOutputLayer({
+const command = generateReportGeocodes({
   source: "rosreestr",
   generateOutputLayer: generateRosreestrOutputLayer,
-  canUseCollectedGeocodes: true,
 });
 
 autoStartCommandIfNeeded(command, __filename);

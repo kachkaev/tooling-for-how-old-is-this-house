@@ -3,7 +3,7 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
 
-import { eraseLastLineInOutput } from "./helpersForCommands";
+import { eraseLastLineInOutput } from "./helpersForScripts";
 
 export type Tile = [x: number, y: number, zoom: number];
 

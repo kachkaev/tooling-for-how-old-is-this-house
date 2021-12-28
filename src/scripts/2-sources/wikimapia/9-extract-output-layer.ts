@@ -1,6 +1,6 @@
 import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
+import { generateExtractOutputLayer } from "../../../shared/helpersForScripts";
 import { generateWikimapiaOutputLayer } from "../../../shared/sources/wikimapia";
 
 const command = generateExtractOutputLayer({

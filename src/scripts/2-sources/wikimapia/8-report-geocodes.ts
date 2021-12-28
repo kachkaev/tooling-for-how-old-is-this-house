@@ -1,6 +1,6 @@
 import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { generateReportGeocodes } from "../../../shared/helpersForCommands";
+import { generateReportGeocodes } from "../../../shared/helpersForScripts";
 import { generateWikimapiaOutputLayer } from "../../../shared/sources/wikimapia";
 
 const command = generateReportGeocodes({

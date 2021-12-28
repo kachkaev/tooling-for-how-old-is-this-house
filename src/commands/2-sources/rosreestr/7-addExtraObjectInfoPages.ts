@@ -1,3 +1,3 @@
-import { autoStartKebabCaseCommandAndWarnAboutFileRenaming } from "../../../shared/helpersForCommands";
+import { autoStartScriptAndWarnAboutFileRenaming } from "../../../shared/helpersForScripts";
 
-autoStartKebabCaseCommandAndWarnAboutFileRenaming(__filename);
+autoStartScriptAndWarnAboutFileRenaming(__filename);

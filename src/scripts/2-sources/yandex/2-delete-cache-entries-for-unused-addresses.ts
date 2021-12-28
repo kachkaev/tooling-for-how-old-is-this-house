@@ -5,7 +5,7 @@ import rmUp from "rm-up";
 import sleep from "sleep-promise";
 
 import { loadCombinedGeocodeDictionary } from "../../../shared/geocoding";
-import { eraseLastLineInOutput } from "../../../shared/helpersForCommands";
+import { eraseLastLineInOutput } from "../../../shared/helpersForScripts";
 import { processFiles } from "../../../shared/processFiles";
 import {
   addressIsWorthKeepingInYandexCache,

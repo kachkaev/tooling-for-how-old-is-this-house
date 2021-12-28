@@ -1,6 +1,6 @@
 import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { generateReportGeocodes } from "../../../shared/helpersForCommands";
+import { generateReportGeocodes } from "../../../shared/helpersForScripts";
 import { generateMkrfOutputLayer } from "../../../shared/sources/mkrf";
 
 const command = generateReportGeocodes({

@@ -2,8 +2,8 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import path from "path";
 
-import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpersForCommands";
 import { writeFormattedJson } from "../../../shared/helpersForJson";
+import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpersForScripts";
 import {
   generateMingkhHouseInfoCollection,
   getMingkhDirPath,

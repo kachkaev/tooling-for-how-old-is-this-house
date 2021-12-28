@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import { generateProgress } from "./helpersForCommands";
+import { generateProgress } from "./helpersForScripts";
 import { listFilePaths } from "./listFilePaths";
 
 export const processFiles = async ({

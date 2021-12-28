@@ -178,24 +178,26 @@ export const ensureTerritoryGitignoreContainsPreview =
 /**
  * TODO: Remove after 2022-04-01
  */
-export const autoStartKebabCaseCommandAndWarnAboutFileRenaming = async (
+export const autoStartScriptAndWarnAboutFileRenaming = async (
   filePath: string,
 ) => {
   const dirPath = path.dirname(filePath);
   const fileName = path.basename(filePath, ".ts");
   const newFileName = _.kebabCase(fileName);
-  const newFilePath = path.resolve(dirPath, newFileName);
+  const newFilePath = path.resolve(
+    dirPath.replace(/\\/g, "/").replace("src/commands", "src/scripts"),
+    `${newFileName}.ts`,
+  );
 
   /* eslint-disable no-console */
   console.log();
   console.log("========");
-  console.log(
-    `Paths to all commands have been changed from camelCase to kebab-case.`,
-  );
-  console.log(
-    `Replace \`${fileName}\` with \`${newFileName}\` to hide this warning.`,
-  );
-  console.log(`Old camelCase paths will stop working in the future.`);
+  console.log(`Script paths have changed. Please replace`);
+  console.log(`  ${path.relative(process.cwd(), filePath)}`);
+  console.log("with");
+  console.log(`  ${path.relative(process.cwd(), newFilePath)}`);
+  console.log("to hide this warning. Old paths will stop working in the");
+  console.log("future, so should be removed from all software and docs.");
   console.log("========");
   console.log();
   /* eslint-enable no-console */

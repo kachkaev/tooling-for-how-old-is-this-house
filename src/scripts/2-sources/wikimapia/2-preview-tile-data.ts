@@ -4,8 +4,8 @@ import chalk from "chalk";
 import _ from "lodash";
 import path from "path";
 
-import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpersForCommands";
 import { writeFormattedJson } from "../../../shared/helpersForJson";
+import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpersForScripts";
 import { getWikimapiaDirPath } from "../../../shared/sources/wikimapia";
 import { combineWikimapiaTiles } from "../../../shared/sources/wikimapia/combineWikimapiaTiles";
 

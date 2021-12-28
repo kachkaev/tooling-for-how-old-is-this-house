@@ -1,9 +1,9 @@
 import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 
-import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
+import { generateReportGeocodes } from "../../../shared/helpersForScripts";
 import { generateMingkhOutputLayer } from "../../../shared/sources/mingkh";
 
-const command = generateExtractOutputLayer({
+const command = generateReportGeocodes({
   source: "mingkh",
   generateOutputLayer: generateMingkhOutputLayer,
 });
