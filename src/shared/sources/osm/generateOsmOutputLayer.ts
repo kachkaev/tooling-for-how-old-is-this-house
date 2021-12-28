@@ -1,9 +1,6 @@
-import { CommandError } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
-import fs from "fs-extra";
 import _ from "lodash";
-import path from "path";
 
 import { deepClean } from "../../deepClean";
 import { TrivialName } from "../../helpersForNames";
@@ -14,7 +11,6 @@ import {
   OutputLayerProperties,
 } from "../../outputLayers";
 import { getTerritoryExtent } from "../../territory";
-import { getOsmDirPath } from "./helpersForPaths";
 import { readFetchedOsmFeatureCollection } from "./readFetchedOsmFeatureCollection";
 import { OsmFeature, OsmFeatureProperties } from "./types";
 
@@ -260,17 +256,6 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
   const settlementBoundaryCollection = await readFetchedOsmFeatureCollection(
     "boundaries-for-settlements",
   );
-
-  // TODO: Remove after 2021-08-01. Related commit: 1b8504fd
-  const legacyBoundaryPath = path.resolve(
-    getOsmDirPath(),
-    "fetched-boundaries.geojson",
-  );
-  if (await fs.pathExists(legacyBoundaryPath)) {
-    throw new CommandError(
-      `Please delete ${legacyBoundaryPath}. This file is no longer needed and may cause confusion.`,
-    );
-  }
 
   const getRegion = generateGetIntersectedBoundaryName({
     boundaryFeatures: regionBoundaryCollection.features,

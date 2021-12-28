@@ -1,4 +1,3 @@
-import { CommandError } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import * as envalid from "envalid";
@@ -17,16 +16,6 @@ import { cleanEnv } from "./cleanEnv";
 export type TerritoryExtent = turf.Feature<turf.Polygon>;
 
 export const getTerritoryDirPath = (): string => {
-  // TODO: Remove oldEnv after 2021-06-01
-  const oldEnv = cleanEnv({
-    TERRITORY_DATA_DIR: envalid.str({ default: "" }),
-  });
-  if (oldEnv.TERRITORY_DATA_DIR) {
-    throw new CommandError(
-      "Please open your .env.local file and replace TERRITORY_DATA_DIR with TERRITORY_DATA_DIR_PATH.",
-    );
-  }
-
   const env = cleanEnv({
     TERRITORY_DATA_DIR_PATH: envalid.str({}),
   });
@@ -109,13 +98,6 @@ export const getTerritoryAddressHandlingConfig = async (
   logger: Console | undefined,
 ): Promise<AddressHandlingConfig> => {
   const territoryConfig = await getTerritoryConfig();
-
-  // TODO: Remove after 2022-01-01
-  if (territoryConfig["addressNormalization"]) {
-    throw new CommandError(
-      `Data in ${getTerritoryConfigFilePath()} is out of sync with the latest tooling. Please replace addressNormalization with addressHandling.`,
-    );
-  }
 
   const rawAddressHandling = territoryConfig.addressHandling ?? {};
 
