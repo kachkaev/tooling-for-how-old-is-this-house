@@ -14,6 +14,7 @@ export const getMixedOutputLayersFilePath = (): string =>
 export const getMixedPropertyVariantsFilePath = (): string =>
   path.resolve(getMixingDirPath(), "mixed-property-variants.geojson");
 
-export const ensureTerritoryGitignoreContainsMixing = async (): Promise<void> => {
-  await ensureTerritoryGitignoreContainsLine("/mixing");
-};
+export const ensureTerritoryGitignoreContainsMixing =
+  async (): Promise<void> => {
+    await ensureTerritoryGitignoreContainsLine("/mixing");
+  };

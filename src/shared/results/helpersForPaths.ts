@@ -12,6 +12,7 @@ export const getResultsDirPath = (): string =>
 export const generateVersionSuffix = (): string =>
   `v${DateTime.utc().toFormat("y-MM-dd-HHmmss")}Z`;
 
-export const ensureTerritoryGitignoreContainsResults = async (): Promise<void> => {
-  await ensureTerritoryGitignoreContainsLine("/results");
-};
+export const ensureTerritoryGitignoreContainsResults =
+  async (): Promise<void> => {
+    await ensureTerritoryGitignoreContainsLine("/results");
+  };

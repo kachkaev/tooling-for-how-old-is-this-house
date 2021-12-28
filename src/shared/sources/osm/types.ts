@@ -10,13 +10,12 @@ export type OsmFeature<G = turf.Polygon | turf.MultiPolygon> = turf.Feature<
   OsmFeatureProperties
 >;
 
-export type OsmFeatureCollection<
-  G = turf.Polygon | turf.MultiPolygon
-> = turf.FeatureCollection<G, OsmFeatureProperties> & {
-  copyright: "OpenStreetMap contributors";
-  license: "ODbL";
-  fetchedAt: string;
-};
+export type OsmFeatureCollection<G = turf.Polygon | turf.MultiPolygon> =
+  turf.FeatureCollection<G, OsmFeatureProperties> & {
+    copyright: "OpenStreetMap contributors";
+    license: "ODbL";
+    fetchedAt: string;
+  };
 
 export type OsmRailwayGeometry = turf.LineString;
 

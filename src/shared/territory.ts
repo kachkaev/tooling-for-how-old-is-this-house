@@ -125,12 +125,8 @@ const sanitizeWordReplacements = (
       continue;
     }
 
-    const {
-      detached,
-      from,
-      to,
-      silenceNormalizationWarning,
-    } = rawWordReplacement as Record<string, unknown>;
+    const { detached, from, to, silenceNormalizationWarning } =
+      rawWordReplacement as Record<string, unknown>;
 
     if (typeof to !== "string") {
       reportIssue?.(
@@ -202,11 +198,8 @@ const sanitizeRawAddressHandlingConfig = (
     return {};
   }
 
-  const {
-    wordReplacements,
-    canonicalSpellings,
-    defaultRegion,
-  } = userInput as Record<string, unknown>;
+  const { wordReplacements, canonicalSpellings, defaultRegion } =
+    userInput as Record<string, unknown>;
 
   const sanitizedCanonicalSpellings: string[] = [];
   let sanitizedDefaultRegion: string | undefined = undefined;

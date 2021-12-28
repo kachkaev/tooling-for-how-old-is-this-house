@@ -114,9 +114,8 @@ export const buildCleanedAddressAst = (
   rawAddress: string,
   config: AddressCleaningConfig,
 ): CleanedAddressAst => {
-  const nodesBeforeReplacements = extractUnclassifiedWordsWithPunctuation(
-    rawAddress,
-  );
+  const nodesBeforeReplacements =
+    extractUnclassifiedWordsWithPunctuation(rawAddress);
 
   const [...nodes]: CleanedAddressNode[] = removeRedundantSeparators(
     replaceWords(nodesBeforeReplacements, config.wordReplacementDirectiveTree),
@@ -152,7 +151,7 @@ export const buildCleanedAddressAst = (
       continue;
     }
     const [, rawNumber = "", ending = ""] = match;
-    const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithNumber;
+    const updatedNode = node as AddressNodeWithWord as AddressNodeWithNumber;
     updatedNode.wordType = "unclassifiedNumber";
     updatedNode.number = parseInt(rawNumber);
     updatedNode.value = `${rawNumber}${ending}`;
@@ -310,7 +309,8 @@ export const buildCleanedAddressAst = (
     if (!designationConfig) {
       continue;
     }
-    const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithDesignation;
+    const updatedNode =
+      node as AddressNodeWithWord as AddressNodeWithDesignation;
     updatedNode.wordType = "designation";
     updatedNode.value = designationConfig.normalizedValue;
   }
@@ -347,7 +347,8 @@ export const buildCleanedAddressAst = (
       }
     }
 
-    const updatedNode = (node as AddressNodeWithWord) as AddressNodeWithApproximatePointer;
+    const updatedNode =
+      node as AddressNodeWithWord as AddressNodeWithApproximatePointer;
     updatedNode.wordType = "approximatePointer";
     updatedNode.value = approximatePointerConfig.normalizedValue;
   }
@@ -432,9 +433,8 @@ export const buildCleanedAddressAst = (
   }
 
   // Mark designation as an unclassified word if canBePartOfName and next to another designation word
-  let previouslySeenDesignationInThisSection:
-    | AddressNodeWithWord
-    | undefined = undefined;
+  let previouslySeenDesignationInThisSection: AddressNodeWithWord | undefined =
+    undefined;
   let previouslySeenDesignationConfigInThisSection:
     | DesignationConfig
     | undefined = undefined;
@@ -469,8 +469,9 @@ export const buildCleanedAddressAst = (
       previouslySeenDesignationConfigInThisSection
     ) {
       if (previouslySeenDesignationConfigInThisSection.canBePartOfName) {
-        (previouslySeenDesignationInThisSection as AddressNodeWithWord).wordType =
-          "unclassified";
+        (
+          previouslySeenDesignationInThisSection as AddressNodeWithWord
+        ).wordType = "unclassified";
       } else if (designationConfig.canBePartOfName) {
         (node as AddressNodeWithWord).wordType = "unclassified";
       }

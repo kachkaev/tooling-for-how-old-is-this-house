@@ -16,14 +16,11 @@ export const combineRosreestrTilesAndSavePreviews = async ({
   objectType: RosreestrObjectType;
   logger: Console;
 }): Promise<void> => {
-  const {
-    objectCenterFeatures,
-    objectExtentFeatures,
-    tileExtentFeatures,
-  } = await combineRosreestrTiles({
-    objectType,
-    logger,
-  });
+  const { objectCenterFeatures, objectExtentFeatures, tileExtentFeatures } =
+    await combineRosreestrTiles({
+      objectType,
+      logger,
+    });
 
   logger.log(chalk.green("Saving..."));
 

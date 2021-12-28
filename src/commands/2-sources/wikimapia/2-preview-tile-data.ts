@@ -12,11 +12,8 @@ import { combineWikimapiaTiles } from "../../../shared/sources/wikimapia/combine
 const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikimapia: Previewing tile data"));
 
-  const {
-    objectPointFeatures,
-    objectExtentFeatures,
-    tileExtentFeatures,
-  } = await combineWikimapiaTiles({ logger });
+  const { objectPointFeatures, objectExtentFeatures, tileExtentFeatures } =
+    await combineWikimapiaTiles({ logger });
 
   logger.log(chalk.green("Saving..."));
 

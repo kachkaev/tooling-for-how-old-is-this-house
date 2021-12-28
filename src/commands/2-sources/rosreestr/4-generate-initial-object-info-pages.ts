@@ -281,15 +281,14 @@ const command: Command = async ({ logger }) => {
       > = {};
 
       knownObjectCnsInBlock.forEach((objectCn) => {
-        const creationReason:
-          | CreationReasonForObjectInInfoPage
-          | undefined = ccoFeatureByCn[objectCn]
-          ? "ccoInTile"
-          : lotFeatureByCn[objectCn]
-          ? "lotInTile"
-          : handpickedEntryByCn[objectCn]
-          ? "handpicked"
-          : undefined;
+        const creationReason: CreationReasonForObjectInInfoPage | undefined =
+          ccoFeatureByCn[objectCn]
+            ? "ccoInTile"
+            : lotFeatureByCn[objectCn]
+            ? "lotInTile"
+            : handpickedEntryByCn[objectCn]
+            ? "handpicked"
+            : undefined;
 
         if (creationReason) {
           creationReasonByObjectCn[objectCn] = creationReason;

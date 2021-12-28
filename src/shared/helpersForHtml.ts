@@ -37,7 +37,7 @@ export const extractSerializedTimeFromPrependedHtmlComment = (
 };
 
 export const extractJsonFromPrependedHtmlComment = <
-  T = Record<string, unknown>
+  T = Record<string, unknown>,
 >(
   html: string,
 ): T => {

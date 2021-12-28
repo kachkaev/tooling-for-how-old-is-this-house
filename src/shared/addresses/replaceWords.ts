@@ -20,9 +20,8 @@ export const replaceWords = (
     }
     const startWordFollowsWord =
       processedNodes[startIndex - 1]?.nodeType === "word";
-    let currentTree:
-      | WordReplacementDirectiveTree
-      | undefined = wordReplacementDirectiveTree;
+    let currentTree: WordReplacementDirectiveTree | undefined =
+      wordReplacementDirectiveTree;
     let pickedDirective: WordReplacementDirective | undefined;
 
     for (let index = startIndex; index < nodes.length; index += 1) {

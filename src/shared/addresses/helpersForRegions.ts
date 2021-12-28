@@ -124,8 +124,8 @@ export const resolveRegionCode = (
   return result;
 };
 
-export const wordReplacementConfigsForRegions: WordReplacementConfig[] = regionConfigs.flatMap(
-  (regionConfig) => {
+export const wordReplacementConfigsForRegions: WordReplacementConfig[] =
+  regionConfigs.flatMap((regionConfig) => {
     const to = regionConfig.canonicalName.toLowerCase();
     const wordReplacements = regionConfig.customWordReplacements ?? [
       regionConfig.canonicalName
@@ -139,5 +139,4 @@ export const wordReplacementConfigsForRegions: WordReplacementConfig[] = regionC
       from,
       to,
     }));
-  },
-);
+  });

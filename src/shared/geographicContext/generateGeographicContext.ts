@@ -141,9 +141,8 @@ export const generateGeographicContext = async (
 ): Promise<GeographicContextFeatureCollection> => {
   const features: GeographicContextFeature[] = [];
 
-  const geographicContextExtent = generateGeographicContextExtent(
-    territoryExtent,
-  );
+  const geographicContextExtent =
+    generateGeographicContextExtent(territoryExtent);
   const clipBbox = turf.bbox(geographicContextExtent);
 
   const railways =

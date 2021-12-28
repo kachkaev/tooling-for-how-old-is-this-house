@@ -401,9 +401,10 @@ export const parseCompletionTime = (
 ): ResultOfParseCompletionTime => {
   const result = doParseCompletionTime(completionTime);
 
-  const derivedCompletionYearUsingGeosemanticaRegexp = deriveCompletionYearUsingGeosemanticaRegexp(
-    result.derivedCompletionTimeForGeosemantica,
-  );
+  const derivedCompletionYearUsingGeosemanticaRegexp =
+    deriveCompletionYearUsingGeosemanticaRegexp(
+      result.derivedCompletionTimeForGeosemantica,
+    );
 
   if (
     result.derivedCompletionYear !==

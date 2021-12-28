@@ -106,6 +106,7 @@ export const deriveNormalizedAddressSliceId = (
     .join("/");
 };
 
-export const ensureTerritoryGitignoreContainsGeocoding = async (): Promise<void> => {
-  await ensureTerritoryGitignoreContainsLine("/geocoding");
-};
+export const ensureTerritoryGitignoreContainsGeocoding =
+  async (): Promise<void> => {
+    await ensureTerritoryGitignoreContainsLine("/geocoding");
+  };

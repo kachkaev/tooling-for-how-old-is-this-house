@@ -167,12 +167,8 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
   posterConfig,
   ...rest
 }) => {
-  const {
-    maxYear,
-    minYear,
-    minYearLabel,
-    minYearLabelOffsetXInMillimeters,
-  } = posterConfig.timeline;
+  const { maxYear, minYear, minYearLabel, minYearLabelOffsetXInMillimeters } =
+    posterConfig.timeline;
 
   const width = paddingLeft + (maxYear - minYear + 1) * binWidth + paddingRight;
   const height = paddingTop + 300 + paddingBottom;

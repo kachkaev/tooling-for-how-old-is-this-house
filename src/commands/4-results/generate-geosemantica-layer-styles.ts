@@ -181,11 +181,13 @@ const generateRulesForGeographicContextAreas = ({
   formatColor: FormatColor;
   opacity?: number;
 }) =>
-  ([
-    ["geographicContextExtent", geographicContextStyling.backgroundColor],
-    ["water", geographicContextStyling.waterColor],
-    ["wetland", geographicContextStyling.wetlandColor],
-  ] as const).map(
+  (
+    [
+      ["geographicContextExtent", geographicContextStyling.backgroundColor],
+      ["water", geographicContextStyling.waterColor],
+      ["wetland", geographicContextStyling.wetlandColor],
+    ] as const
+  ).map(
     ([category, color]) =>
       // Adding thin stroke prevents subtle gaps between parts of rivers and lakes caused by geometry simplification
       html`
@@ -215,11 +217,13 @@ const generateRulesForGeographicContextWays = ({
   formatColor: FormatColor;
   opacity?: number;
 }) =>
-  ([
-    ["waterway", geographicContextStyling.waterColor],
-    ["roadway", geographicContextStyling.roadColor],
-    ["railway", geographicContextStyling.railColor],
-  ] as const).map(
+  (
+    [
+      ["waterway", geographicContextStyling.waterColor],
+      ["roadway", geographicContextStyling.roadColor],
+      ["railway", geographicContextStyling.railColor],
+    ] as const
+  ).map(
     ([category, color]) =>
       html`
         <se:Rule>

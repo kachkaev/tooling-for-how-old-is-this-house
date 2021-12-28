@@ -33,12 +33,9 @@ const extractWayStrokeWidth = ({
   relativeSize,
 }: GeographicContextWayProperties): number => 1 * relativeSize;
 
-export const GeoMapLayerWithGeographicContext: React.VoidFunctionComponent<GeoMapLayerWithGeographicContextProps> = ({
-  width,
-  height,
-  projectionConfig,
-  data,
-}) => {
+export const GeoMapLayerWithGeographicContext: React.VoidFunctionComponent<
+  GeoMapLayerWithGeographicContextProps
+> = ({ width, height, projectionConfig, data }) => {
   const generateFeatureProps = React.useCallback<
     GenerateFeatureProps<GeographicContextFeature>
   >(({ properties }) => {

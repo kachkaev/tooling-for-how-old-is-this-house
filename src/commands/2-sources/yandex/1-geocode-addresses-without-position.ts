@@ -102,9 +102,8 @@ const command: Command = async ({ logger }) => {
   let numberOfPreExistingCacheEntries = 0;
   let numberOfUpdatedCacheEntries = 0;
   for (const normalizedAddress of filteredNormalizedAddresses) {
-    const cacheEntryFilePath = getYandexGeocoderCacheEntryFilePath(
-      normalizedAddress,
-    );
+    const cacheEntryFilePath =
+      getYandexGeocoderCacheEntryFilePath(normalizedAddress);
     if (await fs.pathExists(cacheEntryFilePath)) {
       numberOfPreExistingCacheEntries += 1;
 

@@ -8,8 +8,7 @@ const getPkkApiDelay = _.memoize((): number => {
   const env = cleanEnv({
     PKK_API_DELAY: envalid.num({
       default: 500,
-      desc:
-        "Recommended: 500. The lower the value, the higher the risk of getting banned for a few hours.",
+      desc: "Recommended: 500. The lower the value, the higher the risk of getting banned for a few hours.",
     }),
   });
 

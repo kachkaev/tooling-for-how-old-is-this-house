@@ -325,9 +325,8 @@ const command: Command = async ({ logger }) => {
   for (const outputFeature of outputFeatures) {
     const address = outputFeature.properties.address;
     if (address) {
-      outputFeature.properties.derivedBeautifiedAddress = beautifyAddress(
-        address,
-      );
+      outputFeature.properties.derivedBeautifiedAddress =
+        beautifyAddress(address);
       outputFeature.properties = sortKeys(outputFeature.properties);
     }
   }

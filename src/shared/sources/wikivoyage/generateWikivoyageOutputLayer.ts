@@ -213,9 +213,10 @@ export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
     filesNicknameToLog: "downloaded wikivoyage pages",
     processFile: async (filePath) => {
       const rawWikitext = await fs.readFile(filePath, "utf8");
-      const metadata = extractJsonFromPrependedHtmlComment<WikivoyagePageMetadata>(
-        rawWikitext,
-      );
+      const metadata =
+        extractJsonFromPrependedHtmlComment<WikivoyagePageMetadata>(
+          rawWikitext,
+        );
       const parsedDoc = wtf(rawWikitext);
       const knownAt = serializeTime(metadata.latest.timestamp);
 

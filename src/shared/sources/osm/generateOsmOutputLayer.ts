@@ -323,8 +323,8 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
     };
   };
 
-  const outputFeatures: OutputLayer["features"] = buildingCollection.features.map(
-    (building) => {
+  const outputFeatures: OutputLayer["features"] =
+    buildingCollection.features.map((building) => {
       const buildingTagValue = building.properties["abandoned"]
         ? "abandoned"
         : building.properties["building"];
@@ -377,8 +377,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
       );
 
       return turf.feature(geometry, deepClean(outputLayerProperties));
-    },
-  );
+    });
 
   return {
     type: "FeatureCollection",

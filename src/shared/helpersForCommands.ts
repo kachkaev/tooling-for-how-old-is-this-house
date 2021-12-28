@@ -87,9 +87,8 @@ export const generateExtractOutputLayer = ({
   return async ({ logger }) => {
     logger.log(chalk.bold(`sources/${source}: Extracting output layer`));
 
-    let configuredGeocodeAddress:
-      | ConfiguredGeocodeAddress
-      | undefined = undefined;
+    let configuredGeocodeAddress: ConfiguredGeocodeAddress | undefined =
+      undefined;
 
     if (canUseCollectedGeocodes) {
       const addressHandlingConfig = await getTerritoryAddressHandlingConfig(
@@ -172,9 +171,10 @@ export const eraseLastLineInOutput = (logger: Console) => {
   }
 };
 
-export const ensureTerritoryGitignoreContainsPreview = async (): Promise<void> => {
-  await ensureTerritoryGitignoreContainsLine("preview--*.*");
-};
+export const ensureTerritoryGitignoreContainsPreview =
+  async (): Promise<void> => {
+    await ensureTerritoryGitignoreContainsLine("preview--*.*");
+  };
 
 /**
  * TODO: Remove after 2022-04-01

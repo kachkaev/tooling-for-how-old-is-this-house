@@ -12,12 +12,9 @@ export interface GeoMapLayerWithTerritoryExtentProps {
   projectionConfig: ProjectionConfig;
 }
 
-export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<GeoMapLayerWithTerritoryExtentProps> = ({
-  width,
-  height,
-  projectionConfig,
-  data,
-}) => {
+export const GeoMapLayerWithTerritoryExtent: React.VoidFunctionComponent<
+  GeoMapLayerWithTerritoryExtentProps
+> = ({ width, height, projectionConfig, data }) => {
   const featureProps = React.useCallback<() => React.SVGProps<SVGPathElement>>(
     () => ({
       stroke: "#fff",

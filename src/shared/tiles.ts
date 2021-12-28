@@ -24,9 +24,7 @@ export const parseTile = (stringifiedTile: string): Tile => {
 export type TileStatus = "complete" | "needsSplitting";
 export type CacheStatus = "used" | "notUsed";
 
-export type ProcessTile = (
-  tile: Tile,
-) => Promise<{
+export type ProcessTile = (tile: Tile) => Promise<{
   cacheStatus: CacheStatus;
   tileStatus: TileStatus;
   comment?: string;

@@ -17,8 +17,8 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
     logger,
   });
 
-  const outputFeatures: OutputLayer["features"] = houseInfoCollection.features.map(
-    (houseInfo) => {
+  const outputFeatures: OutputLayer["features"] =
+    houseInfoCollection.features.map((houseInfo) => {
       const outputLayerProperties: OutputLayerProperties = {
         id: `${houseInfo.properties.id}`,
 
@@ -34,8 +34,7 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
         houseInfo.geometry ?? null,
         deepClean(outputLayerProperties),
       );
-    },
-  );
+    });
 
   return {
     type: "FeatureCollection",

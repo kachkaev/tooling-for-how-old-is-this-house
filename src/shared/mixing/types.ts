@@ -49,7 +49,7 @@ export interface ListRelevantPropertyVariants {
 
 export interface PickFromPropertyVariants<
   PropertiesToPick extends keyof MixedPropertyVariants,
-  ExtraPayload extends Record<string, unknown> = Record<string, unknown>
+  ExtraPayload extends Record<string, unknown> = Record<string, unknown>,
 > {
   (
     payload: {

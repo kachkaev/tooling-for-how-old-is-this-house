@@ -73,9 +73,10 @@ const getTileBufferInMeters = (zoom: number): number => {
   return 0;
 };
 
-export const generateProcessTile = (
-  objectType: RosreestrObjectType,
-): ProcessTile => async (tile) => {
+type GenerateProcessTile = (objectType: RosreestrObjectType) => ProcessTile;
+
+export const generateProcessTile: // https://github.com/prettier/prettier/issues/11923
+GenerateProcessTile = (objectType) => async (tile) => {
   const tileDataFilePath = getTileDataFilePath(objectType, tile);
 
   try {

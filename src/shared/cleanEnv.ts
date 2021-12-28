@@ -26,11 +26,9 @@ export const customEnvalidReporter: typeof defaultReporter = (opts) => {
   }
 };
 
-export const cleanEnv = <T>(
-  specs: {
-    [K in keyof T]: envalid.ValidatorSpec<T[K]>;
-  },
-) => {
+export const cleanEnv = <T>(specs: {
+  [K in keyof T]: envalid.ValidatorSpec<T[K]>;
+}) => {
   config({ silent: true });
 
   return envalid.cleanEnv(process.env, specs, {

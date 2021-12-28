@@ -190,9 +190,8 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
 
   const objectCenterFeatureByCn: Record<string, ObjectCenterFeature> = {};
   for (const objectCenterFeature of objectCenterFeaturesInsideTerritory) {
-    objectCenterFeatureByCn[
-      objectCenterFeature.properties.cn
-    ] = objectCenterFeature;
+    objectCenterFeatureByCn[objectCenterFeature.properties.cn] =
+      objectCenterFeature;
   }
 
   const outputFeatures: OutputLayer["features"] = [];

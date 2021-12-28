@@ -40,9 +40,8 @@ export const prioritizeRelevantPropertyVariants = ({
   propertySelectors: PropertySelector[];
   targetBuildArea: number;
 }): PropertyVariant[] => {
-  const relevantPropertyVariants = listRelevantPropertyVariants(
-    propertySelectors,
-  );
+  const relevantPropertyVariants =
+    listRelevantPropertyVariants(propertySelectors);
 
   const unrecognizedSourcesSet = new Set<string>();
   const orderedPropertyVariants = _.orderBy(relevantPropertyVariants, [

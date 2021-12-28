@@ -65,9 +65,9 @@ const isTypologyExpected = (typologyValue: string) =>
   acceptedTypologies.includes(typologyValue);
 
 const deriveTypologies = (objectFile: MkrfObjectFile): string[] => {
-  const rawTypologies = (
-    objectFile.data.general.typologies ?? []
-  ).map((typologyEntry) => typologyEntry.value.toLowerCase());
+  const rawTypologies = (objectFile.data.general.typologies ?? []).map(
+    (typologyEntry) => typologyEntry.value.toLowerCase(),
+  );
 
   const typologies = rawTypologies.map((rawTypology) => {
     if (rawTypology === "памятник истории") {

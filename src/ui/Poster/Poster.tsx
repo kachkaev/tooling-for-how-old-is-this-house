@@ -129,9 +129,8 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
     [colorByCompletionYear],
   );
 
-  const printerBleedInMillimeters = extractPrinterBleedInMillimeters(
-    posterConfig,
-  );
+  const printerBleedInMillimeters =
+    extractPrinterBleedInMillimeters(posterConfig);
   const preprint = posterConfig.target === "preprint";
 
   const timelineStyle: React.CSSProperties = React.useMemo(
@@ -153,12 +152,11 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
     ],
   );
 
-  const {
-    backgroundFeatureCollection,
-    foregroundFeatureCollection,
-  } = React.useMemo(() => splitGeographicContext(geographicContext), [
-    geographicContext,
-  ]);
+  const { backgroundFeatureCollection, foregroundFeatureCollection } =
+    React.useMemo(
+      () => splitGeographicContext(geographicContext),
+      [geographicContext],
+    );
 
   return (
     <Figure

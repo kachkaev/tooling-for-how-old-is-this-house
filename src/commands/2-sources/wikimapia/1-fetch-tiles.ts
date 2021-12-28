@@ -133,9 +133,8 @@ const command: Command = async ({ logger }) => {
         })
       ).data;
 
-      const processedTileResponse = processWikimapiaTileResponse(
-        rawTileResponse,
-      );
+      const processedTileResponse =
+        processWikimapiaTileResponse(rawTileResponse);
 
       const tileData: WikimapiaTileData = {
         tile,

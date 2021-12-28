@@ -22,7 +22,8 @@ export const ordinalNumberEndingConfigs: OrdinalNumberEndingConfig[] = [
   },
 ];
 
-export const ordinalNumberTextualNotationConfigs: OrdinalNumberTextualNotationConfig[] = [
+export const ordinalNumberTextualNotationConfigs: // https://github.com/prettier/prettier/issues/11923
+OrdinalNumberTextualNotationConfig[] = [
   { normalizedValue: "1-й", aliases: ["первый"] },
   { normalizedValue: "2-й", aliases: ["второй"] },
   { normalizedValue: "3-й", aliases: ["третий"] },
@@ -62,9 +63,8 @@ export const ordinalNumberEndingConfigLookup = generateWordConfigLookup({
   wordConfigsTitle: "ordinalNumberEndingConfigs",
 });
 
-export const ordinalNumberTextualNotationConfigLookup = generateWordConfigLookup(
-  {
+export const ordinalNumberTextualNotationConfigLookup =
+  generateWordConfigLookup({
     wordConfigs: ordinalNumberTextualNotationConfigs,
     wordConfigsTitle: "ordinalNumberTextualNotationConfigs",
-  },
-);
+  });

@@ -47,9 +47,8 @@ const orderForAdjectiveLikeName = ({
   }
 };
 
-const postProcessWordsInStandardizedAddressSection: PostProcessWordsInStandardizedAddressSection = (
-  words,
-) => {
+const postProcessWordsInStandardizedAddressSection: // https://github.com/prettier/prettier/issues/11923
+PostProcessWordsInStandardizedAddressSection = (words) => {
   const designationWord = words.find(
     (word): word is AddressNodeWithDesignation =>
       word.wordType === "designation",

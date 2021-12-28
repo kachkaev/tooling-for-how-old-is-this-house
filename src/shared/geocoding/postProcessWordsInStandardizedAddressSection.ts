@@ -1,8 +1,7 @@
 import { PostProcessWordsInStandardizedAddressSection } from "../addresses";
 
-export const postProcessWordsInStandardizedAddressSection: PostProcessWordsInStandardizedAddressSection = (
-  words,
-) =>
+export const postProcessWordsInStandardizedAddressSection: // https://github.com/prettier/prettier/issues/11923
+PostProcessWordsInStandardizedAddressSection = (words) =>
   words.filter(
     (word) =>
       !(

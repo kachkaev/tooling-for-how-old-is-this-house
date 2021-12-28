@@ -86,7 +86,7 @@ export const multiUnion = (
 };
 
 export const filterFeaturesByGeometryType = <
-  T extends turf.Feature<turf.GeometryObject, any>
+  T extends turf.Feature<turf.GeometryObject, any>,
 >({
   features,
   acceptedGeometryTypes,
@@ -145,14 +145,12 @@ export const calculatePointDistanceToPolygonInMeters = (
   } else {
     if (polygon.coordinates.length > 1) {
       // Has holes
-      const [
-        exteriorDistance,
-        ...interiorDistances
-      ] = polygon.coordinates.map((coords) =>
-        calculatePointDistanceToPolygonInMeters(
-          point,
-          turf.polygon([coords]).geometry,
-        ),
+      const [exteriorDistance, ...interiorDistances] = polygon.coordinates.map(
+        (coords) =>
+          calculatePointDistanceToPolygonInMeters(
+            point,
+            turf.polygon([coords]).geometry,
+          ),
       ) as [number, ...number[]];
       if (typeof exteriorDistance === "number" && exteriorDistance < 0) {
         // point is inside the exterior polygon shape

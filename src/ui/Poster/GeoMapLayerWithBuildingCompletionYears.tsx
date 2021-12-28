@@ -31,7 +31,9 @@ export interface GeoMapLayerWithBuildingCompletionYearsProps {
   mapCompletionYearToColor: MapCompletionYearToColor;
 }
 
-export const GeoMapLayerWithBuildingCompletionYears: React.VoidFunctionComponent<GeoMapLayerWithBuildingCompletionYearsProps> = ({
+export const GeoMapLayerWithBuildingCompletionYears: React.VoidFunctionComponent<
+  GeoMapLayerWithBuildingCompletionYearsProps
+> = ({
   width,
   height,
   data,

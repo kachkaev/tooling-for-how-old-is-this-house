@@ -165,10 +165,10 @@ const generateCopyrights = ({
 const mapBackgroundOrForegroundFeatureProperties = (
   features: GeographicContextFeature[],
 ): GeographicContextLayerFeature[] =>
-  (features.map((feature) => ({
+  features.map((feature) => ({
     ...feature,
     properties: _.mapKeys(feature.properties, (value, key) => _.snakeCase(key)),
-  })) as unknown[]) as GeographicContextLayerFeature[];
+  })) as unknown[] as GeographicContextLayerFeature[];
 
 const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica layers"));
@@ -190,18 +190,18 @@ const command: Command = async ({ logger }) => {
 
   process.stdout.write(chalk.green("Processing..."));
 
-  const {
-    backgroundFeatureCollection,
-    foregroundFeatureCollection,
-  } = splitGeographicContext(geographicContextFeatureCollection);
+  const { backgroundFeatureCollection, foregroundFeatureCollection } =
+    splitGeographicContext(geographicContextFeatureCollection);
 
-  const backgroundLayerFeatures: GeographicContextLayerFeature[] = mapBackgroundOrForegroundFeatureProperties(
-    backgroundFeatureCollection.features,
-  );
+  const backgroundLayerFeatures: GeographicContextLayerFeature[] =
+    mapBackgroundOrForegroundFeatureProperties(
+      backgroundFeatureCollection.features,
+    );
   const buildingsLayerFeatures: BuildingsLayerFeature[] = [];
-  const foregroundLayerFeatures: GeographicContextLayerFeature[] = mapBackgroundOrForegroundFeatureProperties(
-    foregroundFeatureCollection.features,
-  );
+  const foregroundLayerFeatures: GeographicContextLayerFeature[] =
+    mapBackgroundOrForegroundFeatureProperties(
+      foregroundFeatureCollection.features,
+    );
 
   const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
 

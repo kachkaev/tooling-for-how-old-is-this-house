@@ -38,12 +38,10 @@ const command: Command = async ({ logger }) => {
   const maxPageByBlockCn: Record<string, number> = {};
 
   for (const infoPagePath of infoPagePaths) {
-    const [
-      fileName,
-      dirSegment3,
-      dirSegment2,
-      dirSegment1,
-    ] = infoPagePath.replace(/\\/g, "/").split("/").reverse();
+    const [fileName, dirSegment3, dirSegment2, dirSegment1] = infoPagePath
+      .replace(/\\/g, "/")
+      .split("/")
+      .reverse();
 
     const pageNumber = parseInt(fileName?.split("-")[1] ?? "0");
     const blockCn = `${dirSegment1}:${dirSegment2}:${dirSegment3}`;

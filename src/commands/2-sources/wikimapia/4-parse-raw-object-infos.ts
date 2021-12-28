@@ -98,9 +98,8 @@ const extractCompletionTimeFromDescription = (
   const descriptionContentMatch =
     rawInfo.match(/<meta name="description" content="(.*)"/)?.[1] ?? "";
 
-  const completionTimeMatch = descriptionContentMatch.match(
-    /остроен.? в ([^.,]*)/,
-  )?.[1];
+  const completionTimeMatch =
+    descriptionContentMatch.match(/остроен.? в ([^.,]*)/)?.[1];
 
   return cleanCompletionTimeMatch(completionTimeMatch);
 };

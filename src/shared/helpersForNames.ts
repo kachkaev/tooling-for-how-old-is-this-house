@@ -87,9 +87,8 @@ const normalizedTrivialNames = [
 
 export type TrivialName = typeof normalizedTrivialNames[number];
 
-const synonymsByNormalizedTrivialName: Partial<
-  Record<TrivialName, string[]>
-> = {
+const synonymsByNormalizedTrivialName: // https://github.com/prettier/prettier/issues/11923
+Partial<Record<TrivialName, string[]>> = {
   АЗС: ["заправка"],
   бассейн: ["плавательный бассейн"],
   гараж: ["гаражное строение"],
@@ -115,17 +114,15 @@ const synonymsByNormalizedTrivialName: Partial<
 const normalizedTrivialNameByLowerCaseVersion: Record<string, TrivialName> = {};
 
 normalizedTrivialNames.forEach((normalizedTrivialName) => {
-  normalizedTrivialNameByLowerCaseVersion[
-    normalizedTrivialName.toLowerCase()
-  ] = normalizedTrivialName;
+  normalizedTrivialNameByLowerCaseVersion[normalizedTrivialName.toLowerCase()] =
+    normalizedTrivialName;
 });
 
 Object.entries(synonymsByNormalizedTrivialName).forEach(
   ([normalizedTrivialName, synonyms]) => {
     synonyms.forEach((synonym) => {
-      normalizedTrivialNameByLowerCaseVersion[
-        synonym.toLowerCase()
-      ] = normalizedTrivialName as TrivialName;
+      normalizedTrivialNameByLowerCaseVersion[synonym.toLowerCase()] =
+        normalizedTrivialName as TrivialName;
     });
   },
 );
