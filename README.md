@@ -1,10 +1,13 @@
 # Tooling for [how-old-is-this.house](https://how-old-is-this.house/en)
 
 This repository helps assemble a geographic dataset with building infos.
-The list of attributes includes _construction year_, _floor count_, _address_, _architect_, _photo_, _wikipedia page URL_ and so on.
-The entire process is handled by the console commands, which collect and mix data from various publicly available sources.
-The result is automatically turned into uploadable and printable artifacts.
-To run the commands, you need to specify a geographic territory, which is usually a single town or city.
+Attributes are gathered from multiple sources and include _construction year_, _floor count_, _address_, _architect_, _photo_, _wikipedia page URL_ and so on.
+The entire process consists of launching console commands, which invoke scripts written in TypeScript.
+The results of data collection and processing are automatically turned into uploadable and printable artifacts.
+
+To run the scripts, you need to specify a geographic territory, which is usually a single city or town.
+You can also supplement data from remote sources with manually created features.
+This helps mitigate potential data quality issues that cannot be resolved upstream.
 
 <!--markdownlint-disable no-inline-html -->
 <center><img width="846" src="docs/assets/tooling-diagram.en@2x.drawio.png" /></center>
@@ -126,7 +129,7 @@ Although some of the data sources are country-specific, most parts of the repo c
     yarn ts-node src/scripts/ensure-dot-env-local.ts
     ```
 
-    Этот шаг помогает проверить общую работоспособность скриптов.
+    Запуск этой консольной команды помогает проверить общую работоспособность скриптов.
     Если возникла ошибка, следует заново пройтись по инструкции (видимо, что-то пропустили).
 
 ### Подготовка данных Минкультуры
