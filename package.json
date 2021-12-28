@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "yarn exe src/commands/launchNextJsDevServer",
-    "exe": "ts-node --transpile-only --project=tsconfig.build.json --compiler-options \"{\\\"noEmit\\\":true}\"",
+    "exe": "echo \"\n========\nCalling \\`yarn exe ...\\` is deprecated and will not work in the future.\nUse \\`yarn ts-node ...\\` instead.\n========\n\"; ts-node",
     "fix": "npm-run-all --continue-on-error \"fix:*\"",
     "fix:eslint": "eslint --fix \"**/*\"",
     "fix:markdownlint": "markdownlint --fix \"**/*\"",
@@ -62,6 +62,8 @@
     "@kachkaev/markdownlint-config": "^0.2.0",
     "@kachkaev/prettier-config": "^1.2.0",
     "@mapbox/tilebelt": "^1.0.2",
+    "@swc/core": "^1.2.123",
+    "@swc/helpers": "^0.3.2",
     "@tmcw/togeojson": "^4.5.0",
     "@turf/turf": "^6.5.0",
     "@types/d3-array": "^3.0.2",

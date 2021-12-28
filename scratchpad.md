@@ -3,11 +3,11 @@
 ```sh
 INSTANCE="NAME"
 
-RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
-RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
-RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
-RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
-RANGE=100 yarn exe src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
+RANGE=100 yarn ts-node src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
+RANGE=100 yarn ts-node src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
+RANGE=100 yarn ts-node src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
+RANGE=100 yarn ts-node src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
+RANGE=100 yarn ts-node src/commands/2-sources/rosreestr/5-fetchObjectInfos.ts || say "Error ${INSTANCE}"
 say "Finished ${INSTANCE}"
 ```
 
@@ -28,15 +28,15 @@ convert "${MAP_DIR}/qgis-layout-result-check.png" -resize 5000 -quality 80% "${M
 Обновление тайлов
 
 ```sh
-yarn exe src/commands/2-sources/osm/tiles/markAsDirty.ts
+yarn ts-node src/commands/2-sources/osm/tiles/markAsDirty.ts
 
 sleep 1800 # 30 mins
 
 OSM_TILE_VERSION=$(date -u +"%Y-%m-%d-%H%M")
 echo ${OSM_TILE_VERSION}
 
-OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
-OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/fetchImages.ts
+OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn ts-node src/commands/2-sources/osm/tiles/fetchImages.ts
+OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn ts-node src/commands/2-sources/osm/tiles/fetchImages.ts
 ```
 
 Обновление зданий
@@ -45,9 +45,9 @@ OSM_TILE_VERSION=${OSM_TILE_VERSION} yarn exe src/commands/2-sources/osm/tiles/f
 MAP_VERSION=$(date -u +"%Y-%m-%d-%H%M")
 COMMIT_MESSAGE="Update fetched OSM buildings (${MAP_VERSION})"
 
-yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts
-yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts
-yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts
+yarn ts-node src/commands/2-sources/osm/1-fetchBuildings.ts
+yarn ts-node src/commands/2-sources/osm/8-reportGeocodes.ts
+yarn ts-node src/commands/2-sources/osm/9-extractOutputLayer.ts
 
 cd ../data/territories/penza
 git add sources/osm/fetched-buildings.geojson
@@ -96,9 +96,9 @@ cd -
 1.  Запустить
 
     ```sh
-    CUSTOM_PATH=sources/manual yarn exe src/commands/formatDataFiles.ts \
-      && yarn exe src/commands/3-mixing/1-mixOutputLayers.ts \
-      && yarn exe src/commands/3-mixing/2-mixPropertyVariants.ts
+    CUSTOM_PATH=sources/manual yarn ts-node src/commands/formatDataFiles.ts \
+      && yarn ts-node src/commands/3-mixing/1-mixOutputLayers.ts \
+      && yarn ts-node src/commands/3-mixing/2-mixPropertyVariants.ts
     ```
 
 ## Цикл обновления данных в ОСМ
@@ -110,14 +110,14 @@ cd -
 1.  Запустить
 
     ```sh
-    yarn exe src/commands/2-sources/osm/1-fetchBuildings.ts \
-      && yarn exe src/commands/2-sources/osm/8-reportGeocodes.ts \
-      && yarn exe src/commands/2-sources/osm/9-extractOutputLayer.ts \
-      && yarn exe src/commands/2-sources/mkrf/9-extractOutputLayer.ts \
-      && yarn exe src/commands/2-sources/rosreestr/9-extractOutputLayer.ts \
-      && yarn exe src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts \
-      && yarn exe src/commands/3-mixing/1-mixOutputLayers.ts \
-      && yarn exe src/commands/3-mixing/2-mixPropertyVariants.ts
+    yarn ts-node src/commands/2-sources/osm/1-fetchBuildings.ts \
+      && yarn ts-node src/commands/2-sources/osm/8-reportGeocodes.ts \
+      && yarn ts-node src/commands/2-sources/osm/9-extractOutputLayer.ts \
+      && yarn ts-node src/commands/2-sources/mkrf/9-extractOutputLayer.ts \
+      && yarn ts-node src/commands/2-sources/rosreestr/9-extractOutputLayer.ts \
+      && yarn ts-node src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts \
+      && yarn ts-node src/commands/3-mixing/1-mixOutputLayers.ts \
+      && yarn ts-node src/commands/3-mixing/2-mixPropertyVariants.ts
     ```
 
 ## TODO

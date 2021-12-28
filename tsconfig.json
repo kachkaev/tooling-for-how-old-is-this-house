@@ -18,5 +18,14 @@
     "incremental": true
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+
+  "ts-node": {
+    "compilerOptions": {
+      "target": "es2018",
+      "module": "commonjs"
+    },
+    "transpileOnly": true,
+    "transpiler": "ts-node/transpilers/swc-experimental"
+  }
 }
