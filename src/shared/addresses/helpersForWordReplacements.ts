@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 import { ReportIssue } from "../issues";
 import { extractUnclassifiedWordsWithPunctuation } from "./extractUnclassifiedWordsWithPunctuation";
 import { wordReplacementConfigsForDesignations } from "./helpersForDesignations";
@@ -127,100 +125,6 @@ const buildWordReplacementDirectiveTree = (
   return treeRoot;
 };
 
-const sanitizeWordReplacements = (
-  rawWordReplacements: unknown,
-  reportIssue?: ReportIssue,
-): WordReplacementConfig[] => {
-  if (!Array.isArray(rawWordReplacements)) {
-    if (typeof rawWordReplacements !== "undefined") {
-      reportIssue?.(
-        `Expected word replacements to be an array, got ${typeof rawWordReplacements}`,
-      );
-    }
-
-    return [];
-  }
-  const result: WordReplacementConfig[] = [];
-
-  for (const rawWordReplacement of rawWordReplacements as unknown[]) {
-    const stringifiedRawWordReplacement = JSON.stringify(rawWordReplacement);
-
-    if (
-      !_.isObject(rawWordReplacement) ||
-      !("from" in rawWordReplacement) ||
-      !("to" in rawWordReplacement)
-    ) {
-      reportIssue?.(
-        `Skipping word replacement ${stringifiedRawWordReplacement} (expected an object with "from" and "to" keys)`,
-      );
-      continue;
-    }
-
-    const {
-      detached,
-      from,
-      to,
-      silenceNormalizationWarning,
-    } = rawWordReplacement as Record<string, unknown>;
-
-    if (typeof to !== "string") {
-      reportIssue?.(
-        `Skipping word replacement ${stringifiedRawWordReplacement} (expected "to" to be a string)`,
-      );
-      continue;
-    }
-
-    if (typeof from !== "string" && !Array.isArray(from)) {
-      reportIssue?.(
-        `Skipping word replacement ${stringifiedRawWordReplacement} (expected "from" to be a string or an array of strings)`,
-      );
-      continue;
-    }
-
-    let sanitizedFrom = from;
-    if (Array.isArray(from)) {
-      sanitizedFrom = [];
-      for (const fromElement of from) {
-        if (typeof fromElement !== "string") {
-          reportIssue?.(
-            `Skipping from ${JSON.stringify(
-              fromElement,
-            )} in ${stringifiedRawWordReplacement} (expected a string)`,
-          );
-        } else {
-          sanitizedFrom.push(fromElement);
-        }
-      }
-    }
-
-    if (typeof detached !== "undefined" && typeof detached !== "boolean") {
-      reportIssue?.(
-        `Skipping word replacement ${stringifiedRawWordReplacement} (expected "detached" to be a boolean)`,
-      );
-      continue;
-    }
-
-    if (
-      typeof silenceNormalizationWarning !== "undefined" &&
-      typeof silenceNormalizationWarning !== "boolean"
-    ) {
-      reportIssue?.(
-        `Skipping word replacement ${stringifiedRawWordReplacement} (expected "silenceNormalizationWarning" to be a boolean)`,
-      );
-      continue;
-    }
-
-    result.push({
-      detached,
-      from: sanitizedFrom,
-      silenceNormalizationWarning,
-      to,
-    });
-  }
-
-  return result;
-};
-
 export const compileAddressHandlingConfig = (
   rawAddressHandlingConfig: RawAddressHandlingConfig,
   reportIssue?: ReportIssue,
@@ -233,7 +137,7 @@ export const compileAddressHandlingConfig = (
       [
         ...wordReplacementConfigsForDesignations,
         ...wordReplacementConfigsForRegions,
-        ...sanitizeWordReplacements(wordReplacements, reportIssue),
+        ...(wordReplacements ?? []),
       ],
       reportIssue,
     ),
