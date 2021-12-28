@@ -1,5 +1,7 @@
 import { Command } from "@kachkaev/commands";
 import chalk from "chalk";
+/* eslint-disable no-console */
+import _ from "lodash";
 import path from "path";
 import sortKeys from "sort-keys";
 
@@ -172,4 +174,30 @@ export const eraseLastLineInOutput = (logger: Console) => {
 
 export const ensureTerritoryGitignoreContainsPreview = async (): Promise<void> => {
   await ensureTerritoryGitignoreContainsLine("preview--*.*");
+};
+
+/**
+ * TODO: Remove after 2022-04-01
+ */
+export const autoStartKebabCaseCommandAndWarnAboutFileRenaming = async (
+  filePath: string,
+) => {
+  const dirPath = path.dirname(filePath);
+  const fileName = path.basename(filePath, ".ts");
+  const newFileName = _.kebabCase(fileName);
+  const newFilePath = path.resolve(dirPath, newFileName);
+
+  console.log();
+  console.log("========");
+  console.log(
+    `Paths to all commands have been changed from camelCase to kebab-case.`,
+  );
+  console.log(
+    `Replace \`${fileName}\` with \`${newFileName}\` to hide this warning.`,
+  );
+  console.log(`Old camelCase paths will stop working in the future.`);
+  console.log("========");
+  console.log();
+
+  (await import(newFilePath)).default({ logger: console });
 };
