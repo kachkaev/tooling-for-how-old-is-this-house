@@ -26,7 +26,6 @@
   },
   "resolutions": {
     "@mapbox/geojson-rewind": "^0.5.1",
-    "set-value": "^4.0.1",
     "xmldom": "^0.6.0"
   },
   "dependencies": {
@@ -55,7 +54,6 @@
     "wtf_wikipedia": "^9.0.3"
   },
   "devDependencies": {
-    "@hkdobrev/run-if-changed": "^0.3.1",
     "@kachkaev/commands": "^0.1.1",
     "@kachkaev/eslint-config-react": "^0.2.3",
     "@kachkaev/markdownlint-config": "^0.2.0",
@@ -121,8 +119,5 @@
   "engines": {
     "node": ">=14.15.1",
     "yarn": ">=1.22.0"
-  },
-  "run-if-changed": {
-    "yarn.lock": "yarn install --prefer-offline --pure-lockfile"
   }
 }
