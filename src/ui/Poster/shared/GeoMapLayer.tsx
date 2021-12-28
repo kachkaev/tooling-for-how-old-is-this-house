@@ -1,3 +1,4 @@
+import rewind from "@mapbox/geojson-rewind";
 import * as turf from "@turf/turf";
 import { Mercator } from "@visx/geo";
 import _ from "lodash";
@@ -28,7 +29,7 @@ const GeoMapLayer: GeoMapLayerType = ({
   width,
   height,
   features,
-  generateFeatureProps: featureProps,
+  generateFeatureProps,
 
   projectionConfig,
 
@@ -40,11 +41,20 @@ const GeoMapLayer: GeoMapLayerType = ({
   return (
     <g {...rest}>
       {chunkedFeatures.map((featuresInChunk, chunkIndex) => (
-        <Mercator data={featuresInChunk} key={chunkIndex} {...projectionConfig}>
+        <Mercator
+          // Prevents fill overflow (e.g. river flooding the entire poster in Volgograd)
+          data={featuresInChunk.map((f) => rewind(f, true))}
+          key={chunkIndex}
+          {...projectionConfig}
+        >
           {(data) =>
             data.features.map(({ path, feature }, index) => {
               return (
-                <path key={index} d={path ?? ""} {...featureProps(feature)} />
+                <path
+                  key={index}
+                  d={path ?? ""}
+                  {...generateFeatureProps(feature)}
+                />
               );
             })
           }
