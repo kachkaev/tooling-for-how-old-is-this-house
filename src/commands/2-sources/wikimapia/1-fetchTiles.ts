@@ -87,7 +87,7 @@ const processWikimapiaTileResponse = (
   return cleanedFeatures;
 };
 
-export const fetchTiles: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikimapia: Fetching tiles"));
 
   const recommendedTileZoom = await getRecommendedWikimapiaTileZoom();
@@ -155,4 +155,6 @@ export const fetchTiles: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchTiles, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

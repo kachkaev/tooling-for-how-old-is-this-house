@@ -15,9 +15,7 @@ import {
 } from "../../../shared/sources/yandex";
 import { getTerritoryAddressHandlingConfig } from "../../../shared/territory";
 
-export const deleteCacheEntriesForUnusedAddresses: Command = async ({
-  logger,
-}) => {
+const command: Command = async ({ logger }) => {
   logger.log(
     chalk.bold(`sources/yandex: Deleting cache entries for unused addresses`),
   );
@@ -91,4 +89,6 @@ export const deleteCacheEntriesForUnusedAddresses: Command = async ({
   process.stdout.write(chalk.magenta(` Done.\n`));
 };
 
-autoStartCommandIfNeeded(deleteCacheEntriesForUnusedAddresses, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

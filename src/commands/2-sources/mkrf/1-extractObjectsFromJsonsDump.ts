@@ -64,7 +64,7 @@ const derivePickReason = (
   return undefined;
 };
 
-export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(
     chalk.bold("sources/mkrf: Extracting raw objects from JSONS dump"),
   );
@@ -171,4 +171,6 @@ export const extractObjectsFromJsonsDump: Command = async ({ logger }) => {
   );
 };
 
-autoStartCommandIfNeeded(extractObjectsFromJsonsDump, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

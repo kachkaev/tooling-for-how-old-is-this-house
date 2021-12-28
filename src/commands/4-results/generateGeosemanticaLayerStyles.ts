@@ -373,7 +373,7 @@ const generateMkrfHighlightRules = () => html`
 const formatSld = (rawSld: string): string =>
   rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
 
-export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica layer styles"));
 
   // TODO: Bring back normal import after migrating to ESM & remove formatColor from function payloads
@@ -523,4 +523,6 @@ export const generateGeosemanticaLayerStyles: Command = async ({ logger }) => {
   }
 };
 
-autoStartCommandIfNeeded(generateGeosemanticaLayerStyles, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

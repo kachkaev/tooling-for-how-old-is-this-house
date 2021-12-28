@@ -19,7 +19,7 @@ import {
 } from "../../../shared/sources/wikidata";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-export const fetchItems: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikidata: Fetching items (executing query)"));
 
   process.stdout.write(chalk.green("Preparing to make the API query..."));
@@ -98,4 +98,6 @@ export const fetchItems: Command = async ({ logger }) => {
   process.stdout.write(` Done: ${chalk.magenta(filePath)}\n`);
 };
 
-autoStartCommandIfNeeded(fetchItems, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

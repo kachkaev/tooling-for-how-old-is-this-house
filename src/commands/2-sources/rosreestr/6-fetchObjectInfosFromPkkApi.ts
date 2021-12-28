@@ -93,7 +93,7 @@ const processRawPkkFeatureResponse = (
   );
 };
 
-export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(
     chalk.bold(
       "sources/rosreestr: Fetching object infos from FIR API (https://pkk.rosreestr.ru/api/features/...)",
@@ -145,4 +145,6 @@ export const fetchObjectInfosFromPkkApi: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchObjectInfosFromPkkApi, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

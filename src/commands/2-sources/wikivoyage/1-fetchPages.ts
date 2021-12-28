@@ -39,7 +39,7 @@ interface ApiResponseData {
   source: string;
 }
 
-export const fetchPages: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikivoyage: Fetching pages"));
 
   const pagesToFetch = (await getTerritoryConfig())?.sources?.wikivoyage
@@ -102,4 +102,6 @@ export const fetchPages: Command = async ({ logger }) => {
   logger.log("Done.");
 };
 
-autoStartCommandIfNeeded(fetchPages, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

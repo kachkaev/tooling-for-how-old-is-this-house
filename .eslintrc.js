@@ -34,7 +34,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["src/pages/**"],
+      files: ["src/commands/**", "src/pages/**"],
       rules: {
         "import/no-default-export": "off",
       },

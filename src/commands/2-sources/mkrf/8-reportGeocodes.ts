@@ -3,9 +3,11 @@ import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 import { generateReportGeocodes } from "../../../shared/helpersForCommands";
 import { generateMkrfOutputLayer } from "../../../shared/sources/mkrf";
 
-export const reportGeocodes = generateReportGeocodes({
+const command = generateReportGeocodes({
   source: "mkrf",
   generateOutputLayer: generateMkrfOutputLayer,
 });
 
-autoStartCommandIfNeeded(reportGeocodes, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

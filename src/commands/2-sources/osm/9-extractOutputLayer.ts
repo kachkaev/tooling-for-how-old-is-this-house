@@ -3,9 +3,11 @@ import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
 import { generateOsmOutputLayer } from "../../../shared/sources/osm";
 
-export const extractOutputLayer = generateExtractOutputLayer({
+const command = generateExtractOutputLayer({
   source: "osm",
   generateOutputLayer: generateOsmOutputLayer,
 });
 
-autoStartCommandIfNeeded(extractOutputLayer, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

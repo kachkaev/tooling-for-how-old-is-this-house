@@ -105,7 +105,7 @@ const extractCompletionTimeFromDescription = (
   return cleanCompletionTimeMatch(completionTimeMatch);
 };
 
-export const parseRawObjectInfos: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikimapia: Parsing raw object infos"));
 
   const logOutputFileName = (
@@ -228,4 +228,6 @@ export const parseRawObjectInfos: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(parseRawObjectInfos, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

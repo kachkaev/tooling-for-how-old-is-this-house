@@ -2,10 +2,7 @@ import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 
-import {
-  ReportedGeocode,
-  reportGeocodes as importedReportGeocodes,
-} from "../../../shared/geocoding";
+import { ReportedGeocode, reportGeocodes } from "../../../shared/geocoding";
 import { Point2dCoordinates } from "../../../shared/helpersForGeometry";
 import { processFiles } from "../../../shared/processFiles";
 import {
@@ -14,7 +11,7 @@ import {
   YandexGeocoderCacheEntry,
 } from "../../../shared/sources/yandex";
 
-export const reportGeocodes: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold(`sources/yandex: Reporting geocodes`));
 
   const reportedGeocodes: ReportedGeocode[] = [];
@@ -66,7 +63,7 @@ export const reportGeocodes: Command = async ({ logger }) => {
     ),
   );
 
-  await importedReportGeocodes({
+  await reportGeocodes({
     reportedGeocodes,
     logger,
     source: "yandex",
@@ -75,4 +72,6 @@ export const reportGeocodes: Command = async ({ logger }) => {
   process.stdout.write(chalk.magenta(` Done.\n`));
 };
 
-autoStartCommandIfNeeded(reportGeocodes, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

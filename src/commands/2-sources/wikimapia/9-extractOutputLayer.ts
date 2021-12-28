@@ -3,9 +3,11 @@ import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
 import { generateWikimapiaOutputLayer } from "../../../shared/sources/wikimapia";
 
-export const extractOutputLayer = generateExtractOutputLayer({
+const command = generateExtractOutputLayer({
   source: "wikimapia",
   generateOutputLayer: generateWikimapiaOutputLayer,
 });
 
-autoStartCommandIfNeeded(extractOutputLayer, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

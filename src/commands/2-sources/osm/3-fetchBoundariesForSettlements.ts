@@ -5,7 +5,7 @@ import { getFetchedOsmBoundariesForSettlementsFilePath } from "../../../shared/s
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-export const fetchBoundaries = generateFetchOsmObjects({
+const command = generateFetchOsmObjects({
   acceptedGeometryTypes: ["Polygon", "MultiPolygon"],
 
   filePath: getFetchedOsmBoundariesForSettlementsFilePath(),
@@ -33,4 +33,6 @@ export const fetchBoundaries = generateFetchOsmObjects({
   title: "boundaries for settlements",
 });
 
-autoStartCommandIfNeeded(fetchBoundaries, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

@@ -18,7 +18,7 @@ import {
   HouseInfoFile,
 } from "../../../shared/sources/mingkh";
 
-export const parseRawHouseInfos: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Parsing raw house infos"));
 
   let numberOfJsonsWritten = 0;
@@ -155,4 +155,6 @@ export const parseRawHouseInfos: Command = async ({ logger }) => {
   );
 };
 
-autoStartCommandIfNeeded(parseRawHouseInfos, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

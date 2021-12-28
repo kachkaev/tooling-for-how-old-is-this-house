@@ -5,7 +5,7 @@ import { getFetchedOsmRoadsFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-export const fetchRoads = generateFetchOsmObjects({
+const command = generateFetchOsmObjects({
   acceptedGeometryTypes: ["LineString", "Polygon"],
   filePath: getFetchedOsmRoadsFilePath(),
   getExtent: async () =>
@@ -25,4 +25,6 @@ export const fetchRoads = generateFetchOsmObjects({
   title: "roads",
 });
 
-autoStartCommandIfNeeded(fetchRoads, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

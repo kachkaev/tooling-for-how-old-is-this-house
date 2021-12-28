@@ -5,7 +5,7 @@ import { getFetchedOsmWaterObjectsFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-export const fetchWaterObjects = generateFetchOsmObjects({
+const command = generateFetchOsmObjects({
   acceptedGeometryTypes: [
     "LineString",
     "MultiLineString",
@@ -31,4 +31,6 @@ export const fetchWaterObjects = generateFetchOsmObjects({
   title: "water objects",
 });
 
-autoStartCommandIfNeeded(fetchWaterObjects, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

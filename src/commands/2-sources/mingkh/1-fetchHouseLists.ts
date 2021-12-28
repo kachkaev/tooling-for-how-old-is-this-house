@@ -13,7 +13,7 @@ import {
   loopThroughHouseLists,
 } from "../../../shared/sources/mingkh";
 
-export const fetchHouseLists: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Fetching house lists"));
 
   await loopThroughHouseLists(
@@ -46,4 +46,6 @@ export const fetchHouseLists: Command = async ({ logger }) => {
   );
 };
 
-autoStartCommandIfNeeded(fetchHouseLists, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

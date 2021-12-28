@@ -170,7 +170,7 @@ const mapBackgroundOrForegroundFeatureProperties = (
     properties: _.mapKeys(feature.properties, (value, key) => _.snakeCase(key)),
   })) as unknown[]) as GeographicContextLayerFeature[];
 
-export const generateGeosemanticaLayers: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica layers"));
 
   process.stdout.write(chalk.green("Loading mixed property variants..."));
@@ -313,4 +313,6 @@ export const generateGeosemanticaLayers: Command = async ({ logger }) => {
   );
 };
 
-autoStartCommandIfNeeded(generateGeosemanticaLayers, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

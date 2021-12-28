@@ -16,7 +16,7 @@ import {
   getTerritoryExtentFilePath,
 } from "../shared/territory";
 
-export const buildTerritoryExtent: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("Building territory extent"));
 
   logger.log(chalk.green("Obtaining elements to combine..."));
@@ -179,4 +179,6 @@ export const buildTerritoryExtent: Command = async ({ logger }) => {
   logger.log(` Result saved to ${chalk.magenta(getTerritoryExtentFilePath())}`);
 };
 
-autoStartCommandIfNeeded(buildTerritoryExtent, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

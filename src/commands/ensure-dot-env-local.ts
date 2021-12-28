@@ -3,7 +3,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 
-export const ensureDotEnvLocal: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   const filePath = path.resolve(".env.local");
   if (await fs.pathExists(filePath)) {
     logger.log(`File already exists: ${chalk.gray(`${filePath}`)} `);
@@ -16,4 +16,6 @@ export const ensureDotEnvLocal: Command = async ({ logger }) => {
   logger.log(` Done.`);
 };
 
-autoStartCommandIfNeeded(ensureDotEnvLocal, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

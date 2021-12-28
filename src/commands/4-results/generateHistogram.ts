@@ -13,7 +13,7 @@ import {
 } from "../../shared/results";
 import { getTerritoryId } from "../../shared/territory";
 
-export const generateHistogram: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating histogram"));
 
   const extension = "png";
@@ -54,4 +54,6 @@ export const generateHistogram: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(generateHistogram, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

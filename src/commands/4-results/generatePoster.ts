@@ -25,7 +25,7 @@ import {
   getTerritoryId,
 } from "../../shared/territory";
 
-export const generatePoster: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   const posterConfig = extractPosterConfig(
     await getTerritoryConfig(),
     await getTerritoryExtent(),
@@ -83,4 +83,6 @@ export const generatePoster: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(generatePoster, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

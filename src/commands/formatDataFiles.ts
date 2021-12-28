@@ -9,7 +9,7 @@ import { formatJson, getJsonFormattingStyle } from "../shared/helpersForJson";
 import { processFiles } from "../shared/processFiles";
 import { getTerritoryDirPath } from "../shared/territory";
 
-export const formatDataFiles: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("Formatting all data files"));
 
   const { CUSTOM_PATH: customPath } = cleanEnv({
@@ -38,4 +38,6 @@ export const formatDataFiles: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(formatDataFiles, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

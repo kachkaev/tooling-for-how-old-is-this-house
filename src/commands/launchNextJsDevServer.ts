@@ -5,7 +5,7 @@ import { getMixedPropertyVariantsFilePath } from "../shared/mixing";
 import { getOsmDirPath } from "../shared/sources/osm";
 import { getTerritoryExtentFilePath } from "../shared/territory";
 
-export const launchNextJsDevServer: Command = async () => {
+const command: Command = async () => {
   await execa(
     "next-remote-watch",
     [
@@ -20,4 +20,6 @@ export const launchNextJsDevServer: Command = async () => {
   );
 };
 
-autoStartCommandIfNeeded(launchNextJsDevServer, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

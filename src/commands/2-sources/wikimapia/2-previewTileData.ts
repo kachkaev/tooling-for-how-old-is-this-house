@@ -9,7 +9,7 @@ import { writeFormattedJson } from "../../../shared/helpersForJson";
 import { getWikimapiaDirPath } from "../../../shared/sources/wikimapia";
 import { combineWikimapiaTiles } from "../../../shared/sources/wikimapia/combineWikimapiaTiles";
 
-export const previewTileData: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikimapia: Previewing tile data"));
 
   const {
@@ -40,4 +40,6 @@ export const previewTileData: Command = async ({ logger }) => {
   }
 };
 
-autoStartCommandIfNeeded(previewTileData, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

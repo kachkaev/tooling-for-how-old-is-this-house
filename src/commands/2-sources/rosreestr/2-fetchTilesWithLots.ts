@@ -5,7 +5,7 @@ import { generateProcessTile } from "../../../shared/sources/rosreestr";
 import { getTerritoryExtent } from "../../../shared/territory";
 import { processTiles } from "../../../shared/tiles";
 
-export const fetchTilesWithLots: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Fetching tiles with lots"));
 
   await processTiles({
@@ -17,4 +17,6 @@ export const fetchTilesWithLots: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchTilesWithLots, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

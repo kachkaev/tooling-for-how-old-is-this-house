@@ -23,7 +23,7 @@ const responseHasObject = (
   return response && response !== "void";
 };
 
-export const addExtraObjectInfoPages: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Adding extra object info pages"));
 
   const infoPagePaths = await listFilePaths({
@@ -124,4 +124,6 @@ export const addExtraObjectInfoPages: Command = async ({ logger }) => {
   logger.log(`Done. Number of extra pages created: ${pagesToCreate.length}.`);
 };
 
-autoStartCommandIfNeeded(addExtraObjectInfoPages, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

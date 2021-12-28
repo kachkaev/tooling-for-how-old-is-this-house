@@ -31,7 +31,7 @@ import {
   getTerritoryExtent,
 } from "../../../shared/territory";
 
-export const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
+const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
   const axiosInstance = axios.create({
     httpAgent: new http.Agent({ keepAlive: true }),
     httpsAgent: new https.Agent({ keepAlive: true }),
@@ -46,7 +46,7 @@ export const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
   return axiosInstance;
 };
 
-export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(
     chalk.bold(`sources/yandex: Geocoding addresses without position`),
   );
@@ -144,4 +144,6 @@ export const geocodeAddressesWithoutPosition: Command = async ({ logger }) => {
   );
 };
 
-autoStartCommandIfNeeded(geocodeAddressesWithoutPosition, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

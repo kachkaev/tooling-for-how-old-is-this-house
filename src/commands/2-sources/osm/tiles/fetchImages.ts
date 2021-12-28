@@ -30,7 +30,7 @@ const downloadFile = async (
   }
 };
 
-export const getOsmTileVersion = (): string => {
+const getOsmTileVersion = (): string => {
   const env = cleanEnv({
     OSM_TILE_VERSION: envalid.str({
       desc: "Name of subdirectory for tiles to download",
@@ -43,7 +43,7 @@ export const getOsmTileVersion = (): string => {
 const initialZoom = 0;
 const maxAllowedZoom = 17;
 
-export const fetchImages: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/osm: Fetching OSM tile images"));
 
   const originalTerritoryExtent = await getTerritoryExtent();
@@ -85,4 +85,6 @@ export const fetchImages: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchImages, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

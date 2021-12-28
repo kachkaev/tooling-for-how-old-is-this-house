@@ -61,7 +61,7 @@ const processRawFirApiResponse = (
   return sortKeys(deepClean(responseData), { deep: true });
 };
 
-export const fetchObjectInfosFromFirApi: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(
     chalk.bold(
       "sources/rosreestr: Fetching object infos from FIR API (https://rosreestr.gov.ru/api/online/fir_object/...)",
@@ -95,4 +95,6 @@ export const fetchObjectInfosFromFirApi: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchObjectInfosFromFirApi, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

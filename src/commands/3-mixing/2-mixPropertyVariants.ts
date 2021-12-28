@@ -83,7 +83,7 @@ const placeholderProperties: Record<keyof MixedPropertyVariants, null> = {
   wikipediaUrlSource: null,
 };
 
-export const mixPropertyVariants: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing property variants"));
 
   process.stdout.write(chalk.green("Loading mixed output layers..."));
@@ -344,4 +344,6 @@ export const mixPropertyVariants: Command = async ({ logger }) => {
   logger.log(` Result saved to ${chalk.magenta(resultFileName)}`);
 };
 
-autoStartCommandIfNeeded(mixPropertyVariants, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

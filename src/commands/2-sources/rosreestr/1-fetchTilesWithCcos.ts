@@ -5,7 +5,7 @@ import { generateProcessTile } from "../../../shared/sources/rosreestr";
 import { getTerritoryExtent } from "../../../shared/territory";
 import { processTiles } from "../../../shared/tiles";
 
-export const fetchTilesWithCcos: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/rosreestr: Fetching tiles with CCOs"));
 
   await processTiles({
@@ -17,4 +17,6 @@ export const fetchTilesWithCcos: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(fetchTilesWithCcos, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

@@ -118,7 +118,7 @@ const generateCommentWithMixedFeatures = (count: number) =>
 const cleanPropertyVariant = (x: PropertyVariantWithNulls): PropertyVariant =>
   sortKeys(deepClean(x));
 
-export const mixOutputLayers: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("Mixing output layers"));
 
   const baseLayers: BaseLayer[] = [];
@@ -379,4 +379,6 @@ export const mixOutputLayers: Command = async ({ logger }) => {
   logger.log(` Result saved to ${chalk.magenta(resultFileName)}`);
 };
 
-autoStartCommandIfNeeded(mixOutputLayers, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

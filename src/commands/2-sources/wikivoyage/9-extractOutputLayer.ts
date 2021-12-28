@@ -3,10 +3,12 @@ import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
 import { generateWikivoyageOutputLayer } from "../../../shared/sources/wikivoyage";
 
-export const extractOutputLayer = generateExtractOutputLayer({
+const command = generateExtractOutputLayer({
   source: "wikivoyage",
   generateOutputLayer: generateWikivoyageOutputLayer,
   canUseCollectedGeocodes: true,
 });
 
-autoStartCommandIfNeeded(extractOutputLayer, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

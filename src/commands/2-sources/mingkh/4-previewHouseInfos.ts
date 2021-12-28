@@ -9,7 +9,7 @@ import {
   getMingkhDirPath,
 } from "../../../shared/sources/mingkh";
 
-export const previewHouseInfos: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/mingkh: Previewing house infos as geojson"));
 
   const houseInfoCollection = await generateMingkhHouseInfoCollection({
@@ -29,4 +29,6 @@ export const previewHouseInfos: Command = async ({ logger }) => {
   );
 };
 
-autoStartCommandIfNeeded(previewHouseInfos, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

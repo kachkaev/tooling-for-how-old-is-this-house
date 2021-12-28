@@ -55,7 +55,7 @@ const getHandpickedCnsForPageInfos = async (
   }
 };
 
-export const generateInitialObjectInfoPages: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(
     chalk.bold("sources/rosreestr: Generating initial object info pages"),
   );
@@ -326,4 +326,6 @@ export const generateInitialObjectInfoPages: Command = async ({ logger }) => {
   `);
 };
 
-autoStartCommandIfNeeded(generateInitialObjectInfoPages, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

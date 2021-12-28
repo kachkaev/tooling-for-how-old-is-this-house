@@ -12,7 +12,7 @@ import {
 } from "../../shared/results";
 import { getTerritoryId } from "../../shared/territory";
 
-export const generateGeosemanticaColorLegend: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("results: Generating Geosemantica color legend"));
 
   await ensureTerritoryGitignoreContainsResults();
@@ -50,4 +50,6 @@ export const generateGeosemanticaColorLegend: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(generateGeosemanticaColorLegend, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

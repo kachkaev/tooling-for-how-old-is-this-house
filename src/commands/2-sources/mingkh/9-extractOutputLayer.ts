@@ -3,9 +3,11 @@ import { autoStartCommandIfNeeded } from "@kachkaev/commands";
 import { generateExtractOutputLayer } from "../../../shared/helpersForCommands";
 import { generateMingkhOutputLayer } from "../../../shared/sources/mingkh";
 
-export const extractOutputLayer = generateExtractOutputLayer({
+const command = generateExtractOutputLayer({
   source: "mingkh",
   generateOutputLayer: generateMingkhOutputLayer,
 });
 
-autoStartCommandIfNeeded(extractOutputLayer, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

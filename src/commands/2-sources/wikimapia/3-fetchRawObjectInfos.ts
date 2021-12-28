@@ -18,7 +18,7 @@ axiosRetry(axios);
 
 const desiredPageLanguage = "ru";
 
-export const fetchRawObjectInfos: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/wikimapia: Fetching raw object infos"));
 
   const { objectExtentFeatures } = await combineWikimapiaTiles({ logger });
@@ -85,4 +85,6 @@ export const fetchRawObjectInfos: Command = async ({ logger }) => {
   }
 };
 
-autoStartCommandIfNeeded(fetchRawObjectInfos, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;

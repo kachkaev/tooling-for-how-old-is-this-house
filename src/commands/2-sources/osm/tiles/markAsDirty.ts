@@ -1,26 +1,14 @@
 import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
-import * as envalid from "envalid";
 
-import { cleanEnv } from "../../../../shared/cleanEnv";
 import { createAxiosInstanceForOsmTiles } from "../../../../shared/sources/osm";
 import { getTerritoryExtent } from "../../../../shared/territory";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 
-export const getOsmTileVersion = (): string => {
-  const env = cleanEnv({
-    OSM_TILE_VERSION: envalid.str({
-      desc: "Name of subdirectory for tiles to download",
-    }),
-  });
-
-  return env.OSM_TILE_VERSION;
-};
-
 const initialZoom = 10;
 const maxAllowedZoom = 17;
 
-export const MarkAsDirty: Command = async ({ logger }) => {
+const command: Command = async ({ logger }) => {
   logger.log(chalk.bold("sources/osm: Marking tiles as dirty"));
 
   const territoryExtent = await getTerritoryExtent();
@@ -53,4 +41,6 @@ export const MarkAsDirty: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(MarkAsDirty, __filename);
+autoStartCommandIfNeeded(command, __filename);
+
+export default command;
