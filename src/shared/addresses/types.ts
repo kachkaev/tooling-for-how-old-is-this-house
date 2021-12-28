@@ -191,7 +191,7 @@ export interface AddressBeautificationConfig
 export interface RawAddressHandlingConfig {
   canonicalSpellings?: string[];
   defaultRegion?: string;
-  wordReplacements?: WordReplacementConfig[];
+  wordReplacements?: unknown;
 }
 
 export type AddressHandlingConfig = AddressBeautificationConfig;
