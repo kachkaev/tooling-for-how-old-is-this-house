@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "yarn exe src/commands/launchNextJsDevServer",
+    "dev": "yarn ts-node src/commands/launch-next-js-dev-server",
     "exe": "echo \"\n========\nCalling \\`yarn exe ...\\` is deprecated and will not work in the future.\nUse \\`yarn ts-node ...\\` instead.\n========\n\"; ts-node",
     "fix": "npm-run-all --continue-on-error \"fix:*\"",
     "fix:eslint": "eslint --fix \"**/*\"",

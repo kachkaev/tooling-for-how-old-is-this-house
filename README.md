@@ -123,7 +123,7 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Будучи в папке `/path/to/tooling`, создайте пустой файл `.env.local`:
 
     ```sh
-    yarn ts-node src/commands/ensureDotEnvLocal.ts
+    yarn ts-node src/commands/ensure-dot-env-local.ts
     ```
 
     Этот шаг помогает проверить общую работоспособность команд.
@@ -165,7 +165,7 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Будучи в папке `/path/to/tooling`, проверьте выполнение предыдущих шагов:
 
     ```sh
-    yarn ts-node src/commands/2-sources/mkrf/0-checkJsonsDump.ts
+    yarn ts-node src/commands/2-sources/mkrf/0-check-jsons-dump.ts
     ```
 
 ### Обработка выбранной территории
@@ -218,7 +218,7 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Если территория новая, постройте её границу согласно настройкам в `territory-config.yml` → `extent`:
 
     ```sh
-    yarn ts-node src/commands/1-buildTerritoryExtent.ts
+    yarn ts-node src/commands/1-build-territory-extent.ts
     ```
 
     Эта команда создаст файл `/path/to/data/territories/TERRITORY_NAME/territory-extent.geojson`.
@@ -267,21 +267,21 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Скачайте списки зданий на страницах, которые перечислены в файле `territory-config.yml`:
 
     ```sh
-    yarn ts-node src/commands/2-sources/mingkh/1-fetchHouseLists.ts
+    yarn ts-node src/commands/2-sources/mingkh/1-fetch-house-lists.ts
     ```
 
 1.  Скачайте и обработайте данные по зданиями:
 
     ```sh
-    yarn ts-node src/commands/2-sources/mingkh/2-fetchRawHouseInfos.ts
-    yarn ts-node src/commands/2-sources/mingkh/3-parseRawHouseInfos.ts
+    yarn ts-node src/commands/2-sources/mingkh/2-fetch-raw-house-infos.ts
+    yarn ts-node src/commands/2-sources/mingkh/3-parse-raw-house-infos.ts
     ```
 
 1.  ![][опционально]  
     Создайте временный файл для анализа промежуточного результата:
 
     ```sh
-    yarn ts-node src/commands/2-sources/mingkh/4-previewHouseInfos.ts
+    yarn ts-node src/commands/2-sources/mingkh/4-preview-house-infos.ts
     ```
 
 ##### [Минкультуры](https://opendata.mkrf.ru)
@@ -289,7 +289,7 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Извлеките данные для вашей территории из скаченного ранее дампа:
 
     ```sh
-    yarn ts-node src/commands/2-sources/mkrf/1-extractObjectsFromJsonsDump.ts
+    yarn ts-node src/commands/2-sources/mkrf/1-extract-objects-from-jsons-dump.ts
     ```
 
 ##### [ОСМ](https://www.openstreetmap.org)
@@ -297,18 +297,18 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Скачайте контуры зданий и административные границы:
 
     ```sh
-    yarn ts-node src/commands/2-sources/osm/1-fetchBuildings.ts
-    yarn ts-node src/commands/2-sources/osm/2-fetchBoundariesForRegions.ts
-    yarn ts-node src/commands/2-sources/osm/3-fetchBoundariesForSettlements.ts
+    yarn ts-node src/commands/2-sources/osm/1-fetch-buildings.ts
+    yarn ts-node src/commands/2-sources/osm/2-fetch-boundaries-for-regions.ts
+    yarn ts-node src/commands/2-sources/osm/3-fetch-boundaries-for-settlements.ts
     ```
 
 1.  ![][опционально]  
     Скачайте контуры водных объектов и дорог (они понадобятся только для визуализации):
 
     ```sh
-    yarn ts-node src/commands/2-sources/osm/4-fetchRailways.ts
-    yarn ts-node src/commands/2-sources/osm/5-fetchRoads.ts
-    yarn ts-node src/commands/2-sources/osm/6-fetchWaterObjects.ts
+    yarn ts-node src/commands/2-sources/osm/4-fetch-railways.ts
+    yarn ts-node src/commands/2-sources/osm/5-fetch-roads.ts
+    yarn ts-node src/commands/2-sources/osm/6-fetch-water-objects.ts
     ```
 
 ##### [Росреестр](https://pkk.rosreestr.ru)
@@ -316,27 +316,27 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Скачайте геопривязанные ОКС (объекты капитального строительства) и земельные участки:
 
     ```sh
-    yarn ts-node src/commands/2-sources/rosreestr/1-fetchTilesWithCcos.ts
-    yarn ts-node src/commands/2-sources/rosreestr/2-fetchTilesWithLots.ts
+    yarn ts-node src/commands/2-sources/rosreestr/1-fetch-tiles-with-ccos.ts
+    yarn ts-node src/commands/2-sources/rosreestr/2-fetch-tiles-with-lots.ts
     ```
 
 1.  ![][опционально]  
     Создайте временные файлы для анализа промежуточного результата:
 
     ```sh
-    yarn ts-node src/commands/2-sources/rosreestr/3-previewTileData.ts
+    yarn ts-node src/commands/2-sources/rosreestr/3-preview-tile-data.ts
     ```
 
 1.  Создайте файлы-страницы для хранения деталей объектов:
 
     ```sh
-    yarn ts-node src/commands/2-sources/rosreestr/4-generateInitialObjectInfoPages.ts
+    yarn ts-node src/commands/2-sources/rosreestr/4-generate-initial-object-info-pages.ts
     ```
 
 1.  Скачайте детали объектов из АПИ `fir_object`:
 
     ```sh
-    yarn ts-node src/commands/2-sources/rosreestr/5-fetchObjectInfosFromFirApi.ts
+    yarn ts-node src/commands/2-sources/rosreestr/5-fetch-object-infos-from-fir-api.ts
     ```
 
     Эта команда поддерживает многозадачность.
@@ -345,7 +345,7 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Скачайте детали объектов из АПИ ПКК, чтобы закрыть оставшиеся пробелы:
 
     ```sh
-    yarn ts-node src/commands/2-sources/rosreestr/6-fetchObjectInfosFromPkkApi.ts
+    yarn ts-node src/commands/2-sources/rosreestr/6-fetch-object-infos-from-pkk-api.ts
     ```
 
     Эта команда не поддерживает многозадачность.
@@ -358,13 +358,13 @@ Although some of the data sources are country-specific, most parts of the repo c
     Это значит, что есть вероятность найти ещё больше объектов, если добавить страниц.
 
     ```sh
-    yarn ts-node src/commands/2-sources/rosreestr/7-addExtraObjectInfoPages.ts
+    yarn ts-node src/commands/2-sources/rosreestr/7-add-extra-object-info-pages.ts
     ```
 
-    Если новые страницы добавились, следует перезапустить команды `5-fetchObjectInfosFromFirApi` и `6-fetchObjectInfosFromPkkApi.ts`.
+    Если новые страницы добавились, следует перезапустить команды `5-fetch-object-infos-from-fir-api` и `6-fetch-object-infos-from-pkk-api.ts`.
 
     Вероятно, процесс добавления и простукивания страниц придётся повторять несколько раз.
-    Если очередной запуск команды `7-addExtraObjectInfoPages` не добавил ни одной страницы, данные Росреестра можно считать собранными.
+    Если очередной запуск команды `7-add-extra-object-info-pages` не добавил ни одной страницы, данные Росреестра можно считать собранными.
 
     ***
 
@@ -387,14 +387,14 @@ Although some of the data sources are country-specific, most parts of the repo c
     ```
 
     На каждый проблемный квартал достаточно ввести только один кадастровый номер (максимальный из найденных вручную).
-    После обновления файла `territory-config.yml` надо перезапустить команду `4-generateInitialObjectInfoPages` и все последующие в этом подразделе.
+    После обновления файла `territory-config.yml` надо перезапустить команду `4-generate-initial-object-info-pages` и все последующие в этом подразделе.
 
 ##### [Викиданные](https://www.wikidata.org)
 
 1.  Скачайте элементы внутри территории:
 
     ```sh
-    yarn ts-node src/commands/2-sources/wikidata/1-fetchItems.ts
+    yarn ts-node src/commands/2-sources/wikidata/1-fetch-items.ts
     ```
 
 ##### [Викимапия](https://wikimapia.org)
@@ -402,21 +402,21 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Скачайте контуры объектов:
 
     ```sh
-    yarn ts-node src/commands/2-sources/wikimapia/1-fetchTiles.ts
+    yarn ts-node src/commands/2-sources/wikimapia/1-fetch-tiles.ts
     ```
 
 1.  ![][опционально]  
     Создайте временные файлы для анализа промежуточного результата:
 
     ```sh
-    yarn ts-node src/commands/2-sources/wikimapia/2-previewTileData.ts
+    yarn ts-node src/commands/2-sources/wikimapia/2-preview-tile-data.ts
     ```
 
 1.  Скачайте и обработайте детали объектов:
 
     ```sh
-    yarn ts-node src/commands/2-sources/wikimapia/3-fetchRawObjectInfos.ts
-    yarn ts-node src/commands/2-sources/wikimapia/4-parseRawObjectInfos.ts
+    yarn ts-node src/commands/2-sources/wikimapia/3-fetch-raw-object-infos.ts
+    yarn ts-node src/commands/2-sources/wikimapia/4-parse-raw-object-infos.ts
     ```
 
 ##### [Викигид](https://ru.wikivoyage.org)
@@ -424,7 +424,7 @@ Although some of the data sources are country-specific, most parts of the repo c
 1.  Скачайте страницы, которые перечислены в `territory-config.yml` → `sources` → `wikivoyage`:
 
     ```sh
-    yarn ts-node src/commands/2-sources/wikivoyage/1-fetchPages.ts
+    yarn ts-node src/commands/2-sources/wikivoyage/1-fetch-pages.ts
     ```
 
 #### Создание локального каталога геокодов
@@ -445,13 +445,13 @@ Although some of the data sources are country-specific, most parts of the repo c
 Их можно запускать в любом порядке.
 
 ```sh
-yarn ts-node src/commands/2-sources/mingkh/8-reportGeocodes.ts
-yarn ts-node src/commands/2-sources/mkrf/8-reportGeocodes.ts
-yarn ts-node src/commands/2-sources/osm/8-reportGeocodes.ts
-yarn ts-node src/commands/2-sources/rosreestr/8-reportGeocodes.ts
-yarn ts-node src/commands/2-sources/wikidata/8-reportGeocodes.ts
-yarn ts-node src/commands/2-sources/wikimapia/8-reportGeocodes.ts
-yarn ts-node src/commands/2-sources/wikivoyage/8-reportGeocodes.ts
+yarn ts-node src/commands/2-sources/mingkh/8-report-geocodes.ts
+yarn ts-node src/commands/2-sources/mkrf/8-report-geocodes.ts
+yarn ts-node src/commands/2-sources/osm/8-report-geocodes.ts
+yarn ts-node src/commands/2-sources/rosreestr/8-report-geocodes.ts
+yarn ts-node src/commands/2-sources/wikidata/8-report-geocodes.ts
+yarn ts-node src/commands/2-sources/wikimapia/8-report-geocodes.ts
+yarn ts-node src/commands/2-sources/wikivoyage/8-report-geocodes.ts
 ```
 
 Результат работы команд будет в папке `/path/to/data/territories/TERRITORY_NAME/geocoding`.
@@ -491,7 +491,7 @@ yarn ts-node src/commands/2-sources/wikivoyage/8-reportGeocodes.ts
 1.  Запустите геокодер и сохраните результат в кэш:
 
     ```sh
-    yarn ts-node src/commands/2-sources/yandex/1-geocodeAddressesWithoutPosition.ts
+    yarn ts-node src/commands/2-sources/yandex/1-geocode-addresses-without-position.ts
     ```
 
     В зависимости от лимита запросов для вашего ключа, вам может понадобиться несколько дней, чтобы закрыть все пробелы.
@@ -503,10 +503,10 @@ yarn ts-node src/commands/2-sources/wikivoyage/8-reportGeocodes.ts
 1.  Добавьте полученные геокоды в каталог:
 
     ```sh
-    yarn ts-node src/commands/2-sources/yandex/8-reportGeocodes.ts
+    yarn ts-node src/commands/2-sources/yandex/8-report-geocodes.ts
     ```
 
-    Как и на предыдущем шаге, результат команды `*/8-reportGeocodes.ts` не попадает в гит-репозиторий.
+    Как и на предыдущем шаге, результат команды `*/8-report-geocodes.ts` не попадает в гит-репозиторий.
     Значит, эту команду надо выполнить каждый раз при клонировании или обновлении репозитория с данными.
 
 ---
@@ -516,7 +516,7 @@ yarn ts-node src/commands/2-sources/wikivoyage/8-reportGeocodes.ts
 Чтобы удалить лишние файлы из кэша, воспользуетесь этой командой:
 
 ```sh
-yarn ts-node src/commands/2-sources/yandex/2-deleteCacheEntriesForUnusedAddresses.ts
+yarn ts-node src/commands/2-sources/yandex/2-delete-cache-entries-for-unused-addresses.ts
 ```
 
 #### Подготовка к смешиванию данных
@@ -535,13 +535,13 @@ yarn ts-node src/commands/2-sources/yandex/2-deleteCacheEntriesForUnusedAddresse
 Их можно запускать в любом порядке.
 
 ```sh
-yarn ts-node src/commands/2-sources/mingkh/9-extractOutputLayer.ts
-yarn ts-node src/commands/2-sources/mkrf/9-extractOutputLayer.ts
-yarn ts-node src/commands/2-sources/osm/9-extractOutputLayer.ts
-yarn ts-node src/commands/2-sources/rosreestr/9-extractOutputLayer.ts
-yarn ts-node src/commands/2-sources/wikidata/9-extractOutputLayer.ts
-yarn ts-node src/commands/2-sources/wikimapia/9-extractOutputLayer.ts
-yarn ts-node src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts
+yarn ts-node src/commands/2-sources/mingkh/9-extract-output-layer.ts
+yarn ts-node src/commands/2-sources/mkrf/9-extract-output-layer.ts
+yarn ts-node src/commands/2-sources/osm/9-extract-output-layer.ts
+yarn ts-node src/commands/2-sources/rosreestr/9-extract-output-layer.ts
+yarn ts-node src/commands/2-sources/wikidata/9-extract-output-layer.ts
+yarn ts-node src/commands/2-sources/wikimapia/9-extract-output-layer.ts
+yarn ts-node src/commands/2-sources/wikivoyage/9-extract-output-layer.ts
 ```
 
 Результатом работы команд станут файлы `/path/to/data/territories/TERRITORY_NAME/sources/*/output-layer.geojson`.
@@ -564,13 +564,13 @@ yarn ts-node src/commands/2-sources/wikivoyage/9-extractOutputLayer.ts
 1.  Смешайте базовые слои и заплатки:
 
     ```sh
-    yarn ts-node src/commands/3-mixing/1-mixOutputLayers.ts
+    yarn ts-node src/commands/3-mixing/1-mix-output-layers.ts
     ```
 
 1.  Запустите команду выбора финальных характеристик из нескольких вариантов:
 
     ```sh
-    yarn ts-node src/commands/3-mixing/2-mixPropertyVariants.ts
+    yarn ts-node src/commands/3-mixing/2-mix-property-variants.ts
     ```
 
 Всё готово! 🎉
@@ -678,13 +678,13 @@ yarn dev
 ##### Черновик постера
 
 ```sh
-yarn ts-node src/commands/4-results/generatePoster.ts
+yarn ts-node src/commands/4-results/generate-poster.ts
 ```
 
 ##### Гистограмма годов постройки
 
 ```sh
-yarn ts-node src/commands/4-results/generateHistogram.ts
+yarn ts-node src/commands/4-results/generate-histogram.ts
 ```
 
 ↑ Команда поддерживает переменную окружения `LOCALE=en`.
@@ -692,23 +692,23 @@ yarn ts-node src/commands/4-results/generateHistogram.ts
 ##### Слои для загрузки на Геосемантику
 
 ```sh
-yarn ts-node src/commands/4-results/generateGeosemanticaLayers.ts
+yarn ts-node src/commands/4-results/generate-geosemantica-layers.ts
 ```
 
 ##### Стили слоёв
 
 ```sh
-yarn ts-node src/commands/4-results/generateGeosemanticaLayerStyles.ts
+yarn ts-node src/commands/4-results/generate-geosemantica-layer-styles.ts
 ```
 
 ##### Цветовая легенда
 
 ```sh
-yarn ts-node src/commands/4-results/generateGeosemanticaColorLegend.ts
+yarn ts-node src/commands/4-results/generate-geosemantica-color-legend.ts
 ```
 
 ```sh
-yarn ts-node src/commands/4-results/generateGeosemanticaColorLegendDemo.ts
+yarn ts-node src/commands/4-results/generate-geosemantica-color-legend-demo.ts
 ```
 
 ↑ Команда поддерживает переменную окружения `LOCALE=en`.
