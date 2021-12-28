@@ -1,6 +1,5 @@
 import { Command } from "@kachkaev/commands";
 import chalk from "chalk";
-/* eslint-disable no-console */
 import _ from "lodash";
 import path from "path";
 import sortKeys from "sort-keys";
@@ -187,6 +186,7 @@ export const autoStartKebabCaseCommandAndWarnAboutFileRenaming = async (
   const newFileName = _.kebabCase(fileName);
   const newFilePath = path.resolve(dirPath, newFileName);
 
+  /* eslint-disable no-console */
   console.log();
   console.log("========");
   console.log(
@@ -198,6 +198,7 @@ export const autoStartKebabCaseCommandAndWarnAboutFileRenaming = async (
   console.log(`Old camelCase paths will stop working in the future.`);
   console.log("========");
   console.log();
+  /* eslint-enable no-console */
 
   (await import(newFilePath)).default({ logger: console });
 };
