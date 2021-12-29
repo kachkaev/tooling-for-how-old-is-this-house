@@ -1,3 +1,3 @@
-import { autoStartScriptAndWarnAboutFileRenaming } from "../../shared/helpersForScripts";
+import { handleDeprecatedCommand } from "../../shared/handleDeprecatedCommand";
 
-autoStartScriptAndWarnAboutFileRenaming(__filename);
+await handleDeprecatedCommand(import.meta);
