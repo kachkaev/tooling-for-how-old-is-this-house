@@ -101,4 +101,4 @@ const script = async () => {
   output.write(` Done: ${chalk.magenta(filePath)}\n`);
 };
 
-script();
+await script();

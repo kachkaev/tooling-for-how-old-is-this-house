@@ -8,4 +8,4 @@ const script = generateExtractOutputLayer({
   source: "wikivoyage",
 });
 
-script();
+await script();

@@ -16,4 +16,4 @@ const script = async () => {
   output.write(" Done.\n");
 };
 
-script();
+await script();

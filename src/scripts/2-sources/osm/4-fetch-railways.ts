@@ -20,4 +20,4 @@ const script = generateFetchOsmObjects({
   title: "railways",
 });
 
-script();
+await script();

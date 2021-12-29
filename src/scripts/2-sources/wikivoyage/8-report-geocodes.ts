@@ -7,4 +7,4 @@ const script = generateReportGeocodes({
   generateOutputLayer: generateWikivoyageOutputLayer,
 });
 
-script();
+await script();

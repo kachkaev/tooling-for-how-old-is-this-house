@@ -7,5 +7,5 @@ const script = generateExtractOutputLayer({
   source: "wikidata",
 });
 
-script();
-script();
+await script();
+await script();

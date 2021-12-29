@@ -8,4 +8,4 @@ const script = generateExtractOutputLayer({
   source: "rosreestr",
 });
 
-script();
+await script();

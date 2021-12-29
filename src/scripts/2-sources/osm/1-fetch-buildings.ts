@@ -12,4 +12,4 @@ const script = generateFetchOsmObjects({
   title: "buildings",
 });
 
-script();
+await script();

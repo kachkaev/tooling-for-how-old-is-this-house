@@ -26,4 +26,4 @@ const script = async () => {
   output.write("All good - file exists!\n");
 };
 
-script();
+await script();

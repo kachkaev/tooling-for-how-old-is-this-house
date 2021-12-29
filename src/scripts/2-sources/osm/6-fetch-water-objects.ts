@@ -30,4 +30,4 @@ const script = generateFetchOsmObjects({
   title: "water objects",
 });
 
-script();
+await script();

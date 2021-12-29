@@ -7,4 +7,4 @@ const script = generateExtractOutputLayer({
   source: "wikimapia",
 });
 
-script();
+await script();

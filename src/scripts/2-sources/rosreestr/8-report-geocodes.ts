@@ -7,4 +7,4 @@ const script = generateReportGeocodes({
   generateOutputLayer: generateRosreestrOutputLayer,
 });
 
-script();
+await script();

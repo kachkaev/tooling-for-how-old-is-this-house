@@ -32,4 +32,4 @@ const script = generateFetchOsmObjects({
   title: "boundaries for regions",
 });
 
-script();
+await script();

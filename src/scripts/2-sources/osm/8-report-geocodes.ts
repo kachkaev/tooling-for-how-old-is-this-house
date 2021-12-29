@@ -7,4 +7,4 @@ const script = generateReportGeocodes({
   generateOutputLayer: generateOsmOutputLayer,
 });
 
-script();
+await script();

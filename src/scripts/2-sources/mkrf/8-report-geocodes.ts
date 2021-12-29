@@ -7,4 +7,4 @@ const script = generateReportGeocodes({
   generateOutputLayer: generateMkrfOutputLayer,
 });
 
-script();
+await script();

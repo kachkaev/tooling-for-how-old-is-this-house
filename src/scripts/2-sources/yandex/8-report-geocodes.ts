@@ -73,4 +73,4 @@ const script = async () => {
   output.write(chalk.magenta(` Done.\n`));
 };
 
-script();
+await script();

@@ -33,4 +33,4 @@ const script = generateFetchOsmObjects({
   title: "boundaries for settlements",
 });
 
-script();
+await script();

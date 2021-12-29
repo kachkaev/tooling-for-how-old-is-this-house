@@ -374,4 +374,4 @@ const script = async () => {
   output.write(` Result saved to ${chalk.magenta(resultFileName)}\n`);
 };
 
-script();
+await script();

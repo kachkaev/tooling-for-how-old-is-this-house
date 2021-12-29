@@ -24,4 +24,4 @@ const script = generateFetchOsmObjects({
   title: "roads",
 });
 
-script();
+await script();

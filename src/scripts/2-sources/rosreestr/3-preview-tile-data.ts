@@ -12,4 +12,4 @@ const script = async () => {
   await combineRosreestrTilesAndSavePreviews({ objectType: "lot", output });
 };
 
-script();
+await script();

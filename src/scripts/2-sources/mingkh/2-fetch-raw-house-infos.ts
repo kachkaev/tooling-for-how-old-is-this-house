@@ -52,4 +52,4 @@ const script = async () => {
   }, output);
 };
 
-script();
+await script();

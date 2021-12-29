@@ -7,4 +7,4 @@ const script = generateExtractOutputLayer({
   generateOutputLayer: generateOsmOutputLayer,
 });
 
-script();
+await script();

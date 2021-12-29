@@ -8,4 +8,4 @@ const script = generateExtractOutputLayer({
   source: "mkrf",
 });
 
-script();
+await script();
