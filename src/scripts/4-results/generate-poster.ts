@@ -51,7 +51,7 @@ const script = async () => {
   await ensureLaunchedWebApp({
     output,
     action: async (webAppUrl) => {
-      output.write(chalk.green(`Making web page snapshot...`));
+      output.write(chalk.green(`Making web page snapshot...\n`));
       const browser = await puppeteer.launch();
 
       const page = await browser.newPage();
