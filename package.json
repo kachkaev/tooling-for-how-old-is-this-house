@@ -16,8 +16,7 @@
     "lint:tsc": "tsc --project .",
     "lint:yarn-deduplicate": "yarn-deduplicate --fail --list --strategy=fewer",
     "prepare": "husky install",
-    "test": "jest",
-    "ts-node": "echo \"\n========\nCalling \\`yarn ts-node ...\\` is deprecated and will not work in the future.\nUse \\`yarn exe ...\\` instead.\n========\n\"; yarn exe"
+    "test": "jest"
   },
   "lint-staged": {
     "**/*": [
@@ -65,8 +64,6 @@
     "@kachkaev/markdownlint-config": "^0.2.0",
     "@kachkaev/prettier-config": "^1.2.0",
     "@mapbox/tilebelt": "^1.0.2",
-    "@swc/core": "^1.2.124",
-    "@swc/helpers": "^0.3.2",
     "@tmcw/togeojson": "^4.5.0",
     "@turf/turf": "^6.5.0",
     "@types/d3-array": "^3.0.2",
