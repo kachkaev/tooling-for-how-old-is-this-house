@@ -2,9 +2,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "yarn ts-node src/scripts/launch-next-js-dev-server",
-    "exe": "echo \"\n========\nCalling \\`yarn exe ...\\` is deprecated and will not work in the future.\nUse \\`yarn ts-node ...\\` instead.\n========\n\"; ts-node",
-    "ts-node": "node --require=./suppress-experimental.cjs --loader ts-node/esm/transpile-only --experimental-specifier-resolution=node",
+    "dev": "yarn exe src/scripts/launch-next-js-dev-server",
+    "exe": "node --require=./suppress-experimental.cjs --loader ts-node/esm/transpile-only --experimental-specifier-resolution=node",
     "fix": "npm-run-all --continue-on-error \"fix:*\"",
     "fix:eslint": "eslint --fix \"**/*\"",
     "fix:markdownlint": "markdownlint --fix \"**/*\"",
@@ -16,8 +15,9 @@
     "lint:prettier": "prettier --check \"**/*\"",
     "lint:tsc": "tsc --project .",
     "lint:yarn-deduplicate": "yarn-deduplicate --fail --list --strategy=fewer",
+    "prepare": "husky install",
     "test": "jest",
-    "prepare": "husky install"
+    "ts-node": "echo \"\n========\nCalling \\`yarn ts-node ...\\` is deprecated and will not work in the future.\nUse \\`yarn exe ...\\` instead.\n========\n\"; yarn exe"
   },
   "lint-staged": {
     "**/*": [
