@@ -1,8 +1,10 @@
 ## extensions
 *.*
+!*.cjs
 !*.js
 !*.json
 !*.md
+!*.mjs
 !*.ts
 !*.tsx
 !*.yml

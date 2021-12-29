@@ -1,10 +1,11 @@
 import chalk from "chalk";
+import clipboardy from "clipboardy";
+import { color as d3Color } from "d3-color";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import _ from "lodash";
 import path from "path";
 import html from "tagged-template-noop"; // Usage of html`` enables Prettier within strings
-import { dynamicImport } from "tsimportlib";
 
 import { cleanEnv } from "../../shared/cleanEnv";
 import { geographicContextStyling } from "../../shared/geographicContext";
@@ -22,13 +23,15 @@ import {
 
 const output = process.stdout;
 
+type FormatColor = (color: string) => string;
+const formatColor: FormatColor = (color) =>
+  d3Color(color)?.formatHex() ?? "#000";
+
 // We can show year labels when the map is zoomed in. Example:
 // https://twitter.com/kachkaev_ru/status/1427919578525577217/photo/2
 // This is currently disabled to avoid the usage of Arial font in the project.
 // The option can be set to true before map publishing for debugging.
 const yearLabelsWhenZoomedIn = false;
-
-type FormatColor = (color: string) => string;
 
 const generateSld = ({ rules }: { rules: string | string[] }) =>
   formatSld(html`
@@ -53,11 +56,7 @@ const generateSld = ({ rules }: { rules: string | string[] }) =>
 
 const generateBaseBuildingRules = ({
   filter = "",
-  formatColor,
-}: {
-  filter?: string;
-  formatColor: FormatColor;
-}) => [
+}: { filter?: string } = {}) => [
   html`
     <se:Rule>
       ${filter}
@@ -129,13 +128,11 @@ const generateRuleForYearRange = ({
   yearMin,
   yearMax,
   color,
-  formatColor,
 }: {
   name: string;
   yearMin: number;
   yearMax: number;
   color: string;
-  formatColor: FormatColor;
 }) => html`
   <se:Rule>
     <se:Name>${name}</se:Name>
@@ -176,12 +173,7 @@ const generateFilterForGeoraphicContextCategory = (category: string) => html`
   </ogc:Filter>
 `;
 
-const generateRulesForGeographicContextAreas = ({
-  formatColor,
-}: {
-  formatColor: FormatColor;
-  opacity?: number;
-}) =>
+const generateRulesForGeographicContextAreas = () =>
   (
     [
       ["geographicContextExtent", geographicContextStyling.backgroundColor],
@@ -213,11 +205,9 @@ const generateRulesForGeographicContextAreas = ({
 
 const generateRulesForGeographicContextWays = ({
   opacity = 1,
-  formatColor,
 }: {
-  formatColor: FormatColor;
   opacity?: number;
-}) =>
+} = {}) =>
   (
     [
       ["waterway", geographicContextStyling.waterColor],
@@ -381,15 +371,6 @@ const formatSld = (rawSld: string): string =>
 const script = async () => {
   output.write(chalk.bold("results: Generating Geosemantica layer styles\n"));
 
-  // TODO: Bring back normal import after migrating to ESM & remove formatColor from function payloads
-  const { color: d3Color } = (await dynamicImport(
-    "d3-color",
-    module,
-  )) as typeof import("d3-color");
-
-  const formatColor: FormatColor = (color) =>
-    d3Color(color)?.formatHex() ?? "#000";
-
   output.write(chalk.green("Creating sld styles..."));
 
   const posterConfig = extractPosterConfig(
@@ -399,9 +380,7 @@ const script = async () => {
 
   const legendEntries = extractLegendEntries(posterConfig);
 
-  const buildingsLayerRules: string[] = generateBaseBuildingRules({
-    formatColor,
-  });
+  const buildingsLayerRules: string[] = generateBaseBuildingRules();
 
   legendEntries.forEach((entry, index) => {
     const nextEntry = legendEntries[index + 1];
@@ -415,7 +394,6 @@ const script = async () => {
         color: entry.color,
         yearMin: entry.completionYear,
         yearMax: nextEntry?.completionYear ?? 10000,
-        formatColor,
       }),
     );
   });
@@ -430,10 +408,9 @@ const script = async () => {
       rules: [
         ...generateBaseBuildingRules({
           filter: generateFilterForGeoraphicContextCategory("building"),
-          formatColor,
         }),
-        ...generateRulesForGeographicContextAreas({ formatColor }),
-        ...generateRulesForGeographicContextWays({ formatColor }),
+        ...generateRulesForGeographicContextAreas(),
+        ...generateRulesForGeographicContextWays(),
       ],
     }),
   );
@@ -447,7 +424,6 @@ const script = async () => {
   const foregroundLayerSld = formatSld(
     generateSld({
       rules: generateRulesForGeographicContextWays({
-        formatColor,
         opacity: geographicContextStyling.foregroundOpacity,
       }),
     }),
@@ -463,12 +439,6 @@ const script = async () => {
       default: "",
     }),
   });
-
-  // TODO: Bring back normal import after migrating to ESM & remove formatColor from function payloads
-  const { default: clipboardy } = (await dynamicImport(
-    "clipboardy",
-    module,
-  )) as typeof import("clipboardy");
 
   if (layerStyleToCopy) {
     clipboardy.writeSync(

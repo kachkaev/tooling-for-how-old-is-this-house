@@ -1,7 +1,9 @@
 ## extensions
 *.*
+!*.cjs
 !*.js
 !*.json
+!*.mjs
 !*.ts
 !*.tsx
 

@@ -34,15 +34,33 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["src/pages/**", "src/scripts/**"],
+      files: ["*.cjs"],
+      env: { node: true },
+      rules: {
+        "@typescript-eslint/no-var-requires": "off",
+      },
+    },
+    {
+      files: ["*.config.js", "src/pages/**"],
       rules: {
         "import/no-default-export": "off",
       },
     },
     {
-      files: ["cli/**"],
+      files: ["src/scripts/**"],
       rules: {
-        "@typescript-eslint/no-var-requires": "off",
+        "import/no-default-export": "off",
+        "no-restricted-syntax": [
+          "error",
+          ...require("@kachkaev/eslint-config-base").rules[
+            "no-restricted-syntax"
+          ].slice(1),
+          {
+            selector: "ExportNamedDeclaration,ExportDefaultDeclaration",
+            message:
+              "A script cannot have exports. Reusable logic should be stored outside /scripts/.",
+          },
+        ],
       },
     },
   ],

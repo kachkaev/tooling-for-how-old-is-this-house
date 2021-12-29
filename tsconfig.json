@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -18,14 +18,5 @@
     "incremental": true
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-
-  "ts-node": {
-    "compilerOptions": {
-      "target": "es2018",
-      "module": "commonjs"
-    },
-    "transpileOnly": true,
-    "transpiler": "ts-node/transpilers/swc-experimental"
-  }
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

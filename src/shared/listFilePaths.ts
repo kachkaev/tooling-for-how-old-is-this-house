@@ -1,6 +1,6 @@
 import chalk from "chalk";
+import { globby } from "globby";
 import _ from "lodash";
-import { dynamicImport } from "tsimportlib";
 import { WriteStream } from "tty";
 
 export const listFilePaths = async ({
@@ -15,11 +15,6 @@ export const listFilePaths = async ({
   output?: WriteStream;
 }): Promise<string[]> => {
   output?.write(chalk.green(`Listing ${filesNicknameToLog}...`));
-
-  const { globby } = (await dynamicImport(
-    "globby",
-    module,
-  )) as typeof import("globby");
 
   const rawGlobbyResults = await globby(fileSearchPattern, {
     cwd: fileSearchDirPath,

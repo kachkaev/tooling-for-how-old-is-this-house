@@ -1,8 +1,10 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "yarn ts-node src/scripts/launch-next-js-dev-server",
     "exe": "echo \"\n========\nCalling \\`yarn exe ...\\` is deprecated and will not work in the future.\nUse \\`yarn ts-node ...\\` instead.\n========\n\"; ts-node",
+    "ts-node": "node --require=./suppress-experimental.cjs --loader ts-node/esm/transpile-only --experimental-specifier-resolution=node",
     "fix": "npm-run-all --continue-on-error \"fix:*\"",
     "fix:eslint": "eslint --fix \"**/*\"",
     "fix:markdownlint": "markdownlint --fix \"**/*\"",
@@ -48,7 +50,7 @@
     "deromanize": "^1.0.0",
     "get-port": "^6.0.0",
     "lodash-es": "^4.17.21",
-    "next": "^12.0.7",
+    "next": "^12.0.8-canary.13",
     "next-remote-watch": "^1.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -56,7 +58,6 @@
     "styled-components": "^5.3.3",
     "styled-normalize": "^8.0.7",
     "tagged-template-noop": "^2.1.1",
-    "tsimportlib": "^0.0.3",
     "wtf_wikipedia": "^9.0.3"
   },
   "devDependencies": {
