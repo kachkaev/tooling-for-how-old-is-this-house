@@ -364,10 +364,10 @@ Although some of the data sources are country-specific, most parts of the repo c
     yarn exe src/scripts/2-sources/rosreestr/7-add-extra-object-info-pages.ts
     ```
 
-    Если новые страницы добавились, следует перезапустить скрипт `5-fetch-object-infos-from-fir-api` и `6-fetch-object-infos-from-pkk-api.ts`.
+    Если новые страницы добавились, следует перезапустить скрипт `5-fetch-object-infos-from-fir-api.ts` и `6-fetch-object-infos-from-pkk-api.ts`.
 
     Вероятно, процесс добавления и простукивания страниц придётся повторять несколько раз.
-    Если очередной запуск скрипта `7-add-extra-object-info-pages` не добавил ни одной страницы, данные Росреестра можно считать собранными.
+    Если очередной запуск скрипта `7-add-extra-object-info-pages.ts` не добавил ни одной страницы, данные Росреестра можно считать собранными.
 
     ***
 
