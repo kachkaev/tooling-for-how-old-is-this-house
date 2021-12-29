@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import * as envalid from "envalid";
+import { WriteStream } from "tty";
 
 import { AddressNormalizationConfig, normalizeAddress } from "../addresses";
 import { cleanEnv } from "../cleanEnv";
@@ -13,15 +14,15 @@ const debuggingEnabled = cleanEnv({
 export const debugAddressNormalizationIfEnabled = ({
   address,
   addressNormalizationConfig,
-  logger,
+  output,
   normalizedAddress,
 }: {
   address?: string;
   addressNormalizationConfig: AddressNormalizationConfig;
-  logger?: Console;
+  output?: WriteStream;
   normalizedAddress?: string;
 }) => {
-  if (!debuggingEnabled || !address || !logger) {
+  if (!debuggingEnabled || !address || !output) {
     return;
   }
 
@@ -34,10 +35,10 @@ export const debugAddressNormalizationIfEnabled = ({
   );
 
   if (normalizedAddress !== renormalizedAddress) {
-    logger.log(
+    output.write(
       `\n${chalk.yellow(
         "Normalized address has changed after normalization. Please report a bug.",
-      )}\n   ┌ ${address}\n   ├ ${normalizedAddress}\n   └ ${renormalizedAddress}`,
+      )}\n   ┌ ${address}\n   ├ ${normalizedAddress}\n   └ ${renormalizedAddress}\n`,
     );
   }
 };

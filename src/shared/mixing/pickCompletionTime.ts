@@ -46,13 +46,13 @@ const getRangeDuration = (range: YearRange): number => {
 
 export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
   listRelevantPropertyVariants,
-  logger,
+  output,
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
-    logger,
+    output,
     prioritizedSources: [
       "manual",
       "mkrf",
@@ -82,8 +82,8 @@ export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
     let resultOfParsing: ResultOfParseCompletionTime;
     try {
       resultOfParsing = parseCompletionTime(completionTime);
-    } catch (e) {
-      logger.log(chalk.yellow(e));
+    } catch (error) {
+      output.write(`${chalk.yellow(error)}\n`);
       if (!candidate) {
         candidate = {
           completionTime,

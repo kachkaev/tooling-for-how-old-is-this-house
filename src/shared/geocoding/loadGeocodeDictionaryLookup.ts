@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
+import { WriteStream } from "tty";
 
 import { processFiles } from "../processFiles";
 import {
@@ -10,11 +11,9 @@ import {
 import { GeocodeDictionary, GeocodeDictionaryLookup } from "./types";
 
 export const loadGeocodeDictionaryLookup = async (
-  logger?: Console,
+  output?: WriteStream,
 ): Promise<GeocodeDictionaryLookup> => {
-  if (logger) {
-    process.stdout.write(chalk.green("Loading geocode dictionaries..."));
-  }
+  output?.write(chalk.green("Loading geocode dictionaries..."));
 
   const result: GeocodeDictionaryLookup = {};
   const geocodeDictionariesDirPath = getGeocodeDictionariesDirPath();
@@ -35,11 +34,7 @@ export const loadGeocodeDictionaryLookup = async (
     },
   });
 
-  if (logger) {
-    process.stdout.write(
-      ` Dictionaries loaded: ${Object.keys(result).length}.\n`,
-    );
-  }
+  output?.write(` Dictionaries loaded: ${Object.keys(result).length}.\n`);
 
   return result;
 };

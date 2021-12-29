@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import { AxiosResponse } from "axios";
 import chalk from "chalk";
 import sortKeys from "sort-keys";
@@ -13,6 +12,8 @@ import {
   SuccessfulFirObjectResponse,
   SuccessfulFirObjectResponseInInfoPage,
 } from "../../../shared/sources/rosreestr";
+
+const output = process.stdout;
 
 const assertNoUsefulData = (
   responseData: SuccessfulFirObjectResponseInInfoPage,
@@ -61,15 +62,15 @@ const processRawFirApiResponse = (
   return sortKeys(deepClean(responseData), { deep: true });
 };
 
-const command: Command = async ({ logger }) => {
-  logger.log(
+const script = async () => {
+  output.write(
     chalk.bold(
-      "sources/rosreestr: Fetching object infos from FIR API (https://rosreestr.gov.ru/api/online/fir_object/...)",
+      "sources/rosreestr: Fetching object infos from FIR API (https://rosreestr.gov.ru/api/online/fir_object/...)\n",
     ),
   );
 
   await processRosreestrPages({
-    logger,
+    output,
     processObject: async (infoPageObject) => {
       if (
         infoPageObject.creationReason === "lotInTile" ||
@@ -95,6 +96,4 @@ const command: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

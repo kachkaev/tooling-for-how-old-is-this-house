@@ -3,13 +3,13 @@ import { PickFromPropertyVariants } from "./types";
 
 export const pickStyle: PickFromPropertyVariants<"style" | "styleSource"> = ({
   listRelevantPropertyVariants,
-  logger,
+  output,
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
-    logger,
+    output,
     prioritizedSources: ["manual", "wikidata", "wikivoyage"],
     propertySelectors: ["style"],
     targetBuildArea,

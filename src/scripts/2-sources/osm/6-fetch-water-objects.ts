@@ -1,11 +1,9 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateGeographicContextExtent } from "../../../shared/geographicContext";
 import { getFetchedOsmWaterObjectsFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-const command = generateFetchOsmObjects({
+const script = generateFetchOsmObjects({
   acceptedGeometryTypes: [
     "LineString",
     "MultiLineString",
@@ -15,6 +13,7 @@ const command = generateFetchOsmObjects({
   filePath: getFetchedOsmWaterObjectsFilePath(),
   getExtent: async () =>
     generateGeographicContextExtent(await getTerritoryExtent()),
+  output: process.stdout,
   selectors: [
     'way["waterway"]',
     'relation["waterway"]',
@@ -31,6 +30,4 @@ const command = generateFetchOsmObjects({
   title: "water objects",
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
@@ -20,6 +19,8 @@ import {
   getTerritoryExtent,
   getTerritoryId,
 } from "../../shared/territory";
+
+const output = process.stdout;
 
 // We can show year labels when the map is zoomed in. Example:
 // https://twitter.com/kachkaev_ru/status/1427919578525577217/photo/2
@@ -377,8 +378,8 @@ const generateMkrfHighlightRules = () => html`
 const formatSld = (rawSld: string): string =>
   rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("results: Generating Geosemantica layer styles"));
+const script = async () => {
+  output.write(chalk.bold("results: Generating Geosemantica layer styles\n"));
 
   // TODO: Bring back normal import after migrating to ESM & remove formatColor from function payloads
   const { color: d3Color } = (await dynamicImport(
@@ -389,7 +390,7 @@ const command: Command = async ({ logger }) => {
   const formatColor: FormatColor = (color) =>
     d3Color(color)?.formatHex() ?? "#000";
 
-  process.stdout.write(chalk.green("Creating sld styles..."));
+  output.write(chalk.green("Creating sld styles..."));
 
   const posterConfig = extractPosterConfig(
     await getTerritoryConfig(),
@@ -452,7 +453,7 @@ const command: Command = async ({ logger }) => {
     }),
   );
 
-  process.stdout.write(` Done.\n`);
+  output.write(` Done.\n`);
 
   const { COPY_TO_CLIPBOARD: layerStyleToCopy } = cleanEnv({
     COPY_TO_CLIPBOARD: envalid.str<
@@ -478,12 +479,12 @@ const command: Command = async ({ logger }) => {
         : foregroundLayerSld,
     );
 
-    logger.log(
-      `The content of your ${layerStyleToCopy} style file has been copied to clipboard.`,
+    output.write(
+      `The content of your ${layerStyleToCopy} style file has been copied to clipboard.\n`,
     );
-    logger.log("You can paste it directly to https://map.geosemantica.ru.");
+    output.write("You can paste it directly to https://map.geosemantica.ru.\n");
   } else {
-    process.stdout.write(chalk.green(`Saving...`));
+    output.write(chalk.green(`Saving...`));
 
     await ensureTerritoryGitignoreContainsResults();
 
@@ -515,18 +516,16 @@ const command: Command = async ({ logger }) => {
       "utf8",
     );
 
-    logger.log(
+    output.write(
       ` Result saved to:\n${
         chalk.magenta(backgroundLayerStyleFilePath) //
       }\n${
         chalk.magenta(buildingsLayerStyleFilePath) //
       }\n${
         chalk.magenta(foregroundLayerStyleFilePath) //
-      }`,
+      }\n`,
     );
   }
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

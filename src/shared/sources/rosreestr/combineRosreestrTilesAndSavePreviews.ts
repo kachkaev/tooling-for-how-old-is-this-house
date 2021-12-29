@@ -2,6 +2,7 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
 import path from "path";
+import { WriteStream } from "tty";
 
 import { writeFormattedJson } from "../../helpersForJson";
 import { ensureTerritoryGitignoreContainsPreview } from "../../helpersForScripts";
@@ -11,18 +12,18 @@ import { RosreestrObjectType } from "./types";
 
 export const combineRosreestrTilesAndSavePreviews = async ({
   objectType,
-  logger,
+  output,
 }: {
   objectType: RosreestrObjectType;
-  logger: Console;
+  output: WriteStream;
 }): Promise<void> => {
   const { objectCenterFeatures, objectExtentFeatures, tileExtentFeatures } =
     await combineRosreestrTiles({
       objectType,
-      logger,
+      output,
     });
 
-  logger.log(chalk.green("Saving..."));
+  output.write(chalk.green("Saving...\n"));
 
   await ensureTerritoryGitignoreContainsPreview();
 
@@ -40,6 +41,6 @@ export const combineRosreestrTilesAndSavePreviews = async ({
       filePath,
       turf.featureCollection<turf.Polygon | turf.Point>(features),
     );
-    logger.log(`${name} saved to ${chalk.magenta(filePath)}`);
+    output.write(`${name} saved to ${chalk.magenta(filePath)}\n`);
   }
 };

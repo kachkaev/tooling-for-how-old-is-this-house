@@ -1,16 +1,15 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 
 import { combineRosreestrTilesAndSavePreviews } from "../../../shared/sources/rosreestr";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/rosreestr: Previewing tile data / CCOs"));
-  await combineRosreestrTilesAndSavePreviews({ objectType: "cco", logger });
+const output = process.stdout;
 
-  logger.log(chalk.bold("sources/rosreestr: Previewing tile data / lots"));
-  await combineRosreestrTilesAndSavePreviews({ objectType: "lot", logger });
+const script = async () => {
+  output.write(chalk.bold("sources/rosreestr: Previewing tile data / CCOs\n"));
+  await combineRosreestrTilesAndSavePreviews({ objectType: "cco", output });
+
+  output.write(chalk.bold("sources/rosreestr: Previewing tile data / lots\n"));
+  await combineRosreestrTilesAndSavePreviews({ objectType: "lot", output });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

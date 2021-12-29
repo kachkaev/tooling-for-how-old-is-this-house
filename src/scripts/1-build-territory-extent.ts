@@ -1,8 +1,3 @@
-import {
-  autoStartCommandIfNeeded,
-  Command,
-  CommandError,
-} from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import dedent from "dedent";
@@ -10,22 +5,25 @@ import sortKeys from "sort-keys";
 
 import { multiUnion } from "../shared/helpersForGeometry";
 import { serializeTime, writeFormattedJson } from "../shared/helpersForJson";
+import { ScriptError } from "../shared/helpersForScripts";
 import { fetchGeojsonFromOverpassApi } from "../shared/sources/osm";
 import {
   getTerritoryConfig,
   getTerritoryExtentFilePath,
 } from "../shared/territory";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("Building territory extent"));
+const output = process.stdout;
 
-  logger.log(chalk.green("Obtaining elements to combine..."));
+const script = async () => {
+  output?.write(chalk.bold("Building territory extent\n"));
+
+  output?.write(chalk.green("Obtaining elements to combine...\n"));
   const territoryConfig = await getTerritoryConfig();
   const elementsToCombine = territoryConfig.extent?.elementsToCombine ?? [];
 
   const elementGeometries: turf.GeometryObject[] = [];
   for (const elementConfig of elementsToCombine) {
-    process.stdout.write(
+    output.write(
       `  ${elementsToCombine.indexOf(elementConfig) + 1}/${
         elementsToCombine.length
       }:`,
@@ -39,7 +37,7 @@ const command: Command = async ({ logger }) => {
 
       if (elementConfig.type === "osmRelation") {
         if (!(elementConfig.relationId > 0)) {
-          process.stdout.write(
+          output.write(
             chalk.yellow(
               ` Missing relationId (should be positive integer), skipping.\n`,
             ),
@@ -47,7 +45,7 @@ const command: Command = async ({ logger }) => {
           continue;
         }
 
-        process.stdout.write(
+        output.write(
           chalk.green(` Fetching OSM relation ${elementConfig.relationId}...`),
         );
 
@@ -62,7 +60,7 @@ const command: Command = async ({ logger }) => {
         `;
       } else {
         if (!(elementConfig.wayId > 0)) {
-          process.stdout.write(
+          output.write(
             chalk.yellow(
               ` Missing wayId (should be positive integer), skipping.\n`,
             ),
@@ -70,7 +68,7 @@ const command: Command = async ({ logger }) => {
           continue;
         }
 
-        process.stdout.write(
+        output.write(
           chalk.green(` Fetching OSM way ${elementConfig.wayId}...`),
         );
 
@@ -93,9 +91,9 @@ const command: Command = async ({ logger }) => {
           elementGeometries.push(feature.geometry);
         }
       });
-      process.stdout.write(" Done.\n");
+      output.write(" Done.\n");
     } else {
-      process.stdout.write(chalk.red(" Skipping due to unknown type.\n"));
+      output.write(chalk.red(" Skipping due to unknown type.\n"));
     }
   }
   const featuresToUnion = elementGeometries
@@ -106,17 +104,17 @@ const command: Command = async ({ logger }) => {
     .map((geometry) => turf.feature(geometry));
 
   if (!featuresToUnion.length) {
-    throw new CommandError(
+    throw new ScriptError(
       "Please configure territory-config.yml → extent → elementsToCombine so that the result contained at least one Polygon or MultiPolygon",
     );
   }
 
-  process.stdout.write(chalk.green("Combining obtained elements..."));
+  output.write(chalk.green("Combining obtained elements..."));
 
   let extent = multiUnion(featuresToUnion);
 
-  process.stdout.write(" Done.\n");
-  process.stdout.write(chalk.green("Ensuring correct feature type..."));
+  output.write(" Done.\n");
+  output.write(chalk.green("Ensuring correct feature type..."));
 
   if (extent.geometry.type === "MultiPolygon") {
     const polygons = extent.geometry.coordinates.map(
@@ -124,48 +122,48 @@ const command: Command = async ({ logger }) => {
       extent.properties,
     );
     if (!polygons[0]) {
-      throw new CommandError(
-        "Unexpected empty list of polygons in a multipolygon",
+      throw new ScriptError(
+        "Unexpected empty list of polygons in a multipolygon\n",
       );
     }
     if (polygons.length === 1) {
       extent = polygons[0];
-      process.stdout.write(
+      output.write(
         " Done: MultiPolygon with one Polygon converted to Polygon.\n",
       );
     } else {
-      process.stdout.write(
+      output.write(
         chalk.yellow(" Found a MultiPolygon, which is not expected.\n"),
       );
-      logger.log(
+      output.write(
         chalk.yellow(
-          "Some commands do not support MultiPolygon territories, so picking a Polygon with max area:",
+          "Some commands do not support MultiPolygon territories, so picking a Polygon with max area:\n",
         ),
       );
       const polygonAreas = polygons.map((polygon) => turf.area(polygon));
       const maxArea = Math.max(...polygonAreas);
       const maxAreaIndex = polygonAreas.indexOf(maxArea);
       polygonAreas.forEach((area, index) => {
-        logger.log(
+        output.write(
           chalk.yellow(
             `${`${Math.round(area / 1000 / 100) / 10}`.padStart(8, " ")} km²${
               index === maxAreaIndex ? " → picked" : ""
-            }`,
+            }\n`,
           ),
         );
       });
       extent = polygons[maxAreaIndex]!;
-      logger.log(
+      output.write(
         chalk.yellow(
-          "Please review your territory-config.yml. You might want to join the ‘islands’ or split them into independent territories.",
+          "Please review your territory-config.yml. You might want to join the ‘islands’ or split them into independent territories.\n",
         ),
       );
     }
   } else {
-    process.stdout.write(" Done.\n");
+    output.write(" Done.\n");
   }
 
-  process.stdout.write(chalk.green(`Saving...`));
+  output.write(chalk.green(`Saving...`));
 
   if (!extent.properties) {
     extent.properties = {};
@@ -176,9 +174,9 @@ const command: Command = async ({ logger }) => {
 
   await writeFormattedJson(getTerritoryExtentFilePath(), sortKeys(extent));
 
-  logger.log(` Result saved to ${chalk.magenta(getTerritoryExtentFilePath())}`);
+  output.write(
+    ` Result saved to ${chalk.magenta(getTerritoryExtentFilePath())}\n`,
+  );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

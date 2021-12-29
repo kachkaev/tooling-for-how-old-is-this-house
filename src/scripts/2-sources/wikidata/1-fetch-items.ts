@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import axios from "axios";
 import chalk from "chalk";
@@ -19,10 +18,14 @@ import {
 } from "../../../shared/sources/wikidata";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikidata: Fetching items (executing query)"));
+const output = process.stdout;
 
-  process.stdout.write(chalk.green("Preparing to make the API query..."));
+const script = async () => {
+  output.write(
+    chalk.bold("sources/wikidata: Fetching items (executing query)\n"),
+  );
+
+  output.write(chalk.green("Preparing to make the API query..."));
 
   const territoryExtent = await getTerritoryExtent();
   const roughBbox = roughenBbox(turf.bbox(territoryExtent), 3);
@@ -64,9 +67,9 @@ const command: Command = async ({ logger }) => {
       GROUP BY ?item ?itemLabel
     `;
 
-  process.stdout.write(" Done.\n");
+  output.write(" Done.\n");
 
-  process.stdout.write(chalk.green("Calling Wikidata API..."));
+  output.write(chalk.green("Calling Wikidata API..."));
 
   const rawJsonData: WikidataApiResponse = (
     await axios.get("https://query.wikidata.org/sparql", {
@@ -75,8 +78,8 @@ const command: Command = async ({ logger }) => {
     })
   ).data;
 
-  process.stdout.write(" Done.\n");
-  process.stdout.write(chalk.green("Processing..."));
+  output.write(" Done.\n");
+  output.write(chalk.green("Processing..."));
 
   const fileContent: ProcessedQueryResult = {
     fetchedAt: serializeTime(),
@@ -89,15 +92,13 @@ const command: Command = async ({ logger }) => {
     ).map((item) => sortKeys(item)),
   };
 
-  process.stdout.write(" Done.\n");
-  process.stdout.write(chalk.green("Saving..."));
+  output.write(" Done.\n");
+  output.write(chalk.green("Saving..."));
 
   const filePath = getWikidataProcessedQueryResultFilePath();
   await writeFormattedJson(filePath, fileContent);
 
-  process.stdout.write(` Done: ${chalk.magenta(filePath)}\n`);
+  output.write(` Done: ${chalk.magenta(filePath)}\n`);
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

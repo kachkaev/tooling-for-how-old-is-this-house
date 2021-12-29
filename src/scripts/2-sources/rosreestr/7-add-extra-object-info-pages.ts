@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
@@ -14,6 +13,8 @@ import {
   rosreestrObjectInfoPageTailLength,
 } from "../../../shared/sources/rosreestr";
 
+const output = process.stdout;
+
 const responseHasObject = (
   response:
     | FirResponseInInfoPageResponse
@@ -23,17 +24,19 @@ const responseHasObject = (
   return response && response !== "void";
 };
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/rosreestr: Adding extra object info pages"));
+const script = async () => {
+  output.write(
+    chalk.bold("sources/rosreestr: Adding extra object info pages\n"),
+  );
 
   const infoPagePaths = await listFilePaths({
-    logger,
+    output,
     fileSearchPattern: "**/page-*.json",
     fileSearchDirPath: getObjectInfoPagesDirPath(),
     filesNicknameToLog: "rosreestr info pages",
   });
 
-  process.stdout.write(chalk.green("Indexing..."));
+  output.write(chalk.green("Indexing..."));
 
   const maxPageByBlockCn: Record<string, number> = {};
 
@@ -55,9 +58,9 @@ const command: Command = async ({ logger }) => {
   }
   const blockCns = _.orderBy(Object.keys(maxPageByBlockCn));
 
-  process.stdout.write(` Done. Number of blocks: ${blockCns.length}.\n`);
+  output.write(` Done. Number of blocks: ${blockCns.length}.\n`);
 
-  process.stdout.write(chalk.green("Scanning last page in each block..."));
+  output.write(chalk.green("Scanning last page in each block..."));
   const pagesToCreate: Array<{ blockCn: string; pageNumber: number }> = [];
 
   for (const blockCn of blockCns) {
@@ -99,7 +102,7 @@ const command: Command = async ({ logger }) => {
     }
   }
 
-  process.stdout.write(
+  output.write(
     ` Done. Number of extra pages to create: ${pagesToCreate.length}.\n`,
   );
 
@@ -107,7 +110,7 @@ const command: Command = async ({ logger }) => {
     return;
   }
 
-  logger.log(chalk.green("Creating pages..."));
+  output.write(chalk.green("Creating pages...\n"));
 
   for (const pageToCreate of pagesToCreate) {
     const pagePath = getObjectInfoPageFilePath(
@@ -116,12 +119,14 @@ const command: Command = async ({ logger }) => {
     );
 
     const pageWasWritten = await ensureRosreestrInfoPage(pageToCreate);
-    logger.log((pageWasWritten ? chalk.magenta : chalk.gray)(pagePath));
+    output.write(
+      `${(pageWasWritten ? chalk.magenta : chalk.gray)(pagePath)}\n`,
+    );
   }
 
-  logger.log(`Done. Number of extra pages created: ${pagesToCreate.length}.`);
+  output.write(
+    `Done. Number of extra pages created: ${pagesToCreate.length}.\n`,
+  );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

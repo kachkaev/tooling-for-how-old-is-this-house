@@ -1,11 +1,9 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { createBboxFeature } from "../../../shared/helpersForGeometry";
 import { getFetchedOsmBoundariesForRegionsFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-const command = generateFetchOsmObjects({
+const script = generateFetchOsmObjects({
   acceptedGeometryTypes: ["Polygon", "MultiPolygon"],
 
   filePath: getFetchedOsmBoundariesForRegionsFilePath(),
@@ -22,6 +20,8 @@ const command = generateFetchOsmObjects({
 
   needToTryAnotherExtentVersion: (geojsonData) => !geojsonData.features.length,
 
+  output: process.stdout,
+
   selectors: [
     // https://wiki.openstreetmap.org/wiki/RU:Tag:boundary%3Dadministrative
     // ↳ Административные уровни (admin_level) в Российской Федерации
@@ -32,6 +32,4 @@ const command = generateFetchOsmObjects({
   title: "boundaries for regions",
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

@@ -1,14 +1,11 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateExtractOutputLayer } from "../../../shared/helpersForScripts";
 import { generateWikivoyageOutputLayer } from "../../../shared/sources/wikivoyage";
 
-const command = generateExtractOutputLayer({
-  source: "wikivoyage",
-  generateOutputLayer: generateWikivoyageOutputLayer,
+const script = generateExtractOutputLayer({
   canUseCollectedGeocodes: true,
+  generateOutputLayer: generateWikivoyageOutputLayer,
+  output: process.stdout,
+  source: "wikivoyage",
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

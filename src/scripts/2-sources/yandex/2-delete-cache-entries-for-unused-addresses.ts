@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 import rmUp from "rm-up";
@@ -15,12 +14,14 @@ import {
 } from "../../../shared/sources/yandex";
 import { getTerritoryAddressHandlingConfig } from "../../../shared/territory";
 
-const command: Command = async ({ logger }) => {
-  logger.log(
-    chalk.bold(`sources/yandex: Deleting cache entries for unused addresses`),
+const output = process.stdout;
+
+const script = async () => {
+  output.write(
+    chalk.bold(`sources/yandex: Deleting cache entries for unused addresses\n`),
   );
 
-  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(output);
   const combinedGeocodeDictionary = await loadCombinedGeocodeDictionary();
   const filePathsToDelete: string[] = [];
 
@@ -49,7 +50,7 @@ const command: Command = async ({ logger }) => {
   };
 
   await processFiles({
-    logger,
+    output,
     fileSearchDirPath: getYandexGeocoderCacheDir(),
     fileSearchPattern: `**/*${getYandexGeocoderCacheEntryFileSuffix()}`,
     filesNicknameToLog: "yandex geocoder cache entries",
@@ -65,30 +66,28 @@ const command: Command = async ({ logger }) => {
   });
 
   if (!filePathsToDelete.length) {
-    logger.log(chalk.gray("No files to delete."));
+    output.write(chalk.gray("No files to delete.\n"));
 
     return;
   }
 
-  logger.log(
+  output.write(
     chalk.yellow(
-      `Files to delete: ${filePathsToDelete.length}\nPress ctrl+c now to abort`,
+      `Files to delete: ${filePathsToDelete.length}\nPress ctrl+c now to abort\n`,
     ),
   );
 
   for (let ttl = 10; ttl >= 0; ttl -= 1) {
-    logger.log(chalk.gray(ttl));
+    output.write(`${chalk.gray(ttl)}\n`);
     await sleep(1000);
-    eraseLastLineInOutput(logger);
+    eraseLastLineInOutput(output);
   }
 
-  process.stdout.write(chalk.green(`Deleting...`));
+  output.write(chalk.green(`Deleting...`));
   for (const filePath of filePathsToDelete) {
     await rmUp(filePath, { deleteInitial: true });
   }
-  process.stdout.write(chalk.magenta(` Done.\n`));
+  output.write(chalk.magenta(` Done.\n`));
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

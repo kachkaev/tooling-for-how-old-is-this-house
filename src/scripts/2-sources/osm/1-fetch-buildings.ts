@@ -1,11 +1,10 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { getFetchedOsmBuildingsFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 
-const command = generateFetchOsmObjects({
+const script = generateFetchOsmObjects({
   acceptedGeometryTypes: ["Polygon", "MultiPolygon"],
   filePath: getFetchedOsmBuildingsFilePath(),
+  output: process.stdout,
   selectors: [
     'way["building"]',
     'relation["building"]', //
@@ -13,6 +12,4 @@ const command = generateFetchOsmObjects({
   title: "buildings",
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

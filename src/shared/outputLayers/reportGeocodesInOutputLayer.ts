@@ -1,17 +1,18 @@
 import * as turf from "@turf/turf";
 import chalk from "chalk";
+import { WriteStream } from "tty";
 
 import { ReportedGeocode, reportGeocodes } from "../geocoding";
 import { OutputLayer, OutputLayerGeometry } from "./types";
 
 export const reportGeocodesInOutputLayer = async ({
-  source,
-  logger,
+  output,
   outputLayer,
+  source,
 }: {
-  logger: Console;
-  source: string;
+  output: WriteStream;
   outputLayer: OutputLayer;
+  source: string;
 }) => {
   const reportedGeocodes: ReportedGeocode[] = [];
 
@@ -38,9 +39,9 @@ export const reportGeocodesInOutputLayer = async ({
   }
 
   if (!reportedGeocodes.length) {
-    logger.log(
+    output.write(
       chalk.blue(
-        `There are no geocodes to report. This is because none of the ${source} features have ‘address’ property.`,
+        `There are no geocodes to report. This is because none of the ${source} features have ‘address’ property.\n`,
       ),
     );
 
@@ -50,7 +51,7 @@ export const reportGeocodesInOutputLayer = async ({
   }
 
   await reportGeocodes({
-    logger,
+    output,
     reportedGeocodes,
     source,
   });

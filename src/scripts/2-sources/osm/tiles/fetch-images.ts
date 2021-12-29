@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import { AxiosInstance } from "axios";
 import chalk from "chalk";
 import * as envalid from "envalid";
@@ -12,6 +11,8 @@ import {
 } from "../../../../shared/sources/osm";
 import { getTerritoryExtent } from "../../../../shared/territory";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
+
+const output = process.stdout;
 
 // Inspired by https://www.kindacode.com/article/using-axios-to-download-images-and-videos-in-node-js/
 const downloadFile = async (
@@ -43,8 +44,8 @@ const getOsmTileVersion = (): string => {
 const initialZoom = 0;
 const maxAllowedZoom = 17;
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/osm: Fetching OSM tile images"));
+const script = async () => {
+  output.write(chalk.bold("sources/osm: Fetching OSM tile images\n"));
 
   const originalTerritoryExtent = await getTerritoryExtent();
   const territoryExtent = originalTerritoryExtent;
@@ -54,6 +55,7 @@ const command: Command = async ({ logger }) => {
   await processTiles({
     initialZoom,
     maxAllowedZoom,
+    output,
     territoryExtent,
     processTile: async (tile) => {
       const [tileX, tileY, tileZoom] = tile;
@@ -81,10 +83,7 @@ const command: Command = async ({ logger }) => {
 
       return { cacheStatus: "notUsed", tileStatus, comment: tileImageFileName };
     },
-    logger,
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

@@ -2,6 +2,7 @@ import rewind from "@mapbox/geojson-rewind";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
+import { WriteStream } from "tty";
 
 export type Point2dCoordinates = [lon: number, lat: number];
 
@@ -90,11 +91,11 @@ export const filterFeaturesByGeometryType = <
 >({
   features,
   acceptedGeometryTypes,
-  logger,
+  output,
 }: {
   features: T[];
   acceptedGeometryTypes: turf.GeometryTypes[];
-  logger?: Console;
+  output?: WriteStream;
 }): T[] => {
   return features.filter((feature) => {
     if (acceptedGeometryTypes.includes(feature.geometry?.type)) {
@@ -103,13 +104,13 @@ export const filterFeaturesByGeometryType = <
 
     const featureId = feature.properties?.id;
     if (!feature.geometry) {
-      logger?.log(
-        chalk.yellow(`Ignoring feature ${featureId} without geometry`),
+      output?.write(
+        chalk.yellow(`Ignoring feature ${featureId} without geometry\n`),
       );
     } else {
-      logger?.log(
+      output?.write(
         chalk.yellow(
-          `Ignoring feature ${featureId} due to unexpected geometry type: ${feature.geometry.type}`,
+          `Ignoring feature ${featureId} due to unexpected geometry type: ${feature.geometry.type}\n`,
         ),
       );
     }

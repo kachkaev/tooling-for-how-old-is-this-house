@@ -1,13 +1,10 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateReportGeocodes } from "../../../shared/helpersForScripts";
 import { generateWikidataOutputLayer } from "../../../shared/sources/wikidata";
 
-const command = generateReportGeocodes({
+const script = generateReportGeocodes({
+  output: process.stdout,
   source: "wikidata",
   generateOutputLayer: generateWikidataOutputLayer,
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

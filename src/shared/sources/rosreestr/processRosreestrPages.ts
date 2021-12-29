@@ -1,10 +1,11 @@
-import { CommandError } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 import { DateTime } from "luxon";
+import { WriteStream } from "tty";
 
 import { writeFormattedJson } from "../../helpersForJson";
+import { ScriptError } from "../../helpersForScripts";
 import { processFiles } from "../../processFiles";
 import { getObjectInfoPagesDirPath } from "./helpersForPaths";
 import { InfoPageData, InfoPageObject } from "./types";
@@ -61,18 +62,18 @@ export const processRosreestrPages = async ({
   findAnchorObjects,
   includeObjectsAroundAnchors = 0,
   includeObjectsAroundEnds = 0,
-  logger,
+  output,
   pageSaveFrequency = 1,
   processObject,
   revisit = true,
 }: {
   concurrencyDisabledReason?: string;
-  logger?: Console;
   findAnchorObjects?: (
     allInfoPageObjects: InfoPageObject[],
   ) => InfoPageObject[];
   includeObjectsAroundAnchors?: number;
   includeObjectsAroundEnds?: number;
+  output?: WriteStream;
   pageSaveFrequency?: number;
   processObject: (
     infoPageObject: Readonly<InfoPageObject>,
@@ -81,23 +82,23 @@ export const processRosreestrPages = async ({
 }) => {
   const scriptStartTime = DateTime.utc().toMillis();
   await processFiles({
-    logger,
     fileSearchPattern: "**/page-*.json",
     fileSearchDirPath: getObjectInfoPagesDirPath(),
     filesNicknameToLog: "rosreestr info pages",
+    output,
     processFile: async (filePath, prefixLength) => {
       const prefix = " ".repeat(prefixLength + 1);
 
       const fileStat = await fs.stat(filePath);
       if (fileStat.mtimeMs > scriptStartTime) {
         if (concurrencyDisabledReason) {
-          throw new CommandError(
+          throw new ScriptError(
             `Concurrent use detected, which is not allowed. ${concurrencyDisabledReason}`,
           );
         }
-        logger?.log(
+        output?.write(
           chalk.yellow(
-            `${prefix}Skipping – this file is being handled by another process`,
+            `${prefix}Skipping – this file is being handled by another process\n`,
           ),
         );
 
@@ -140,11 +141,11 @@ export const processRosreestrPages = async ({
           break;
         }
 
-        process.stdout.write(prefix);
+        output?.write(prefix);
 
         // Compensate lack of 0 on page-000 (improve vertical alignment)
         if (infoPageData[0]?.cn?.endsWith(":1")) {
-          process.stdout.write(chalk.gray(" "));
+          output?.write(chalk.gray(" "));
         }
 
         let unsavedObjectCount = 0;
@@ -205,15 +206,13 @@ export const processRosreestrPages = async ({
 
           const progressDecoration = picked ? chalk.inverse : chalk.reset;
 
-          process.stdout.write(
-            progressDecoration(progressColor(progressSymbol)),
-          );
+          output?.write(progressDecoration(progressColor(progressSymbol)));
         }
 
         if (unsavedObjectCount) {
           await writeFormattedJson(filePath, infoPageData);
         }
-        logger?.log("");
+        output?.write("\n");
         previouslyPickedCns = pickedCns;
       } while (revisit);
     },

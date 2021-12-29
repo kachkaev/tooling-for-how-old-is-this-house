@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 
@@ -11,13 +10,15 @@ import {
   YandexGeocoderCacheEntry,
 } from "../../../shared/sources/yandex";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold(`sources/yandex: Reporting geocodes`));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(chalk.bold("sources/yandex: Reporting geocodes\n"));
 
   const reportedGeocodes: ReportedGeocode[] = [];
 
   await processFiles({
-    logger,
+    output,
     fileSearchDirPath: getYandexGeocoderCacheDir(),
     fileSearchPattern: `**/*${getYandexGeocoderCacheEntryFileSuffix()}`,
     filesNicknameToLog: "yandex geocoder cache entries",
@@ -55,7 +56,7 @@ const command: Command = async ({ logger }) => {
     },
   });
 
-  process.stdout.write(
+  output.write(
     chalk.green(
       `Saving ${reportedGeocodes.length} reported geocode${
         reportedGeocodes.length > 1 ? "s" : ""
@@ -65,13 +66,11 @@ const command: Command = async ({ logger }) => {
 
   await reportGeocodes({
     reportedGeocodes,
-    logger,
+    output,
     source: "yandex",
   });
 
-  process.stdout.write(chalk.magenta(` Done.\n`));
+  output.write(chalk.magenta(` Done.\n`));
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

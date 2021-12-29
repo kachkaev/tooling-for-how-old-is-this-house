@@ -4,6 +4,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
+import { WriteStream } from "tty";
 
 import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
@@ -26,9 +27,9 @@ import {
 // const tileAreaToExtentBboxAreaRatios: StatEntry[] = [];
 
 export const combineWikimapiaTiles = async ({
-  logger,
+  output,
 }: {
-  logger?: Console;
+  output?: WriteStream;
 }): Promise<{
   objectPointFeatures: WikimapiaObjectPointFeature[];
   objectExtentFeatures: WikimapiaObjectExtentFeature[];
@@ -39,11 +40,11 @@ export const combineWikimapiaTiles = async ({
   const tileExtentFeatures: WikimaiaTileExtentFeature[] = [];
 
   await processFiles({
-    logger,
     fileSearchPattern: `**/${getWikimapiaTileDataFileName()}`,
     fileSearchDirPath: getWikimapiaTilesDirPath(),
     statusReportFrequency: 500,
     filesNicknameToLog: "wikimapia tile data files",
+    output,
     processFile: async (filePath) => {
       const tileData = (await fs.readJson(filePath)) as WikimapiaTileData;
 
@@ -128,7 +129,7 @@ export const combineWikimapiaTiles = async ({
     },
   });
 
-  process.stdout.write(chalk.green("Deduplicating features..."));
+  output?.write(chalk.green("Deduplicating features..."));
 
   const objectPointFeatures = _.uniqBy(
     rawObjectPointFeatures,
@@ -140,11 +141,11 @@ export const combineWikimapiaTiles = async ({
     (feature) => feature.properties?.wikimapiaId,
   );
 
-  process.stdout.write(
+  output?.write(
     ` Count reduced from ${rawObjectExtentFeatures.length} to ${objectExtentFeatures.length}.\n`,
   );
 
-  // logger.log({
+  // console.log({
   //   minExtentArea: _.orderBy(extentAreas, (t) => t[0]).slice(0, 10),
   //   minExtentBboxArea: _.orderBy(extentBboxAreas, (t) => t[0]).slice(0, 10),
   //   maxTileAreaToExtentAreaRatios: _.orderBy(extentAreas, (t) => -t[0]).slice(

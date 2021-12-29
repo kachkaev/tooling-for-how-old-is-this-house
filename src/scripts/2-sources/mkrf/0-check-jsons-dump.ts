@@ -1,33 +1,29 @@
-import {
-  autoStartCommandIfNeeded,
-  Command,
-  CommandError,
-} from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 
+import { ScriptError } from "../../../shared/helpersForScripts";
 import { getMkrfJsonsDumpFilePath } from "../../../shared/sources/mkrf";
 
-const command: Command = async ({ logger }) => {
-  logger.log(
-    chalk.bold("sources/mkrf: Checking the presence of the JSONS dump"),
+const output = process.stdout;
+
+const script = async () => {
+  output.write(
+    chalk.bold("sources/mkrf: Checking the presence of the JSONS dump\n"),
   );
 
   const jsonsDumpFilePath = getMkrfJsonsDumpFilePath();
 
-  logger.log(`Location: ${chalk.cyan(jsonsDumpFilePath)}`);
+  output.write(`Location: ${chalk.cyan(jsonsDumpFilePath)}\n`);
 
   if (!(await fs.pathExists(jsonsDumpFilePath))) {
-    throw new CommandError(`File does not exist.`);
+    throw new ScriptError(`File does not exist.`);
   }
 
   if (!jsonsDumpFilePath.endsWith(".jsons")) {
-    throw new CommandError(`Expected file extension extension to be ‘jsons’.`);
+    throw new ScriptError(`Expected file extension extension to be ‘jsons’.`);
   }
 
-  logger.log(`All good - file exists!`);
+  output.write("All good - file exists!\n");
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

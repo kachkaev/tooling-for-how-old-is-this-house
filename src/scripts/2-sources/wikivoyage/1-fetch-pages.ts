@@ -1,8 +1,3 @@
-import {
-  autoStartCommandIfNeeded,
-  Command,
-  CommandError,
-} from "@kachkaev/commands";
 import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
@@ -10,6 +5,7 @@ import path from "path";
 
 import { prependCommentWithJsonToHtml } from "../../../shared/helpersForHtml";
 import { serializeTime } from "../../../shared/helpersForJson";
+import { ScriptError } from "../../../shared/helpersForScripts";
 import {
   getWikivoyagePageFileSuffix,
   getWikivoyagePagesDir,
@@ -19,6 +15,8 @@ import {
   getTerritoryConfig,
   getTerritoryConfigFilePath,
 } from "../../../shared/territory";
+
+const output = process.stdout;
 
 const urlPrefix = "https://ru.wikivoyage.org/wiki/";
 
@@ -39,13 +37,13 @@ interface ApiResponseData {
   source: string;
 }
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikivoyage: Fetching pages"));
+const script = async () => {
+  output.write(chalk.bold("sources/wikivoyage: Fetching pages\n"));
 
   const pagesToFetch = (await getTerritoryConfig())?.sources?.wikivoyage
     ?.pagesToFetch as unknown;
   if (!(pagesToFetch instanceof Array)) {
-    throw new CommandError(
+    throw new ScriptError(
       `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to be an array, got ${pagesToFetch}`,
     );
   }
@@ -53,9 +51,9 @@ const command: Command = async ({ logger }) => {
   const urls: string[] = [];
   for (const pageToFetch of pagesToFetch) {
     if (typeof pageToFetch !== "string" || !pageToFetch.startsWith(urlPrefix)) {
-      logger.log(
+      output.write(
         chalk.yellow(
-          `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to contain URLs starting with ${urlPrefix}. Skipping ${pageToFetch}.`,
+          `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to contain URLs starting with ${urlPrefix}. Skipping ${pageToFetch}.\n`,
         ),
       );
       continue;
@@ -64,12 +62,12 @@ const command: Command = async ({ logger }) => {
   }
 
   if (!urls.length) {
-    throw new CommandError(
+    throw new ScriptError(
       `Could not find any pages to fetch. Please check ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch.`,
     );
   }
 
-  logger.log(chalk.green("Fetching..."));
+  output.write(chalk.green("Fetching...\n"));
 
   for (const url of urls) {
     const pageName = url.substr(urlPrefix.length);
@@ -96,12 +94,10 @@ const command: Command = async ({ logger }) => {
     const wikiTextToWrite = prependCommentWithJsonToHtml(source, metadata);
     await fs.mkdirp(path.dirname(filePath));
     await fs.writeFile(filePath, wikiTextToWrite);
-    logger.log(chalk.magenta(filePath));
+    output.write(`${chalk.magenta(filePath)}\n`);
   }
 
-  logger.log("Done.");
+  output.write("Done.\n");
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

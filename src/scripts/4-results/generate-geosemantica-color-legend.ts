@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
@@ -12,8 +11,10 @@ import {
 } from "../../shared/results";
 import { getTerritoryId } from "../../shared/territory";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("results: Generating Geosemantica color legend"));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(chalk.bold("results: Generating Geosemantica color legend\n"));
 
   await ensureTerritoryGitignoreContainsResults();
 
@@ -25,9 +26,9 @@ const command: Command = async ({ logger }) => {
   );
 
   await ensureLaunchedWebApp({
-    logger,
+    output,
     action: async (webAppUrl) => {
-      logger.log(chalk.green(`Crawling web page...`));
+      output.write(chalk.green("Crawling web page...\n"));
       const browser = await puppeteer.launch();
 
       const page = await browser.newPage();
@@ -43,13 +44,11 @@ const command: Command = async ({ logger }) => {
       await fs.ensureDir(getResultsDirPath());
       await fs.writeFile(resultFilePath, svgHtml, "utf8");
 
-      logger.log(chalk.magenta(resultFilePath));
+      output.write(chalk.magenta(resultFilePath));
 
       await browser.close();
     },
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import * as envalid from "envalid";
 import path from "path";
@@ -25,7 +24,9 @@ import {
   getTerritoryId,
 } from "../../shared/territory";
 
-const command: Command = async ({ logger }) => {
+const output = process.stdout;
+
+const script = async () => {
   const posterConfig = extractPosterConfig(
     await getTerritoryConfig(),
     await getTerritoryExtent(),
@@ -48,9 +49,9 @@ const command: Command = async ({ logger }) => {
   );
 
   await ensureLaunchedWebApp({
-    logger,
+    output,
     action: async (webAppUrl) => {
-      logger.log(chalk.green(`Making web page snapshot...`));
+      output.write(chalk.green(`Making web page snapshot...`));
       const browser = await puppeteer.launch();
 
       const page = await browser.newPage();
@@ -58,7 +59,7 @@ const command: Command = async ({ logger }) => {
 
       if (extension === "pdf") {
         await ensurePdfSnapshot({
-          logger,
+          output,
           page,
           pdfSizeInMillimeters: [
             posterConfig.layout.widthInMillimeters +
@@ -71,7 +72,7 @@ const command: Command = async ({ logger }) => {
       } else {
         await ensureImageSnapshot({
           imageScaleFactor: 3,
-          logger,
+          output,
           page,
           quality: extension === "jpg" ? 85 : undefined,
           resultFilePath,
@@ -83,6 +84,4 @@ const command: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

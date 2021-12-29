@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
@@ -9,13 +8,15 @@ import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpers
 import { getWikimapiaDirPath } from "../../../shared/sources/wikimapia";
 import { combineWikimapiaTiles } from "../../../shared/sources/wikimapia/combineWikimapiaTiles";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikimapia: Previewing tile data"));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(chalk.bold("sources/wikimapia: Previewing tile data\n"));
 
   const { objectPointFeatures, objectExtentFeatures, tileExtentFeatures } =
-    await combineWikimapiaTiles({ logger });
+    await combineWikimapiaTiles({ output });
 
-  logger.log(chalk.green("Saving..."));
+  output.write(chalk.green("Saving...\n"));
 
   await ensureTerritoryGitignoreContainsPreview();
 
@@ -33,10 +34,8 @@ const command: Command = async ({ logger }) => {
       filePath,
       turf.featureCollection<turf.Polygon | turf.Point>(features),
     );
-    logger.log(`${name} saved to ${chalk.magenta(filePath)}`);
+    output.write(`${name} saved to ${chalk.magenta(filePath)}\n`);
   }
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

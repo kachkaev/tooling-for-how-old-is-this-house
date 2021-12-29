@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import axiosRetry from "axios-retry";
@@ -31,6 +30,8 @@ import {
   getTerritoryExtent,
 } from "../../../shared/territory";
 
+const output = process.stdout;
+
 const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
   const axiosInstance = axios.create({
     httpAgent: new http.Agent({ keepAlive: true }),
@@ -46,23 +47,21 @@ const createAxiosInstanceForYandexGeocoder = (): AxiosInstance => {
   return axiosInstance;
 };
 
-const command: Command = async ({ logger }) => {
-  logger.log(
-    chalk.bold(`sources/yandex: Geocoding addresses without position`),
+const script = async () => {
+  output.write(
+    chalk.bold(`sources/yandex: Geocoding addresses without position\n`),
   );
 
-  process.stdout.write(
-    chalk.green("Listing normalized addresses without position..."),
-  );
+  output.write(chalk.green("Listing normalized addresses without position..."));
   const normalizedAddresses = listNormalizedAddressesWithoutPosition({
     combinedGeocodeDictionary: await loadCombinedGeocodeDictionary(),
     sourcesToIgnore: ["yandex"],
   });
-  process.stdout.write(` Found ${normalizedAddresses.length}.\n`);
+  output.write(` Found ${normalizedAddresses.length}.\n`);
 
-  process.stdout.write(chalk.green("Filtering..."));
+  output.write(chalk.green("Filtering..."));
 
-  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(output);
   const filteredNormalizedAddresses = normalizedAddresses.filter(
     (normalizedAddress) =>
       addressIsWorthGeocodingWithYandex(
@@ -71,7 +70,7 @@ const command: Command = async ({ logger }) => {
       ),
   );
 
-  process.stdout.write(
+  output.write(
     ` Found ${filteredNormalizedAddresses.length} that can be geocoded by Yandex.\n`,
   );
 
@@ -123,26 +122,26 @@ const command: Command = async ({ logger }) => {
       };
       await writeFormattedJson(cacheEntryFilePath, cacheEntry);
       numberOfUpdatedCacheEntries += 1;
-      logger.log(`${chalk.magenta(cacheEntryFilePath)} ${normalizedAddress}`);
-    } catch (e: unknown) {
-      if ((e as AxiosError)?.response?.status === 403) {
-        logger.log(
+      output.write(
+        `${chalk.magenta(cacheEntryFilePath)} ${normalizedAddress}\n`,
+      );
+    } catch (error: unknown) {
+      if ((error as AxiosError)?.response?.status === 403) {
+        output.write(
           chalk.red(
-            "Looks like you’ve reached your API key limits. Try again tomorrow!",
+            "Looks like you’ve reached your API key limits. Try again tomorrow!\n",
           ),
         );
       } else {
-        logger.log(e);
+        output.write(`${error}\n`);
       }
       break;
     }
   }
 
-  logger.log(
-    `Done. Updated cache entries: ${numberOfUpdatedCacheEntries}, pre-existing cache entries: ${numberOfPreExistingCacheEntries}.`,
+  output.write(
+    `Done. Updated cache entries: ${numberOfUpdatedCacheEntries}, pre-existing cache entries: ${numberOfPreExistingCacheEntries}.\n`,
   );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

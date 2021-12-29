@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
@@ -22,6 +21,8 @@ import {
   getTerritoryExtent,
   TerritoryConfig,
 } from "../../../shared/territory";
+
+const output = process.stdout;
 
 type PickReason = "position" | "address";
 
@@ -64,32 +65,32 @@ const derivePickReason = (
   return undefined;
 };
 
-const command: Command = async ({ logger }) => {
-  logger.log(
-    chalk.bold("sources/mkrf: Extracting raw objects from JSONS dump"),
+const script = async () => {
+  output.write(
+    chalk.bold("sources/mkrf: Extracting raw objects from JSONS dump\n"),
   );
 
   const territoryConfig = await getTerritoryConfig();
   const territoryExtent = await getTerritoryExtent();
 
   const jsonsDumpFilePath = getMkrfJsonsDumpFilePath();
-  logger.log(`File location: ${chalk.cyan(jsonsDumpFilePath)}`);
+  output.write(`File location: ${chalk.cyan(jsonsDumpFilePath)}\n`);
 
-  process.stdout.write(chalk.green(`Opening file...`));
+  output.write(chalk.green(`Opening file...`));
   const fileStream = fs.createReadStream(jsonsDumpFilePath);
   const lineStream = readline.createInterface({
     input: fileStream,
     crlfDelay: Infinity,
   });
 
-  logger.log(` Done.`);
+  output.write(" Done.\n");
 
   const dataDumpFileName = path.basename(jsonsDumpFilePath);
   const dataDumpProcessedAt = serializeTime();
 
-  logger.log(
+  output.write(
     chalk.green(
-      "Scanning through objects and saving those within territory extent...",
+      "Scanning through objects and saving those within territory extent...\n",
     ),
   );
 
@@ -109,15 +110,15 @@ const command: Command = async ({ logger }) => {
 
     try {
       objectData = JSON.parse(line) as MkrfObjectData;
-    } catch (e) {
-      logger.log(
+    } catch (error) {
+      output.write(
         chalk.red(
           `\n\nUnexpected JSON parse error occurred on row ${
             numberOfRecords + 1
-          }. JSON content:\n\n${line}\n\nThis can happen if the file has been truncated when unpacking. Please try extracting the downloaded zip file with the different software.\n\n`,
+          }. JSON content:\n\n${line}\n\nThis can happen if the file has been truncated when unpacking. Please try extracting the downloaded zip file with the different software.\n\n\n`,
         ),
       );
-      throw e;
+      throw error;
     }
 
     numberOfRecords += 1;
@@ -141,7 +142,7 @@ const command: Command = async ({ logger }) => {
       )) as MkrfObjectFile;
 
       if (existingObject.dataDumpFileName === dataDumpFileName) {
-        logger.log(`${chalk.gray(objectFilePath)} (${pickReason})`);
+        output.write(`${chalk.gray(objectFilePath)} (${pickReason})\n`);
         continue;
       }
     }
@@ -156,7 +157,7 @@ const command: Command = async ({ logger }) => {
     );
     await writeFormattedJson(objectFilePath, objectFile);
 
-    logger.log(`${chalk.magenta(objectFilePath)} (${pickReason})`);
+    output.write(`${chalk.magenta(objectFilePath)} (${pickReason})\n`);
   }
 
   lineStream.close();
@@ -166,11 +167,9 @@ const command: Command = async ({ logger }) => {
     Object.values(numberOfObjectsByPickReason),
   );
 
-  logger.log(
-    `Done. Picked objects: ${numberOfPickedObjects} (${numberOfObjectsByPickReason["position"]} based on position and ${numberOfObjectsByPickReason["address"]} based on address). Number of records scanned: ${numberOfRecords}.`,
+  output.write(
+    `Done. Picked objects: ${numberOfPickedObjects} (${numberOfObjectsByPickReason["position"]} based on position and ${numberOfObjectsByPickReason["address"]} based on address). Number of records scanned: ${numberOfRecords}.\n`,
   );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

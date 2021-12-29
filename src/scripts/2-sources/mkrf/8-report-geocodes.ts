@@ -1,13 +1,10 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateReportGeocodes } from "../../../shared/helpersForScripts";
 import { generateMkrfOutputLayer } from "../../../shared/sources/mkrf";
 
-const command = generateReportGeocodes({
+const script = generateReportGeocodes({
+  output: process.stdout,
   source: "mkrf",
   generateOutputLayer: generateMkrfOutputLayer,
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

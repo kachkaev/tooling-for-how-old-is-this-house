@@ -3,11 +3,11 @@ import { PickFromPropertyVariants } from "./types";
 
 export const pickFloorCount: PickFromPropertyVariants<
   "floorCountAboveGround" | "floorCountBelowGround" | "floorCountSource"
-> = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
+> = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
-    logger,
+    output,
     prioritizedSources: ["manual", "osm", "mingkh", "rosreestr"],
     propertySelectors: ["floorCount"],
     targetBuildArea,

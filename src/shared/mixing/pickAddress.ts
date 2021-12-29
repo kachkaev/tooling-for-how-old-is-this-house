@@ -16,13 +16,13 @@ export const pickAddress: PickFromPropertyVariants<
 > = ({
   addressHandlingConfig,
   listRelevantPropertyVariants,
-  logger,
+  output,
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
-    logger,
+    output,
     prioritizedSources: [
       "manual",
       "osm",

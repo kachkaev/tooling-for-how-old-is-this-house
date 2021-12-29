@@ -5,6 +5,7 @@ import fs from "fs-extra";
 import { load } from "js-yaml";
 import _ from "lodash";
 import path from "path";
+import { WriteStream } from "tty";
 
 import {
   AddressHandlingConfig,
@@ -240,13 +241,13 @@ const sanitizeRawAddressHandlingConfig = (
 };
 
 export const getTerritoryAddressHandlingConfig = async (
-  logger: Console | undefined,
+  output?: WriteStream,
 ): Promise<AddressHandlingConfig> => {
   const territoryConfig = await getTerritoryConfig();
 
   const reportIssue: ReportIssue = (issue) =>
-    logger?.log(
-      chalk.yellow(`territory-config.yml → addressHandling: ${issue}`),
+    output?.write(
+      chalk.yellow(`territory-config.yml → addressHandling: ${issue}\n`),
     );
 
   const rawAddressHandlingConfig = sanitizeRawAddressHandlingConfig(

@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
@@ -11,8 +10,10 @@ import {
   loopThroughRowsInHouseList,
 } from "../../../shared/sources/mingkh";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/mingkh: Fetching raw house infos"));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(chalk.bold("sources/mingkh: Fetching raw house infos\n"));
 
   await loopThroughHouseLists(async ({ houseListFilePath }) => {
     await loopThroughRowsInHouseList(
@@ -20,7 +21,7 @@ const command: Command = async ({ logger }) => {
       async ({ houseUrl, houseId }) => {
         const rawHouseInfoFilePath = getHouseFilePath(houseId, "raw-info.html");
         if (await fs.pathExists(rawHouseInfoFilePath)) {
-          process.stdout.write(
+          output.write(
             chalk.gray(
               ` Skipped because file exists: ${rawHouseInfoFilePath}\n`,
             ),
@@ -29,7 +30,7 @@ const command: Command = async ({ logger }) => {
           return;
         }
 
-        process.stdout.write(` Fetching...`);
+        output.write(` Fetching...`);
 
         const responseBody = (
           await axios.get<string>(`https://dom.mingkh.ru/${houseUrl}`)
@@ -42,14 +43,13 @@ const command: Command = async ({ logger }) => {
           "utf8",
         );
 
-        process.stdout.write(
+        output.write(
           ` Result saved to ${chalk.magenta(rawHouseInfoFilePath)}\n`,
         );
       },
+      output,
     );
-  });
+  }, output);
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

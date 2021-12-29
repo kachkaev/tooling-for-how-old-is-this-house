@@ -1,13 +1,9 @@
-import {
-  autoStartCommandIfNeeded,
-  Command,
-  CommandError,
-} from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import dedent from "dedent";
 import _ from "lodash";
 
+import { ScriptError } from "../../../shared/helpersForScripts";
 import {
   combineRosreestrTiles,
   CreationReasonForObjectInInfoPage,
@@ -25,12 +21,12 @@ import {
   getTerritoryExtent,
 } from "../../../shared/territory";
 
+const output = process.stdout;
+
 const minNumberOfObjectsPerBlock = 5;
 const minPercentageOutsideTerritoryExtent = 25;
 
-const getHandpickedCnsForPageInfos = async (
-  logger: Console | undefined,
-): Promise<string[]> => {
+const getHandpickedCnsForPageInfos = async (): Promise<string[]> => {
   const handpickedCnsForPageInfos = (await getTerritoryConfig()).sources
     ?.rosreestr?.handpickedCnsForPageInfos;
 
@@ -47,32 +43,32 @@ const getHandpickedCnsForPageInfos = async (
       return cn;
     });
   } catch {
-    logger?.log(
-      "Expected territory config → sources → rosreestr → handpickedCnsForPageInfos to contain an array of cadastral numbers (××:××:×××××××:×××). Ignoring this setting.",
+    output.write(
+      "Expected territory config → sources → rosreestr → handpickedCnsForPageInfos to contain an array of cadastral numbers (××:××:×××××××:×××). Ignoring this setting.\n",
     );
 
     return [];
   }
 };
 
-const command: Command = async ({ logger }) => {
-  logger.log(
-    chalk.bold("sources/rosreestr: Generating initial object info pages"),
+const script = async () => {
+  output.write(
+    chalk.bold("sources/rosreestr: Generating initial object info pages\n"),
   );
 
-  logger.log(chalk.green("Loading CCOs from tiles..."));
+  output.write(chalk.green("Loading CCOs from tiles...\n"));
   const { objectCenterFeatures: ccoFeatures } = await combineRosreestrTiles({
     objectType: "cco",
-    logger,
+    output,
   });
 
-  logger.log(chalk.green("Loading lots from tiles..."));
+  output.write(chalk.green("Loading lots from tiles...\n"));
   const { objectCenterFeatures: lotFeatures } = await combineRosreestrTiles({
     objectType: "lot",
-    logger,
+    output,
   });
 
-  logger.log(chalk.green("Generating lookups..."));
+  output.write(chalk.green("Generating lookups...\n"));
 
   const ccoFeatureByCn: Record<string, ObjectCenterFeature> = {};
   const lotFeatureByCn: Record<string, ObjectCenterFeature> = {};
@@ -82,14 +78,14 @@ const command: Command = async ({ logger }) => {
   for (const ccoFeature of ccoFeatures) {
     const cn = ccoFeature.properties?.cn;
     if (!isValidObjectCn(cn)) {
-      throw new CommandError(
+      throw new ScriptError(
         `Found CCO without a valid cn property (cadastral number): ${JSON.stringify(
           ccoFeature,
         )}`,
       );
     }
     if (ccoFeatureByCn[cn]) {
-      throw new CommandError(
+      throw new ScriptError(
         `Found CCO with an already used cadastral number for the same object type: ${JSON.stringify(
           ccoFeature,
         )}`,
@@ -102,14 +98,14 @@ const command: Command = async ({ logger }) => {
   for (const lotFeature of lotFeatures) {
     const objectCn = lotFeature.properties?.cn;
     if (!isValidObjectCn(objectCn)) {
-      throw new CommandError(
+      throw new ScriptError(
         `Found lot without cn property (cadastral number): ${JSON.stringify(
           lotFeature,
         )}`,
       );
     }
     if (lotFeatureByCn[objectCn]) {
-      throw new CommandError(
+      throw new ScriptError(
         `Found lot with an already used cadastral number for the same object type: ${JSON.stringify(
           lotFeature,
         )}`,
@@ -117,9 +113,9 @@ const command: Command = async ({ logger }) => {
     }
     if (ccoFeatureByCn[objectCn]) {
       // Example: 72:17:1708003:561
-      logger.log(
+      output.write(
         chalk.yellow(
-          `Found lot with an already used cadastral number for CCO: ${objectCn}. Ignoring lot.`,
+          `Found lot with an already used cadastral number for CCO: ${objectCn}. Ignoring lot.\n`,
         ),
       );
     }
@@ -128,20 +124,20 @@ const command: Command = async ({ logger }) => {
   }
 
   // Index handpicked CNs defined in territory-config.yml
-  const handpickedCnsForPageInfos = await getHandpickedCnsForPageInfos(logger);
+  const handpickedCnsForPageInfos = await getHandpickedCnsForPageInfos();
   for (const objectCn of handpickedCnsForPageInfos) {
     if (ccoFeatureByCn[objectCn]) {
-      logger.log(
+      output.write(
         chalk.yellow(
-          `You can remove ${objectCn} from handpickedCnsForPageInfos – it is present in tiles with CCOs`,
+          `You can remove ${objectCn} from handpickedCnsForPageInfos – it is present in tiles with CCOs\n`,
         ),
       );
       continue;
     }
     if (lotFeatureByCn[objectCn]) {
-      logger.log(
+      output.write(
         chalk.yellow(
-          `You can remove ${objectCn} from handpickedCnsForPageInfos – it is present in tiles with lots`,
+          `You can remove ${objectCn} from handpickedCnsForPageInfos – it is present in tiles with lots\n`,
         ),
       );
       continue;
@@ -156,9 +152,9 @@ const command: Command = async ({ logger }) => {
   ];
 
   if (_.uniq(knownObjectCns).length !== knownObjectCns.length) {
-    logger.log(
+    output.write(
       chalk.red(
-        "Found duplicates in cadastral numbers for new objects. Please report a bug and share the data you’ve been working with.",
+        "Found duplicates in cadastral numbers for new objects. Please report a bug and share the data you’ve been working with.\n",
       ),
     );
   }
@@ -169,8 +165,8 @@ const command: Command = async ({ logger }) => {
 
   const orderedBlockCns = _.orderBy(Object.keys(knownObjectCnsByBlockCn));
 
-  logger.log(
-    `Found ${knownObjectCns.length} objects (${ccoFeatures.length} CCOs and ${lotFeatureByCn.length} lots) in ${orderedBlockCns.length} blocks.`,
+  output.write(
+    `Found ${knownObjectCns.length} objects (${ccoFeatures.length} CCOs and ${lotFeatureByCn.length} lots) in ${orderedBlockCns.length} blocks.\n`,
   );
 
   const territoryExtent = await getTerritoryExtent();
@@ -182,9 +178,9 @@ const command: Command = async ({ logger }) => {
   for (const blockCn of orderedBlockCns) {
     const knownObjectCnsInBlock = knownObjectCnsByBlockCn[blockCn];
     if (!knownObjectCnsInBlock) {
-      logger.log(
+      output.write(
         chalk.red(
-          `No objects found in block ${blockCn}. Please report a bug and share the data you’ve been working with.`,
+          `No objects found in block ${blockCn}. Please report a bug and share the data you’ve been working with.\n`,
         ),
       );
       continue;
@@ -196,10 +192,10 @@ const command: Command = async ({ logger }) => {
       ),
     );
 
-    logger.log(
+    output.write(
       `${chalk.green(`Block ${blockCn}`)} – known objects: ${
         knownObjectCnsInBlock.length
-      }, max found id: ${maxFoundId}`,
+      }, max found id: ${maxFoundId}\n`,
     );
 
     const handpickedObjectsCnsInBlock = knownObjectCnsInBlock.filter(
@@ -208,15 +204,15 @@ const command: Command = async ({ logger }) => {
 
     if (knownObjectCnsInBlock.length < minNumberOfObjectsPerBlock) {
       if (handpickedObjectsCnsInBlock.length) {
-        logger.log(
+        output.write(
           chalk.cyan(
-            "  Feature count is too low, but block is still picked because of territory config → sources → rosreestr → handpickedCnsForPageInfos",
+            "  Feature count is too low, but block is still picked because of territory config → sources → rosreestr → handpickedCnsForPageInfos\n",
           ),
         );
       } else {
-        logger.log(
+        output.write(
           chalk.yellow(
-            `  Block is skipped because known feature count is ${knownObjectCnsInBlock.length} (< ${minNumberOfObjectsPerBlock})`,
+            `  Block is skipped because known feature count is ${knownObjectCnsInBlock.length} (< ${minNumberOfObjectsPerBlock})\n`,
           ),
         );
         continue;
@@ -243,15 +239,15 @@ const command: Command = async ({ logger }) => {
       percentageOutsideTerritoryExtent > minPercentageOutsideTerritoryExtent
     ) {
       if (handpickedObjectsCnsInBlock.length) {
-        logger.log(
+        output.write(
           chalk.cyan(
-            "  Too many objects are outside territory extent, but block is still picked because of territory config → sources → rosreestr → handpickedCnsForPageInfos",
+            "  Too many objects are outside territory extent, but block is still picked because of territory config → sources → rosreestr → handpickedCnsForPageInfos\n",
           ),
         );
       } else {
-        logger.log(
+        output.write(
           chalk.yellow(
-            `  Block is skipped because ${percentageOutsideTerritoryExtent}% of objects are outside territory extent (> ${minPercentageOutsideTerritoryExtent})`,
+            `  Block is skipped because ${percentageOutsideTerritoryExtent}% of objects are outside territory extent (> ${minPercentageOutsideTerritoryExtent})\n`,
           ),
         );
         continue;
@@ -306,25 +302,25 @@ const command: Command = async ({ logger }) => {
       }
     }
 
-    logger.log(
+    output.write(
       (writtenPageCountInBlock ? chalk.magenta : chalk.gray)(
         `  Pages total: ${
           maxPageNumber + 1
-        } (${writtenPageCountInBlock} written to disk)`,
+        } (${writtenPageCountInBlock} written to disk)\n`,
       ),
     );
     totalWrittenPageCount += writtenPageCountInBlock;
   }
-  logger.log(dedent`
+  output.write(
+    `${dedent`
     Done.
       Known object CNs (cadastral numbers): ${knownObjectCns.length} 
       Known blocks: ${orderedBlockCns.length}
       Picked blocks: ${totalBlockCount}
       Predicted number of API requests: ${totalEstimatedRequestCount}
       Number of info pages: ${totalPageCount} (${totalWrittenPageCount} written to disk)
-  `);
+  `}\n`,
+  );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

@@ -2,28 +2,29 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 import puppeteer from "puppeteer";
+import { WriteStream } from "tty";
 
 const nextJsPageSelector = "#__next *";
 
 export const ensureImageSnapshot = async ({
   imageScaleFactor,
-  logger,
   omitBackground,
+  output,
   page,
   quality,
   resultFilePath,
   selectorToWaitFor = nextJsPageSelector,
 }: {
   imageScaleFactor: number;
-  logger: Console;
   omitBackground?: boolean;
+  output: WriteStream;
   page: puppeteer.Page;
   quality?: number;
   resultFilePath: string;
   selectorToWaitFor?: string;
 }): Promise<void> => {
   if (await fs.pathExists(resultFilePath)) {
-    logger.log(chalk.gray(resultFilePath));
+    output.write(`${chalk.gray(resultFilePath)}\n`);
 
     return;
   }
@@ -52,24 +53,24 @@ export const ensureImageSnapshot = async ({
     omitBackground,
   });
 
-  logger.log(chalk.magenta(resultFilePath));
+  output.write(`${chalk.magenta(resultFilePath)}\n`);
 };
 
 export const ensurePdfSnapshot = async ({
-  logger,
+  output,
   page,
   pdfSizeInMillimeters,
   resultFilePath,
   selectorToWaitFor = nextJsPageSelector,
 }: {
-  logger: Console;
+  output: WriteStream;
   page: puppeteer.Page;
   pdfSizeInMillimeters: [number, number];
   resultFilePath: string;
   selectorToWaitFor?: string;
 }): Promise<void> => {
   if (await fs.pathExists(resultFilePath)) {
-    logger.log(chalk.gray(resultFilePath));
+    output.write(`${chalk.gray(resultFilePath)}\n`);
 
     return;
   }
@@ -92,5 +93,5 @@ export const ensurePdfSnapshot = async ({
     printBackground: true,
   });
 
-  logger.log(chalk.magenta(resultFilePath));
+  output.write(`${chalk.magenta(resultFilePath)}\n`);
 };

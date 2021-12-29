@@ -1,12 +1,13 @@
-import { CommandError } from "@kachkaev/commands";
 import axios from "axios";
 import chalk from "chalk";
 import { createServer } from "http";
 import _ from "lodash";
 import next from "next";
 import { dynamicImport } from "tsimportlib";
+import { WriteStream } from "tty";
 import { parse } from "url"; // https://github.com/vercel/next.js/discussions/21283
 
+import { ScriptError } from "./helpersForScripts";
 import { getTerritoryConfig, TerritoryConfig } from "./territory";
 
 const defaultPort = 3000;
@@ -31,11 +32,11 @@ const checkIfWebAppIsLaunched = async (
 };
 
 export const ensureLaunchedWebApp = async ({
-  logger,
   action,
+  output,
 }: {
-  logger: Console;
   action: (webAppUrl: string) => Promise<void>;
+  output: WriteStream;
 }) => {
   const existingWebAppUrl = generateAppUrl(defaultPort);
   const territoryConfig = await getTerritoryConfig();
@@ -55,7 +56,7 @@ export const ensureLaunchedWebApp = async ({
   const tempAppPort = await getPort();
   const tempWebAppUrl = generateAppUrl(tempAppPort);
 
-  process.stdout.write(
+  output.write(
     chalk.green(`Starting a temporary web app at ${tempWebAppUrl}...`),
   );
 
@@ -72,16 +73,16 @@ export const ensureLaunchedWebApp = async ({
   });
   server.listen(tempAppPort);
 
-  logger.log(" Done.");
+  output.write(" Done.\n");
 
-  process.stdout.write(
+  output.write(
     chalk.blue(
       'The above step is skipped if you run "yarn dev" in another terminal. Doing so can slightly speed up the command.\n',
     ),
   );
 
   if (!(await checkIfWebAppIsLaunched(tempWebAppUrl, territoryConfig))) {
-    throw new CommandError(
+    throw new ScriptError(
       `Unable to validate the web app at ${tempWebAppUrl}. Please report a bug.`,
     );
   }
@@ -89,12 +90,10 @@ export const ensureLaunchedWebApp = async ({
   try {
     await action(tempWebAppUrl);
   } finally {
-    process.stdout.write(
-      chalk.green(`Stopping the web app at ${tempWebAppUrl}...`),
-    );
+    output.write(chalk.green(`Stopping the web app at ${tempWebAppUrl}...`));
     server.close();
     app.close();
     global.console = originalConsole;
-    logger.log(" Done.");
+    output.write(" Done.\n");
   }
 };

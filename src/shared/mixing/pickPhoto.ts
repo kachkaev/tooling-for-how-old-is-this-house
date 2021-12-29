@@ -3,11 +3,11 @@ import { PickFromPropertyVariants } from "./types";
 
 export const pickPhoto: PickFromPropertyVariants<
   "photoAuthorName" | "photoAuthorUrl" | "photoSource" | "photoUrl"
-> = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
+> = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
-    logger,
+    output,
     prioritizedSources: [
       "manual",
       "wikidata",

@@ -12,11 +12,11 @@ type Result = {
 
 export const pickName: PickFromPropertyVariants<
   "name" | "nameSource" | "derivedBeautifiedName"
-> = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
+> = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
-    logger,
+    output,
     prioritizedSources: [
       "manual",
       "wikidata",

@@ -1,8 +1,8 @@
-import { Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import _ from "lodash";
 import path from "path";
 import sortKeys from "sort-keys";
+import { WriteStream } from "tty";
 
 import { deepClean } from "./deepClean";
 import { geocodeAddress, loadCombinedGeocodeDictionary } from "./geocoding";
@@ -28,25 +28,27 @@ export const generateProgress = (index: number, total: number) => {
   return `${`${index + 1}`.padStart(totalLength)} / ${total}`;
 };
 
-export const generateReportGeocodes = ({
-  source,
-  generateOutputLayer,
-}: {
-  source: string;
-  generateOutputLayer: GenerateOutputLayer;
-}): Command => {
-  return async ({ logger }) => {
-    logger.log(chalk.bold(`sources/${source}: Reporting geocodes`));
+export const generateReportGeocodes =
+  ({
+    generateOutputLayer,
+    output,
+    source,
+  }: {
+    generateOutputLayer: GenerateOutputLayer;
+    output: WriteStream;
+    source: string;
+  }) =>
+  async () => {
+    output.write(chalk.bold(`sources/${source}: Reporting geocodes\n`));
 
-    const outputLayer = await generateOutputLayer({ logger });
+    const outputLayer = await generateOutputLayer({ output });
 
     await reportGeocodesInOutputLayer({
       source,
       outputLayer,
-      logger,
+      output,
     });
   };
-};
 
 // Placeholder properties are added to the first feature of the resulting feature collection.
 // This ensures property list completeness and order in apps like QGIS.
@@ -74,27 +76,30 @@ const placeholderProperties: Record<keyof OutputLayerProperties, null> = {
   wikipediaUrl: null,
 };
 
-export const generateExtractOutputLayer = ({
-  source,
-  generateOutputLayer,
-  canUseCollectedGeocodes,
-}: {
-  source: string;
-  generateOutputLayer: GenerateOutputLayer;
-  canUseCollectedGeocodes?: boolean;
-}): Command => {
-  return async ({ logger }) => {
-    logger.log(chalk.bold(`sources/${source}: Extracting output layer`));
+export const generateExtractOutputLayer =
+  ({
+    source,
+    output,
+    generateOutputLayer,
+    canUseCollectedGeocodes,
+  }: {
+    source: string;
+    output: WriteStream;
+    generateOutputLayer: GenerateOutputLayer;
+    canUseCollectedGeocodes?: boolean;
+  }) =>
+  async () => {
+    output?.write(chalk.bold(`sources/${source}: Extracting output layer\n`));
 
     let configuredGeocodeAddress: ConfiguredGeocodeAddress | undefined =
       undefined;
 
     if (canUseCollectedGeocodes) {
       const addressHandlingConfig = await getTerritoryAddressHandlingConfig(
-        logger,
+        output,
       );
       const combinedGeocodeDictionary = await loadCombinedGeocodeDictionary(
-        logger,
+        output,
       );
 
       configuredGeocodeAddress = (address) =>
@@ -108,11 +113,11 @@ export const generateExtractOutputLayer = ({
     }
 
     const outputLayer = await generateOutputLayer({
-      logger,
       geocodeAddress: configuredGeocodeAddress,
+      output,
     });
 
-    process.stdout.write(chalk.green(`Adding derived properties...`));
+    output.write(chalk.green(`Adding derived properties...`));
 
     const outputLayerWithDerivedProperties: OutputLayer = {
       ...outputLayer,
@@ -123,8 +128,12 @@ export const generateExtractOutputLayer = ({
           derivedCompletionYear = parseCompletionTime(
             feature.properties.completionTime ?? undefined,
           ).derivedCompletionYear;
-        } catch (e) {
-          logger.log(chalk.yellow(e instanceof Error ? e.message : `${e}`));
+        } catch (error) {
+          output?.write(
+            `${chalk.yellow(
+              error instanceof Error ? error.message : `${error}`,
+            )}\n`,
+          );
         }
 
         const propertiesWithDerivatives = deepClean({
@@ -143,9 +152,9 @@ export const generateExtractOutputLayer = ({
       }),
     };
 
-    logger.log(` Done.`);
+    output.write(" Done.\n");
 
-    process.stdout.write(chalk.green(`Saving...`));
+    output.write(chalk.green("Saving..."));
 
     const outputLayerFilePath = path.resolve(
       getSourceDirPath(source),
@@ -159,21 +168,31 @@ export const generateExtractOutputLayer = ({
       outputLayerWithDerivedProperties,
     );
 
-    logger.log(` Result saved to ${chalk.magenta(outputLayerFilePath)}`);
+    output.write(` Result saved to ${chalk.magenta(outputLayerFilePath)}\n`);
   };
-};
 
-export const eraseLastLineInOutput = (logger: Console) => {
-  if (logger) {
-    process.stdout.moveCursor?.(0, -1);
-    process.stdout.clearScreenDown?.();
-  }
+export const eraseLastLineInOutput = (output: WriteStream) => {
+  output.moveCursor?.(0, -1);
+  output.clearScreenDown?.();
 };
 
 export const ensureTerritoryGitignoreContainsPreview =
   async (): Promise<void> => {
     await ensureTerritoryGitignoreContainsLine("preview--*.*");
   };
+
+export class ScriptError extends Error {}
+
+process.on("uncaughtException", (error) => {
+  if (error instanceof ScriptError) {
+    // eslint-disable-next-line no-console
+    console.log(chalk.red(error.message));
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(error);
+  }
+  process.exit(1);
+});
 
 /**
  * TODO: Remove after 2022-04-01

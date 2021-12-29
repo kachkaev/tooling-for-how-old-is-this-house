@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
@@ -104,8 +103,9 @@ const extractCompletionTimeFromDescription = (
   return cleanCompletionTimeMatch(completionTimeMatch);
 };
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikimapia: Parsing raw object infos"));
+const script = async () => {
+  const output = process.stdout;
+  output.write(chalk.bold("sources/wikimapia: Parsing raw object infos\n"));
 
   const logOutputFileName = (
     outputFilePath: string,
@@ -113,16 +113,16 @@ const command: Command = async ({ logger }) => {
     status: "alreadyUpToDate" | "modified",
   ) => {
     const color = status === "modified" ? chalk.magenta : chalk.gray;
-    logger.log(`${" ".repeat(prefixLength - 1)}↳ ${color(outputFilePath)}`);
+    output.write(`${" ".repeat(prefixLength - 1)}↳ ${color(outputFilePath)}\n`);
   };
 
-  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(output);
 
   await processFiles({
-    logger,
     fileSearchPattern: `**/*--${getWikimapiaRawObjectInfoFileSuffix()}`,
     fileSearchDirPath: getWikimapiaObjectsDirPath(),
     filesNicknameToLog: "htmls with wikimapia objects",
+    output,
     processFile: async (filePath, prefixLength) => {
       const outputFilePath = filePath.replace(
         `--${getWikimapiaRawObjectInfoFileSuffix()}`,
@@ -162,13 +162,13 @@ const command: Command = async ({ logger }) => {
           !url ||
           ((!userId || !userName) && !(userName === "Guest" && userId === 0))
         ) {
-          logger.log(photoMatchContent);
+          output.write(`${photoMatchContent}\n`);
           throw new Error(
             `Unexpected error parsing photo match ${JSON.stringify({
               userId,
               userName,
               url,
-            })}. The script might need enhancing`,
+            })}. The script might need enhancing.`,
           );
         }
 
@@ -227,6 +227,4 @@ const command: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

@@ -1,6 +1,6 @@
-import { CommandError } from "@kachkaev/commands";
 import fs from "fs-extra";
 
+import { ScriptError } from "../../helpersForScripts";
 import {
   getFetchedOsmBoundariesForRegionsFilePath,
   getFetchedOsmBoundariesForSettlementsFilePath,
@@ -71,7 +71,7 @@ ReadFetchedOsmFeatureCollection = async (collectionName: string) => {
       collectionName === "boundaries-for-regions" ||
       collectionName === "boundaries-for-settlements")
   ) {
-    throw new CommandError(
+    throw new ScriptError(
       `Please generate ${filePath} by running a corresponding command.`,
     );
   }

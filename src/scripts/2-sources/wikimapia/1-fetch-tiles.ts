@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as tilebelt from "@mapbox/tilebelt";
 // @ts-ignore https://github.com/tmcw/togeojson/issues/46
 import * as tj from "@tmcw/togeojson";
@@ -23,6 +22,8 @@ import {
 } from "../../../shared/sources/wikimapia";
 import { getTerritoryExtent } from "../../../shared/territory";
 import { processTiles } from "../../../shared/tiles";
+
+const output = process.stdout;
 
 axiosRetry(axios);
 
@@ -87,8 +88,8 @@ const processWikimapiaTileResponse = (
   return cleanedFeatures;
 };
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikimapia: Fetching tiles"));
+const script = async () => {
+  output.write(chalk.bold("sources/wikimapia: Fetching tiles"));
 
   const recommendedTileZoom = await getRecommendedWikimapiaTileZoom();
   await processTiles({
@@ -150,10 +151,8 @@ const command: Command = async ({ logger }) => {
         comment: generateWikimapiaTileComment(tileDataFilePath, tileData),
       };
     },
-    logger,
+    output,
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

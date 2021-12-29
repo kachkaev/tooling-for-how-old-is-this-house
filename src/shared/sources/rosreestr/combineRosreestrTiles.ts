@@ -3,6 +3,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 import sortKeys from "sort-keys";
+import { WriteStream } from "tty";
 
 import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
@@ -19,10 +20,10 @@ import {
 
 export const combineRosreestrTiles = async ({
   objectType,
-  logger,
+  output,
 }: {
   objectType: RosreestrObjectType;
-  logger?: Console;
+  output?: WriteStream;
 }): Promise<{
   objectCenterFeatures: ObjectCenterFeature[];
   objectExtentFeatures: ObjectExtentFeature[];
@@ -33,10 +34,10 @@ export const combineRosreestrTiles = async ({
   const tileExtentFeatures: RosreestrTileExtentFeature[] = [];
 
   await processFiles({
-    logger,
     fileSearchPattern: `**/${getTileDataFileName()}`,
     fileSearchDirPath: getTilesDirPath(objectType),
     filesNicknameToLog: "rosreestr tile data files",
+    output,
     statusReportFrequency: 1000,
     processFile: async (filePath) => {
       const tileData = (await fs.readJson(filePath)) as RosreestrTileData;
@@ -59,9 +60,9 @@ export const combineRosreestrTiles = async ({
         const { cn, id } = responseFeature.attrs;
         const derivedId = convertCnToId(cn);
         if (derivedId !== id) {
-          logger?.log(
+          output?.write(
             chalk.red(
-              `Id mismatch detected for object with cn ${responseFeature.attrs.cn}: Derived id is ${derivedId}, while real id is ${id}. Downstream scripts may fail.`,
+              `Id mismatch detected for object with cn ${responseFeature.attrs.cn}: Derived id is ${derivedId}, while real id is ${id}. Downstream scripts may fail.\n`,
             ),
           );
         }
@@ -92,9 +93,7 @@ export const combineRosreestrTiles = async ({
     },
   });
 
-  if (logger) {
-    process.stdout.write(chalk.green("Deduplicating features..."));
-  }
+  output?.write(chalk.green("Deduplicating features..."));
 
   const objectCenterFeatures = _.uniqBy(
     rawObjectCenterFeatures,
@@ -106,11 +105,9 @@ export const combineRosreestrTiles = async ({
     (feature) => feature.properties?.cn,
   );
 
-  if (logger) {
-    process.stdout.write(
-      ` Count reduced from ${rawObjectExtentFeatures.length} to ${objectExtentFeatures.length}.\n`,
-    );
-  }
+  output?.write(
+    ` Count reduced from ${rawObjectExtentFeatures.length} to ${objectExtentFeatures.length}.\n`,
+  );
 
   return {
     objectCenterFeatures,

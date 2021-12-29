@@ -1,20 +1,21 @@
 import chalk from "chalk";
+import { WriteStream } from "tty";
 
 import { generateProgress } from "./helpersForScripts";
 import { listFilePaths } from "./listFilePaths";
 
 export const processFiles = async ({
-  logger,
   fileSearchPattern,
   fileSearchDirPath,
   filesNicknameToLog = "files",
+  output,
   processFile,
   statusReportFrequency = 1,
 }: {
-  logger?: Console;
   fileSearchPattern: string | string[];
   fileSearchDirPath: string;
   filesNicknameToLog?: string;
+  output?: WriteStream;
   processFile: (
     filePath: string,
     prefixLength: number,
@@ -26,16 +27,14 @@ export const processFiles = async ({
     filesNicknameToLog,
     fileSearchPattern,
     fileSearchDirPath,
-    logger,
+    output,
   });
 
   const numberOfFiles = filePaths.length;
 
-  if (logger) {
-    process.stdout.write(chalk.green(`Processing ${filesNicknameToLog}...`));
-    if (statusReportFrequency) {
-      process.stdout.write("\n");
-    }
+  output?.write(chalk.green(`Processing ${filesNicknameToLog}...`));
+  if (statusReportFrequency) {
+    output?.write("\n");
   }
 
   for (let index = 0; index < numberOfFiles; index += 1) {
@@ -49,20 +48,20 @@ export const processFiles = async ({
         index === numberOfFiles - 1);
 
     if (reportingStatus) {
-      logger?.log(`${progress} ${chalk.green(filePath)}`);
+      output?.write(`${progress} ${chalk.green(filePath)}\n`);
     }
 
     try {
       await processFile(filePath, progress.length, reportingStatus);
-    } catch (e) {
-      logger?.error(
+    } catch (error) {
+      output?.write(
         chalk.red(`Unexpected error while processing file ${filePath}`),
       );
-      throw e;
+      throw error;
     }
   }
 
-  if (logger && !statusReportFrequency) {
-    process.stdout.write(" Done.\n");
+  if (!statusReportFrequency) {
+    output?.write(" Done.\n");
   }
 };

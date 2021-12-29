@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import { AxiosResponse } from "axios";
 import chalk from "chalk";
 import * as envalid from "envalid";
@@ -20,6 +19,8 @@ import {
   PkkResponseInInfoPageResponse,
   processRosreestrPages,
 } from "../../../shared/sources/rosreestr";
+
+const output = process.stdout;
 
 const checkIfNeedsProcessing = (infoPageObject: InfoPageObject): boolean => {
   if (
@@ -93,10 +94,10 @@ const processRawPkkFeatureResponse = (
   );
 };
 
-const command: Command = async ({ logger }) => {
-  logger.log(
+const script = async () => {
+  output.write(
     chalk.bold(
-      "sources/rosreestr: Fetching object infos from FIR API (https://pkk.rosreestr.ru/api/features/...)",
+      "sources/rosreestr: Fetching object infos from FIR API (https://pkk.rosreestr.ru/api/features/...)\n",
     ),
   );
 
@@ -110,7 +111,7 @@ const command: Command = async ({ logger }) => {
   await processRosreestrPages({
     concurrencyDisabledReason:
       "PKK API returns 403 for a few hours after receiving more than ≈50 requests per minute.",
-    logger,
+    output,
     findAnchorObjects: (infoPageObjects) =>
       infoPageObjects.filter(
         (infoPageObject) =>
@@ -145,6 +146,4 @@ const command: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

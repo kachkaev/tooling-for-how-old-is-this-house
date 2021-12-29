@@ -1,13 +1,10 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateExtractOutputLayer } from "../../../shared/helpersForScripts";
 import { generateWikimapiaOutputLayer } from "../../../shared/sources/wikimapia";
 
-const command = generateExtractOutputLayer({
-  source: "wikimapia",
+const script = generateExtractOutputLayer({
   generateOutputLayer: generateWikimapiaOutputLayer,
+  output: process.stdout,
+  source: "wikimapia",
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

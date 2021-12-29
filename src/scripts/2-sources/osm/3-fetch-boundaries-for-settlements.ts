@@ -1,11 +1,9 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { createBboxFeature } from "../../../shared/helpersForGeometry";
 import { getFetchedOsmBoundariesForSettlementsFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-const command = generateFetchOsmObjects({
+const script = generateFetchOsmObjects({
   acceptedGeometryTypes: ["Polygon", "MultiPolygon"],
 
   filePath: getFetchedOsmBoundariesForSettlementsFilePath(),
@@ -22,6 +20,8 @@ const command = generateFetchOsmObjects({
 
   needToTryAnotherExtentVersion: (geojsonData) => !geojsonData.features.length,
 
+  output: process.stdout,
+
   selectors: [
     'way["place"~"^(city|town|village)$"]',
     'relation["place"~"^(city|town|village)$"]',
@@ -33,6 +33,4 @@ const command = generateFetchOsmObjects({
   title: "boundaries for settlements",
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

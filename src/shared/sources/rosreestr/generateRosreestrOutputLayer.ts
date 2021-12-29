@@ -173,14 +173,14 @@ const extractPropertiesFromPkkResponse = (
 };
 
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
-  logger,
+  output,
   geocodeAddress,
 }) => {
   const territoryExtent = await getTerritoryExtent();
-  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(output);
 
   const { objectCenterFeatures } = await combineRosreestrTiles({
-    logger,
+    output,
     objectType: "cco",
   });
 
@@ -196,7 +196,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
 
   const outputFeatures: OutputLayer["features"] = [];
   await processFiles({
-    logger,
+    output,
     fileSearchDirPath: getObjectInfoPagesDirPath(),
     fileSearchPattern: "**/page-*.json",
     filesNicknameToLog: "rosreestr info pages",

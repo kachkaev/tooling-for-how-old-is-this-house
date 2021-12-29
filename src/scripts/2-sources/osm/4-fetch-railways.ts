@@ -1,15 +1,14 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateGeographicContextExtent } from "../../../shared/geographicContext";
 import { getFetchedOsmRailwaysFilePath } from "../../../shared/sources/osm";
 import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
-const command = generateFetchOsmObjects({
+const script = generateFetchOsmObjects({
   acceptedGeometryTypes: ["LineString"],
   filePath: getFetchedOsmRailwaysFilePath(),
   getExtent: async () =>
     generateGeographicContextExtent(await getTerritoryExtent()),
+  output: process.stdout,
   selectors: [
     'way["railway"="rail"]',
     'relation["railway"="rail"]',
@@ -21,6 +20,4 @@ const command = generateFetchOsmObjects({
   title: "railways",
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

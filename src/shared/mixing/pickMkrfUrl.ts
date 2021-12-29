@@ -3,11 +3,11 @@ import { PickFromPropertyVariants } from "./types";
 
 export const pickMkrfUrl: PickFromPropertyVariants<
   "mkrfUrl" | "mkrfUrlSource"
-> = ({ listRelevantPropertyVariants, logger, targetBuildArea }) => {
+> = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
     callingFilePath: __filename,
     listRelevantPropertyVariants,
-    logger,
+    output,
     prioritizedSources: ["manual", "mkrf"],
     propertySelectors: ["mkrfUrl"],
     targetBuildArea,

@@ -599,13 +599,6 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@kachkaev/commands@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@kachkaev/commands/-/commands-0.1.1.tgz#71cd9ea4a87b549beb96407a814c9bb7da5fe16f"
-  integrity sha512-0C+5whWFYRO01ec84jUn7qbwOZkSFJWjpgytSIazfkKBcdcEfAb3GZ9M9Xgg/lT0mbSuHAFfoUA1INUGu9WMgA==
-  dependencies:
-    lodash "^4.17.20"
-
 "@kachkaev/eslint-config-base@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@kachkaev/eslint-config-base/-/eslint-config-base-0.2.3.tgz#bf2ac92700baac7e260e3a6956d364e39e94dedc"
@@ -5951,7 +5944,7 @@ lodash.sortby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
   integrity sha1-7dFMgk4sycHgsKG0K7UhBRakJDg=
 
-lodash@^4.17.11, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.7.0:
+lodash@^4.17.11, lodash@^4.17.21, lodash@^4.7.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==

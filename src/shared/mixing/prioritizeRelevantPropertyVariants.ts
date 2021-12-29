@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import _ from "lodash";
+import { WriteStream } from "tty";
 
 import {
   ListRelevantPropertyVariants,
@@ -28,14 +29,14 @@ const alreadyLoggedWarningsSet = new Set<string>();
 export const prioritizeRelevantPropertyVariants = ({
   callingFilePath,
   listRelevantPropertyVariants,
-  logger,
+  output,
   prioritizedSources,
   propertySelectors,
   targetBuildArea,
 }: {
   callingFilePath: string;
   listRelevantPropertyVariants: ListRelevantPropertyVariants;
-  logger: Console;
+  output: WriteStream;
   prioritizedSources: string[];
   propertySelectors: PropertySelector[];
   targetBuildArea: number;
@@ -82,11 +83,11 @@ export const prioritizeRelevantPropertyVariants = ({
     const warningHash = JSON.stringify([unrecognizedSource, propertySelectors]);
     if (!alreadyLoggedWarningsSet.has(warningHash)) {
       alreadyLoggedWarningsSet.add(warningHash);
-      logger.log(
+      output.write(
         chalk.yellow(
           `Unexpected to find source "${unrecognizedSource}" when picking "${propertySelectors.join(
             '", "',
-          )}". Please add it to a corresponding ${callingFilePath} to ensure the right priority.`,
+          )}". Please add it to a corresponding ${callingFilePath} to ensure the right priority.\n`,
         ),
       );
     }

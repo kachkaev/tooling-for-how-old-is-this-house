@@ -1,15 +1,16 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 
 import { createAxiosInstanceForOsmTiles } from "../../../../shared/sources/osm";
 import { getTerritoryExtent } from "../../../../shared/territory";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 
+const output = process.stdout;
+
 const initialZoom = 10;
 const maxAllowedZoom = 17;
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/osm: Marking tiles as dirty"));
+const script = async () => {
+  output.write(chalk.bold("sources/osm: Marking tiles as dirty\n"));
 
   const territoryExtent = await getTerritoryExtent();
 
@@ -17,6 +18,7 @@ const command: Command = async ({ logger }) => {
 
   await processTiles({
     initialZoom,
+    output,
     maxAllowedZoom,
     territoryExtent,
     processTile: async (tile) => {
@@ -37,10 +39,7 @@ const command: Command = async ({ logger }) => {
 
       return { cacheStatus: "notUsed", tileStatus };
     },
-    logger,
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

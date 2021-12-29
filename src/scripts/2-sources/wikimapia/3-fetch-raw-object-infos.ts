@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import axios from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
@@ -14,14 +13,16 @@ import {
   getWikimapiaRawObjectInfoFileSuffix,
 } from "../../../shared/sources/wikimapia";
 
+const output = process.stdout;
+
 axiosRetry(axios);
 
 const desiredPageLanguage = "ru";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/wikimapia: Fetching raw object infos"));
+const script = async () => {
+  output.write(chalk.bold("sources/wikimapia: Fetching raw object infos"));
 
-  const { objectExtentFeatures } = await combineWikimapiaTiles({ logger });
+  const { objectExtentFeatures } = await combineWikimapiaTiles({ output });
 
   for (let index = 0; index < objectExtentFeatures.length; index += 1) {
     const objectExtentFeature = objectExtentFeatures[index]!;
@@ -37,10 +38,10 @@ const command: Command = async ({ logger }) => {
     );
 
     if (await fs.pathExists(rawObjectInfoFilePath)) {
-      logger.log(
+      output.write(
         `${generateProgress(index, objectExtentFeatures.length)} ${chalk.gray(
           rawObjectInfoFilePath,
-        )}`,
+        )}\n`,
       );
 
       continue;
@@ -77,14 +78,12 @@ const command: Command = async ({ logger }) => {
     // cooling off period is needed to avoid 503 responses following API abuse
     await sleep(1000);
 
-    logger.log(
+    output.write(
       `${generateProgress(index, objectExtentFeatures.length)} ${chalk.magenta(
         rawObjectInfoFilePath,
-      )}`,
+      )}\n`,
     );
   }
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

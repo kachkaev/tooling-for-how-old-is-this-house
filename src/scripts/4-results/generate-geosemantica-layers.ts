@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
@@ -32,6 +31,8 @@ import {
   getTerritoryExtent,
   getTerritoryId,
 } from "../../shared/territory";
+
+const output = process.stdout;
 
 interface MainLayerProperties {
   fid: number;
@@ -170,25 +171,25 @@ const mapBackgroundOrForegroundFeatureProperties = (
     properties: _.mapKeys(feature.properties, (value, key) => _.snakeCase(key)),
   })) as unknown[] as GeographicContextLayerFeature[];
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("results: Generating Geosemantica layers"));
+const script = async () => {
+  output.write(chalk.bold("results: Generating Geosemantica layers\n"));
 
-  process.stdout.write(chalk.green("Loading mixed property variants..."));
+  output.write(chalk.green("Loading mixed property variants..."));
   const inputFileName = getMixedPropertyVariantsFilePath();
   const inputFeatureCollection = (await fs.readJson(
     inputFileName,
   )) as MixedPropertyVariantsFeatureCollection;
 
-  process.stdout.write(` Done.\n`);
+  output.write(` Done.\n`);
 
-  process.stdout.write(chalk.green("Loading geographic context..."));
+  output.write(chalk.green("Loading geographic context..."));
   const geographicContextFeatureCollection = await generateGeographicContext(
     await getTerritoryExtent(),
   );
 
-  process.stdout.write(` Done.\n`);
+  output.write(` Done.\n`);
 
-  process.stdout.write(chalk.green("Processing..."));
+  output.write(chalk.green("Processing..."));
 
   const { backgroundFeatureCollection, foregroundFeatureCollection } =
     splitGeographicContext(geographicContextFeatureCollection);
@@ -203,7 +204,7 @@ const command: Command = async ({ logger }) => {
       foregroundFeatureCollection.features,
     );
 
-  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(output);
 
   const addressPrefixToRemove = addressHandlingConfig.defaultRegion
     ? `${addressHandlingConfig.defaultRegion.toLowerCase()}, `
@@ -269,8 +270,8 @@ const command: Command = async ({ logger }) => {
     );
   }
 
-  process.stdout.write(` Done.\n`);
-  process.stdout.write(chalk.green(`Saving...`));
+  output.write(` Done.\n`);
+  output.write(chalk.green(`Saving...`));
 
   await ensureTerritoryGitignoreContainsResults();
 
@@ -302,17 +303,15 @@ const command: Command = async ({ logger }) => {
     turf.featureCollection(foregroundLayerFeatures),
   );
 
-  logger.log(
+  output?.write(
     ` Result saved to:\n${
       chalk.magenta(backgroundLayerFilePath) //
     }\n${
       chalk.magenta(buildingsLayerFilePath) //
     }\n${
       chalk.magenta(foregroundLayerFilePath) //
-    }`,
+    }\n`,
   );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

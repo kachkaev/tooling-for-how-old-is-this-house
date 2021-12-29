@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import fs from "fs-extra";
+import { WriteStream } from "tty";
 
 import { getTerritoryConfig } from "../../territory";
 import { getHouseListFilePath } from "./helpersForPaths";
@@ -11,12 +12,13 @@ export const loopThroughHouseLists = async (
     cityUrl: string;
     houseListFilePath: string;
   }) => Promise<void>,
+  output: WriteStream,
 ) => {
   const territoryConfig = await getTerritoryConfig();
   const houseListsToFetch = territoryConfig.sources?.mingkh?.houseLists ?? [];
 
   for (const houseListConfig of houseListsToFetch) {
-    process.stdout.write(
+    output.write(
       `  ${houseListsToFetch.indexOf(houseListConfig) + 1}/${
         houseListsToFetch.length
       }:`,
@@ -24,7 +26,7 @@ export const loopThroughHouseLists = async (
 
     const { regionUrl, cityUrl } = houseListConfig || {};
     if (!regionUrl || !cityUrl) {
-      process.stdout.write(chalk.red(" Skipping due to misconfig.\n"));
+      output.write(chalk.red(" Skipping due to misconfig.\n"));
       continue;
     }
 
@@ -33,7 +35,7 @@ export const loopThroughHouseLists = async (
     try {
       await callback({ regionUrl, cityUrl, houseListFilePath });
     } catch (e) {
-      process.stdout.write(chalk.red(` Error: ${e}\n`));
+      output.write(chalk.red(` Error: ${e}\n`));
     }
   }
 };
@@ -54,6 +56,7 @@ const extractHouseIdFromUrl = (houseUrl: string): number => {
 export const loopThroughRowsInHouseList = async (
   houseListFilePath: string,
   callback: (payload: { houseId: number; houseUrl: string }) => Promise<void>,
+  output: WriteStream,
 ) => {
   const houseList: HouseListFile = await fs.readJson(houseListFilePath);
 
@@ -61,21 +64,19 @@ export const loopThroughRowsInHouseList = async (
   const numberOfRows = rows.length;
   const numberOfRowsCharCount = `${numberOfRows}`.length;
 
-  process.stdout.write(
-    ` Found ${rows.length} houses in ${houseListFilePath}\n`,
-  );
+  output.write(` Found ${rows.length} houses in ${houseListFilePath}\n`);
 
   for (const row of rows) {
     const humanFriendlyIndex = `${rows.indexOf(row) + 1}`.padStart(
       numberOfRowsCharCount,
       "0",
     );
-    process.stdout.write(`    ${humanFriendlyIndex}/${numberOfRows}:`);
+    output.write(`    ${humanFriendlyIndex}/${numberOfRows}:`);
     try {
       const houseId = extractHouseIdFromUrl(row.url);
       await callback({ houseId, houseUrl: row.url });
     } catch (e) {
-      process.stdout.write(chalk.red(` Error: ${e}\n`));
+      output.write(chalk.red(` Error: ${e}\n`));
     }
   }
 };

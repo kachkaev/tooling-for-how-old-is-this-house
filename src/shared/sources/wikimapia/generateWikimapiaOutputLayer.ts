@@ -76,14 +76,14 @@ const pickPhotoInfo = (
 };
 
 export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
-  logger,
+  output,
 }) => {
   const outputFeatures: OutputLayer["features"] = [];
 
   const objectInfoFileById: Record<string, WikimapiaObjectInfoFile> = {};
 
   await processFiles({
-    logger,
+    output,
     fileSearchDirPath: getWikimapiaObjectsDirPath(),
     fileSearchPattern: `**/*-${getWikimapiaObjectInfoFileSuffix()}`,
     filesNicknameToLog: "wikimapia object info files",
@@ -97,13 +97,13 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
     statusReportFrequency: 1000,
   });
 
-  const { objectExtentFeatures } = await combineWikimapiaTiles({ logger });
+  const { objectExtentFeatures } = await combineWikimapiaTiles({ output });
 
   for (const objectFeature of objectExtentFeatures) {
     const id = `${objectFeature.properties.wikimapiaId}`;
     const objectInfoFile = objectInfoFileById[id];
     if (!objectInfoFile) {
-      logger?.log(chalk.yellow(`Could not find info for object ${id}`));
+      output?.write(chalk.yellow(`Could not find info for object ${id}\n`));
       continue;
     }
 

@@ -243,7 +243,7 @@ const generateGetIntersectedBoundaryName = ({
 };
 
 export const generateOsmOutputLayer: GenerateOutputLayer = async ({
-  logger,
+  output,
 }): Promise<OutputLayer> => {
   const territoryExtent = await getTerritoryExtent();
 
@@ -281,9 +281,9 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
 
     const region = getRegion(building);
     if (!region) {
-      logger?.log(
+      output?.write(
         chalk.yellow(
-          `Unable to find region for https://www.openstreetmap.org/${building.properties.id}`,
+          `Unable to find region for https://www.openstreetmap.org/${building.properties.id}\n`,
         ),
       );
 
@@ -293,9 +293,9 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
     const settlement =
       building.properties["addr:city"] ?? getSettlement(building);
     if (!settlement) {
-      logger?.log(
+      output?.write(
         chalk.yellow(
-          `Unable to find settlement (city / town / village) for https://www.openstreetmap.org/${building.properties.id}`,
+          `Unable to find settlement (city / town / village) for https://www.openstreetmap.org/${building.properties.id}\n`,
         ),
       );
 

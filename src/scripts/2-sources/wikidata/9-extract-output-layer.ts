@@ -1,13 +1,11 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateExtractOutputLayer } from "../../../shared/helpersForScripts";
 import { generateWikidataOutputLayer } from "../../../shared/sources/wikidata";
 
-const command = generateExtractOutputLayer({
-  source: "wikidata",
+const script = generateExtractOutputLayer({
   generateOutputLayer: generateWikidataOutputLayer,
+  output: process.stdout,
+  source: "wikidata",
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();
+script();

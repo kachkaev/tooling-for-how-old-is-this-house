@@ -1,13 +1,10 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateReportGeocodes } from "../../../shared/helpersForScripts";
 import { generateOsmOutputLayer } from "../../../shared/sources/osm";
 
-const command = generateReportGeocodes({
+const script = generateReportGeocodes({
+  output: process.stdout,
   source: "osm",
   generateOutputLayer: generateOsmOutputLayer,
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

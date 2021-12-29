@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import path from "path";
 import puppeteer from "puppeteer";
@@ -13,8 +12,10 @@ import {
 } from "../../shared/results";
 import { getTerritoryId } from "../../shared/territory";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("results: Generating histogram"));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(chalk.bold("results: Generating histogram\n"));
 
   const extension = "png";
 
@@ -26,7 +27,7 @@ const command: Command = async ({ logger }) => {
   const locale = getLocaleFromEnv();
 
   await ensureLaunchedWebApp({
-    logger,
+    output,
     action: async (webAppUrl) => {
       const browser = await puppeteer.launch();
 
@@ -37,14 +38,16 @@ const command: Command = async ({ logger }) => {
         }.${extension}`,
       );
 
-      logger.log(chalk.green(`Making web page snapshot (LOCALE=${locale})...`));
+      output.write(
+        chalk.green(`Making web page snapshot (LOCALE=${locale})...\n`),
+      );
 
       const page = await browser.newPage();
       await page.goto(`${webAppUrl}/${locale}/histogram`);
 
       await ensureImageSnapshot({
         imageScaleFactor: 2,
-        logger,
+        output,
         page,
         resultFilePath,
       });
@@ -54,6 +57,4 @@ const command: Command = async ({ logger }) => {
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

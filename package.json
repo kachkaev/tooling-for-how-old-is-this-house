@@ -60,7 +60,6 @@
     "wtf_wikipedia": "^9.0.3"
   },
   "devDependencies": {
-    "@kachkaev/commands": "^0.1.1",
     "@kachkaev/eslint-config-react": "^0.2.3",
     "@kachkaev/markdownlint-config": "^0.2.0",
     "@kachkaev/prettier-config": "^1.2.0",

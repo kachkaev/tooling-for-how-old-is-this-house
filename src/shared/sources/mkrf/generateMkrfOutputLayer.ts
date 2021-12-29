@@ -89,7 +89,7 @@ const deriveTypologies = (objectFile: MkrfObjectFile): string[] => {
   return typologies;
 };
 export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
-  logger,
+  output,
   geocodeAddress,
 }) => {
   const outputFeatures: OutputLayer["features"] = [];
@@ -97,7 +97,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
   const territoryCentroid = turf.centroid(await getTerritoryExtent());
 
   await processFiles({
-    logger,
+    output,
     fileSearchDirPath: getMkrfObjectDirPath(),
     fileSearchPattern: "*--info.json",
     filesNicknameToLog: "mkrf object info files",
@@ -109,12 +109,12 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       const warningPrefix = chalk.yellow(`${" ".repeat(prefixLength - 1)}! `);
 
       const objectFile: MkrfObjectFile = await fs.readJson(filePath);
-      logger?.log(`${prefix}${objectFile.nativeName}`);
+      output?.write(`${prefix}${objectFile.nativeName}\n`);
 
       // Filter by typology
       const typologies = deriveTypologies(objectFile);
       const hasRightTypology = typologies.some(isTypologyExpected);
-      logger?.log(
+      output?.write(
         `${hasRightTypology ? prefix : shouldNotProceedPrefix}${
           typologies
             .map((value) => {
@@ -123,11 +123,11 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
               return color(value);
             })
             .join(", ") || chalk.gray("no typology types found")
-        }`,
+        }\n`,
       );
 
       if (!hasRightTypology) {
-        logger?.log("");
+        output?.write("\n");
 
         return;
       }
@@ -135,9 +135,9 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       // Address
       const address = objectFile.data?.general?.address?.fullAddress;
       if (address) {
-        logger?.log(`${prefix}${chalk.cyan(address)}`);
+        output?.write(`${prefix}${chalk.cyan(address)}\n`);
       } else {
-        logger?.log(`${warningPrefix}${chalk.yellow("No address")}`);
+        output?.write(`${warningPrefix}${chalk.yellow("No address")}\n`);
       }
 
       // Id
@@ -207,18 +207,20 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       }
 
       if (point) {
-        logger?.log(
+        output?.write(
           `${prefix}${chalk.cyan(
             `[${point.coordinates.join(", ")}]`,
-          )} (${pointSource})`,
+          )} (${pointSource})\n`,
         );
       }
 
       if (!address && !point) {
-        logger?.log(
-          chalk.gray(`${shouldNotProceedPrefix}no coordinates and no address`),
+        output?.write(
+          chalk.gray(
+            `${shouldNotProceedPrefix}no coordinates and no address\n`,
+          ),
         );
-        logger?.log("");
+        output?.write("\n");
 
         return;
       }
@@ -245,14 +247,14 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       );
 
       if (!point && geocodeAddress) {
-        logger?.log(
+        output?.write(
           chalk.yellow(
-            `${prefix}If the building still exists, please provide object coordinates via\n${prefix}territory-config.yml → sources → mkrf → fixedLonLatById → ${id}: [lon, lat]`,
+            `${prefix}If the building still exists, please provide object coordinates via\n${prefix}territory-config.yml → sources → mkrf → fixedLonLatById → ${id}: [lon, lat]\n`,
           ),
         );
       }
 
-      logger?.log("");
+      output?.write("\n");
     },
   });
 

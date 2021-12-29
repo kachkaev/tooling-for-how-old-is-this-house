@@ -11,10 +11,10 @@ import { generateMingkhHouseInfoCollection } from "./generateMingkhHouseInfoColl
 export const notFilledIn = ["Не заполнено", "Нет данных"];
 
 export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
-  logger,
+  output,
 }) => {
   const houseInfoCollection = await generateMingkhHouseInfoCollection({
-    logger,
+    output,
   });
 
   const outputFeatures: OutputLayer["features"] =

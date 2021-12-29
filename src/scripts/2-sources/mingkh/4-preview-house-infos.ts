@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import path from "path";
 
@@ -9,11 +8,15 @@ import {
   getMingkhDirPath,
 } from "../../../shared/sources/mingkh";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/mingkh: Previewing house infos as geojson"));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(
+    chalk.bold("sources/mingkh: Previewing house infos as geojson\n"),
+  );
 
   const houseInfoCollection = await generateMingkhHouseInfoCollection({
-    logger,
+    output,
   });
 
   await ensureTerritoryGitignoreContainsPreview();
@@ -24,11 +27,9 @@ const command: Command = async ({ logger }) => {
   );
   await writeFormattedJson(previewHouseInfosFilePath, houseInfoCollection);
 
-  process.stdout.write(
+  output.write(
     ` Result saved to ${chalk.magenta(previewHouseInfosFilePath)}\n`,
   );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

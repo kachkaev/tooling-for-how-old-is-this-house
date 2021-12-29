@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import axios from "axios";
 import chalk from "chalk";
 import qs from "qs";
@@ -13,8 +12,10 @@ import {
   loopThroughHouseLists,
 } from "../../../shared/sources/mingkh";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/mingkh: Fetching house lists"));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(chalk.bold("sources/mingkh: Fetching house lists\n"));
 
   await loopThroughHouseLists(
     async ({ regionUrl, cityUrl, houseListFilePath }) => {
@@ -39,13 +40,10 @@ const command: Command = async ({ logger }) => {
 
       await writeFormattedJson(houseListFilePath, json);
 
-      process.stdout.write(
-        ` Result saved to ${chalk.magenta(houseListFilePath)}\n`,
-      );
+      output.write(` Result saved to ${chalk.magenta(houseListFilePath)}\n`);
     },
+    output,
   );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

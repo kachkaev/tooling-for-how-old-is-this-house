@@ -1,13 +1,10 @@
-import { autoStartCommandIfNeeded } from "@kachkaev/commands";
-
 import { generateExtractOutputLayer } from "../../../shared/helpersForScripts";
 import { generateOsmOutputLayer } from "../../../shared/sources/osm";
 
-const command = generateExtractOutputLayer({
+const script = generateExtractOutputLayer({
+  output: process.stdout,
   source: "osm",
   generateOutputLayer: generateOsmOutputLayer,
 });
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

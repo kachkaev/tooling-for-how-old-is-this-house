@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import _ from "lodash";
 import rmUp from "rm-up";
+import { WriteStream } from "tty";
 
 import { normalizeAddressAtomically } from "../addresses";
 import { getTerritoryAddressHandlingConfig } from "../territory";
@@ -67,19 +68,17 @@ const removeEmptyItems = (dictionary: GeocodeDictionary): GeocodeDictionary => {
 };
 
 export const reportGeocodes = async ({
-  logger,
+  output,
   reportedGeocodes,
   source,
 }: {
-  logger?: Console;
+  output?: WriteStream;
   reportedGeocodes: ReportedGeocode[];
   source: string;
 }): Promise<void> => {
-  if (logger) {
-    process.stdout.write(chalk.green("Preparing to report geocodes..."));
-  }
+  output?.write(chalk.green("Preparing to report geocodes..."));
 
-  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(logger);
+  const addressHandlingConfig = await getTerritoryAddressHandlingConfig(output);
   const sourceDictionary: GeocodeDictionary = {};
   const weightDictionary: Record<string, number> = {};
 
@@ -91,9 +90,9 @@ export const reportGeocodes = async ({
     );
 
     if (!normalizedAddresses.length) {
-      logger?.log(
+      output?.write(
         chalk.yellow(
-          `Skipping "${reportedGeocode.address}" (normalized address is empty)`,
+          `Skipping "${reportedGeocode.address}" (normalized address is empty)\n`,
         ),
       );
       continue;
@@ -104,7 +103,7 @@ export const reportGeocodes = async ({
         address: reportedGeocode.address,
         normalizedAddress,
         addressNormalizationConfig: addressHandlingConfig,
-        logger,
+        output,
       });
 
       const existingWeight = weightDictionary[normalizedAddress];
@@ -140,15 +139,11 @@ export const reportGeocodes = async ({
     sourceDictionaryLookup[sliceId]![normalizedAddress] = addressRecord;
   }
 
-  if (logger) {
-    process.stdout.write(` Done.\n`);
-  }
+  output?.write(` Done.\n`);
 
-  const existingDictionaryLookup = await loadGeocodeDictionaryLookup(logger);
+  const existingDictionaryLookup = await loadGeocodeDictionaryLookup(output);
 
-  if (logger) {
-    process.stdout.write(chalk.green("Writing changes to dictionaries..."));
-  }
+  output?.write(chalk.green("Writing changes to dictionaries..."));
 
   ensureTerritoryGitignoreContainsGeocoding();
 
@@ -205,9 +200,7 @@ export const reportGeocodes = async ({
     await writeGeocodeDictionary(dictionaryFilePath, dictionary);
   }
 
-  if (logger) {
-    process.stdout.write(
-      ` Dictionaries created: ${numberOfDictionariesCreated}, updated: ${numberOfDictionariesUpdated}, deleted: ${numberOfDictionariesDeleted}.\n`,
-    );
-  }
+  output?.write(
+    ` Dictionaries created: ${numberOfDictionariesCreated}, updated: ${numberOfDictionariesUpdated}, deleted: ${numberOfDictionariesDeleted}.\n`,
+  );
 };

@@ -200,13 +200,13 @@ const extractWikipediaUrl = (
 };
 
 export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
-  logger,
+  output,
 }) => {
   const territoryExtent = await getTerritoryExtent();
 
   const features: OutputLayerFeature[] = [];
   await processFiles({
-    logger,
+    output,
     fileSearchDirPath: getWikivoyagePagesDir(),
     fileSearchPattern: `**/*${getWikivoyagePageFileSuffix()}`,
     statusReportFrequency: 1,

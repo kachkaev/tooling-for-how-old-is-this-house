@@ -1,4 +1,5 @@
 import * as turf from "@turf/turf";
+import { WriteStream } from "tty";
 
 import { GeocodeAddressResult } from "../geocoding";
 
@@ -58,8 +59,8 @@ export type ConfiguredGeocodeAddress = (
 ) => GeocodeAddressResult;
 
 export type GenerateOutputLayer = (payload: {
-  logger?: Console;
   geocodeAddress?: ConfiguredGeocodeAddress;
+  output?: WriteStream;
 }) => Promise<OutputLayer>;
 
 export type OutputGeometry = turf.Polygon | turf.MultiPolygon;

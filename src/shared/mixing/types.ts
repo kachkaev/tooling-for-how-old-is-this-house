@@ -1,4 +1,5 @@
 import * as turf from "@turf/turf";
+import { WriteStream } from "tty";
 
 import { OutputLayerProperties } from "../outputLayers";
 import { OutputGeometry } from "../outputLayers/types";
@@ -54,7 +55,7 @@ export interface PickFromPropertyVariants<
   (
     payload: {
       listRelevantPropertyVariants: ListRelevantPropertyVariants;
-      logger: Console;
+      output: WriteStream;
       targetBuildArea: number;
     } & ExtraPayload,
   ): Pick<MixedPropertyVariants, PropertiesToPick> | undefined;

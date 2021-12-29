@@ -1,4 +1,3 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
@@ -18,8 +17,10 @@ import {
   HouseInfoFile,
 } from "../../../shared/sources/mingkh";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/mingkh: Parsing raw house infos"));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(chalk.bold("sources/mingkh: Parsing raw house infos\n"));
 
   let numberOfJsonsWritten = 0;
   let numberOfJsonsSkipped = 0;
@@ -28,7 +29,7 @@ const command: Command = async ({ logger }) => {
     fileSearchDirPath: getMingkhHousesDirPath(),
     fileSearchPattern: "**/*-raw-info.html",
     filesNicknameToLog: "raw house infos",
-    logger,
+    output,
     processFile: async (
       rawHouseInfoFilePath,
       prefixLength,
@@ -128,10 +129,10 @@ const command: Command = async ({ logger }) => {
       if (!needToWriteFile) {
         numberOfJsonsSkipped += 1;
         if (reportingStatus) {
-          logger.log(
+          output.write(
             `${" ".repeat(prefixLength + 1)}${chalk.gray(
               houseInfoFilePath,
-            )} (already up to date)`,
+            )} (already up to date)\n`,
           );
         }
 
@@ -142,19 +143,19 @@ const command: Command = async ({ logger }) => {
       numberOfJsonsWritten += 1;
 
       if (reportingStatus) {
-        logger.log(
-          `${" ".repeat(prefixLength + 1)}${chalk.magenta(houseInfoFilePath)}`,
+        output.write(
+          `${" ".repeat(prefixLength + 1)}${chalk.magenta(
+            houseInfoFilePath,
+          )}\n`,
         );
       }
     },
     statusReportFrequency: 500,
   });
 
-  logger.log(
-    `Done. Number of JSON files written: ${numberOfJsonsWritten}, kept as is: ${numberOfJsonsSkipped}.`,
+  output.write(
+    `Done. Number of JSON files written: ${numberOfJsonsWritten}, kept as is: ${numberOfJsonsSkipped}.\n`,
   );
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

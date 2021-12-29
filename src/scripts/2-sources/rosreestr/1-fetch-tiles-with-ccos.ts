@@ -1,22 +1,21 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 
 import { generateProcessTile } from "../../../shared/sources/rosreestr";
 import { getTerritoryExtent } from "../../../shared/territory";
 import { processTiles } from "../../../shared/tiles";
 
-const command: Command = async ({ logger }) => {
-  logger.log(chalk.bold("sources/rosreestr: Fetching tiles with CCOs"));
+const output = process.stdout;
+
+const script = async () => {
+  output.write(chalk.bold("sources/rosreestr: Fetching tiles with CCOs\n"));
 
   await processTiles({
     initialZoom: 13,
     maxAllowedZoom: 24,
-    territoryExtent: await getTerritoryExtent(),
+    output,
     processTile: generateProcessTile("cco"),
-    logger,
+    territoryExtent: await getTerritoryExtent(),
   });
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();

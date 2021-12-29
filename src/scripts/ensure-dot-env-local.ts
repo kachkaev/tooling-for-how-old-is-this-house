@@ -1,21 +1,19 @@
-import { autoStartCommandIfNeeded, Command } from "@kachkaev/commands";
 import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 
-const command: Command = async ({ logger }) => {
+const script = async () => {
+  const output = process.stdout;
   const filePath = path.resolve(".env.local");
   if (await fs.pathExists(filePath)) {
-    logger.log(`File already exists: ${chalk.gray(`${filePath}`)} `);
+    output.write(`File already exists: ${chalk.gray(`${filePath}`)}\n`);
 
     return;
   }
 
-  process.stdout.write(`Creating ${chalk.magenta(`${filePath}`)}...`);
+  output.write(`Creating ${chalk.magenta(`${filePath}`)}...`);
   await fs.ensureFile(filePath);
-  logger.log(` Done.`);
+  output.write(" Done.\n");
 };
 
-autoStartCommandIfNeeded(command, __filename);
-
-export default command;
+script();
