@@ -2,6 +2,7 @@ module.exports = {
   extends: ["@kachkaev/eslint-config-react"],
   rules: {
     "import/no-default-export": "error",
+    "import/no-unresolved": "off", // https://github.com/import-js/eslint-plugin-import/issues/2132
     "@typescript-eslint/naming-convention": [
       "error",
       // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/naming-convention.md

@@ -1,4 +1,4 @@
-import execa from "execa";
+import { execa } from "execa";
 
 import { getMixedPropertyVariantsFilePath } from "../shared/mixing";
 import { getOsmDirPath } from "../shared/sources/osm";
