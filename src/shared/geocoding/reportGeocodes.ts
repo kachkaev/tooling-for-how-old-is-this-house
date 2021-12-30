@@ -182,7 +182,8 @@ export const reportGeocodes = async ({
     // Create, update or delete dictionary
     const dictionaryFilePath = getDictionaryFilePath(sliceId);
     if (_.isEmpty(dictionary)) {
-      await rmUp(dictionaryFilePath, { deleteInitial: true });
+      // @ts-expect-error -- upstream issue with native ESM modules
+      await rmUp.default(dictionaryFilePath, { deleteInitial: true });
       numberOfDictionariesDeleted += 1;
       continue;
     }
