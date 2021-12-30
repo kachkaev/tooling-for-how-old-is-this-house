@@ -85,7 +85,7 @@ const script = async () => {
 
   output.write(chalk.green(`Deleting...`));
   for (const filePath of filePathsToDelete) {
-    // @ts-expect-error -- upstream issue with native ESM modules
+    // @ts-expect-error -- https://github.com/ozum/rm-up/issues/2
     await rmUp.default(filePath, { deleteInitial: true });
   }
   output.write(chalk.magenta(` Done.\n`));

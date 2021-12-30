@@ -182,7 +182,7 @@ export const reportGeocodes = async ({
     // Create, update or delete dictionary
     const dictionaryFilePath = getDictionaryFilePath(sliceId);
     if (_.isEmpty(dictionary)) {
-      // @ts-expect-error -- upstream issue with native ESM modules
+      // @ts-expect-error -- https://github.com/ozum/rm-up/issues/2
       await rmUp.default(dictionaryFilePath, { deleteInitial: true });
       numberOfDictionariesDeleted += 1;
       continue;
