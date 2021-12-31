@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import rmUp from "rm-up";
+import { rmUp } from "rm-up";
 import sleep from "sleep-promise";
 
 import { loadCombinedGeocodeDictionary } from "../../../shared/geocoding";
@@ -85,8 +85,7 @@ const script = async () => {
 
   output.write(chalk.green(`Deleting...`));
   for (const filePath of filePathsToDelete) {
-    // @ts-expect-error -- https://github.com/ozum/rm-up/issues/2
-    await rmUp.default(filePath, { deleteInitial: true });
+    await rmUp(filePath, { deleteInitial: true });
   }
   output.write(chalk.magenta(` Done.\n`));
 };

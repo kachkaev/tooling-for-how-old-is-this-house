@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import _ from "lodash";
-import rmUp from "rm-up";
+import { rmUp } from "rm-up";
 import { WriteStream } from "tty";
 
 import { normalizeAddressAtomically } from "../addresses";
@@ -182,8 +182,7 @@ export const reportGeocodes = async ({
     // Create, update or delete dictionary
     const dictionaryFilePath = getDictionaryFilePath(sliceId);
     if (_.isEmpty(dictionary)) {
-      // @ts-expect-error -- https://github.com/ozum/rm-up/issues/2
-      await rmUp.default(dictionaryFilePath, { deleteInitial: true });
+      await rmUp(dictionaryFilePath, { deleteInitial: true });
       numberOfDictionariesDeleted += 1;
       continue;
     }

@@ -111,7 +111,7 @@
     "prettier": "^2.5.1",
     "puppeteer": "^13.0.1",
     "qs": "^6.10.2",
-    "rm-up": "^1.0.4",
+    "rm-up": "^1.1.0",
     "sleep-promise": "^9.1.0",
     "sort-keys": "^5.0.0",
     "ts-jest": "^27.1.2",
