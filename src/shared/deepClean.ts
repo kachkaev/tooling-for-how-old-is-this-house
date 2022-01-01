@@ -7,7 +7,7 @@ import { OmitNulls } from "./types";
  */
 export const deepClean = <T>(obj: T): OmitNulls<T> =>
   JSON.parse(
-    JSON.stringify(obj, (k, v) =>
-      v === null || v === undefined ? undefined : v,
+    JSON.stringify(obj, (key, value) =>
+      value === null || value === undefined ? undefined : value,
     ),
   );

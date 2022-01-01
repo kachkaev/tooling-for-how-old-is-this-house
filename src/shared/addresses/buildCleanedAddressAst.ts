@@ -439,8 +439,8 @@ export const buildCleanedAddressAst = (
     | DesignationConfig
     | undefined = undefined;
 
-  for (let i = 0; i < nodes.length; i += 1) {
-    const node = nodes[i];
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index];
     if (node?.nodeType === "separator" && node.separatorType !== "dash") {
       previouslySeenDesignationInThisSection = undefined;
       previouslySeenDesignationConfigInThisSection = undefined;
@@ -483,8 +483,8 @@ export const buildCleanedAddressAst = (
   // - it is surrounded by separators
   // - comes after house designation
   // - comes before ‘строение’
-  for (let i = 0; i < nodes.length; i += 1) {
-    const node = nodes[i];
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index];
 
     if (
       node?.nodeType !== "word" ||
@@ -494,7 +494,7 @@ export const buildCleanedAddressAst = (
       continue;
     }
 
-    const prevNode = nodes[i - 1];
+    const prevNode = nodes[index - 1];
     if (
       prevNode?.nodeType === "word" &&
       (!isDesignation(prevNode) ||
@@ -504,7 +504,7 @@ export const buildCleanedAddressAst = (
       continue;
     }
 
-    const nextNode = nodes[i + 1];
+    const nextNode = nodes[index + 1];
     if (nextNode?.nodeType === "word" && nextNode.value !== "строение") {
       continue;
     }

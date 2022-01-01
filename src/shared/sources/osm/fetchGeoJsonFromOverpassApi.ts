@@ -97,7 +97,7 @@ export const fetchGeojsonFromOverpassApi = async ({
   });
 
   // Remove feature ids given that there is a property with the same value
-  geojsonData.features.forEach((feature) => {
+  const featuresWithoutId = geojsonData.features.map((feature) => {
     if (!feature.properties?.id) {
       throw new Error(`Unexpected missing id property in ${feature.id}`);
     }
@@ -106,7 +106,13 @@ export const fetchGeojsonFromOverpassApi = async ({
         `feature.id (${feature.id}) does not match feature.properties.id (${feature.properties?.id})`,
       );
     }
-    delete feature.id;
+
+    const { id, ...rest } = feature;
+    if (id) {
+      return rest;
+    }
+
+    return feature;
   });
 
   output?.write(" Done.\n");
@@ -116,6 +122,6 @@ export const fetchGeojsonFromOverpassApi = async ({
     copyright: "OpenStreetMap contributors",
     fetchedAt: serializeTime(),
     license: "ODbL",
-    features: geojsonData.features,
+    features: featuresWithoutId,
   };
 };

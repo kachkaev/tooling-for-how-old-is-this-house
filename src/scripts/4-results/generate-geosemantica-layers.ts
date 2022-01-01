@@ -159,7 +159,7 @@ const generateCopyrights = ({
   }
 
   return `фото: ${[photoAuthorName, photoAuthorUrl]
-    .filter((v) => Boolean(v))
+    .filter((value) => Boolean(value))
     .join(", ")}`;
 };
 

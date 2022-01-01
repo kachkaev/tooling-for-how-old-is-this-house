@@ -34,7 +34,9 @@ const script = async () => {
       const rawCoordinates: string | undefined = geoObject?.Point?.pos;
 
       const [lon, lat] =
-        rawCoordinates?.split(" ").map((n) => parseFloat(n)) ?? [];
+        rawCoordinates
+          ?.split(" ")
+          .map((coordinate) => parseFloat(coordinate)) ?? [];
 
       if (lon && lat) {
         coordinates = [lon, lat];

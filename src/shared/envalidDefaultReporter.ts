@@ -22,14 +22,14 @@ export const defaultReporter = ({ errors = {} }: ReporterOptions<any>) => {
 
   const missingVarsOutput: string[] = [];
   const invalidVarsOutput: string[] = [];
-  for (const [k, err] of Object.entries(errors)) {
-    if (err instanceof EnvMissingError) {
+  for (const [key, error] of Object.entries(errors)) {
+    if (error instanceof EnvMissingError) {
       missingVarsOutput.push(
-        `    ${colors.blue(k)}: ${err.message || "(required)"}`,
+        `    ${colors.blue(key)}: ${error.message || "(required)"}`,
       );
     } else {
       invalidVarsOutput.push(
-        `    ${colors.blue(k)}: ${err?.message || "(invalid format)"}`,
+        `    ${colors.blue(key)}: ${error?.message || "(invalid format)"}`,
       );
     }
   }

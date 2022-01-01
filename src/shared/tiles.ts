@@ -12,7 +12,9 @@ export const stringifyTile = (tile: Tile): string =>
   `${tile[2]}/${tile[0]}/${tile[1]}`;
 
 export const parseTile = (stringifiedTile: string): Tile => {
-  const result = stringifiedTile.split("/").map((v) => parseInt(v) ?? 0);
+  const result = stringifiedTile
+    .split("/")
+    .map((stringifiedTileSection) => parseInt(stringifiedTileSection) ?? 0);
   if (result.length !== 3) {
     throw new Error(
       `Expected 3 parts in stringified tile, got ${result.length}`,

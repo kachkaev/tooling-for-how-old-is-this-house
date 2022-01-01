@@ -6,14 +6,14 @@ const defaultAddressHandlingConfig = compileAddressHandlingConfig({});
 
 describe("normalizeAddress", () => {
   it(`returns undefined for undefined`, () => {
-    expect(normalizeAddress(undefined, {})).toEqual(undefined);
+    expect(normalizeAddress(undefined, {})).toBeUndefined();
   });
 
   it(`returns undefined for punctuation only`, () => {
-    expect(normalizeAddress("-", {})).toEqual(undefined);
-    expect(normalizeAddress("  ", {})).toEqual(undefined);
-    expect(normalizeAddress("  - ", {})).toEqual(undefined);
-    expect(normalizeAddress("  / -. ", {})).toEqual(undefined);
+    expect(normalizeAddress("-", {})).toBeUndefined();
+    expect(normalizeAddress("  ", {})).toBeUndefined();
+    expect(normalizeAddress("  - ", {})).toBeUndefined();
+    expect(normalizeAddress("  / -. ", {})).toBeUndefined();
   });
 
   testCases.forEach(

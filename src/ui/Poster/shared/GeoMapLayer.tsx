@@ -43,7 +43,7 @@ const GeoMapLayer: GeoMapLayerType = ({
       {chunkedFeatures.map((featuresInChunk, chunkIndex) => (
         <Mercator
           // Prevents fill overflow (e.g. river flooding the entire poster in Volgograd)
-          data={featuresInChunk.map((f) => rewind(f, true))}
+          data={featuresInChunk.map((feature) => rewind(feature, true))}
           key={chunkIndex}
           {...projectionConfig}
         >

@@ -17,7 +17,7 @@ const height = 70;
 
 const Wrapper = styled.div<{ spaced?: boolean }>`
   width: ${width}px;
-  ${(p) => (p.spaced ? "padding: 20px;" : "")};
+  ${(props) => (props.spaced ? "padding: 20px;" : "")};
 `;
 
 const Figure = styled.div`
@@ -78,26 +78,28 @@ export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
         />
       </Figure>
 
-      {(!snapshot || snapshot === "color-blindness") &&
-        colorBlindnessConditions.map((condition) => (
-          <ColorBlindness key={condition}>
-            <ColorBlindnessTitle>
-              {colorBlindnessConditionTitleLookup[locale ?? ""]?.[condition] ??
-                condition}
-            </ColorBlindnessTitle>
-            <Figure
-              style={{
-                filter: generateColorBlindnessFilterCssProperty(condition),
-              }}
-            >
-              <ColorLegendSvg
-                width={width}
-                height={height}
-                legendEntries={legendEntries}
-              />
-            </Figure>
-          </ColorBlindness>
-        ))}
+      {!snapshot || snapshot === "color-blindness"
+        ? colorBlindnessConditions.map((condition) => (
+            <ColorBlindness key={condition}>
+              <ColorBlindnessTitle>
+                {colorBlindnessConditionTitleLookup[locale ?? ""]?.[
+                  condition
+                ] ?? condition}
+              </ColorBlindnessTitle>
+              <Figure
+                style={{
+                  filter: generateColorBlindnessFilterCssProperty(condition),
+                }}
+              >
+                <ColorLegendSvg
+                  width={width}
+                  height={height}
+                  legendEntries={legendEntries}
+                />
+              </Figure>
+            </ColorBlindness>
+          ))
+        : null}
     </Wrapper>
   );
 };

@@ -127,11 +127,12 @@ type MaybeFeature<T extends turf.Geometry> = T | turf.Feature<T>;
  */
 export const calculatePointDistanceToPolygonInMeters = (
   point: MaybeFeature<turf.Point>,
-  polygon: MaybeFeature<turf.Polygon | turf.MultiPolygon>,
+  polygonFeatureOrGeometry: MaybeFeature<turf.Polygon | turf.MultiPolygon>,
 ) => {
-  if (polygon.type === "Feature") {
-    polygon = polygon.geometry;
-  }
+  const polygon =
+    polygonFeatureOrGeometry.type === "Feature"
+      ? polygonFeatureOrGeometry.geometry
+      : polygonFeatureOrGeometry;
 
   let distance: number;
   if (polygon.type === "MultiPolygon") {

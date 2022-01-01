@@ -1,2 +1,2 @@
-export * from "./helpersForPaths";
 export * from "./getLocaleFromEnv";
+export * from "./helpersForPaths";

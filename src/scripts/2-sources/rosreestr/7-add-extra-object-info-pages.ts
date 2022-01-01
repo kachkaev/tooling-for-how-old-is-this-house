@@ -94,10 +94,10 @@ const script = async () => {
 
     const numberOfPagesToAdd = tailIsFullOfFlats ? 5 : 3;
 
-    for (let i = 1; i <= numberOfPagesToAdd; i += 1) {
+    for (let index = 1; index <= numberOfPagesToAdd; index += 1) {
       pagesToCreate.push({
         blockCn,
-        pageNumber: maxPageNumber + i,
+        pageNumber: maxPageNumber + index,
       });
     }
   }

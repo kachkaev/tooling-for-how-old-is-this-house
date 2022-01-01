@@ -33,6 +33,9 @@ const formatColor: FormatColor = (color) =>
 // The option can be set to true before map publishing for debugging.
 const yearLabelsWhenZoomedIn = false;
 
+const formatSld = (rawSld: string): string =>
+  rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
+
 const generateSld = ({ rules }: { rules: string | string[] }) =>
   formatSld(html`
     <StyledLayerDescriptor
@@ -364,9 +367,6 @@ const generateMkrfHighlightRules = () => html`
     </se:LineSymbolizer>
   </se:Rule>
 `;
-
-const formatSld = (rawSld: string): string =>
-  rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
 
 const script = async () => {
   output.write(chalk.bold("results: Generating Geosemantica layer styles\n"));

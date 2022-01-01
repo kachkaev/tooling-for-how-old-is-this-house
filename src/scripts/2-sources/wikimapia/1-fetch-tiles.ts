@@ -1,5 +1,5 @@
 import * as tilebelt from "@mapbox/tilebelt";
-// @ts-ignore https://github.com/tmcw/togeojson/issues/46
+// @ts-expect-error https://github.com/tmcw/togeojson/issues/46
 import * as tj from "@tmcw/togeojson";
 import * as turf from "@turf/turf";
 import { DOMParser } from "@xmldom/xmldom";

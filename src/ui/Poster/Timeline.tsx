@@ -14,8 +14,8 @@ import { MapCompletionYearToColor } from "./types";
 
 const numberFormat = Intl.NumberFormat("ru");
 
-const formatNumber = (n: number) => {
-  return numberFormat.format(n).replace(/\u00A0/g, "\u202F");
+const formatNumber = (number: number) => {
+  return numberFormat.format(number).replace(/\u00A0/g, "\u202F");
 };
 
 const Wrapper = styled.div`
@@ -47,8 +47,8 @@ const paddingBottom = 28 * pointsInMm;
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
 
-  for (let n = 0; n < value; n += tickSize) {
-    result.push(n);
+  for (let tick = 0; tick < value; tick += tickSize) {
+    result.push(tick);
   }
   result.push(value);
 

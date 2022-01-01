@@ -8,7 +8,7 @@ import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
 import { usePosterConfig } from "../ui/shared/usePosterConfig";
 
 const ColorLegend = dynamic<ColorLegendProps>(
-  import("../ui/ColorLegend").then((m) => m.ColorLegend),
+  import("../ui/ColorLegend").then((module) => module.ColorLegend),
   { ssr: false },
 );
 

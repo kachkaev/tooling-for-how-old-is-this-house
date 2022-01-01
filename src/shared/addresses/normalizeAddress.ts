@@ -37,10 +37,10 @@ export const normalizeAddress = (
       postProcessWordsInStandardizedAddressSection,
       finalizeWordSpelling,
     );
-  } catch (e: unknown) {
-    if (e instanceof AddressInterpretationError) {
+  } catch (error) {
+    if (error instanceof AddressInterpretationError) {
       return printCleanedAddressAst(cleanedAddressAst, finalizeWordSpelling);
     }
-    throw e;
+    throw error;
   }
 };

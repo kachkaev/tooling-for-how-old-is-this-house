@@ -1,7 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiHandler } from "next";
 
 import { getTerritoryConfig } from "../../shared/territory";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler: NextApiHandler = async (req, res) => {
   res.status(200).json(await getTerritoryConfig());
 };
+
+export default handler;

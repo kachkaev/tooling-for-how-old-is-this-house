@@ -4,15 +4,15 @@ import { DateTime } from "luxon";
 import path from "path";
 
 export const serializeTime = (time?: string): string => {
-  let t: DateTime | undefined = undefined;
+  let dateTime: DateTime | undefined = undefined;
   if (time) {
-    t = DateTime.fromRFC2822(time).setZone("utc");
-    if (!t.isValid) {
-      t = DateTime.fromISO(time).setZone("utc");
+    dateTime = DateTime.fromRFC2822(time).setZone("utc");
+    if (!dateTime.isValid) {
+      dateTime = DateTime.fromISO(time).setZone("utc");
     }
   }
 
-  return (t ?? DateTime.utc())
+  return (dateTime ?? DateTime.utc())
     .set({ millisecond: 0 })
     .toISO({ suppressMilliseconds: true });
 };
@@ -85,7 +85,7 @@ export const formatJson = (
           ),
           (match, p1) => `[{${p1.replace(/\n\t/g, "\n")}${whitespace}}]`,
         );
-      } catch (e) {
+      } catch {
         // The following error has been noticed in a GeoJSON with ≈ 1M rows:
         //
         //    "RangeError: Maximum call stack size exceeded"

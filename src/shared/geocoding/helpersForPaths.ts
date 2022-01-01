@@ -80,9 +80,9 @@ export const deriveNormalizedAddressSliceId = (
     slices.push(createStandardizedSlice(standardizedAddressAst.region));
     slices.push(createStandardizedSlice(standardizedAddressAst.settlement));
     slices.push(createStandardizedSlice(standardizedAddressAst.streets[0]));
-  } catch (e: unknown) {
-    if (!(e instanceof AddressInterpretationError)) {
-      throw e;
+  } catch (error) {
+    if (!(error instanceof AddressInterpretationError)) {
+      throw error;
     }
     slices.push("cleaned");
     const firstLetters: string[] = [];

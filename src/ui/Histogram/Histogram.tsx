@@ -74,8 +74,8 @@ const legendBackgroundWidth = 100;
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
 
-  for (let n = 0; n < value; n += tickSize) {
-    result.push(n);
+  for (let tick = 0; tick < value; tick += tickSize) {
+    result.push(tick);
   }
   result.push(value);
 

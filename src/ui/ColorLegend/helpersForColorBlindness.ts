@@ -51,7 +51,10 @@ export const getColorTransformMatrix = (
 
 const stringifyColorTransformMatrix = (matrixRows: number[][]) => {
   return matrixRows
-    .map((numbersInRow) => `${numbersInRow.map((n) => `${n}`).join(" ")}`)
+    .map(
+      (numbersInRow) =>
+        `${numbersInRow.map((number) => `${number}`).join(" ")}`,
+    )
     .join("\n ");
 };
 

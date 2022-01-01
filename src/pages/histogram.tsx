@@ -10,7 +10,7 @@ import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
 import { usePosterConfig } from "../ui/shared/usePosterConfig";
 
 const Histogram = dynamic<HistogramProps>(
-  import("../ui/Histogram").then((m) => m.Histogram),
+  import("../ui/Histogram").then((module) => module.Histogram),
   { ssr: false },
 );
 

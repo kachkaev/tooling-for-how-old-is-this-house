@@ -34,8 +34,8 @@ export const loopThroughHouseLists = async (
 
     try {
       await callback({ regionUrl, cityUrl, houseListFilePath });
-    } catch (e) {
-      output.write(chalk.red(` Error: ${e}\n`));
+    } catch (error) {
+      output.write(chalk.red(` Error: ${error}\n`));
     }
   }
 };
@@ -75,8 +75,8 @@ export const loopThroughRowsInHouseList = async (
     try {
       const houseId = extractHouseIdFromUrl(row.url);
       await callback({ houseId, houseUrl: row.url });
-    } catch (e) {
-      output.write(chalk.red(` Error: ${e}\n`));
+    } catch (error) {
+      output.write(chalk.red(` Error: ${error}\n`));
     }
   }
 };
