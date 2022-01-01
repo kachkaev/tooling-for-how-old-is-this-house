@@ -137,7 +137,7 @@ const script = async () => {
       );
       output.write(
         chalk.yellow(
-          "Some commands do not support MultiPolygon territories, so picking a Polygon with max area:\n",
+          "Some scripts do not support MultiPolygon territories, so picking a Polygon with max area:\n",
         ),
       );
       const polygonAreas = polygons.map((polygon) => turf.area(polygon));

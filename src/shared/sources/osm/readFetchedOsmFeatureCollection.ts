@@ -72,7 +72,7 @@ ReadFetchedOsmFeatureCollection = async (collectionName: string) => {
       collectionName === "boundaries-for-settlements")
   ) {
     throw new ScriptError(
-      `Please generate ${filePath} by running a corresponding command.`,
+      `Please generate ${filePath} by running a corresponding script.`,
     );
   }
 

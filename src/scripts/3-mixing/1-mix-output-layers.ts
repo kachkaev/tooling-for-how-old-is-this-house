@@ -237,7 +237,7 @@ const script = async () => {
 
   if (!baseLayers.length) {
     throw new ScriptError(
-      `No base layers found. Have you called all ‘generateOutputLayer’ commands?`,
+      `No base layers found. Have you called all ‘generate-output-layer’ scripts?`,
     );
   }
 
