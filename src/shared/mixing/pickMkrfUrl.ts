@@ -5,7 +5,7 @@ export const pickMkrfUrl: PickFromPropertyVariants<
   "mkrfUrl" | "mkrfUrlSource"
 > = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: ["manual", "mkrf"],

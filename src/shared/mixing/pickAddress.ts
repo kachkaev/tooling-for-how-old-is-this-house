@@ -20,7 +20,7 @@ export const pickAddress: PickFromPropertyVariants<
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: [

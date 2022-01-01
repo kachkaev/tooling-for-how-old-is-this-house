@@ -5,7 +5,7 @@ export const pickArchitect: PickFromPropertyVariants<
   "architect" | "architectSource"
 > = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: ["manual", "wikidata", "wikivoyage"],

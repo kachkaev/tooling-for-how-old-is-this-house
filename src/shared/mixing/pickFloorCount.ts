@@ -5,7 +5,7 @@ export const pickFloorCount: PickFromPropertyVariants<
   "floorCountAboveGround" | "floorCountBelowGround" | "floorCountSource"
 > = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: ["manual", "osm", "mingkh", "rosreestr"],

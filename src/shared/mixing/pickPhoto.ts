@@ -5,7 +5,7 @@ export const pickPhoto: PickFromPropertyVariants<
   "photoAuthorName" | "photoAuthorUrl" | "photoSource" | "photoUrl"
 > = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: [

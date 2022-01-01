@@ -14,7 +14,7 @@ export const pickName: PickFromPropertyVariants<
   "name" | "nameSource" | "derivedBeautifiedName"
 > = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: [

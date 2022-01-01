@@ -50,7 +50,7 @@ export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: [
