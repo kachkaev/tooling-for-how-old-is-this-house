@@ -28,7 +28,7 @@ const PosterPage: NextPage<PosterPageProps> = ({
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
 
   if (!posterConfig) {
-    return null;
+    return <></>;
   }
 
   return (

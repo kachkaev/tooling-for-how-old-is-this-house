@@ -211,7 +211,7 @@ export const createBeautifyAddress = (
       continue;
     }
 
-    letterSequences.forEach((letterSequence) => {
+    for (const letterSequence of letterSequences) {
       const simplifiedSpelling = simplifySpelling(letterSequence);
       if (simplifiedSpelling !== letterSequence) {
         const letterCasing = deriveLetterCasing(letterSequence);
@@ -233,7 +233,7 @@ export const createBeautifyAddress = (
           letterCasingLookup[simplifiedSpelling] = letterCasing;
         }
       }
-    });
+    }
   }
 
   for (const { normalizedValue, beautifiedValue } of designationConfigs) {

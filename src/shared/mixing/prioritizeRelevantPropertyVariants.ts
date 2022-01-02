@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import _ from "lodash";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import {
   ListRelevantPropertyVariants,

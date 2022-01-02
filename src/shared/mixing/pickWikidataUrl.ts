@@ -22,5 +22,5 @@ export const pickWikidataUrl: PickFromPropertyVariants<
     }
   }
 
-  return undefined;
+  return;
 };

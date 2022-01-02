@@ -46,7 +46,7 @@ const checkIfNeedsProcessing = (infoPageObject: InfoPageObject): boolean => {
 
     const normalizedObjectName =
       firResponse.objectData.objectName?.toLowerCase() ?? "";
-    if (normalizedObjectName.match(/гараж|сарай|садов/)) {
+    if (/гараж|сарай|садов/.test(normalizedObjectName)) {
       return false;
     }
 

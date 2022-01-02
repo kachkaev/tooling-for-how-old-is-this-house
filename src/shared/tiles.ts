@@ -2,7 +2,7 @@ import * as tilebelt from "@mapbox/tilebelt";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { eraseLastLineInOutput } from "./helpersForScripts";
 
@@ -14,7 +14,9 @@ export const stringifyTile = (tile: Tile): string =>
 export const parseTile = (stringifiedTile: string): Tile => {
   const result = stringifiedTile
     .split("/")
-    .map((stringifiedTileSection) => parseInt(stringifiedTileSection) || 0);
+    .map(
+      (stringifiedTileSection) => Number.parseInt(stringifiedTileSection) || 0,
+    );
   if (result.length !== 3) {
     throw new Error(
       `Expected 3 parts in stringified tile, got ${result.length}`,
@@ -121,12 +123,12 @@ export const processTiles = async ({
     }
 
     tiles = nextZoomTiles;
-    if (!tiles.length) {
+    if (tiles.length === 0) {
       break;
     }
   }
 
-  if (tiles.length) {
+  if (tiles.length > 0) {
     throw new Error(
       `Max zoom ${maxAllowedZoom} reached, number of tiles on zoom ${
         maxAllowedZoom + 1

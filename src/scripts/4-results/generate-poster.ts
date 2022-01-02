@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import * as envalid from "envalid";
-import path from "path";
+import path from "node:path";
 import puppeteer from "puppeteer";
 
 import { cleanEnv } from "../../shared/cleanEnv";
@@ -57,27 +57,25 @@ const script = async () => {
       const page = await browser.newPage();
       await page.goto(`${webAppUrl}/poster`);
 
-      if (extension === "pdf") {
-        await ensurePdfSnapshot({
-          output,
-          page,
-          pdfSizeInMillimeters: [
-            posterConfig.layout.widthInMillimeters +
-              extractPrinterBleedInMillimeters(posterConfig) * 2,
-            posterConfig.layout.heightInMillimeters +
-              extractPrinterBleedInMillimeters(posterConfig) * 2,
-          ],
-          resultFilePath,
-        });
-      } else {
-        await ensureImageSnapshot({
-          imageScaleFactor: 3,
-          output,
-          page,
-          quality: extension === "jpg" ? 85 : undefined,
-          resultFilePath,
-        });
-      }
+      await (extension === "pdf"
+        ? ensurePdfSnapshot({
+            output,
+            page,
+            pdfSizeInMillimeters: [
+              posterConfig.layout.widthInMillimeters +
+                extractPrinterBleedInMillimeters(posterConfig) * 2,
+              posterConfig.layout.heightInMillimeters +
+                extractPrinterBleedInMillimeters(posterConfig) * 2,
+            ],
+            resultFilePath,
+          })
+        : ensureImageSnapshot({
+            imageScaleFactor: 3,
+            output,
+            page,
+            quality: extension === "jpg" ? 85 : undefined,
+            resultFilePath,
+          }));
 
       await browser.close();
     },

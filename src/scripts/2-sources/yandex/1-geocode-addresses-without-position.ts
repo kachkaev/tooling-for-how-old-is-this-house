@@ -4,8 +4,8 @@ import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
-import http from "http";
-import https from "https";
+import http from "node:http";
+import https from "node:https";
 
 import { cleanEnv } from "../../../shared/cleanEnv";
 import {

@@ -27,5 +27,5 @@ export const pickFloorCount: PickFromPropertyVariants<
     }
   }
 
-  return undefined;
+  return;
 };

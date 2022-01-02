@@ -2,7 +2,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 import { DateTime } from "luxon";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { writeFormattedJson } from "../../helpersForJson";
 import { ScriptError } from "../../helpersForScripts";

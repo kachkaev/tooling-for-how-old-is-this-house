@@ -18,11 +18,11 @@ export const buildStandardizedAddressAst = (
 ): StandardizedAddressAst => {
   const sections = extractSections(cleanedAddressAst);
 
-  let region: StandardizedAddressAst["region"] | undefined = undefined;
-  let settlement: StandardizedAddressAst["settlement"] | undefined = undefined;
-  let streets: StandardizedAddressAst["streets"] | undefined = undefined;
-  let houses: StandardizedAddressAst["houses"] | undefined = undefined;
-  let housePart: StandardizedAddressAst["housePart"] | undefined = undefined;
+  let region: StandardizedAddressAst["region"] | undefined;
+  let settlement: StandardizedAddressAst["settlement"] | undefined;
+  let streets: StandardizedAddressAst["streets"] | undefined;
+  let houses: StandardizedAddressAst["houses"] | undefined;
+  let housePart: StandardizedAddressAst["housePart"] | undefined;
 
   const houseSections: AddressSection[] = [];
   const housePartSections: AddressSection[] = [];
@@ -91,7 +91,7 @@ export const buildStandardizedAddressAst = (
 
         // If there is no other section that can be treated as house
         // → remove word
-        if (!houseSections.length) {
+        if (houseSections.length === 0) {
           houseSections.push({
             index: section.index,
             words: section.words.filter((word) => word.value !== "строение"),
@@ -145,7 +145,7 @@ export const buildStandardizedAddressAst = (
     // Settlement (designation is omitted)
     if (
       !section.designation &&
-      !section.words.find((word) => word.wordType === "cardinalNumber")
+      !section.words.some((word) => word.wordType === "cardinalNumber")
     ) {
       if (settlement) {
         throw new AddressInterpretationError(
@@ -192,7 +192,7 @@ export const buildStandardizedAddressAst = (
     housePartSections.push(section);
   }
 
-  let prevHouseSection: AddressSection | undefined = undefined;
+  let prevHouseSection: AddressSection | undefined;
   for (const houseSection of houseSections) {
     let wordsToAdd = [...houseSection.words];
     const firstWordInSection = houseSection.words[0];
@@ -218,7 +218,7 @@ export const buildStandardizedAddressAst = (
     }
 
     const [firstWord, ...otherWords] = wordsToAdd;
-    if (!firstWord || otherWords.length) {
+    if (!firstWord || otherWords.length > 0) {
       throw new AddressInterpretationError(
         `Expected house section to consist of one word, got ${wordsToAdd.length}`,
       );
@@ -258,7 +258,7 @@ export const buildStandardizedAddressAst = (
   }
 
   // Assemble housePart out of the remaining sections
-  if (housePartSections.length) {
+  if (housePartSections.length > 0) {
     for (
       let sectionIndex = 0;
       sectionIndex < housePartSections.length;
@@ -315,10 +315,10 @@ export const buildStandardizedAddressAst = (
     }
 
     const wordsInHousePart: AddressNodeWithWord[] = [];
-    housePartSections.forEach((section) => {
+    for (const section of housePartSections) {
       const wordsToAdd = section.words;
       wordsInHousePart.push(...wordsToAdd);
-    });
+    }
 
     if (
       wordsInHousePart.some(
@@ -336,7 +336,7 @@ export const buildStandardizedAddressAst = (
       );
     }
 
-    if (wordsInHousePart.length) {
+    if (wordsInHousePart.length > 0) {
       housePart = {
         nodeType: "semanticPart",
         orderedWords: wordsInHousePart,

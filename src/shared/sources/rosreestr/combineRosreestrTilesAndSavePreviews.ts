@@ -1,8 +1,8 @@
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
-import path from "path";
-import { WriteStream } from "tty";
+import path from "node:path";
+import { WriteStream } from "node:tty";
 
 import { writeFormattedJson } from "../../helpersForJson";
 import { ensureTerritoryGitignoreContainsPreview } from "../../helpersForScripts";

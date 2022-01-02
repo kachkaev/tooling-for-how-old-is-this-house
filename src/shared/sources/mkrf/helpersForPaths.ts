@@ -1,5 +1,5 @@
 import * as envalid from "envalid";
-import path from "path";
+import path from "node:path";
 
 import { cleanEnv } from "../../cleanEnv";
 import { getTerritoryDirPath } from "../../territory";

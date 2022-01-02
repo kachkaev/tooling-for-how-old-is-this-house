@@ -2,10 +2,12 @@
 
 import { EnvMissingError, ReporterOptions } from "envalid";
 
+import { ScriptError } from "./helpersForScripts";
+
 // Apply ANSI colors to the reporter output only if we detect that we're running in Node
 const isNode = !!(typeof process === "object" && process.versions.node);
 const colorWith = (colorCode: string) => (str: string) =>
-  isNode ? `\x1b[${colorCode}m${str}\x1b[0m` : str;
+  isNode ? `\u001B[${colorCode}m${str}\u001B[0m` : str;
 
 const colors = {
   blue: colorWith("34"),
@@ -16,7 +18,7 @@ const colors = {
 const rule = colors.white("================================");
 
 export const defaultReporter = ({ errors = {} }: ReporterOptions<any>) => {
-  if (!Object.keys(errors).length) {
+  if (Object.keys(errors).length === 0) {
     return;
   }
 
@@ -35,12 +37,12 @@ export const defaultReporter = ({ errors = {} }: ReporterOptions<any>) => {
   }
 
   // Prepend "header" output for each section of the output:
-  if (invalidVarsOutput.length) {
+  if (invalidVarsOutput.length > 0) {
     invalidVarsOutput.unshift(
       ` ${colors.yellow("Invalid")} environment variables:`,
     );
   }
-  if (missingVarsOutput.length) {
+  if (missingVarsOutput.length > 0) {
     missingVarsOutput.unshift(
       ` ${colors.yellow("Missing")} environment variables:`,
     );
@@ -59,9 +61,9 @@ export const defaultReporter = ({ errors = {} }: ReporterOptions<any>) => {
   // eslint-disable-next-line no-console
   console.error(output);
 
-  if (isNode) {
-    process.exit(1);
-  } else {
-    throw new TypeError("Environment validation failed");
-  }
+  const error = isNode
+    ? new ScriptError("")
+    : new TypeError("Environment validation failed");
+
+  throw error;
 };

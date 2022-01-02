@@ -27,7 +27,7 @@ const cleanCompletionTimeMatch = (match?: string): string | undefined => {
   const result = (match ?? "")
     .toLowerCase()
     .replace(/(годах?|году|годов|гг)\.?/, "")
-    .replace(/([^\d])г/, "$1")
+    .replace(/(\D)г/, "$1")
     .replace(/^(\d+)-х/, "$1-е") // “2010-е”, but “начало 2010-х”
     .replace(/-?го века/, "-й век")
     .replace(/начале/, "начало")
@@ -56,7 +56,7 @@ const extractName = (
     )?.[1] ?? "";
 
   if (!result) {
-    return undefined;
+    return;
   }
 
   // Ignore trivial names referring to building address (e.g. “ул. Такая-то, 10”)
@@ -70,7 +70,7 @@ const extractName = (
       (node) => node.nodeType === "word" && node.wordType === "unclassified",
     )
   ) {
-    return undefined;
+    return;
   }
 
   const indexOfDesignation = cleanedAddressAst.children.findIndex(
@@ -84,7 +84,7 @@ const extractName = (
     indexOfCardinalNumber >= 0 &&
     indexOfCardinalNumber > indexOfDesignation
   ) {
-    return undefined;
+    return;
   }
 
   return result;
@@ -97,7 +97,7 @@ const extractCompletionTimeFromDescription = (
     rawInfo.match(/<meta name="description" content="(.*)"/)?.[1] ?? "";
 
   const completionTimeMatch =
-    descriptionContentMatch.match(/остроен.? в ([^.,]*)/)?.[1];
+    descriptionContentMatch.match(/остроен.? в ([^,.]*)/)?.[1];
 
   return cleanCompletionTimeMatch(completionTimeMatch);
 };
@@ -128,7 +128,7 @@ const script = async () => {
         `--${getWikimapiaObjectInfoFileSuffix()}`,
       );
 
-      const wikimapiaIdInFilePath = parseInt(
+      const wikimapiaIdInFilePath = Number.parseInt(
         filePath.match(/(\d+)--/)?.[1] ?? "0",
       );
       if (!wikimapiaIdInFilePath) {
@@ -147,9 +147,9 @@ const script = async () => {
       const photoMatches = rawInfo.matchAll(
         /<div itemscope itemtype="http:\/\/schema.org\/ImageObject" style="display:inline">\n([^]*?)<\/div>/g,
       );
-      for (const photoMatch of [...photoMatches]) {
+      for (const photoMatch of photoMatches) {
         const photoMatchContent = photoMatch[1]!;
-        const userId = parseInt(
+        const userId = Number.parseInt(
           photoMatchContent.match(/data-user-id="(.+?)"/)?.[1] ?? "0",
         );
         const userName =
@@ -178,7 +178,7 @@ const script = async () => {
         });
       }
 
-      if (photoInfos.length) {
+      if (photoInfos.length > 0) {
         info.photos = photoInfos;
       }
 

@@ -32,5 +32,5 @@ export const pickPhoto: PickFromPropertyVariants<
     }
   }
 
-  return undefined;
+  return;
 };

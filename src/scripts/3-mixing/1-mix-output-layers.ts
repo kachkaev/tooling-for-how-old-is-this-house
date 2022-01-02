@@ -2,7 +2,7 @@ import tilebelt from "@mapbox/tilebelt";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
 import sortKeys from "sort-keys";
 
 import { deepClean } from "../../shared/deepClean";
@@ -208,10 +208,10 @@ const script = async () => {
         });
       } else {
         const features: PatchLayerFeature[] = [];
-        outputLayer.features.forEach((feature) => {
+        for (const feature of outputLayer.features) {
           const geometry = feature.geometry;
           if (!geometry) {
-            return;
+            continue;
           }
 
           const derivedBuildArea = Math.round(turf.area(geometry));
@@ -224,7 +224,7 @@ const script = async () => {
               ...(derivedBuildArea > 0 ? { derivedBuildArea } : {}),
             },
           });
-        });
+        }
 
         logPickedFeatures("convertible to points", features.length);
 
@@ -237,7 +237,7 @@ const script = async () => {
     },
   });
 
-  if (!baseLayers.length) {
+  if (baseLayers.length === 0) {
     throw new ScriptError(
       `No base layers found. Have you called all ‘generate-output-layer’ scripts?`,
     );
@@ -263,14 +263,12 @@ const script = async () => {
       }));
 
       const bboxWithBufferAroundBuildings = (() => {
-        let result: turf.BBox | undefined = undefined;
+        let result: turf.BBox | undefined;
         for (const filteredBaseLayer of filteredBaseLayers) {
           for (const baseLayerFeature of filteredBaseLayer.features) {
-            if (!result) {
-              result = baseLayerFeature.bboxWithBuffer;
-            } else {
-              result = unionBboxes(result, baseLayerFeature.bboxWithBuffer);
-            }
+            result = !result
+              ? baseLayerFeature.bboxWithBuffer
+              : unionBboxes(result, baseLayerFeature.bboxWithBuffer);
           }
         }
 

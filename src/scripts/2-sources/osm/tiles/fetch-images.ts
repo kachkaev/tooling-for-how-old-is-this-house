@@ -2,9 +2,9 @@ import { AxiosInstance } from "axios";
 import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
-import path from "path";
-import stream from "stream";
-import { promisify } from "util";
+import path from "node:path";
+import stream from "node:stream";
+import { promisify } from "node:util";
 
 import { cleanEnv } from "../../../../shared/cleanEnv";
 import {

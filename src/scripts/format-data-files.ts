@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
 
 import { cleanEnv } from "../shared/cleanEnv";
 import { formatJson, getJsonFormattingStyle } from "../shared/helpersForJson";

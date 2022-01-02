@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
-import path from "path";
+import path from "node:path";
 import sortKeys from "sort-keys";
 
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
@@ -35,7 +35,7 @@ const script = async () => {
       prefixLength,
       reportingStatus,
     ) => {
-      const houseId = parseInt(path.basename(rawHouseInfoFilePath));
+      const houseId = Number.parseInt(path.basename(rawHouseInfoFilePath));
       const houseInfoFilePath = getHouseFilePath(houseId, "info.json");
 
       const rawInfo = await fs.readFile(rawHouseInfoFilePath, "utf8");
@@ -48,11 +48,11 @@ const script = async () => {
       const lonMatch = rawInfo.match(
         /<input type="hidden" id="mapcenterlng" name="mapcenterlng" value="(.*)"\/>/,
       );
-      const lon = parseFloat(lonMatch?.[1] ?? "");
+      const lon = Number.parseFloat(lonMatch?.[1] ?? "");
       const latMatch = rawInfo.match(
         /<input type="hidden" id="mapcenterlat" name="mapcenterlat" value="(.*)"\/>/,
       );
-      const lat = parseFloat(latMatch?.[1] ?? "");
+      const lat = Number.parseFloat(latMatch?.[1] ?? "");
 
       if (lon && lat) {
         info.centerPoint = [lon, lat];
@@ -60,7 +60,7 @@ const script = async () => {
 
       // extract address
       const addressMatch = rawInfo.match(
-        /<dt>Адрес<\/dt>\s*<dd>(.*)&nbsp;&nbsp;&nbsp;<a/,
+        /<dt>Адрес<\/dt>\s*<d{2}>(.*)(?:&nbsp;){3}<a/,
       );
       const address = addressMatch?.[1]?.trim();
       if (address) {
@@ -71,7 +71,7 @@ const script = async () => {
       const yearMatch = rawInfo.match(
         /<dt>Год постройки<\/dt>\s*<dd>(\d{4})<\/dd>/,
       );
-      const year = parseInt(yearMatch?.[1] ?? "");
+      const year = Number.parseInt(yearMatch?.[1] ?? "");
       if (year) {
         info.year = year;
       }
@@ -80,7 +80,7 @@ const script = async () => {
       const numberOfFloorsMatch = rawInfo.match(
         /<dt>Количество этажей<\/dt>\s*<dd>(.*)<\/dd>/,
       );
-      const numberOfFloors = parseInt(numberOfFloorsMatch?.[1] ?? "");
+      const numberOfFloors = Number.parseInt(numberOfFloorsMatch?.[1] ?? "");
       if (numberOfFloors) {
         info.numberOfFloors = numberOfFloors;
       }
@@ -89,7 +89,7 @@ const script = async () => {
       const numberOfLivingQuartersMatch = rawInfo.match(
         /<dt>Жилых помещений<\/dt>\s*<dd>(.*)<\/dd>/,
       );
-      const numberOfLivingQuarters = parseInt(
+      const numberOfLivingQuarters = Number.parseInt(
         numberOfLivingQuartersMatch?.[1] ?? "",
       );
       if (numberOfLivingQuarters) {

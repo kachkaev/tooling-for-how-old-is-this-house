@@ -22,5 +22,5 @@ export const pickArchitect: PickFromPropertyVariants<
     }
   }
 
-  return undefined;
+  return;
 };

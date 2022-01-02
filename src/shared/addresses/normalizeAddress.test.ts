@@ -16,31 +16,29 @@ describe("normalizeAddress", () => {
     expect(normalizeAddress("  / -. ", {})).toBeUndefined();
   });
 
-  testCases.forEach(
-    ({
-      rawAddresses,
-      expectedCleanedAddress,
-      expectedNormalizedAddress,
-      addressHandlingConfig = defaultAddressHandlingConfig,
-    }) => {
-      if (expectedNormalizedAddress) {
-        const rawAddressesToUse = expectedCleanedAddress
-          ? [rawAddresses[0]!]
-          : rawAddresses;
-        for (const rawAddress of rawAddressesToUse) {
-          it(`works for "${rawAddress}"`, () => {
-            expect(normalizeAddress(rawAddress, addressHandlingConfig)).toEqual(
-              expectedNormalizedAddress,
-            );
-          });
+  for (const {
+    rawAddresses,
+    expectedCleanedAddress,
+    expectedNormalizedAddress,
+    addressHandlingConfig = defaultAddressHandlingConfig,
+  } of testCases) {
+    if (expectedNormalizedAddress) {
+      const rawAddressesToUse = expectedCleanedAddress
+        ? [rawAddresses[0]!]
+        : rawAddresses;
+      for (const rawAddress of rawAddressesToUse) {
+        it(`works for "${rawAddress}"`, () => {
+          expect(normalizeAddress(rawAddress, addressHandlingConfig)).toEqual(
+            expectedNormalizedAddress,
+          );
+        });
 
-          it(`autoencodes "${expectedNormalizedAddress}"`, () => {
-            expect(normalizeAddress(expectedNormalizedAddress, {})).toEqual(
-              expectedNormalizedAddress,
-            );
-          });
-        }
+        it(`autoencodes "${expectedNormalizedAddress}"`, () => {
+          expect(normalizeAddress(expectedNormalizedAddress, {})).toEqual(
+            expectedNormalizedAddress,
+          );
+        });
       }
-    },
-  );
+    }
+  }
 });

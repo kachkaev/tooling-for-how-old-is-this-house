@@ -17,7 +17,7 @@ const mapOsmPropertiesToLevel = ({
   bridge,
   tunnel,
 }: OsmFeatureProperties): number | undefined => {
-  const parsedLevel = parseInt(level ?? "");
+  const parsedLevel = Number.parseInt(level ?? "");
   if (parsedLevel) {
     return parsedLevel;
   }
@@ -145,14 +145,16 @@ export const generateGeographicContext = async (
     generateGeographicContextExtent(territoryExtent);
   const clipBbox = turf.bbox(geographicContextExtent);
 
-  const railways =
-    (await readFetchedOsmFeatureCollection("railways"))?.features || [];
-  const roads =
-    (await readFetchedOsmFeatureCollection("roads"))?.features || [];
-  const waterObjects =
-    (await readFetchedOsmFeatureCollection("water-objects"))?.features || [];
+  const { features: railways = [] } =
+    (await readFetchedOsmFeatureCollection("railways")) ?? {};
 
-  [...railways, ...roads, ...waterObjects].forEach((osmFeature) => {
+  const { features: roads = [] } =
+    (await readFetchedOsmFeatureCollection("roads")) ?? {};
+
+  const { features: waterObjects = [] } =
+    (await readFetchedOsmFeatureCollection("water-objects")) ?? {};
+
+  for (const osmFeature of [...railways, ...roads, ...waterObjects]) {
     const properties = mapOsmPropertiesToGeographicContextProperties(
       osmFeature.geometry.type,
       osmFeature.properties,
@@ -161,12 +163,12 @@ export const generateGeographicContext = async (
       features.push({
         type: "Feature",
         geometry: turf.simplify(turf.bboxClip(osmFeature.geometry, clipBbox), {
-          tolerance: 0.000005,
+          tolerance: 0.000_005,
         }).geometry,
         properties: deepClean(properties),
       });
     }
-  });
+  }
 
   return {
     type: "FeatureCollection",

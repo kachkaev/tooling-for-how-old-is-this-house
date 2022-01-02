@@ -2,7 +2,7 @@ import { extractTokens } from "./extractTokens";
 import { testCases } from "./testHelpers/testCases";
 
 describe("extractTokens", () => {
-  testCases.forEach(({ rawAddresses, expectedTokens }) => {
+  for (const { rawAddresses, expectedTokens } of testCases) {
     if (expectedTokens) {
       for (const rawAddress of rawAddresses) {
         it(`works for "${rawAddress}"`, () => {
@@ -10,5 +10,5 @@ describe("extractTokens", () => {
         });
       }
     }
-  });
+  }
 });

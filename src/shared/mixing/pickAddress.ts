@@ -58,5 +58,5 @@ export const pickAddress: PickFromPropertyVariants<
     }
   }
 
-  return undefined;
+  return;
 };

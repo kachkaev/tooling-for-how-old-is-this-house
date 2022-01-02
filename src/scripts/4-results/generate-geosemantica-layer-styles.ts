@@ -4,7 +4,7 @@ import { color as d3Color } from "d3-color";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import _ from "lodash";
-import path from "path";
+import path from "node:path";
 import html from "tagged-template-noop"; // Usage of html`` enables Prettier within strings
 
 import { cleanEnv } from "../../shared/cleanEnv";
@@ -34,7 +34,7 @@ const formatColor: FormatColor = (color) =>
 const yearLabelsWhenZoomedIn = false as boolean;
 
 const formatSld = (rawSld: string): string =>
-  rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
+  rawSld.trimStart().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();
 
 const generateSld = ({ rules }: { rules: string | string[] }) =>
   formatSld(html`
@@ -382,7 +382,7 @@ const script = async () => {
 
   const buildingsLayerRules: string[] = generateBaseBuildingRules();
 
-  legendEntries.forEach((entry, index) => {
+  for (const [index, entry] of legendEntries.entries()) {
     const nextEntry = legendEntries[index + 1];
     const entryName = nextEntry
       ? `${entry.completionYear}...${nextEntry.completionYear - 1}`
@@ -393,10 +393,10 @@ const script = async () => {
         name: entryName,
         color: entry.color,
         yearMin: entry.completionYear,
-        yearMax: nextEntry?.completionYear ?? 10000,
+        yearMax: nextEntry?.completionYear ?? 10_000,
       }),
     );
-  });
+  }
 
   buildingsLayerRules.push(
     ...(yearLabelsWhenZoomedIn ? generateYearLabelRules() : []),

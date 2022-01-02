@@ -17,14 +17,14 @@ import {
 import { WikimapiaObjectInfoFile, WikimapiaObjectPhotoInfo } from "./types";
 
 const minAreaInMeters = 10;
-const maxAreaInMeters = 50000;
+const maxAreaInMeters = 50_000;
 const maxPerimeterInMeters = 2000;
 const maxPerimeterToAreaSqrtRatio = 20;
 
 const maxIdDeltaForPhotosInOneBatch = 100;
 
 const checkIfNameIsAppropriateForBuilding = (name: string): boolean => {
-  if (name.match(/колонка/i)) {
+  if (/колонка/i.test(name)) {
     return false;
   }
 
@@ -37,9 +37,9 @@ const checkIfNameIsAppropriateForBuilding = (name: string): boolean => {
  * 8384820
  */
 const extractPhotoIdFromUrl = (url: string): number => {
-  const digits = url.split("").filter((char) => char >= "0" && char <= "9");
+  const digits = [...url].filter((char) => char >= "0" && char <= "9");
 
-  return parseInt(digits.join("").replace(/^0+/, ""));
+  return Number.parseInt(digits.join("").replace(/^0+/, ""));
 };
 
 /**
@@ -54,7 +54,7 @@ const pickPhotoInfo = (
     return undefined;
   }
 
-  let result: WikimapiaObjectPhotoInfo | undefined = undefined;
+  let result: WikimapiaObjectPhotoInfo | undefined;
   for (let index = photoInfos.length - 1; index >= 0; index -= 1) {
     const photoInfo = photoInfos[index]!;
 

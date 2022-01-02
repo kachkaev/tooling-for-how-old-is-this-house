@@ -3,8 +3,8 @@ import axios from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import _ from "lodash";
+import { WriteStream } from "node:tty";
 import osmToGeojson from "osmtogeojson";
-import { WriteStream } from "tty";
 
 import { filterFeaturesByGeometryType } from "../../helpersForGeometry";
 import { serializeTime } from "../../helpersForJson";

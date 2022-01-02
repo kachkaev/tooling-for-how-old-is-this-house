@@ -99,7 +99,7 @@ export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
               </Figure>
             </ColorBlindness>
           ))
-        : null}
+        : undefined}
     </Wrapper>
   );
 };

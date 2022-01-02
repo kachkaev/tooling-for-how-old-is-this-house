@@ -1,5 +1,5 @@
+import path from "node:path";
 import hash from "object-hash";
-import path from "path";
 
 import { getSourceDirPath } from "../../helpersForPaths";
 

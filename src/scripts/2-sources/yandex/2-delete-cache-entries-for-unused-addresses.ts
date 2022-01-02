@@ -65,7 +65,7 @@ const script = async () => {
     },
   });
 
-  if (!filePathsToDelete.length) {
+  if (filePathsToDelete.length === 0) {
     output.write(chalk.gray("No files to delete.\n"));
 
     return;

@@ -105,7 +105,7 @@ export const extractPosterConfig = (
     nilMergeDeep,
   );
 
-  if (!Object.keys(result.colorByCompletionYear).length) {
+  if (Object.keys(result.colorByCompletionYear).length === 0) {
     result.colorByCompletionYear = defaultColorByCompletionYear;
   }
 
@@ -128,7 +128,7 @@ export const extractLegendEntries = (
 ): LegendEntry[] => {
   return Object.entries(posterConfig.colorByCompletionYear).map(
     ([rawCompletionYear, color]) => ({
-      completionYear: parseInt(rawCompletionYear),
+      completionYear: Number.parseInt(rawCompletionYear),
       color,
     }),
   );

@@ -25,7 +25,7 @@ export const geocodeAddress = (
 
     for (const source of sourcesInPriorityOrder) {
       const sourceRecord = addressRecord[source];
-      if (sourceRecord && sourceRecord.length) {
+      if (sourceRecord && sourceRecord.length === 2) {
         return {
           source,
           location: {

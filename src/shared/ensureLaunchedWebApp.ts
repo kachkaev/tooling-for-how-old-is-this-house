@@ -1,11 +1,11 @@
 import axios from "axios";
 import chalk from "chalk";
 import getPort from "get-port";
-import { createServer } from "http";
 import _ from "lodash";
 import next from "next";
-import { WriteStream } from "tty";
-import { parse } from "url"; // https://github.com/vercel/next.js/discussions/21283
+import { createServer } from "node:http";
+import { WriteStream } from "node:tty";
+import { parse } from "node:url"; // https://github.com/vercel/next.js/discussions/21283
 
 import { ScriptError } from "./helpersForScripts";
 import { getTerritoryConfig, TerritoryConfig } from "./territory";
@@ -19,11 +19,12 @@ const checkIfWebAppIsLaunched = async (
   territoryConfig: TerritoryConfig,
 ): Promise<boolean> => {
   try {
-    const fetchedTerritoryConfig = (
-      await axios.get<TerritoryConfig>(`${webAppUrl}/api/territory-config`, {
+    const { data: fetchedTerritoryConfig } = await axios.get<TerritoryConfig>(
+      `${webAppUrl}/api/territory-config`,
+      {
         responseType: "json",
-      })
-    ).data;
+      },
+    );
 
     return _.isEqual(fetchedTerritoryConfig, territoryConfig);
   } catch {

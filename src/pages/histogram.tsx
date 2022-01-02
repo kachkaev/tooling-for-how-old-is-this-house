@@ -29,7 +29,7 @@ const HistogramPage: NextPage<HistogramPageProps> = ({
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
 
   if (!posterConfig) {
-    return null;
+    return <></>;
   }
 
   return <Histogram posterConfig={posterConfig} {...props} />;

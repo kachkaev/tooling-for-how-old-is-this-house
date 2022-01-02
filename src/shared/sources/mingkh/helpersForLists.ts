@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { getTerritoryConfig } from "../../territory";
 import { getHouseListFilePath } from "./helpersForPaths";
@@ -51,7 +51,7 @@ const extractHouseIdFromUrl = (houseUrl: string): number => {
     throw new Error(`Cannot extract house id from url ${houseUrl}`);
   }
 
-  return parseInt(result);
+  return Number.parseInt(result);
 };
 
 export const loopThroughRowsInHouseList = async (

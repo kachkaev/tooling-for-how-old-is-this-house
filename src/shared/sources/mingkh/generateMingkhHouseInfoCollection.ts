@@ -1,8 +1,8 @@
 import * as turf from "@turf/turf";
 import fs from "fs-extra";
 import _ from "lodash";
+import { WriteStream } from "node:tty";
 import sortKeys from "sort-keys";
-import { WriteStream } from "tty";
 
 import { processFiles } from "../../processFiles";
 import { getMingkhHousesDirPath } from "./helpersForPaths";

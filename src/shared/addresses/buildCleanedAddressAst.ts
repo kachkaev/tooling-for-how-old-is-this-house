@@ -54,7 +54,7 @@ const canBeInitial = (
 const canHaveDesignationAdjective = (
   node?: CleanedAddressNode,
 ): node is AddressNodeWithUnclassifiedWord =>
-  isUnclassifiedWord(node) && Boolean(node.value.match(/(ая|ый|ое|нка|вка)$/));
+  isUnclassifiedWord(node) && Boolean(/(ая|ый|ое|нка|вка)$/.test(node.value));
 
 const findRelevantDesignation = (
   nodes: CleanedAddressNode[],
@@ -122,9 +122,8 @@ export const buildCleanedAddressAst = (
   );
 
   // Replace ordinal number textual notations (e.g. первый → 1-й) {
-  for (let index = 0; index < nodes.length; index += 1) {
-    const node = nodes[index];
-    if (node?.nodeType !== "word" || node.wordType !== "unclassified") {
+  for (const node of nodes) {
+    if (node.nodeType !== "word" || node.wordType !== "unclassified") {
       continue;
     }
     const ordinalNumberTextualNotationConfig =
@@ -141,8 +140,7 @@ export const buildCleanedAddressAst = (
   }
 
   // Find words that start with digits, treat all as unclassified numbers for now
-  for (let index = 0; index < nodes.length; index += 1) {
-    const node = nodes[index]!;
+  for (const node of nodes) {
     if (node.nodeType !== "word" || node.wordType !== "unclassified") {
       continue;
     }
@@ -153,7 +151,7 @@ export const buildCleanedAddressAst = (
     const [, rawNumber = "", ending = ""] = match;
     const updatedNode = node as AddressNodeWithWord as AddressNodeWithNumber;
     updatedNode.wordType = "unclassifiedNumber";
-    updatedNode.number = parseInt(rawNumber);
+    updatedNode.number = Number.parseInt(rawNumber);
     updatedNode.value = `${rawNumber}${ending}`;
     updatedNode.ending = ending;
   }
@@ -181,7 +179,7 @@ export const buildCleanedAddressAst = (
     if (
       node.nodeType !== "word" ||
       node.wordType !== "unclassifiedNumber" ||
-      node.ending.length
+      node.ending.length > 0
     ) {
       continue;
     }
@@ -215,13 +213,12 @@ export const buildCleanedAddressAst = (
   }
 
   // Classify numbers
-  for (let index = 0; index < nodes.length; index += 1) {
-    const node = nodes[index];
-    if (node?.nodeType !== "word" || node.wordType !== "unclassifiedNumber") {
+  for (const node of nodes) {
+    if (node.nodeType !== "word" || node.wordType !== "unclassifiedNumber") {
       continue;
     }
 
-    if (!node.ending && node.number >= 100000 && node.number < 1000000) {
+    if (!node.ending && node.number >= 100_000 && node.number < 1_000_000) {
       node.wordType = "postCode";
       continue;
     }
@@ -433,15 +430,13 @@ export const buildCleanedAddressAst = (
   }
 
   // Mark designation as an unclassified word if canBePartOfName and next to another designation word
-  let previouslySeenDesignationInThisSection: AddressNodeWithWord | undefined =
-    undefined;
+  let previouslySeenDesignationInThisSection: AddressNodeWithWord | undefined;
   let previouslySeenDesignationConfigInThisSection:
     | DesignationConfig
-    | undefined = undefined;
+    | undefined;
 
-  for (let index = 0; index < nodes.length; index += 1) {
-    const node = nodes[index];
-    if (node?.nodeType === "separator" && node.separatorType !== "dash") {
+  for (const node of nodes) {
+    if (node.nodeType === "separator" && node.separatorType !== "dash") {
       previouslySeenDesignationInThisSection = undefined;
       previouslySeenDesignationConfigInThisSection = undefined;
       continue;
@@ -466,9 +461,7 @@ export const buildCleanedAddressAst = (
 
     if (previouslySeenDesignationConfigInThisSection) {
       if (previouslySeenDesignationConfigInThisSection.canBePartOfName) {
-        (
-          previouslySeenDesignationInThisSection as AddressNodeWithWord
-        ).wordType = "unclassified";
+        previouslySeenDesignationInThisSection.wordType = "unclassified";
       } else if (designationConfig.canBePartOfName) {
         (node as AddressNodeWithWord).wordType = "unclassified";
       }

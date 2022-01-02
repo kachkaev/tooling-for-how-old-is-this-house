@@ -58,7 +58,7 @@ const resolveCollectionNameToFilePath = (collectionName: string) => {
 export const readFetchedOsmFeatureCollection: // https://github.com/prettier/prettier/issues/11923
 ReadFetchedOsmFeatureCollection = async (collectionName: string) => {
   const filePath = resolveCollectionNameToFilePath(collectionName);
-  let result: OsmFeatureCollection<any> | undefined = undefined;
+  let result: OsmFeatureCollection<any> | undefined;
   try {
     result = (await fs.readJson(filePath)) as OsmFeatureCollection;
   } catch {

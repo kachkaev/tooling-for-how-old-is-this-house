@@ -56,16 +56,18 @@ interface UnknownTemplate {
 
 type WikitextTemplate = MonumentTemplate | UnknownTemplate;
 
-const extractGeometry = (templateJson: MonumentTemplate): turf.Point | null => {
+const extractGeometry = (
+  templateJson: MonumentTemplate,
+): turf.Point | undefined => {
   if (templateJson.precise?.toLowerCase() !== "yes") {
-    return null;
+    return;
   }
 
-  const lon = parseFloat(templateJson.long ?? "");
-  const lat = parseFloat(templateJson.lat ?? "");
+  const lon = Number.parseFloat(templateJson.long ?? "");
+  const lat = Number.parseFloat(templateJson.lat ?? "");
 
-  if (!isFinite(lon) || !isFinite(lat)) {
-    return null;
+  if (!Number.isFinite(lon) || !Number.isFinite(lat)) {
+    return;
   }
 
   return turf.point([lon, lat]).geometry;
@@ -224,18 +226,18 @@ export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
       const parsedDoc = wtf(rawWikitext);
       const knownAt = serializeTime(metadata.latest.timestamp);
 
-      parsedDoc.templates().forEach((template) => {
+      for (const template of parsedDoc.templates()) {
         const templateJson = template.json() as WikitextTemplate;
         if (
           templateJson.template !== "monument" ||
           templateJson.type !== "architecture" ||
           templateJson.status === "destroyed"
         ) {
-          return;
+          continue;
         }
         const geometry = extractGeometry(templateJson);
         if (geometry && !turf.booleanContains(territoryExtent, geometry)) {
-          return;
+          continue;
         }
 
         const properties: OutputLayerProperties = {
@@ -257,7 +259,7 @@ export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
           geometry,
           properties: deepClean(properties),
         });
-      });
+      }
     },
   });
 

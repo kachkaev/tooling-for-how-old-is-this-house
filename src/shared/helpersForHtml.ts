@@ -18,7 +18,10 @@ export const prependCommentWithJsonToHtml = (
   const indexOfNewline = formattedJson.indexOf("\n");
   const indexOfSecondNewline = formattedJson.indexOf("\n", indexOfNewline);
   if (indexOfSecondNewline === -1) {
-    return `<!-- ${formattedJson.substr(0, indexOfNewline)} -->\n${html}`;
+    return `<!-- ${formattedJson.slice(
+      0,
+      Math.max(0, indexOfNewline),
+    )} -->\n${html}`;
   }
 
   return `<!--\n${formattedJson}-->\n${html}`;

@@ -2,7 +2,7 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
-import path from "path";
+import path from "node:path";
 import sortKeys from "sort-keys";
 
 import { deepClean } from "../../shared/deepClean";
@@ -75,7 +75,7 @@ type GeographicContextLayerFeature = turf.Feature<
 // Placeholder properties are added to the first feature of the resulting feature collection.
 // This ensures property list completeness and order in apps like QGIS.
 const placeholderProperties: Record<keyof MainLayerProperties, null> = {
-  /* eslint-disable @typescript-eslint/naming-convention */
+  /* eslint-disable @typescript-eslint/naming-convention,unicorn/no-null */
 
   // Properties are ordered to match the desired layout of building cards
   r_name: null,
@@ -95,7 +95,7 @@ const placeholderProperties: Record<keyof MainLayerProperties, null> = {
 
   r_year_int: null,
   fid: null,
-  /* eslint-enable @typescript-eslint/naming-convention */
+  /* eslint-enable @typescript-eslint/naming-convention,unicorn/no-null */
 };
 
 const orderedPropertyKeys = Object.keys(placeholderProperties);
@@ -131,7 +131,7 @@ const fixUrlForGeosemantica = (
 ): string | undefined | null => {
   return url?.replace(
     /[!'()*]/g,
-    (char) => `%${char.charCodeAt(0).toString(16)}`,
+    (char) => `%${char.codePointAt(0)!.toString(16)}`,
   );
 };
 
@@ -224,7 +224,7 @@ const script = async () => {
       return address;
     }
 
-    return address.substr(addressPrefixToRemove.length);
+    return address.slice(addressPrefixToRemove.length);
   };
 
   for (const inputFeature of inputFeatureCollection.features) {

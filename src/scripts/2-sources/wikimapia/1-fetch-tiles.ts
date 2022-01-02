@@ -26,7 +26,7 @@ const output = process.stdout;
 
 axiosRetry(axios);
 
-const featurePropertiesToExclude = [
+const featurePropertiesToExclude = new Set([
   "icon",
   "icon-scale",
   "label-scale",
@@ -36,7 +36,7 @@ const featurePropertiesToExclude = [
   "styleHash",
   "styleMapHash",
   "styleUrl",
-];
+]);
 
 const processWikimapiaTileResponse = (
   rawTileResponse: string,
@@ -67,7 +67,7 @@ const processWikimapiaTileResponse = (
 
     const cleanedProperties = Object.fromEntries(
       Object.entries(feature.properties ?? {})
-        .filter(([key]) => !featurePropertiesToExclude.includes(key))
+        .filter(([key]) => !featurePropertiesToExclude.has(key))
         .map(([key, value]) => {
           if (key === "description" && typeof value === "string") {
             return [key, value.trim()];
@@ -117,12 +117,13 @@ const script = async () => {
 
       const tileBbox = tilebelt.tileToBBOX(tile) as turf.BBox;
 
-      const rawTileResponse = (
-        await axios.get<string>("https://wikimapia.org/d", {
+      const { data: rawTileResponse } = await axios.get<string>(
+        "https://wikimapia.org/d",
+        {
           params: {
             BBOX: tileBbox.join(","),
           },
-          timeout: 20000,
+          timeout: 20_000,
           headers: {
             "Accept-Encoding": "gzip, deflate",
           },
@@ -130,8 +131,8 @@ const script = async () => {
             retries: 3,
             shouldResetTimeout: true,
           },
-        })
-      ).data;
+        },
+      );
 
       const processedTileResponse =
         processWikimapiaTileResponse(rawTileResponse);

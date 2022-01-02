@@ -1,5 +1,5 @@
 import _ from "lodash";
-import path from "path";
+import path from "node:path";
 
 /**
  * TODO: Remove after 2022-04-01

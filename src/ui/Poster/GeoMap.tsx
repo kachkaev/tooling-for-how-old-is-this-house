@@ -82,7 +82,7 @@ export const GeoMap: React.VoidFunctionComponent<GeoMapProps> = ({
         <StyledSvg width={width} height={height}>
           {children({ width, height, projectionConfig })}
         </StyledSvg>
-      ) : null}
+      ) : undefined}
     </Wrapper>
   );
 };

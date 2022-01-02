@@ -63,7 +63,9 @@ const buildAreaThresholds = [
 const buildAreaColors =
   schemeYlGnBu[buildAreaThresholds.length + 1]?.slice(1) ?? [];
 const buildAreaColor = scaleThreshold(buildAreaThresholds, buildAreaColors);
-const binByBuiltArea = bin().domain([0, 10000]).thresholds(buildAreaThresholds);
+const binByBuiltArea = bin()
+  .domain([0, 10_000])
+  .thresholds(buildAreaThresholds);
 
 const gapOverlap = 0.2;
 
@@ -118,7 +120,7 @@ const Bar: React.VoidFunctionComponent<{
         const overlapCompensationH = year !== maxYear ? gapOverlap : 0;
 
         if (!rawHeight) {
-          return null;
+          return;
         }
 
         yOffset += rawHeight;
@@ -151,7 +153,7 @@ const Bar: React.VoidFunctionComponent<{
             {label}
           </text>
         </g>
-      ) : null}
+      ) : undefined}
     </g>
   );
 };
@@ -310,9 +312,9 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
                         <tspan x={0} dy={labelFontSize}>
                           {locale === "en" ? "buildings" : "зданий"}
                         </tspan>
-                      ) : null}
+                      ) : undefined}
                     </text>
-                  ) : null}
+                  ) : undefined}
                 </g>
               );
             })}
@@ -360,7 +362,7 @@ export const Histogram: React.VoidFunctionComponent<HistogramProps> = ({
                       {index === 0 ? "< " : ""}
                       {threshold}
                     </text>
-                  ) : null}
+                  ) : undefined}
                 </React.Fragment>
               );
             })}

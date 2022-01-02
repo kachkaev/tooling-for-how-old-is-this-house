@@ -40,10 +40,10 @@ const normalizedDesignationAdjectivesSet = new Set<string>();
 export const isNormalizedDesignationAdjective = (value: string): boolean =>
   normalizedDesignationAdjectivesSet.has(value);
 
-designationAdjectiveConfigs.forEach((designationAdjectiveConfig) => {
-  Object.values(designationAdjectiveConfig.normalizedValueByGender).forEach(
-    (normalizedValue) => {
-      normalizedDesignationAdjectivesSet.add(normalizedValue);
-    },
-  );
-});
+for (const designationAdjectiveConfig of designationAdjectiveConfigs) {
+  for (const normalizedValue of Object.values(
+    designationAdjectiveConfig.normalizedValueByGender,
+  )) {
+    normalizedDesignationAdjectivesSet.add(normalizedValue);
+  }
+}

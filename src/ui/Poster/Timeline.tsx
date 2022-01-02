@@ -92,7 +92,7 @@ const Bar: React.VoidFunctionComponent<{
     <g key={year} transform={`translate(${xScale(year)},0)`}>
       {tickifiedValues.map((tickifiedValue, index) => {
         if (index === 0 && total !== 0) {
-          return null;
+          return;
         }
 
         const gradientId = yearIsAbnormal ? `g-${year}-${index}` : undefined;
@@ -105,7 +105,7 @@ const Bar: React.VoidFunctionComponent<{
         );
 
         if (height < barMinHeight) {
-          return null;
+          return;
         }
 
         return (
@@ -118,7 +118,7 @@ const Bar: React.VoidFunctionComponent<{
                 to={barColor}
                 toOpacity={1 - prevTickifiedValue / total}
               />
-            ) : null}
+            ) : undefined}
             <rect
               x={-barWidth / 2}
               width={barWidth}
@@ -142,7 +142,7 @@ const Bar: React.VoidFunctionComponent<{
             {label}
           </text>
         </g>
-      ) : null}
+      ) : undefined}
     </g>
   );
 };
@@ -223,7 +223,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
 
   return (
     <Wrapper {...rest} ref={ref}>
-      {!height || !width ? null : (
+      {!height || !width ? undefined : (
         <svg
           width={svgWidth}
           height={svgHeight}
@@ -262,7 +262,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
           >
             {yAxisTicks.map((value, index) => {
               if (index === 0) {
-                return null;
+                return;
               }
 
               return (
@@ -275,7 +275,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
                       yScale(value - barTick) - yScale(value) - barTickGap
                     }
                   />
-                  {(value / barTickLabelFrequency) % barTick ? null : (
+                  {(value / barTickLabelFrequency) % barTick ? undefined : (
                     <text
                       fontSize="0.8em"
                       fill="#fff"

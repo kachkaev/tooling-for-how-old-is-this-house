@@ -4,8 +4,8 @@ import * as envalid from "envalid";
 import fs from "fs-extra";
 import { load } from "js-yaml";
 import _ from "lodash";
-import path from "path";
-import { WriteStream } from "tty";
+import path from "node:path";
+import { WriteStream } from "node:tty";
 
 import {
   AddressHandlingConfig,
@@ -209,20 +209,20 @@ const sanitizeRawAddressHandlingConfig = (
     userInput as Record<string, unknown>;
 
   const sanitizedCanonicalSpellings: string[] = [];
-  let sanitizedDefaultRegion: string | undefined = undefined;
+  let sanitizedDefaultRegion: string | undefined;
 
   if (Array.isArray(canonicalSpellings)) {
-    canonicalSpellings.forEach((canonicalSpelling, index) => {
+    for (const [index, canonicalSpelling] of canonicalSpellings.entries()) {
       if (typeof canonicalSpelling !== "string") {
         reportIssue?.(
           `Ignoring canonicalSpelling[${index}] (expected string got ${typeof canonicalSpelling})`,
         );
 
-        return;
+        continue;
       }
 
       sanitizedCanonicalSpellings.push(canonicalSpelling);
-    });
+    }
   } else if (canonicalSpellings !== undefined && canonicalSpellings !== null) {
     reportIssue?.(
       `Ignoring canonicalSpellings (expected array, got ${typeof defaultRegion})`,

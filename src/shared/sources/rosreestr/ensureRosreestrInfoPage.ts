@@ -25,9 +25,9 @@ export const ensureRosreestrInfoPage = async ({
     const existingInfoPageData = (await fs.readJson(
       infoPageFilePath,
     )) as InfoPageData;
-    existingInfoPageData.forEach((infoPageObject) => {
+    for (const infoPageObject of existingInfoPageData) {
       existingInfoPageObjectByCn[infoPageObject.cn] = infoPageObject;
-    });
+    }
   } catch {
     // Noop (page does not exist)
   }
@@ -61,8 +61,10 @@ export const ensureRosreestrInfoPage = async ({
     const newInfoPageObject: InfoPageObject = {
       cn: objectCn,
       creationReason,
-      firFetchedAt: null, // This line reduces git diff
-      pkkFetchedAt: null, // This line reduces git diff
+      /* eslint-disable unicorn/no-null -- storing nulls reduces git diff  */
+      firFetchedAt: null,
+      pkkFetchedAt: null,
+      /* eslint-enable unicorn/no-null */
     };
     newInfoPageData.push(newInfoPageObject);
   }

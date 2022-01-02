@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
 import puppeteer from "puppeteer";
 
 import { ensureLaunchedWebApp } from "../../shared/ensureLaunchedWebApp";

@@ -9,19 +9,19 @@ export const generateMapCompletionYearToColor = (
   const domain: number[] = [];
   const range: string[] = [colorForUnknownCompletionYear];
 
-  Object.entries(colorByCompletionYear).forEach(([yearAsString, color]) => {
-    const year = parseInt(yearAsString);
-    if (isFinite(year)) {
+  for (const [yearAsString, color] of Object.entries(colorByCompletionYear)) {
+    const year = Number.parseInt(yearAsString);
+    if (Number.isFinite(year)) {
       domain.push(year);
       range.push(color);
     }
-  });
+  }
 
   const scale = scaleThreshold<number, string>().domain(domain).range(range);
 
   return (completionYear) => {
     const year = completionYear;
-    if (typeof year === "number" && isFinite(year)) {
+    if (typeof year === "number" && Number.isFinite(year)) {
       return scale(year);
     }
 

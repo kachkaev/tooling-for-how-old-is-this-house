@@ -13,24 +13,22 @@ describe("normalizeAddressAtomically", () => {
     expect(normalizeAddressAtomically("  / -. ", {})).toEqual([]);
   });
 
-  testCases.forEach(
-    ({
-      rawAddresses,
-      expectedCleanedAddress,
-      expectedNormalizedAtomicAddresses,
-    }) => {
-      if (expectedNormalizedAtomicAddresses) {
-        const rawAddressesToUse = expectedCleanedAddress
-          ? [rawAddresses[0]!]
-          : rawAddresses;
-        for (const rawAddress of rawAddressesToUse) {
-          it(`works for "${rawAddress}"`, () => {
-            expect(normalizeAddressAtomically(rawAddress, {})).toEqual(
-              expectedNormalizedAtomicAddresses,
-            );
-          });
-        }
+  for (const {
+    rawAddresses,
+    expectedCleanedAddress,
+    expectedNormalizedAtomicAddresses,
+  } of testCases) {
+    if (expectedNormalizedAtomicAddresses) {
+      const rawAddressesToUse = expectedCleanedAddress
+        ? [rawAddresses[0]!]
+        : rawAddresses;
+      for (const rawAddress of rawAddressesToUse) {
+        it(`works for "${rawAddress}"`, () => {
+          expect(normalizeAddressAtomically(rawAddress, {})).toEqual(
+            expectedNormalizedAtomicAddresses,
+          );
+        });
       }
-    },
-  );
+    }
+  }
 });

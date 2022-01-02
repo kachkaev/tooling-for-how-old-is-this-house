@@ -19,19 +19,17 @@ const script = async () => {
 
   await loopThroughHouseLists(
     async ({ regionUrl, cityUrl, houseListFilePath }) => {
-      const response = (
-        await axios.post<HouseListResponse>(
-          "https://dom.mingkh.ru/api/houses",
-          qs.stringify({
-            current: "1",
-            rowCount: "-1",
-            searchPhrase: "",
-            ["region_url"]: regionUrl,
-            ["city_url"]: cityUrl,
-          }),
-          { responseType: "json" },
-        )
-      ).data;
+      const { data: response } = await axios.post<HouseListResponse>(
+        "https://dom.mingkh.ru/api/houses",
+        qs.stringify({
+          current: "1",
+          rowCount: "-1",
+          searchPhrase: "",
+          ["region_url"]: regionUrl,
+          ["city_url"]: cityUrl,
+        }),
+        { responseType: "json" },
+      );
 
       const json: HouseListFile = {
         fetchedAt: serializeTime(),

@@ -71,7 +71,7 @@ export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
         completionTime: string;
         source: string;
       })
-    | undefined = undefined;
+    | undefined;
 
   for (const propertyVariant of propertyVariants) {
     const { source, completionTime } = propertyVariant;
@@ -97,7 +97,7 @@ export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
       if (!candidate) {
         candidate = { ...resultOfParsing, completionTime, source };
       }
-      if (propertyVariant.source === "manual") {
+      if (source === "manual") {
         break;
       }
       continue;
@@ -122,10 +122,7 @@ export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
       };
     }
 
-    if (
-      propertyVariant.source === "manual" ||
-      currentRange[1] - currentRange[0] === 0
-    ) {
+    if (source === "manual" || currentRange[1] - currentRange[0] === 0) {
       break;
     }
   }
@@ -148,5 +145,5 @@ export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
     };
   }
 
-  return undefined;
+  return;
 };

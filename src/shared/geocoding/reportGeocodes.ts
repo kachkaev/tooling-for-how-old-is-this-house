@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import _ from "lodash";
+import { WriteStream } from "node:tty";
 import { rmUp } from "rm-up";
-import { WriteStream } from "tty";
 
 import { normalizeAddressAtomically } from "../addresses";
 import { getTerritoryAddressHandlingConfig } from "../territory";
@@ -62,7 +62,7 @@ const addOrRemoveTrailingCommaItem = (
 const removeEmptyItems = (dictionary: GeocodeDictionary): GeocodeDictionary => {
   return Object.fromEntries(
     Object.entries(dictionary).filter(
-      ([, value]) => Object.keys(value).length !== 0,
+      ([, value]) => Object.keys(value).length > 0,
     ),
   );
 };
@@ -89,7 +89,7 @@ export const reportGeocodes = async ({
       postProcessWordsInStandardizedAddressSection,
     );
 
-    if (!normalizedAddresses.length) {
+    if (normalizedAddresses.length === 0) {
       output?.write(
         chalk.yellow(
           `Skipping "${reportedGeocode.address}" (normalized address is empty)\n`,

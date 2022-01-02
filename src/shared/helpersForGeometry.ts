@@ -2,7 +2,7 @@ import rewind from "@mapbox/geojson-rewind";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 export type Point2dCoordinates = [lon: number, lat: number];
 
@@ -156,6 +156,7 @@ export const calculatePointDistanceToPolygonInMeters = (
           turf.polygon(coords).geometry,
         ),
       )
+      // eslint-disable-next-line unicorn/no-array-reduce
       .reduce((smallest, current) => (current < smallest ? current : smallest));
   } else {
     if (polygon.coordinates.length > 1) {
@@ -169,6 +170,7 @@ export const calculatePointDistanceToPolygonInMeters = (
       ) as [number, ...number[]];
       if (typeof exteriorDistance === "number" && exteriorDistance < 0) {
         // point is inside the exterior polygon shape
+        // eslint-disable-next-line unicorn/no-array-reduce
         const smallestInteriorDistance = interiorDistances.reduce(
           (smallest, current) => (current < smallest ? current : smallest),
         );

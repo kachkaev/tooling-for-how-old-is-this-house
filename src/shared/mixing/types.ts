@@ -1,5 +1,5 @@
 import * as turf from "@turf/turf";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { OutputLayerProperties } from "../outputLayers";
 import { OutputGeometry } from "../outputLayers/types";

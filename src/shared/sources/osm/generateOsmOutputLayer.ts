@@ -50,7 +50,7 @@ const extractPhoto = (
 
     return {
       photoUrl: parsedImageUrl.toString(),
-      photoAuthorUrl: host.match(/\.*.userapi.com$/) ? "ВК" : host,
+      photoAuthorUrl: /\.*.userapi.com$/.test(host) ? "ВК" : host,
     };
   } catch {
     // noop
@@ -114,7 +114,7 @@ const processStartDate = (startDate: string | undefined) => {
     .replace(/^~(\d{4})$/, "около $1");
 
   if (!result) {
-    return undefined;
+    return;
   }
 
   return result;
@@ -335,14 +335,15 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
           : undefined;
 
       const floorCountAboveGround =
-        parseInt(building.properties["building:levels"] ?? "") ||
+        Number.parseInt(building.properties["building:levels"] ?? "") ||
         deriveFloorCountAboveGroundFromBuildingTag(
           building.properties["building"],
         ) ||
         undefined;
       const floorCountBelowGround =
-        parseInt(building.properties["building:levels:underground"] ?? "") ||
-        undefined;
+        Number.parseInt(
+          building.properties["building:levels:underground"] ?? "",
+        ) || undefined;
 
       const url =
         building.properties["contact:website"] ??
@@ -373,7 +374,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
 
       // Simplify geometry to avoid redundant nodes from building parts and entrances
       const geometry = turf.truncate(
-        turf.simplify(building.geometry, { tolerance: 0.000001 }),
+        turf.simplify(building.geometry, { tolerance: 0.000_001 }),
         { precision: 6 },
       );
 

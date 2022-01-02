@@ -15,15 +15,21 @@ export const printStandardizedAddressAst = (
 ): string => {
   const printableParts: Array<string | AddressNodeWithSemanticPart> = [];
 
-  printableParts.push(standardizedAddressAst.region);
-  printableParts.push(", ", standardizedAddressAst.settlement);
+  printableParts.push(
+    standardizedAddressAst.region,
+    ", ",
+    standardizedAddressAst.settlement,
+  );
 
-  standardizedAddressAst.streets.forEach((semanticPart, index) => {
+  for (const [
+    index,
+    semanticPart,
+  ] of standardizedAddressAst.streets.entries()) {
     printableParts.push(index === 0 ? ", " : " / ", semanticPart);
-  });
-  standardizedAddressAst.houses.forEach((semanticPart, index) => {
+  }
+  for (const [index, semanticPart] of standardizedAddressAst.houses.entries()) {
     printableParts.push(index === 0 ? ", " : "/", semanticPart);
-  });
+  }
   if (standardizedAddressAst.housePart) {
     printableParts.push(" ", standardizedAddressAst.housePart);
   }

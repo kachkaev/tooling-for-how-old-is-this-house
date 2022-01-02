@@ -1,4 +1,4 @@
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { loadGeocodeDictionaryLookup } from "./loadGeocodeDictionaryLookup";
 import { GeocodeDictionary } from "./types";

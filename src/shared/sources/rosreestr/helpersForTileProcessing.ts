@@ -100,7 +100,7 @@ GenerateProcessTile = (objectType) => async (tile) => {
     ),
   ).geometry;
 
-  const rawTileResponse = (
+  const { data: rawTileResponse } =
     await fetchJsonFromRosreestr<RawRosreestrTileResponse>(
       `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[objectType]}`,
       {
@@ -108,8 +108,7 @@ GenerateProcessTile = (objectType) => async (tile) => {
         tolerance: 2, // Needs to be a power of two. The smaller the number, the fewer features outside the polygon are returned.
         limit: maxSupportedFeaturesPerTileRequest,
       },
-    )
-  ).data;
+    );
 
   await pauseBetweenPkkApiRequestsToAvoid403();
 

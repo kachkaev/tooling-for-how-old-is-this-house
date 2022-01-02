@@ -29,15 +29,15 @@ export const extractSections = (
   const sections: AddressSection[] = [];
   let forceClosePreviousSection: boolean = false;
   let currentSectionWords: AddressNodeWithWord[] = [];
-  let currentDesignation: Designation | undefined = undefined;
-  let lastUsedSeparator: AddressNodeWithSeparator | undefined = undefined;
+  let currentDesignation: Designation | undefined;
+  let lastUsedSeparator: AddressNodeWithSeparator | undefined;
 
   for (let nodeIndex = 0; nodeIndex <= nodes.length; nodeIndex += 1) {
     const node = nodes[nodeIndex];
 
     // close previous section
     if (!node || node.nodeType === "separator" || forceClosePreviousSection) {
-      if (!currentSectionWords.length) {
+      if (currentSectionWords.length === 0) {
         throw new AddressInterpretationError(
           `Unexpected empty section at index ${sections.length}`,
         );

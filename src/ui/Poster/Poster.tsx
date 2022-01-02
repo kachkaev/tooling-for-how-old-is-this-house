@@ -118,7 +118,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
   posterConfig,
   territoryExtent,
 }) => {
-  const { colorByCompletionYear, layout, map, timeline } = posterConfig;
+  const { colorByCompletionYear, layout, map, timeline, target } = posterConfig;
 
   const mapCompletionYearToColor = React.useMemo(
     () =>
@@ -131,7 +131,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
 
   const printerBleedInMillimeters =
     extractPrinterBleedInMillimeters(posterConfig);
-  const preprint = posterConfig.target === "preprint";
+  const preprint = target === "preprint";
 
   const timelineStyle: React.CSSProperties = React.useMemo(
     () => ({
@@ -182,7 +182,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
                   {...layerProps}
                   data={territoryExtent}
                 />
-              ) : null}
+              ) : undefined}
 
               <GeoMapLayerWithBuildingCompletionYears
                 {...layerProps}
@@ -209,7 +209,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
           {...timeline}
         />
       </Shadow>
-      {preprint ? null : (
+      {preprint ? undefined : (
         <>
           <Shadow>
             <DraftNotice
@@ -300,7 +300,7 @@ export const Poster: React.VoidFunctionComponent<PosterProps> = ({
             printerBleedInMillimeters={printerBleedInMillimeters}
           />
         </>
-      ) : null}
+      ) : undefined}
     </Figure>
   );
 };

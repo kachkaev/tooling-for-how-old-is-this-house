@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
+import { WriteStream } from "node:tty";
 import puppeteer from "puppeteer";
-import { WriteStream } from "tty";
 
 const nextJsPageSelector = "#__next *";
 

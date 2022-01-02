@@ -83,13 +83,13 @@ const normalizeWording = (completionTime: string): string => {
         "4-я четверть ",
       )
       .replace(/-(го|ый|й) век/g, " век")
-      .replace(/([хivx]+)\s?-\s?/, "$1 - ")
-      .replace(/^([хivx]+) -/, "$1 век -")
-      .replace(/ ([хivx]+) -/, " $1 века -")
-      .replace(/^([хivx]+)( в| в.|)$/, "$1 век")
-      .replace(/ ([хivx]+)( в| в.|)$/, " $1 века")
-      .replace(/^([хivx]+) (в|в.|)\s?-\s?/, "$1 век - ")
-      .replace(/ ([хivx]+) (в|в.|)\s?-\s?/, " $1 века - ")
+      .replace(/([ivx]+)\s?-\s?/, "$1 - ")
+      .replace(/^([ivx]+) -/, "$1 век -")
+      .replace(/ ([ivx]+) -/, " $1 века -")
+      .replace(/^([ivx]+)( в| в.|)$/, "$1 век")
+      .replace(/ ([ivx]+)( в| в.|)$/, " $1 века")
+      .replace(/^([ivx]+) (в|в.|)\s?-\s?/, "$1 век - ")
+      .replace(/ ([ivx]+) (в|в.|)\s?-\s?/, " $1 века - ")
       .replace(/^([хivx\d]+) в.?(?!(\d|\p{L}|\.))/u, "$1 век")
       .replace(/, ([хivx\d]+) в.?(?!(\d|\p{L}|\.))/u, ", $1 век")
       .replace(/ в.?(?!(\d|\p{L}|\.))/gu, " века")
@@ -97,13 +97,13 @@ const normalizeWording = (completionTime: string): string => {
       .replace(/\s?(г|гг|год|года|годы)\.?$/g, "")
       .replace(/\s?(г|гг|год|года|годы)\.?([^\p{L}])/gu, "$2")
       .replace(
-        /([хivx]+) /g,
+        /([ivx]+) /g,
         (match) =>
           `${deromanize(
             match.replace(/х/g, "x").trim(), // Russian ‘х’ → Latin ‘X’,
           )} `,
       )
-      .replace(/[xvi]/g, (match) => match.toUpperCase())
+      .replace(/[ivx]/g, (match) => match.toUpperCase())
   );
 };
 
@@ -132,7 +132,7 @@ const parseSingleCompletionTime = (
   singleCompletionTime: string,
 ): ResultOfParseSingleCompletionTime => {
   let result = normalizeWording(singleCompletionTime);
-  if (!result.length) {
+  if (result.length === 0) {
     return {};
   }
 
@@ -140,7 +140,7 @@ const parseSingleCompletionTime = (
   {
     const yearMatch = result.match(/^до (\d{4})$/)?.[1];
     if (yearMatch) {
-      const year = parseInt(yearMatch);
+      const year = Number.parseInt(yearMatch);
 
       return {
         cleanedCompletionTime: result,
@@ -155,7 +155,7 @@ const parseSingleCompletionTime = (
   {
     const decade = result.match(/^(\d{3})0-е/)?.[1];
     if (decade) {
-      const decadeStartYear = parseInt(decade) * 10;
+      const decadeStartYear = Number.parseInt(decade) * 10;
 
       return {
         cleanedCompletionTime: `${decade}0-е`,
@@ -175,7 +175,7 @@ const parseSingleCompletionTime = (
       result.match(/(\d{4})-(\d{2})-(\d{2})/)?.[1] ??
       result.match(/(\d{2})[./](\d{2})[./](\d{4})/)?.[3];
     if (yearMatch) {
-      const year = parseInt(yearMatch);
+      const year = Number.parseInt(yearMatch);
 
       return {
         cleanedCompletionTime: yearMatch,
@@ -190,7 +190,10 @@ const parseSingleCompletionTime = (
   result = result.replace(/\d{4}-\d{1,2}(?!\d)/g, (match) => {
     const [yearStart, yearEnd] = match.split("-") as [string, string];
 
-    return `${yearStart}-${yearStart.substr(0, 4 - yearEnd.length)}${yearEnd}`;
+    return `${yearStart}-${yearStart.slice(
+      0,
+      Math.max(0, 4 - yearEnd.length),
+    )}${yearEnd}`;
   });
 
   // "конец 1920-х"
@@ -199,7 +202,7 @@ const parseSingleCompletionTime = (
       result.match(/^(начало|середина|конец) (\d{3}0)-х?$/) ?? [];
     const decadeYearAndRange = decadeYearAndRangeLookup[prefixmatch ?? ""];
     if (decadeYearAndRange && decadeMatch) {
-      const decadeStartYear = parseInt(decadeMatch);
+      const decadeStartYear = Number.parseInt(decadeMatch);
       const year = decadeStartYear + decadeYearAndRange[0];
       result = `около ${year}`;
     }
@@ -227,9 +230,9 @@ const parseSingleCompletionTime = (
     const extraAmbiguity = result.includes("около") ? 5 : 0;
     const ambiguityPrefix = extraAmbiguity ? "около " : "";
     if (from) {
-      const yearFrom = parseInt(from);
+      const yearFrom = Number.parseInt(from);
       if (to) {
-        const yearTo = parseInt(to);
+        const yearTo = Number.parseInt(to);
 
         return {
           cleanedCompletionTime: `${ambiguityPrefix}${yearFrom}-${yearTo}`,
@@ -256,7 +259,7 @@ const parseSingleCompletionTime = (
   {
     const [, centuryMatch] = result.match(/^(\d{1,2}) век$/) ?? [];
     if (centuryMatch) {
-      const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
+      const centuryStartYear = (Number.parseInt(centuryMatch) - 1) * 100;
 
       return {
         cleanedCompletionTime: result,
@@ -273,9 +276,9 @@ const parseSingleCompletionTime = (
     const [, fromDecadeMatch, toDecadeMatch, centuryMatch] =
       result.match(/^(\d0)\s?-\s?(\d0) (\d{1,2}) века$/) ?? [];
     if (fromDecadeMatch && toDecadeMatch && centuryMatch) {
-      const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
-      const from = centuryStartYear + parseInt(fromDecadeMatch);
-      const to = centuryStartYear + parseInt(toDecadeMatch);
+      const centuryStartYear = (Number.parseInt(centuryMatch) - 1) * 100;
+      const from = centuryStartYear + Number.parseInt(fromDecadeMatch);
+      const to = centuryStartYear + Number.parseInt(toDecadeMatch);
 
       return {
         cleanedCompletionTime: `${from}-${to}`,
@@ -290,8 +293,8 @@ const parseSingleCompletionTime = (
     const [, decadeMatch, , centuryMatch] =
       result.match(/^(\d0)(-е)? (\d{1,2}) века$/) ?? [];
     if (decadeMatch && centuryMatch) {
-      const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
-      const decadeStartYear = centuryStartYear + parseInt(decadeMatch);
+      const centuryStartYear = (Number.parseInt(centuryMatch) - 1) * 100;
+      const decadeStartYear = centuryStartYear + Number.parseInt(decadeMatch);
 
       return {
         cleanedCompletionTime: `${decadeStartYear}-е`,
@@ -309,7 +312,7 @@ const parseSingleCompletionTime = (
     const [, centuryPartMatch, centuryMatch] =
       result.match(/^(.*?) (\d{1,2}) века/) ?? [];
     if (centuryPartMatch && centuryMatch) {
-      const centuryStartYear = (parseInt(centuryMatch) - 1) * 100;
+      const centuryStartYear = (Number.parseInt(centuryMatch) - 1) * 100;
       const centuryYearAndRange = centuryYearAndRangeLookup[centuryPartMatch];
       if (centuryYearAndRange) {
         return {
@@ -325,7 +328,7 @@ const parseSingleCompletionTime = (
     }
   }
 
-  if (result.match(/[\d\p{L}]/u)) {
+  if (/[\d\p{L}]/u.test(result)) {
     // result contains at least one digit or letter
     return { cleanedCompletionTime: result };
   }
@@ -341,11 +344,11 @@ const deriveCompletionYearUsingGeosemanticaRegexp = (
   }
 
   const completionYearMatch = completionTime.match(
-    /\d{4}(?=,|\s|)(?!-)|\d(?:\s)\d{3}|\d{2}(?:\s)\d{2}/,
+    /\d{4}(?=,|\s|)(?!-)|\d\s\d{3}|\d{2}\s\d{2}/,
   );
 
   if (completionYearMatch?.[0]) {
-    return parseInt(completionYearMatch[0]);
+    return Number.parseInt(completionYearMatch[0]);
   }
 
   return undefined;
@@ -357,7 +360,10 @@ const addAssumedYear = (originalValue: string, yearToAssume: number) =>
 const doParseCompletionTime = (
   completionTime: string | undefined,
 ): ResultOfParseCompletionTime => {
-  if (typeof completionTime !== "string" || !completionTime.trim().length) {
+  if (
+    typeof completionTime !== "string" ||
+    completionTime.trim().length === 0
+  ) {
     return {};
   }
 

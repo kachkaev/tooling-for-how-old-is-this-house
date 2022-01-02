@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 
 import {
   AddressNodeWithSemanticPart,
@@ -76,17 +76,19 @@ export const deriveNormalizedAddressSliceId = (
       );
     }
 
-    slices.push("standardized");
-    slices.push(createStandardizedSlice(standardizedAddressAst.region));
-    slices.push(createStandardizedSlice(standardizedAddressAst.settlement));
-    slices.push(createStandardizedSlice(standardizedAddressAst.streets[0]));
+    slices.push(
+      "standardized",
+      createStandardizedSlice(standardizedAddressAst.region),
+      createStandardizedSlice(standardizedAddressAst.settlement),
+      createStandardizedSlice(standardizedAddressAst.streets[0]),
+    );
   } catch (error) {
     if (!(error instanceof AddressInterpretationError)) {
       throw error;
     }
     slices.push("cleaned");
     const firstLetters: string[] = [];
-    cleanedAddressAst.children.forEach((node) => {
+    for (const node of cleanedAddressAst.children) {
       if (
         node.nodeType === "word" &&
         node.wordType === "unclassified" &&
@@ -95,9 +97,11 @@ export const deriveNormalizedAddressSliceId = (
       ) {
         firstLetters.push(node.value[0]);
       }
-    });
+    }
 
-    slices.push(firstLetters.length ? firstLetters.slice(0, 3).join("-") : "-");
+    slices.push(
+      firstLetters.length > 0 ? firstLetters.slice(0, 3).join("-") : "-",
+    );
   }
 
   return slices

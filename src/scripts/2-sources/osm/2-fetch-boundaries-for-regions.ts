@@ -18,7 +18,8 @@ const script = generateFetchOsmObjects({
     return createBboxFeature(territoryExtent, bufferInMeters);
   },
 
-  needToTryAnotherExtentVersion: (geojsonData) => !geojsonData.features.length,
+  needToTryAnotherExtentVersion: (geojsonData) =>
+    geojsonData.features.length === 0,
 
   output: process.stdout,
 

@@ -22,5 +22,5 @@ export const pickWikipediaUrl: PickFromPropertyVariants<
     }
   }
 
-  return undefined;
+  return;
 };

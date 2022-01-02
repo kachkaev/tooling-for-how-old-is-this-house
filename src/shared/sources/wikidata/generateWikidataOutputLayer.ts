@@ -106,7 +106,7 @@ export const generateWikidataOutputLayer: GenerateOutputLayer = async () => {
 
   const features: OutputLayerFeature[] = [];
 
-  fetchedItemsFileContent.items.forEach((item) => {
+  for (const item of fetchedItemsFileContent.items) {
     const geometry = extractGeometry(item);
 
     const properties: OutputLayerProperties = {
@@ -125,7 +125,7 @@ export const generateWikidataOutputLayer: GenerateOutputLayer = async () => {
       geometry,
       properties: deepClean(properties),
     });
-  });
+  }
 
   return {
     type: "FeatureCollection",

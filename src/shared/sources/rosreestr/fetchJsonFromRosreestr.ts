@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import axiosRetry from "axios-retry";
-import https from "https";
+import https from "node:https";
 
 const axiosInstance = axios.create({
   httpsAgent: new https.Agent({

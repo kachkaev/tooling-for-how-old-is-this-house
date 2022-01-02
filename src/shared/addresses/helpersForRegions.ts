@@ -101,7 +101,7 @@ export const regionConfigs: RegionConfig[] = [
 
 export const regionByCode: Record<string, AddressNodeWithSemanticPart> = {};
 
-regionConfigs.forEach(({ gibddCode, canonicalName }) => {
+for (const { gibddCode, canonicalName } of regionConfigs) {
   const section = extractSections(buildCleanedAddressAst(canonicalName, {}))[0];
   if (!section) {
     throw new Error(
@@ -109,7 +109,7 @@ regionConfigs.forEach(({ gibddCode, canonicalName }) => {
     );
   }
   regionByCode[gibddCode] = convertSectionToSemanticPart(section);
-});
+}
 
 export const resolveRegionCode = (
   regionCode: string,

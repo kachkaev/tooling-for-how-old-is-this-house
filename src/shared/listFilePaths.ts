@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { globby } from "globby";
 import _ from "lodash";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 export const listFilePaths = async ({
   fileSearchDirPath,

@@ -24,5 +24,5 @@ export const pickUrl: PickFromPropertyVariants<"url" | "urlSource"> = ({
     }
   }
 
-  return undefined;
+  return;
 };

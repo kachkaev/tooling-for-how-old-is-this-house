@@ -76,7 +76,7 @@ const buildWordReplacementDirectiveTree = (
         continue;
       }
 
-      if (!fromWords.length) {
+      if (fromWords.length === 0) {
         reportIssue?.(
           `Skipping "${wordReplacementFromValue}" → "${wordReplacement.to}" because "from" contains no words`,
         );

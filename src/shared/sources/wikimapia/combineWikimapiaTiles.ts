@@ -3,8 +3,8 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
+import { WriteStream } from "node:tty";
 import sortKeys from "sort-keys";
-import { WriteStream } from "tty";
 
 import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
@@ -63,11 +63,11 @@ export const combineWikimapiaTiles = async ({
       // const tileArea = turf.area(tileFeature);
       tileExtentFeatures.push(tileFeature);
 
-      tileData.response.forEach((responseFeature) => {
+      for (const responseFeature of tileData.response) {
         const responseFeatureIdMatch = `${responseFeature.id!}`.match(
-          /^wm([0-9]+)$/,
+          /^wm(\d+)$/,
         );
-        const wikimapiaId = parseInt(responseFeatureIdMatch?.[1] ?? "0");
+        const wikimapiaId = Number.parseInt(responseFeatureIdMatch?.[1] ?? "0");
         if (!wikimapiaId) {
           throw new Error(
             `Unexpected empty feature id ${wikimapiaId} as the result of an unexpected format: ${responseFeature.id!}. Should be wm12345.`,
@@ -125,7 +125,7 @@ export const combineWikimapiaTiles = async ({
         //   responseFeatureId,
         //   currentTileZoom,
         // ]);
-      });
+      }
     },
   });
 

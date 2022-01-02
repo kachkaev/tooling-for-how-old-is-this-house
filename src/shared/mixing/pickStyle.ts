@@ -24,5 +24,5 @@ export const pickStyle: PickFromPropertyVariants<"style" | "styleSource"> = ({
     }
   }
 
-  return undefined;
+  return;
 };

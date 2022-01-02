@@ -5,7 +5,7 @@ const multiCharTokens: Array<
 > = [
   [
     "letterSequence",
-    (char) => Boolean(char.match(/^\p{L}$/u)), //
+    (char) => Boolean(/^\p{L}$/u.test(char)), //
   ],
   [
     "numberSequence",

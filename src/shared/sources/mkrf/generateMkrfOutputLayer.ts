@@ -31,7 +31,7 @@ const extractName = (name: string | undefined): string | undefined => {
   }
 
   // Remove trivial names like “дом № 1 по улице Такой-то”
-  if (lowerCaseName.match(/^дом (№ )?([^\s]+) по /)) {
+  if (/^дом (№ )?(\S+) по /.test(lowerCaseName)) {
     return undefined;
   }
 
@@ -54,15 +54,15 @@ const wordsToCheckInHistoricMonuments = [
   "усадьба",
   "флигель",
 ];
-const acceptedTypologies = [
+const acceptedTypologies = new Set([
   "памятник градостроительства и архитектуры",
   ...wordsToCheckInHistoricMonuments.map(
     (wordToCheck) => `памятник истории (+ слово «${wordToCheck}»)`,
   ),
-];
+]);
 
 const isTypologyExpected = (typologyValue: string) =>
-  acceptedTypologies.includes(typologyValue);
+  acceptedTypologies.has(typologyValue);
 
 const deriveTypologies = (objectFile: MkrfObjectFile): string[] => {
   const rawTypologies = (objectFile.data.general.typologies ?? []).map(
@@ -113,7 +113,9 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
 
       // Filter by typology
       const typologies = deriveTypologies(objectFile);
-      const hasRightTypology = typologies.some(isTypologyExpected);
+      const hasRightTypology = typologies.some((typology) =>
+        isTypologyExpected(typology),
+      );
       output?.write(
         `${hasRightTypology ? prefix : shouldNotProceedPrefix}${
           typologies
@@ -144,9 +146,9 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       const id = objectFile.nativeId;
 
       // Coordinates
-      let point: turf.Point | null = null;
+      let point: turf.Point | undefined;
       let pointSource: string = "unknown";
-      let externalGeometrySource: string | undefined = undefined;
+      let externalGeometrySource: string | undefined;
 
       const fixedLonLat = territoryConfig.sources?.mkrf?.fixedLonLatById?.[id];
       if (

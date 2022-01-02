@@ -1,7 +1,7 @@
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
-import path from "path";
+import path from "node:path";
 
 import { writeFormattedJson } from "../../../shared/helpersForJson";
 import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpersForScripts";

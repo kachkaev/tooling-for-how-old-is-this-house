@@ -46,7 +46,7 @@ const script = async () => {
       .split("/")
       .reverse();
 
-    const pageNumber = parseInt(fileName?.split("-")[1] ?? "0");
+    const pageNumber = Number.parseInt(fileName?.split("-")[1] ?? "0");
     const blockCn = `${dirSegment1!}:${dirSegment2!}:${dirSegment3!}`;
     const existingPageNumber = maxPageByBlockCn[blockCn];
     if (
@@ -66,7 +66,7 @@ const script = async () => {
   for (const blockCn of blockCns) {
     const maxPageNumber = maxPageByBlockCn[blockCn];
     if (typeof maxPageNumber !== "number") {
-      throw new Error(
+      throw new TypeError(
         `Unexpected empty max page number for block ${blockCn}. This is a bug, please report it.`,
       );
     }
@@ -106,7 +106,7 @@ const script = async () => {
     ` Done. Number of extra pages to create: ${pagesToCreate.length}.\n`,
   );
 
-  if (!pagesToCreate.length) {
+  if (pagesToCreate.length === 0) {
     return;
   }
 

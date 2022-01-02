@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 
 import { getSourceDirPath } from "../../helpersForPaths";
 
@@ -26,7 +26,7 @@ export const getHouseFilePath = (houseId: number, fileNameSuffix: string) => {
 
   return path.resolve(
     getMingkhHousesDirPath(),
-    `${normalisedHouseId.substring(0, 4)}xxx`,
+    `${normalisedHouseId.slice(0, 4)}xxx`,
     `${normalisedHouseId}--${fileNameSuffix}`,
   );
 };

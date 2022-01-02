@@ -52,14 +52,14 @@ const script = async () => {
       );
 
       query = dedent`
-          [out:json][timeout:25];
-          (
-            relation(id:${elementConfig.relationId});
-          );
-          out body;
-          >;
-          out skel qt;
-        `;
+        [out:json][timeout:25];
+        (
+          relation(id:${elementConfig.relationId});
+        );
+        out body;
+        >;
+        out skel qt;
+      `;
     } else {
       if (!(elementConfig.wayId > 0)) {
         output.write(
@@ -73,24 +73,24 @@ const script = async () => {
       output.write(chalk.green(` Fetching OSM way ${elementConfig.wayId}...`));
 
       query = dedent`
-          [out:json][timeout:25];
-          (
-            way(id:${elementConfig.wayId});
-          );
-          out body;
-          >;
-          out skel qt;
-        `;
+        [out:json][timeout:25];
+        (
+          way(id:${elementConfig.wayId});
+        );
+        out body;
+        >;
+        out skel qt;
+      `;
     }
 
     const geometryCollection = await fetchGeojsonFromOverpassApi({ query });
 
-    geometryCollection.features.forEach((feature) => {
+    for (const feature of geometryCollection.features) {
       const featureGeometry = feature.geometry as turf.Geometry;
       if (featureGeometry.type === "Polygon") {
         elementGeometries.push(feature.geometry);
       }
-    });
+    }
 
     output.write(" Done.\n");
   }
@@ -102,7 +102,7 @@ const script = async () => {
     )
     .map((geometry) => turf.feature(geometry));
 
-  if (!featuresToUnion.length) {
+  if (featuresToUnion.length === 0) {
     throw new ScriptError(
       "Please configure territory-config.yml → extent → elementsToCombine so that the result contained at least one Polygon or MultiPolygon",
     );
@@ -116,9 +116,8 @@ const script = async () => {
   output.write(chalk.green("Ensuring correct feature type..."));
 
   if (extent.geometry.type === "MultiPolygon") {
-    const polygons = extent.geometry.coordinates.map(
-      (coordinates) => turf.polygon(coordinates),
-      extent.properties,
+    const polygons = extent.geometry.coordinates.map((coordinates) =>
+      turf.polygon(coordinates),
     );
     if (!polygons[0]) {
       throw new ScriptError(
@@ -142,7 +141,7 @@ const script = async () => {
       const polygonAreas = polygons.map((polygon) => turf.area(polygon));
       const maxArea = Math.max(...polygonAreas);
       const maxAreaIndex = polygonAreas.indexOf(maxArea);
-      polygonAreas.forEach((area, index) => {
+      for (const [index, area] of polygonAreas.entries()) {
         output.write(
           chalk.yellow(
             `${`${Math.round(area / 1000 / 100) / 10}`.padStart(8, " ")} km²${
@@ -150,7 +149,7 @@ const script = async () => {
             }\n`,
           ),
         );
-      });
+      }
       extent = polygons[maxAreaIndex]!;
       output.write(
         chalk.yellow(

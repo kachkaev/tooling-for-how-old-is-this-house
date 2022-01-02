@@ -21,7 +21,7 @@ const LegendPage: NextPage<LegendPageProps> = ({ territoryExtent }) => {
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
 
   if (!posterConfig) {
-    return null;
+    return <></>;
   }
 
   return <ColorLegend posterConfig={posterConfig} />;

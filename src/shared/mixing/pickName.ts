@@ -29,8 +29,8 @@ export const pickName: PickFromPropertyVariants<
     targetBuildArea,
   });
 
-  let fallbackLongResult: Result | undefined = undefined;
-  let fallbackTrivialResult: Result | undefined = undefined;
+  let fallbackLongResult: Result | undefined;
+  let fallbackTrivialResult: Result | undefined;
 
   for (const propertyVariant of propertyVariants) {
     const derivedBeautifiedName = beautifyName(

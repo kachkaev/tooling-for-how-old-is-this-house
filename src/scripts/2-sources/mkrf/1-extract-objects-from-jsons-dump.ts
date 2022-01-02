@@ -2,8 +2,8 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
-import path from "path";
-import readline from "readline";
+import path from "node:path";
+import readline from "node:readline";
 import sortKeys from "sort-keys";
 
 import {
@@ -35,10 +35,8 @@ const derivePickReason = (
     objectData.data.general.additionalCoordinates?.[0] ??
     objectData.data.general.address?.mapPosition;
 
-  if (position) {
-    if (turf.booleanContains(territoryExtent, position)) {
-      return "position";
-    }
+  if (position && turf.booleanContains(territoryExtent, position)) {
+    return "position";
   }
 
   const fallbackAddressSelectors =
@@ -80,7 +78,7 @@ const script = async () => {
   const fileStream = fs.createReadStream(jsonsDumpFilePath);
   const lineStream = readline.createInterface({
     input: fileStream,
-    crlfDelay: Infinity,
+    crlfDelay: Number.POSITIVE_INFINITY,
   });
 
   output.write(" Done.\n");
