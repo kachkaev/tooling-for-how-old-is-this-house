@@ -82,22 +82,23 @@ const normalizeWording = (completionTime: string): string => {
         /(?<!i)(чет|четв|четвертая|4-я|iv-я|4)\.?\s?(чет|четв|четверть)(?!\p{L})\.?\s?/gu,
         "4-я четверть ",
       )
+      // xх is Latin + Cyrillic
       .replace(/-(го|ый|й) век/g, " век")
-      .replace(/([ivx]+)\s?-\s?/, "$1 - ")
-      .replace(/^([ivx]+) -/, "$1 век -")
-      .replace(/ ([ivx]+) -/, " $1 века -")
-      .replace(/^([ivx]+)( в| в.|)$/, "$1 век")
-      .replace(/ ([ivx]+)( в| в.|)$/, " $1 века")
-      .replace(/^([ivx]+) (в|в.|)\s?-\s?/, "$1 век - ")
-      .replace(/ ([ivx]+) (в|в.|)\s?-\s?/, " $1 века - ")
-      .replace(/^([хivx\d]+) в.?(?!(\d|\p{L}|\.))/u, "$1 век")
-      .replace(/, ([хivx\d]+) в.?(?!(\d|\p{L}|\.))/u, ", $1 век")
+      .replace(/([ivxх]+)\s?-\s?/, "$1 - ")
+      .replace(/^([ivxх]+) -/, "$1 век -")
+      .replace(/ ([ivxх]+) -/, " $1 века -")
+      .replace(/^([ivxх]+)( в| в.|)$/, "$1 век")
+      .replace(/ ([ivxх]+)( в| в.|)$/, " $1 века")
+      .replace(/^([ivxх]+) (в|в.|)\s?-\s?/, "$1 век - ")
+      .replace(/ ([ivxх]+) (в|в.|)\s?-\s?/, " $1 века - ")
+      .replace(/^([ivxх\d]+) в.?(?!(\d|\p{L}|\.))/u, "$1 век")
+      .replace(/, ([ivxх\d]+) в.?(?!(\d|\p{L}|\.))/u, ", $1 век")
       .replace(/ в.?(?!(\d|\p{L}|\.))/gu, " века")
       .replace(/ вв?.?$/g, " века")
       .replace(/\s?(г|гг|год|года|годы)\.?$/g, "")
       .replace(/\s?(г|гг|год|года|годы)\.?([^\p{L}])/gu, "$2")
       .replace(
-        /([ivx]+) /g,
+        /([ivxх]+) /g,
         (match) =>
           `${deromanize(
             match.replace(/х/g, "x").trim(), // Russian ‘х’ → Latin ‘X’,
@@ -200,6 +201,7 @@ const parseSingleCompletionTime = (
   {
     const [, prefixmatch, decadeMatch] =
       result.match(/^(начало|середина|конец) (\d{3}0)-х?$/) ?? [];
+
     const decadeYearAndRange = decadeYearAndRangeLookup[prefixmatch ?? ""];
     if (decadeYearAndRange && decadeMatch) {
       const decadeStartYear = Number.parseInt(decadeMatch);
@@ -344,7 +346,9 @@ const deriveCompletionYearUsingGeosemanticaRegexp = (
   }
 
   const completionYearMatch = completionTime.match(
-    /\d{4}(?=,|\s|)(?!-)|\d\s\d{3}|\d{2}\s\d{2}/,
+    // eslint-disable-next-line unicorn/better-regex
+    /\d{4}(?=,|\s|)(?!-)|\d(?:\s)\d{3}|\d{2}(?:\s)\d{2}/,
+    // /\d{4}(?=,|\s|)(?!-)|\d\s\d{3}|\d{2}\s\d{2}/,
   );
 
   if (completionYearMatch?.[0]) {
