@@ -39,7 +39,7 @@ import { writeGeocodeDictionary } from "./writeGeocodeDictionary";
  * it can still be leveraged to debug catalog changes.
  */
 const trailingCommaItemKey = "↳";
-const trailingCommaShouldBeAdded = false;
+const trailingCommaShouldBeAdded = false as boolean;
 
 const addOrRemoveTrailingCommaItem = (
   dictionary: GeocodeDictionary,
@@ -72,7 +72,7 @@ export const reportGeocodes = async ({
   reportedGeocodes,
   source,
 }: {
-  output?: WriteStream;
+  output?: WriteStream | undefined;
   reportedGeocodes: ReportedGeocode[];
   source: string;
 }): Promise<void> => {
@@ -117,9 +117,8 @@ export const reportGeocodes = async ({
       }
 
       const geocode: ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary =
-        "coordinates" in reportedGeocode && reportedGeocode.coordinates
-          ? reportedGeocode.coordinates
-          : [];
+        "coordinates" in reportedGeocode ? reportedGeocode.coordinates : [];
+
       sourceDictionary[normalizedAddress] = { [source]: geocode };
       weightDictionary[normalizedAddress] = reportedWeight;
     }
@@ -145,7 +144,7 @@ export const reportGeocodes = async ({
 
   output?.write(chalk.green("Writing changes to dictionaries..."));
 
-  ensureTerritoryGitignoreContainsGeocoding();
+  await ensureTerritoryGitignoreContainsGeocoding();
 
   let numberOfDictionariesCreated = 0;
   let numberOfDictionariesUpdated = 0;
@@ -173,7 +172,7 @@ export const reportGeocodes = async ({
       {},
       dictionary,
       sourceDictionaryLookup[sliceId],
-    );
+    ) as GeocodeDictionary;
 
     // Clean
     dictionary = addOrRemoveTrailingCommaItem(dictionary);

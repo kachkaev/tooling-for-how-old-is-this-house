@@ -50,8 +50,8 @@ const generateRosreestrTileComment = (
   tileDataFilePath: string,
   tileData: RosreestrTileData,
 ): string => {
-  const numberOfFeatures = tileData?.response?.features?.length;
-  const numberOfFeaturesAsString = `${numberOfFeatures ?? "?"}`;
+  const numberOfFeatures = tileData.response.features.length;
+  const numberOfFeaturesAsString = `${numberOfFeatures}`;
 
   return `${tileDataFilePath} ${numberOfFeaturesAsString.padStart(2)}`;
 };
@@ -99,10 +99,6 @@ GenerateProcessTile = (objectType) => async (tile) => {
       getTileBufferInMeters(tile[2]),
     ),
   ).geometry;
-
-  if (!tileExtentGeometry) {
-    throw new Error("Unexpected empty geometry");
-  }
 
   const rawTileResponse = (
     await fetchJsonFromRosreestr<RawRosreestrTileResponse>(

@@ -76,7 +76,7 @@ const script = async () => {
 
   // Index CCOs in tiles
   for (const ccoFeature of ccoFeatures) {
-    const cn = ccoFeature.properties?.cn;
+    const cn = ccoFeature.properties.cn;
     if (!isValidObjectCn(cn)) {
       throw new ScriptError(
         `Found CCO without a valid cn property (cadastral number): ${JSON.stringify(
@@ -96,7 +96,7 @@ const script = async () => {
 
   // Index lots in tiles
   for (const lotFeature of lotFeatures) {
-    const objectCn = lotFeature.properties?.cn;
+    const objectCn = lotFeature.properties.cn;
     if (!isValidObjectCn(objectCn)) {
       throw new ScriptError(
         `Found lot without cn property (cadastral number): ${JSON.stringify(
@@ -166,7 +166,7 @@ const script = async () => {
   const orderedBlockCns = _.orderBy(Object.keys(knownObjectCnsByBlockCn));
 
   output.write(
-    `Found ${knownObjectCns.length} objects (${ccoFeatures.length} CCOs and ${lotFeatureByCn.length} lots) in ${orderedBlockCns.length} blocks.\n`,
+    `Found ${knownObjectCns.length} objects (${ccoFeatures.length} CCOs and ${lotFeatures.length} lots) in ${orderedBlockCns.length} blocks.\n`,
   );
 
   const territoryExtent = await getTerritoryExtent();

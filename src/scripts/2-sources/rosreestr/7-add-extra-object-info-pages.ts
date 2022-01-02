@@ -47,7 +47,7 @@ const script = async () => {
       .reverse();
 
     const pageNumber = parseInt(fileName?.split("-")[1] ?? "0");
-    const blockCn = `${dirSegment1}:${dirSegment2}:${dirSegment3}`;
+    const blockCn = `${dirSegment1!}:${dirSegment2!}:${dirSegment3!}`;
     const existingPageNumber = maxPageByBlockCn[blockCn];
     if (
       typeof existingPageNumber !== "number" ||

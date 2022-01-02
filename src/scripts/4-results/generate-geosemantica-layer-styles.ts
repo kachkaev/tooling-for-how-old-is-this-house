@@ -31,7 +31,7 @@ const formatColor: FormatColor = (color) =>
 // https://twitter.com/kachkaev_ru/status/1427919578525577217/photo/2
 // This is currently disabled to avoid the usage of Arial font in the project.
 // The option can be set to true before map publishing for debugging.
-const yearLabelsWhenZoomedIn = false;
+const yearLabelsWhenZoomedIn = false as boolean;
 
 const formatSld = (rawSld: string): string =>
   rawSld.trimLeft().replace(/>\s+</g, "><").replace(/\s+/g, " ").trim();

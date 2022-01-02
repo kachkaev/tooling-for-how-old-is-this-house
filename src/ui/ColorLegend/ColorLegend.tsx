@@ -65,7 +65,7 @@ export const ColorLegend: React.VoidFunctionComponent<ColorLegendProps> = ({
 }) => {
   const legendEntries = extractLegendEntries(posterConfig);
   const { locale, query } = useRouter();
-  const snapshot = query.snapshot;
+  const snapshot = query["snapshot"];
 
   return (
     <Wrapper spaced={!snapshot}>

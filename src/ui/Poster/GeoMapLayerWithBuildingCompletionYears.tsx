@@ -25,8 +25,8 @@ export interface GeoMapLayerWithBuildingCompletionYearsProps {
   width: number;
   height: number;
   data: MixedPropertyVariantsFeatureCollection;
-  sampleSize?: number;
-  bufferInMeters?: number;
+  sampleSize?: number | undefined;
+  bufferInMeters?: number | undefined;
   projectionConfig: ProjectionConfig;
   mapCompletionYearToColor: MapCompletionYearToColor;
 }
@@ -61,7 +61,7 @@ export const GeoMapLayerWithBuildingCompletionYears: React.VoidFunctionComponent
       typeof sampleSize === "number" && isFinite(sampleSize)
         ? _.orderBy(data.features, (feature) => {
             const [lon = 0, lat = 0] =
-              turf.pointOnFeature(feature).geometry.coordinates ?? [];
+              turf.pointOnFeature(feature).geometry.coordinates;
             const pseudoRandomIndex =
               extractNumberDigitsInReverse(lon) +
               extractNumberDigitsInReverse(lat);

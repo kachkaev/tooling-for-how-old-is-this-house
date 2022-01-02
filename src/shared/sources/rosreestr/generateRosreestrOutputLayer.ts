@@ -114,7 +114,7 @@ const extractPropertiesFromFirResponse = (
     return "notBuilding";
   }
 
-  return {
+  return deepClean({
     id: cn,
     knownAt: firFetchedAt,
     completionTime: processCompletionTime(
@@ -132,7 +132,7 @@ const extractPropertiesFromFirResponse = (
       firResponse.parcelData.oksFloors,
       firResponse.parcelData.oksUFloors,
     ),
-  };
+  });
 };
 
 const extractPropertiesFromPkkResponse = (
@@ -162,14 +162,14 @@ const extractPropertiesFromPkkResponse = (
       ? attrs.area_value
       : undefined;
 
-  return {
+  return deepClean({
     id: cn,
     knownAt: pkkFetchedAt,
     documentedBuildArea,
     address: attrs.address,
     completionTime,
     ...calculateFloorCounts(attrs.floors, attrs.underground_floors),
-  };
+  });
 };
 
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
@@ -201,7 +201,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     fileSearchPattern: "**/page-*.json",
     filesNicknameToLog: "rosreestr info pages",
     processFile: async (filePath) => {
-      const infoPageData: InfoPageData = await fs.readJson(filePath);
+      const infoPageData = (await fs.readJson(filePath)) as InfoPageData;
       for (const infoPageEntry of infoPageData) {
         const propertyVariants = [
           extractPropertiesFromFirResponse(
@@ -211,17 +211,16 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
           extractPropertiesFromPkkResponse(infoPageEntry),
         ]
           .filter((variant) => typeof variant === "object")
-          .map((variant) => deepClean(variant))
           .reverse();
 
         if (!propertyVariants.length) {
           continue;
         }
 
-        const outputLayerProperties: OutputLayerProperties = Object.assign(
+        const outputLayerProperties = Object.assign(
           {},
           ...propertyVariants,
-        );
+        ) as OutputLayerProperties;
 
         const cn = infoPageEntry.cn;
         let geometry: turf.Point | null =

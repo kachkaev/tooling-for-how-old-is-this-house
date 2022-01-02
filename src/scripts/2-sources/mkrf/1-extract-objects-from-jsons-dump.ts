@@ -42,12 +42,12 @@ const derivePickReason = (
   }
 
   const fallbackAddressSelectors =
-    territoryConfig?.sources?.mkrf
+    territoryConfig.sources?.mkrf
       ?.fallbackAddressSelectorsForObjectsWithoutGeometry;
 
   const fullAddress = objectData.data.general.address?.fullAddress;
 
-  if (fullAddress && fallbackAddressSelectors instanceof Array) {
+  if (fullAddress && Array.isArray(fallbackAddressSelectors)) {
     for (const fallbackAddressSelector of fallbackAddressSelectors) {
       const selectors =
         typeof fallbackAddressSelector === "string"

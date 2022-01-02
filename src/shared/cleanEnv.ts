@@ -7,6 +7,8 @@ import { defaultReporter } from "./envalidDefaultReporter";
 export const customEnvalidReporter: typeof defaultReporter = (opts) => {
   /* eslint-disable no-console */
   const originalConsoleError = console.error;
+
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const originalProcessExit = process.exit;
 
   let errorOutput = "\n";

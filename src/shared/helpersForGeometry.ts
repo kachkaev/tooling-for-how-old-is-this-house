@@ -87,7 +87,10 @@ export const multiUnion = (
 };
 
 export const filterFeaturesByGeometryType = <
-  T extends turf.Feature<turf.GeometryObject, any>,
+  T extends turf.Feature<
+    turf.GeometryObject | undefined,
+    Record<string, unknown>
+  >,
 >({
   features,
   acceptedGeometryTypes,
@@ -95,22 +98,32 @@ export const filterFeaturesByGeometryType = <
 }: {
   features: T[];
   acceptedGeometryTypes: turf.GeometryTypes[];
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): T[] => {
   return features.filter((feature) => {
-    if (acceptedGeometryTypes.includes(feature.geometry?.type)) {
+    if (
+      feature.geometry &&
+      acceptedGeometryTypes.includes(feature.geometry.type)
+    ) {
       return true;
     }
 
-    const featureId = feature.properties?.id;
+    const featureIdToDisplay =
+      typeof feature.properties["id"] === "string" ||
+      typeof feature.properties["id"] === "number"
+        ? feature.properties["id"]
+        : "<no id>";
+
     if (!feature.geometry) {
       output?.write(
-        chalk.yellow(`Ignoring feature ${featureId} without geometry\n`),
+        chalk.yellow(
+          `Ignoring feature ${featureIdToDisplay} without geometry\n`,
+        ),
       );
     } else {
       output?.write(
         chalk.yellow(
-          `Ignoring feature ${featureId} due to unexpected geometry type: ${feature.geometry.type}\n`,
+          `Ignoring feature ${featureIdToDisplay} due to unexpected geometry type: ${feature.geometry.type}\n`,
         ),
       );
     }

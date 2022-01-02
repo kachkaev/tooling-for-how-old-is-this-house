@@ -385,7 +385,7 @@ const doParseCompletionTime = (
 
   const derivedCompletionTimeForGeosemantica = stringChunks.join(", ");
 
-  if (firstResult.completionYear && firstResult.completionYearRange) {
+  if (firstResult.completionYear) {
     return {
       derivedCompletionTimeForGeosemantica,
       derivedCompletionYear: firstResult.completionYear,
@@ -412,6 +412,7 @@ export const parseCompletionTime = (
   ) {
     // It is safe to comment this line out if it blocks you
     throw new Error(
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       `Unexpected completion year mismatch for string "${completionTime}". Local parser: ${result.derivedCompletionYear}, Geosemantica ${derivedCompletionYearUsingGeosemanticaRegexp}. This is a bug, please report it.`,
     );
   }

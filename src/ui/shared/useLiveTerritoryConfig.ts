@@ -5,12 +5,14 @@ import { useInterval } from "react-use";
 import { TerritoryConfig } from "../../shared/territory";
 
 export const useLiveTerritoryConfig = (): TerritoryConfig | undefined => {
-  const [result, setResult] = React.useState(undefined);
+  const [result, setResult] = React.useState<TerritoryConfig | undefined>(
+    undefined,
+  );
 
   useInterval(async () => {
-    const justFetchedTerritoryConfig = await (
+    const justFetchedTerritoryConfig = (await (
       await fetch("/api/territory-config")
-    ).json();
+    ).json()) as TerritoryConfig;
 
     if (!_.isEqual(result, justFetchedTerritoryConfig)) {
       setResult(justFetchedTerritoryConfig);

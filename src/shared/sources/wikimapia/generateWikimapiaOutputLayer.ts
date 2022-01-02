@@ -88,9 +88,9 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
     fileSearchPattern: `**/*-${getWikimapiaObjectInfoFileSuffix()}`,
     filesNicknameToLog: "wikimapia object info files",
     processFile: async (filePath) => {
-      const objectInfoFile: WikimapiaObjectInfoFile = await fs.readJson(
+      const objectInfoFile = (await fs.readJson(
         filePath,
-      );
+      )) as WikimapiaObjectInfoFile;
 
       objectInfoFileById[`${objectInfoFile.data.wikimapiaId}`] = objectInfoFile;
     },
@@ -139,7 +139,7 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
     const pickedPhotoInfo = pickPhotoInfo(objectInfoFile.data.photos);
 
     // Combined properties
-    const outputLayerProperties: OutputLayerProperties = {
+    const outputLayerProperties: OutputLayerProperties = deepClean({
       id,
       photoUrl: pickedPhotoInfo?.url,
       photoAuthorName: pickedPhotoInfo?.userName,
@@ -151,10 +151,10 @@ export const generateWikimapiaOutputLayer: GenerateOutputLayer = async ({
         objectInfoFile.data.completionTime ??
         objectInfoFile.data.completionDates,
       name,
-    };
+    });
 
     outputFeatures.push(
-      turf.feature(objectFeature.geometry, deepClean(outputLayerProperties)),
+      turf.feature(objectFeature.geometry, outputLayerProperties),
     );
   }
 

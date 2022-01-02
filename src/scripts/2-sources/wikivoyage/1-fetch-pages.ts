@@ -40,11 +40,11 @@ interface ApiResponseData {
 const script = async () => {
   output.write(chalk.bold("sources/wikivoyage: Fetching pages\n"));
 
-  const pagesToFetch = (await getTerritoryConfig())?.sources?.wikivoyage
+  const pagesToFetch = (await getTerritoryConfig()).sources?.wikivoyage
     ?.pagesToFetch as unknown;
-  if (!(pagesToFetch instanceof Array)) {
+  if (!Array.isArray(pagesToFetch)) {
     throw new ScriptError(
-      `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to be an array, got ${pagesToFetch}`,
+      `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to be an array, got ${typeof pagesToFetch}`,
     );
   }
 
@@ -53,7 +53,9 @@ const script = async () => {
     if (typeof pageToFetch !== "string" || !pageToFetch.startsWith(urlPrefix)) {
       output.write(
         chalk.yellow(
-          `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to contain URLs starting with ${urlPrefix}. Skipping ${pageToFetch}.\n`,
+          `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to contain URLs starting with ${urlPrefix}. Skipping ${JSON.stringify(
+            pageToFetch,
+          )}.\n`,
         ),
       );
       continue;

@@ -13,12 +13,16 @@ export const pickFloorCount: PickFromPropertyVariants<
     targetBuildArea,
   });
 
-  for (const propertyVariant of propertyVariants) {
-    if (propertyVariant.floorCountAboveGround) {
+  for (const {
+    floorCountAboveGround,
+    floorCountBelowGround,
+    source,
+  } of propertyVariants) {
+    if (floorCountAboveGround) {
       return {
-        floorCountAboveGround: propertyVariant.floorCountAboveGround,
-        floorCountBelowGround: propertyVariant.floorCountBelowGround,
-        floorCountSource: propertyVariant.source,
+        floorCountAboveGround,
+        ...(floorCountBelowGround ? { floorCountBelowGround } : {}),
+        floorCountSource: source,
       };
     }
   }

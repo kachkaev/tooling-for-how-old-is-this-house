@@ -27,7 +27,7 @@ const script = async () => {
   for (let index = 0; index < objectExtentFeatures.length; index += 1) {
     const objectExtentFeature = objectExtentFeatures[index]!;
 
-    const wikimapiaId = objectExtentFeature.properties?.wikimapiaId;
+    const wikimapiaId = objectExtentFeature.properties.wikimapiaId;
     if (!wikimapiaId) {
       throw new Error(`Unexpected empty wikimapia at index ${index}`);
     }

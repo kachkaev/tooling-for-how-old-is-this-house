@@ -102,7 +102,7 @@ const mapOsmPropertiesToGeographicContextProperties = (
     case "rail":
       return {
         category: "railway",
-        relativeSize: properties.usage === "main" ? 1 : 0.7,
+        relativeSize: properties["usage"] === "main" ? 1 : 0.7,
         level,
       };
     case "abandoned":

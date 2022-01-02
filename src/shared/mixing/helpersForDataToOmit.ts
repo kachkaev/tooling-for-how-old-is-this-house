@@ -39,9 +39,9 @@ const isValidPropertySelector = (
 export const parseDataToOmit = (
   dataToOmit: string | undefined,
   reportIssue: (issue: string) => void,
-): undefined | DataToOmitSelector[] => {
+): DataToOmitSelector[] => {
   if (!dataToOmit) {
-    return undefined;
+    return [];
   }
   const slices = dataToOmit.split(",").map((slice) => slice.trim());
 
@@ -71,10 +71,12 @@ export const parseDataToOmit = (
         return undefined;
       }
 
+      const id = treatAsteriskAsUndefined(rawId);
+
       return {
         source,
-        id: treatAsteriskAsUndefined(rawId),
-        propertySelector,
+        ...(id ? { id } : {}),
+        ...(propertySelector ? { propertySelector } : {}),
       };
     })
     .filter((result): result is DataToOmitSelector => Boolean(result));

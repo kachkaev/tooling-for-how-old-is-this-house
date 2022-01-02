@@ -24,7 +24,7 @@ const findItemsAroundAnchors = <Item>(
   const foundItemSet = new Set<Item>();
 
   for (let index = 0; index < items.length; index += 1) {
-    const item = items[index]!;
+    const item = items[index];
     if (!item || !anchorItemSet.has(item)) {
       continue;
     }
@@ -73,7 +73,7 @@ export const processRosreestrPages = async ({
   ) => InfoPageObject[];
   includeObjectsAroundAnchors?: number;
   includeObjectsAroundEnds?: number;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
   pageSaveFrequency?: number;
   processObject: (
     infoPageObject: Readonly<InfoPageObject>,
@@ -187,7 +187,7 @@ export const processRosreestrPages = async ({
             progressSymbol = "•";
           } else if (typeof latestResponse === "object") {
             if ("parcelData" in latestResponse) {
-              progressSymbol = latestResponse.parcelData?.oksType?.[0] ?? "?";
+              progressSymbol = latestResponse.parcelData.oksType?.[0] ?? "?";
             } else if ("attrs" in latestResponse) {
               progressSymbol = latestResponse.attrs.oks_type?.[0] ?? "?";
             }

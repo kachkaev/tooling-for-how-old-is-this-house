@@ -13,7 +13,7 @@ type FeatureProperties = Omit<HouseInfo, "centerPoint"> & { fetchedAt: string };
 export const generateMingkhHouseInfoCollection = async ({
   output,
 }: {
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): Promise<
   turf.FeatureCollection<turf.Point | undefined, FeatureProperties>
 > => {

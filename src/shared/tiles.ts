@@ -14,7 +14,7 @@ export const stringifyTile = (tile: Tile): string =>
 export const parseTile = (stringifiedTile: string): Tile => {
   const result = stringifiedTile
     .split("/")
-    .map((stringifiedTileSection) => parseInt(stringifiedTileSection) ?? 0);
+    .map((stringifiedTileSection) => parseInt(stringifiedTileSection) || 0);
   if (result.length !== 3) {
     throw new Error(
       `Expected 3 parts in stringified tile, got ${result.length}`,
@@ -27,11 +27,15 @@ export const parseTile = (stringifiedTile: string): Tile => {
 export type TileStatus = "complete" | "needsSplitting";
 export type CacheStatus = "used" | "notUsed";
 
-export type ProcessTile = (tile: Tile) => Promise<{
+export interface ProcessTileResult {
   cacheStatus: CacheStatus;
   tileStatus: TileStatus;
   comment?: string;
-}>;
+}
+
+export type ProcessTile = (
+  tile: Tile,
+) => ProcessTileResult | Promise<ProcessTileResult>;
 
 export const processTiles = async ({
   initialZoom,

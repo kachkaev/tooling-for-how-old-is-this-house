@@ -103,7 +103,7 @@ export const extractPosterConfig = (
     rawPosterConfig,
     defaultPosterConfig,
     nilMergeDeep,
-  ) as PosterConfig;
+  );
 
   if (!Object.keys(result.colorByCompletionYear).length) {
     result.colorByCompletionYear = defaultColorByCompletionYear;

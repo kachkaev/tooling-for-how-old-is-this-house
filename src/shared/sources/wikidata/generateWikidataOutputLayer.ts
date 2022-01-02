@@ -23,9 +23,9 @@ const extractArchitect = (
 };
 
 const extractId = (item: WikidataQueryItem): Partial<OutputLayerProperties> => {
-  const [, idMatch] = item.item?.value.match(/\/entity\/(.*)$/) ?? [];
+  const [, idMatch] = item.item.value.match(/\/entity\/(.*)$/) ?? [];
   if (!idMatch) {
-    throw new Error(`Unable to extract item id from ${item.item?.value}`);
+    throw new Error(`Unable to extract item id from ${item.item.value}`);
   }
 
   return { id: idMatch };

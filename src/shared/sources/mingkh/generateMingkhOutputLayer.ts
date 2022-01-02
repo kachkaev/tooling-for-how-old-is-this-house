@@ -19,7 +19,7 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
 
   const outputFeatures: OutputLayer["features"] =
     houseInfoCollection.features.map((houseInfo) => {
-      const outputLayerProperties: OutputLayerProperties = {
+      const outputLayerProperties: OutputLayerProperties = deepClean({
         id: `${houseInfo.properties.id}`,
 
         address: houseInfo.properties.address,
@@ -28,12 +28,9 @@ export const generateMingkhOutputLayer: GenerateOutputLayer = async ({
           : undefined,
         floorCountAboveGround: houseInfo.properties.numberOfFloors,
         knownAt: houseInfo.properties.fetchedAt,
-      };
+      });
 
-      return turf.feature(
-        houseInfo.geometry ?? null,
-        deepClean(outputLayerProperties),
-      );
+      return turf.feature(houseInfo.geometry ?? null, outputLayerProperties);
     });
 
   return {

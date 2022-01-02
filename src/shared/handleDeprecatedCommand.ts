@@ -27,5 +27,5 @@ export const handleDeprecatedCommand = async (importMeta: ImportMeta) => {
   console.log();
   /* eslint-enable no-console */
 
-  (await import(newFilePath)).default({ logger: console });
+  await import(newFilePath);
 };

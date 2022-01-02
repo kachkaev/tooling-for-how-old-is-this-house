@@ -15,7 +15,7 @@ export const processFiles = async ({
   fileSearchPattern: string | string[];
   fileSearchDirPath: string;
   filesNicknameToLog?: string;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
   processFile: (
     filePath: string,
     prefixLength: number,

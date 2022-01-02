@@ -21,7 +21,7 @@ describe("normalizeAddressAtomically", () => {
     }) => {
       if (expectedNormalizedAtomicAddresses) {
         const rawAddressesToUse = expectedCleanedAddress
-          ? [rawAddresses[0]]
+          ? [rawAddresses[0]!]
           : rawAddresses;
         for (const rawAddress of rawAddressesToUse) {
           it(`works for "${rawAddress}"`, () => {

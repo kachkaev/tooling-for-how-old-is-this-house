@@ -142,7 +142,7 @@ const script = async () => {
 
       const outputLayer = (await fs.readJson(filePath)) as OutputLayer;
 
-      const layerRole = outputLayer.layerRole;
+      const layerRole = outputLayer.layerRole as unknown;
       if (layerRole !== "base" && layerRole !== "patch") {
         output.write(
           `${prefix}layer role: ${chalk.red(
@@ -214,12 +214,14 @@ const script = async () => {
             return;
           }
 
+          const derivedBuildArea = Math.round(turf.area(geometry));
+
           features.push({
             type: "Feature",
             geometry: turf.pointOnFeature(geometry).geometry,
             properties: {
               ...ensureUniqueIdProperty(feature.properties, source),
-              derivedBuildArea: Math.round(turf.area(geometry)) || undefined,
+              ...(derivedBuildArea > 0 ? { derivedBuildArea } : {}),
             },
           });
         });
@@ -250,7 +252,7 @@ const script = async () => {
     initialZoom: tileZoom,
     maxAllowedZoom: tileZoom,
     output,
-    processTile: async (tile) => {
+    processTile: (tile) => {
       const tileBbox = tilebelt.tileToBBOX(tile) as turf.BBox;
 
       const filteredBaseLayers: BaseLayer[] = baseLayers.map((baseLayer) => ({

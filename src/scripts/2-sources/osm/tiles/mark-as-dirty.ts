@@ -27,11 +27,9 @@ const script = async () => {
         tileZoom === maxAllowedZoom ? "complete" : "needsSplitting";
 
       // const canBeSkipped = tileZoom >= 14 && (tileX + tileY) % 2 === 0;
-      const canBeSkipped = false;
-
-      if (canBeSkipped) {
-        return { cacheStatus: "used", tileStatus };
-      }
+      // if (canBeSkipped) {
+      //   return { cacheStatus: "used", tileStatus };
+      // }
 
       await axiosInstance.get(
         `https://tile.openstreetmap.org/${tileZoom}/${tileX}/${tileY}.png`,

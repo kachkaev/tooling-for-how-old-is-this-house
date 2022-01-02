@@ -145,7 +145,7 @@ const generateCopyrights = ({
     return undefined;
   }
 
-  if (photoUrl?.startsWith("https://commons.wikimedia.org")) {
+  if (photoUrl.startsWith("https://commons.wikimedia.org")) {
     return `фото: Викимедя Коммонс`;
   }
 
@@ -303,7 +303,7 @@ const script = async () => {
     turf.featureCollection(foregroundLayerFeatures),
   );
 
-  output?.write(
+  output.write(
     ` Result saved to:\n${
       chalk.magenta(backgroundLayerFilePath) //
     }\n${

@@ -8,10 +8,10 @@ const nextJsPageSelector = "#__next *";
 
 export const ensureImageSnapshot = async ({
   imageScaleFactor,
-  omitBackground,
+  omitBackground = false,
   output,
   page,
-  quality,
+  quality = 100,
   resultFilePath,
   selectorToWaitFor = nextJsPageSelector,
 }: {
@@ -19,7 +19,7 @@ export const ensureImageSnapshot = async ({
   omitBackground?: boolean;
   output: WriteStream;
   page: puppeteer.Page;
-  quality?: number;
+  quality?: number | undefined;
   resultFilePath: string;
   selectorToWaitFor?: string;
 }): Promise<void> => {

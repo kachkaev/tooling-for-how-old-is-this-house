@@ -33,7 +33,7 @@ export const extractSerializedTimeFromPrependedHtmlComment = (
     throw new Error("Unable to find prepended serialized time in html");
   }
 
-  return rawFetchedAtMatch?.[1];
+  return rawFetchedAtMatch[1];
 };
 
 export const extractJsonFromPrependedHtmlComment = <
@@ -48,9 +48,9 @@ export const extractJsonFromPrependedHtmlComment = <
   }
 
   try {
-    const json = JSON.parse(match[1].trim());
+    const json = JSON.parse(match[1].trim()) as unknown;
 
-    return json;
+    return json as T;
   } catch {
     throw new Error("Unable to parse prepended JSON in html");
   }

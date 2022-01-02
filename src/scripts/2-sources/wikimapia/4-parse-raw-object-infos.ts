@@ -7,7 +7,6 @@ import {
   AddressHandlingConfig,
   buildCleanedAddressAst,
 } from "../../../shared/addresses";
-import { deepClean } from "../../../shared/deepClean";
 import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
 import {
   serializeTime,
@@ -184,12 +183,18 @@ const script = async () => {
       }
 
       // Extract completion time
-      info.completionTime =
+      const completionTime =
         extractCompletionTimeFromTags(rawInfo) ??
         extractCompletionTimeFromDescription(rawInfo);
+      if (completionTime) {
+        info.completionTime = completionTime;
+      }
 
       // Extract title
-      info.name = extractName(rawInfo, addressHandlingConfig);
+      const name = extractName(rawInfo, addressHandlingConfig);
+      if (name) {
+        info.name = name;
+      }
 
       // Mark buildings are demolished
       // https://wikimapia.org/object/category/?type=view&id=45694
@@ -200,7 +205,7 @@ const script = async () => {
       const objectInfoFileJson: WikimapiaObjectInfoFile = {
         fetchedAt: extractSerializedTimeFromPrependedHtmlComment(rawInfo),
         parsedAt: serializeTime(),
-        data: sortKeys(deepClean(info), { deep: true }),
+        data: sortKeys(info, { deep: true }),
       };
 
       try {

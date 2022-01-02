@@ -18,7 +18,7 @@ const output = process.stdout;
 const assertNoUsefulData = (
   responseData: SuccessfulFirObjectResponseInInfoPage,
 ) => {
-  if (responseData.parcelData?.oksYearBuilt) {
+  if (responseData.parcelData.oksYearBuilt) {
     throw new Error(
       `Did not expect to see oksYearBuilt in the flat ${responseData.objectId}. Maybe the script should be tweaked to harvest more data?`,
     );
@@ -34,14 +34,16 @@ const processRawFirApiResponse = (
     throw new Error(`Unexpected response status ${rawApiResponse.status}`);
   }
 
-  const rawResponseData = rawApiResponse.data as SuccessfulFirObjectResponse;
+  const rawResponseData = rawApiResponse.data;
   const responseData = Object.fromEntries(
-    Object.entries(rawResponseData).filter(([key]) => key !== "oldNumbers"),
-  ) as SuccessfulFirObjectResponseInInfoPage;
+    Object.entries(rawResponseData as SuccessfulFirObjectResponse).filter(
+      ([key]) => key !== "oldNumbers",
+    ),
+  ) as SuccessfulFirObjectResponseInInfoPage | undefined;
 
   // https://github.com/kachkaev/tooling-for-how-old-is-this-house/issues/17
   // TODO: Fix retry logic in fetchJsonFromRosreestr once API response is known.
-  if (!responseData.parcelData) {
+  if (!responseData?.parcelData) {
     throw new Error(
       `Unexpected empty parcel data in response.\nContext: https://github.com/kachkaev/tooling-for-how-old-is-this-house/issues/17\nData: ${JSON.stringify(
         responseData,
@@ -53,7 +55,7 @@ const processRawFirApiResponse = (
     assertNoUsefulData(responseData);
 
     return "flat";
-  } else if (!responseData.parcelData?.oksFlag) {
+  } else if (!responseData.parcelData.oksFlag) {
     assertNoUsefulData(responseData);
 
     return "lot";

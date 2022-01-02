@@ -20,7 +20,7 @@ const checkIfWebAppIsLaunched = async (
 ): Promise<boolean> => {
   try {
     const fetchedTerritoryConfig = (
-      await axios.get(`${webAppUrl}/api/territory-config`, {
+      await axios.get<TerritoryConfig>(`${webAppUrl}/api/territory-config`, {
         responseType: "json",
       })
     ).data;
@@ -63,7 +63,7 @@ export const ensureLaunchedWebApp = async ({
   await app.prepare();
   const handle = app.getRequestHandler();
   const server = createServer((req, res) => {
-    handle(req, res, parse(req.url ?? "", true));
+    void handle(req, res, parse(req.url ?? "", true));
   });
   server.listen(tempAppPort);
 
@@ -86,7 +86,7 @@ export const ensureLaunchedWebApp = async ({
   } finally {
     output.write(chalk.green(`Stopping the web app at ${tempWebAppUrl}...`));
     server.close();
-    app.close();
+    await app.close();
     global.console = originalConsole;
     output.write(" Done.\n");
   }

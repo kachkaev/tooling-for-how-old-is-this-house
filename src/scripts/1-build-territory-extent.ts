@@ -15,9 +15,9 @@ import {
 const output = process.stdout;
 
 const script = async () => {
-  output?.write(chalk.bold("Building territory extent\n"));
+  output.write(chalk.bold("Building territory extent\n"));
 
-  output?.write(chalk.green("Obtaining elements to combine...\n"));
+  output.write(chalk.green("Obtaining elements to combine...\n"));
   const territoryConfig = await getTerritoryConfig();
   const elementsToCombine = territoryConfig.extent?.elementsToCombine ?? [];
 
@@ -29,27 +29,29 @@ const script = async () => {
       }:`,
     );
 
-    if (
-      elementConfig.type === "osmRelation" ||
-      elementConfig.type === "osmWay"
-    ) {
-      let query: string;
+    const elementType = elementConfig.type as unknown;
+    if (elementType !== "osmRelation" && elementType !== "osmWay") {
+      output.write(chalk.red(" Skipping due to unknown type.\n"));
+      continue;
+    }
 
-      if (elementConfig.type === "osmRelation") {
-        if (!(elementConfig.relationId > 0)) {
-          output.write(
-            chalk.yellow(
-              ` Missing relationId (should be positive integer), skipping.\n`,
-            ),
-          );
-          continue;
-        }
+    let query: string;
 
+    if (elementConfig.type === "osmRelation") {
+      if (!(elementConfig.relationId > 0)) {
         output.write(
-          chalk.green(` Fetching OSM relation ${elementConfig.relationId}...`),
+          chalk.yellow(
+            ` Missing relationId (should be positive integer), skipping.\n`,
+          ),
         );
+        continue;
+      }
 
-        query = dedent`
+      output.write(
+        chalk.green(` Fetching OSM relation ${elementConfig.relationId}...`),
+      );
+
+      query = dedent`
           [out:json][timeout:25];
           (
             relation(id:${elementConfig.relationId});
@@ -58,21 +60,19 @@ const script = async () => {
           >;
           out skel qt;
         `;
-      } else {
-        if (!(elementConfig.wayId > 0)) {
-          output.write(
-            chalk.yellow(
-              ` Missing wayId (should be positive integer), skipping.\n`,
-            ),
-          );
-          continue;
-        }
-
+    } else {
+      if (!(elementConfig.wayId > 0)) {
         output.write(
-          chalk.green(` Fetching OSM way ${elementConfig.wayId}...`),
+          chalk.yellow(
+            ` Missing wayId (should be positive integer), skipping.\n`,
+          ),
         );
+        continue;
+      }
 
-        query = dedent`
+      output.write(chalk.green(` Fetching OSM way ${elementConfig.wayId}...`));
+
+      query = dedent`
           [out:json][timeout:25];
           (
             way(id:${elementConfig.wayId});
@@ -81,21 +81,20 @@ const script = async () => {
           >;
           out skel qt;
         `;
-      }
-
-      const geometryCollection = await fetchGeojsonFromOverpassApi({ query });
-
-      geometryCollection.features.forEach((feature) => {
-        const featureGeometry = feature.geometry as turf.Geometry;
-        if (featureGeometry.type === "Polygon") {
-          elementGeometries.push(feature.geometry);
-        }
-      });
-      output.write(" Done.\n");
-    } else {
-      output.write(chalk.red(" Skipping due to unknown type.\n"));
     }
+
+    const geometryCollection = await fetchGeojsonFromOverpassApi({ query });
+
+    geometryCollection.features.forEach((feature) => {
+      const featureGeometry = feature.geometry as turf.Geometry;
+      if (featureGeometry.type === "Polygon") {
+        elementGeometries.push(feature.geometry);
+      }
+    });
+
+    output.write(" Done.\n");
   }
+
   const featuresToUnion = elementGeometries
     .filter(
       (geometry): geometry is turf.Polygon | turf.MultiPolygon =>
@@ -169,8 +168,8 @@ const script = async () => {
     extent.properties = {};
   }
 
-  extent.properties.name = territoryConfig.name;
-  extent.properties.createdAt = serializeTime();
+  extent.properties["name"] = territoryConfig.name;
+  extent.properties["createdAt"] = serializeTime();
 
   await writeFormattedJson(getTerritoryExtentFilePath(), sortKeys(extent));
 

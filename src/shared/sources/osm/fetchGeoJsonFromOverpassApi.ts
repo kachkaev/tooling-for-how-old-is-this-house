@@ -19,8 +19,8 @@ axiosRetry(axiosInstance, {
   retryDelay: (retryCount) => 2000 + (retryCount ^ 1.5) * 1000,
   retryCondition: (error) =>
     !error.response?.status ||
-    error.response?.status === 429 ||
-    error.response?.status >= 500,
+    error.response.status === 429 ||
+    error.response.status >= 500,
   shouldResetTimeout: true,
 });
 
@@ -32,7 +32,7 @@ export const fetchGeojsonFromOverpassApi = async ({
 }: {
   acceptedGeometryTypes?: turf.GeometryTypes[];
   extent?: turf.Feature<turf.Polygon>;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
   query: string;
 }): Promise<OsmFeatureCollection<turf.GeometryObject>> => {
   output?.write(chalk.green("Preparing to make Overpass API query..."));
@@ -43,7 +43,7 @@ export const fetchGeojsonFromOverpassApi = async ({
       throw new Error("Unexpected empty geometry in extent");
     }
 
-    const pointsInOuterRing = (extent.geometry as turf.Polygon).coordinates[0];
+    const pointsInOuterRing = extent.geometry.coordinates[0];
 
     if (!pointsInOuterRing) {
       throw new Error("Unexpected undefined outer ring in the polygon");
@@ -62,7 +62,7 @@ export const fetchGeojsonFromOverpassApi = async ({
   output?.write(" Done.\n");
   output?.write(chalk.green("Calling Overpass API..."));
 
-  const response = await axiosInstance.post(
+  const response = await axiosInstance.post<unknown>(
     "https://overpass-api.de/api/interpreter",
     processedQuery,
     { responseType: "json" },
@@ -73,10 +73,11 @@ export const fetchGeojsonFromOverpassApi = async ({
   output?.write(" Done.\n");
   output?.write(chalk.green("Converting OSM data to geojson..."));
 
-  const geojsonData = osmToGeojson(osmData) as turf.FeatureCollection<
+  // @ts-expect-error -- There is a type mismatch between turf and osmtogeojson
+  const geojsonData: turf.FeatureCollection<
     turf.GeometryObject,
     OsmFeatureProperties
-  >;
+  > = osmToGeojson(osmData);
 
   output?.write(" Done.\n");
   output?.write(chalk.green("Post-processing..."));
@@ -91,19 +92,21 @@ export const fetchGeojsonFromOverpassApi = async ({
 
   // Reorder features by id (helps reduce diffs following subsequent fetches)
   geojsonData.features = _.orderBy(geojsonData.features, (feature) => {
-    const [osmType, numericId] = `${feature.id}`.split("/");
+    const [osmType, numericId] = `${feature.id!}`.split("/");
 
-    return `${osmType}/${(numericId ?? "").padStart(12, "0")}`;
+    return `${osmType!}/${(numericId ?? "").padStart(12, "0")}`;
   });
 
   // Remove feature ids given that there is a property with the same value
   const featuresWithoutId = geojsonData.features.map((feature) => {
-    if (!feature.properties?.id) {
-      throw new Error(`Unexpected missing id property in ${feature.id}`);
+    if (!feature.properties.id) {
+      throw new Error(`Unexpected missing id property in ${feature.id!}`);
     }
-    if (feature.properties?.id !== feature.id) {
+    if (feature.properties.id !== feature.id) {
       throw new Error(
-        `feature.id (${feature.id}) does not match feature.properties.id (${feature.properties?.id})`,
+        `feature.id (${feature.id!}) does not match feature.properties.id (${
+          feature.properties.id
+        })`,
       );
     }
 

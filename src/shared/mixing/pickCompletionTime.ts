@@ -131,12 +131,20 @@ export const pickCompletionTime: PickFromPropertyVariants<PropertiesToPick> = ({
   }
 
   if (candidate) {
+    const {
+      completionTime,
+      source,
+      derivedCompletionTimeForGeosemantica,
+      derivedCompletionYear,
+    } = candidate;
+
     return {
-      completionTime: candidate.completionTime,
-      completionTimeSource: candidate.source,
-      derivedCompletionTimeForGeosemantica:
-        candidate.derivedCompletionTimeForGeosemantica,
-      derivedCompletionYear: candidate.derivedCompletionYear,
+      completionTime,
+      completionTimeSource: source,
+      ...(derivedCompletionTimeForGeosemantica
+        ? { derivedCompletionTimeForGeosemantica }
+        : {}),
+      ...(derivedCompletionYear ? { derivedCompletionYear } : {}),
     };
   }
 

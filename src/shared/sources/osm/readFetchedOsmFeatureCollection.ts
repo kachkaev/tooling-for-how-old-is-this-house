@@ -60,7 +60,7 @@ ReadFetchedOsmFeatureCollection = async (collectionName: string) => {
   const filePath = resolveCollectionNameToFilePath(collectionName);
   let result: OsmFeatureCollection<any> | undefined = undefined;
   try {
-    result = await fs.readJson(filePath);
+    result = (await fs.readJson(filePath)) as OsmFeatureCollection;
   } catch {
     // noop
   }
@@ -76,5 +76,6 @@ ReadFetchedOsmFeatureCollection = async (collectionName: string) => {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- tolerable due to type overloading
   return result as any;
 };

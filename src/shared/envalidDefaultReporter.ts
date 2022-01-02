@@ -3,7 +3,7 @@
 import { EnvMissingError, ReporterOptions } from "envalid";
 
 // Apply ANSI colors to the reporter output only if we detect that we're running in Node
-const isNode = !!(typeof process === "object" && process?.versions?.node);
+const isNode = !!(typeof process === "object" && process.versions.node);
 const colorWith = (colorCode: string) => (str: string) =>
   isNode ? `\x1b[${colorCode}m${str}\x1b[0m` : str;
 

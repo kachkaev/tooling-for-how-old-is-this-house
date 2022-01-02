@@ -226,7 +226,7 @@ export const buildCleanedAddressAst = (
       continue;
     }
 
-    const endingStartsWithDash = node.ending?.startsWith("-");
+    const endingStartsWithDash = node.ending.startsWith("-");
     const endingWithoutDash = endingStartsWithDash
       ? node.ending.slice(1)
       : node.ending;
@@ -282,8 +282,8 @@ export const buildCleanedAddressAst = (
     ) {
       (node1 as AddressNodeWithWord).wordType = "initial";
       (node2 as AddressNodeWithWord).wordType = "initial";
-      node1.value = `${node1.value[0]}.`;
-      node2.value = `${node2.value[0]}.`;
+      node1.value = `${node1.value[0]!}.`;
+      node2.value = `${node2.value[0]!}.`;
     }
   }
 
@@ -381,7 +381,7 @@ export const buildCleanedAddressAst = (
       }
 
       (node2 as AddressNodeWithWord).wordType = "initial";
-      node2.value = `${node2.value[0]}.`;
+      node2.value = `${node2.value[0]!}.`;
     }
   }
 
@@ -464,10 +464,7 @@ export const buildCleanedAddressAst = (
       continue;
     }
 
-    if (
-      previouslySeenDesignationInThisSection &&
-      previouslySeenDesignationConfigInThisSection
-    ) {
+    if (previouslySeenDesignationConfigInThisSection) {
       if (previouslySeenDesignationConfigInThisSection.canBePartOfName) {
         (
           previouslySeenDesignationInThisSection as AddressNodeWithWord

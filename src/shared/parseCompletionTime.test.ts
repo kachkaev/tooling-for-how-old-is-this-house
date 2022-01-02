@@ -74,6 +74,11 @@ describe("parseCompletionTime", () => {
       derivedCompletionTimeForGeosemantica,
       derivedCompletionYear,
       derivedCompletionYearRange,
+    }: {
+      input: string | undefined;
+      derivedCompletionTimeForGeosemantica: string | undefined;
+      derivedCompletionYear: string | undefined;
+      derivedCompletionYearRange: [number, number] | undefined;
     }) => {
       expect(parseCompletionTime(input)).toEqual({
         derivedCompletionTimeForGeosemantica,

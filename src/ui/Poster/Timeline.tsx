@@ -60,7 +60,7 @@ const Bar: React.VoidFunctionComponent<{
   abnormalYearBuildingCountCap: number;
   buildings: MixedPropertyVariantsFeature[];
   label: string;
-  labelOffsetX?: number;
+  labelOffsetX?: number | undefined;
   mapCompletionYearToColor: MapCompletionYearToColor;
   xScale: ScaleLinear<number, number>;
   year: number;
@@ -81,7 +81,7 @@ const Bar: React.VoidFunctionComponent<{
     buildings.length > 0 ? year : undefined,
   );
 
-  const yearIsAbnormal = abnormalYears?.includes(year);
+  const yearIsAbnormal = abnormalYears.includes(year);
   const total =
     yearIsAbnormal && abnormalYearBuildingCountCap > 0
       ? Math.min(buildings.length, abnormalYearBuildingCountCap)

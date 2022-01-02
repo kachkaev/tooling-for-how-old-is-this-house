@@ -3,7 +3,10 @@ import { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import { getMixedPropertyVariantsFilePath } from "../shared/mixing";
+import {
+  getMixedPropertyVariantsFilePath,
+  MixedPropertyVariantsFeatureCollection,
+} from "../shared/mixing";
 import { getTerritoryExtent, TerritoryExtent } from "../shared/territory";
 import { HistogramProps } from "../ui/Histogram";
 import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
@@ -36,7 +39,9 @@ export const getStaticProps: GetStaticProps<HistogramPageProps> = async () => {
   return {
     props: {
       territoryExtent: await getTerritoryExtent(),
-      buildingCollection: await fs.readJson(getMixedPropertyVariantsFilePath()),
+      buildingCollection: (await fs.readJson(
+        getMixedPropertyVariantsFilePath(),
+      )) as MixedPropertyVariantsFeatureCollection,
     },
   };
 };

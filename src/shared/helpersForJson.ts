@@ -83,7 +83,8 @@ export const formatJson = (
             `\\[\\n${whitespace}\t\\{(\\n(${whitespace}[\\}\\{\\t][^\\n]+\\n)+)${whitespace}\t\\}\\n\t*\\]`,
             "g",
           ),
-          (match, p1) => `[{${p1.replace(/\n\t/g, "\n")}${whitespace}}]`,
+          (match, p1: string) =>
+            `[{${p1.replace(/\n\t/g, "\n")}${whitespace}}]`,
         );
       } catch {
         // The following error has been noticed in a GeoJSON with ≈ 1M rows:
@@ -145,7 +146,7 @@ export const formatJson = (
         `\\[((\\n${whitespace}\\t[^\\]\\t][^\\n]+)+)\\n${whitespace}]`,
         "g",
       ),
-      (match, p1) =>
+      (match, p1: string) =>
         `[${p1.replace(new RegExp(`\\n${whitespace}\\t`, "g"), " ").trim()}]`,
     );
   }
@@ -194,7 +195,7 @@ export const formatJson = (
         `\\[\\n${whitespace}\t\\[(\\n(${whitespace}\t[^\\n]+\\n)+)${whitespace}\t\\]\\n\t+\\]`,
         "g",
       ),
-      (match, p1) => `[[${p1.replace(/\n\t/g, "\n")}${whitespace}]]`,
+      (match, p1: string) => `[[${p1.replace(/\n\t/g, "\n")}${whitespace}]]`,
     );
   }
 

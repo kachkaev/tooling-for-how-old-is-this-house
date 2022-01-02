@@ -27,7 +27,7 @@ const script = async () => {
     statusReportFrequency: 500,
     processFile: async (filePath) => {
       const originalJson = await fs.readFile(filePath, "utf8");
-      const jsonData = JSON.parse(originalJson);
+      const jsonData = JSON.parse(originalJson) as unknown;
       const formattedJson = formatJson(jsonData, {
         checkIntegrity: true,
         formattingStyle: getJsonFormattingStyle(filePath),

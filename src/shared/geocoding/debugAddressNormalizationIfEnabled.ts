@@ -19,7 +19,7 @@ export const debugAddressNormalizationIfEnabled = ({
 }: {
   address?: string;
   addressNormalizationConfig: AddressNormalizationConfig;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
   normalizedAddress?: string;
 }) => {
   if (!debuggingEnabled || !address || !output) {
@@ -38,7 +38,9 @@ export const debugAddressNormalizationIfEnabled = ({
     output.write(
       `\n${chalk.yellow(
         "Normalized address has changed after normalization. Please report a bug.",
-      )}\n   ┌ ${address}\n   ├ ${normalizedAddress}\n   └ ${renormalizedAddress}\n`,
+      )}\n   ┌ ${address}\n   ├ ${normalizedAddress ?? "<undefined>"}\n   └ ${
+        renormalizedAddress ?? "<undefined>"
+      }\n`,
     );
   }
 };

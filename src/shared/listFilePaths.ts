@@ -12,9 +12,9 @@ export const listFilePaths = async ({
   fileSearchDirPath: string;
   fileSearchPattern: string | string[];
   filesNicknameToLog?: string;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): Promise<string[]> => {
-  output?.write(chalk.green(`Listing ${filesNicknameToLog}...`));
+  output?.write(chalk.green(`Listing ${filesNicknameToLog ?? "files"}...`));
 
   const rawGlobbyResults = await globby(fileSearchPattern, {
     cwd: fileSearchDirPath,

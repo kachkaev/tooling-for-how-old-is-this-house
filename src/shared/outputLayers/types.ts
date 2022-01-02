@@ -59,8 +59,8 @@ export type ConfiguredGeocodeAddress = (
 ) => GeocodeAddressResult;
 
 export type GenerateOutputLayer = (payload: {
-  geocodeAddress?: ConfiguredGeocodeAddress;
-  output?: WriteStream;
+  geocodeAddress?: ConfiguredGeocodeAddress | undefined;
+  output?: WriteStream | undefined;
 }) => Promise<OutputLayer>;
 
 export type OutputGeometry = turf.Polygon | turf.MultiPolygon;

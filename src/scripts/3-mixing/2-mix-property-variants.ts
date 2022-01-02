@@ -43,7 +43,7 @@ interface VariantInfoInstance {
 }
 interface VariantInfo {
   instances: [VariantInfoInstance, ...VariantInfoInstance[]];
-  parsedDataToOmitSelectors?: DataToOmitSelector[];
+  parsedDataToOmitSelectors: DataToOmitSelector[];
 }
 
 // Placeholder properties are added to the first feature of the resulting feature collection.
@@ -173,7 +173,7 @@ const script = async () => {
   const inputFeaturesToOmit = new Set<MixedOutputLayersFeature>();
 
   for (const variantInfo of Object.values(variantInfoLookup)) {
-    if (!variantInfo.parsedDataToOmitSelectors) {
+    if (!variantInfo.parsedDataToOmitSelectors.length) {
       continue;
     }
     for (const { parentFeature } of variantInfo.instances) {
@@ -245,9 +245,7 @@ const script = async () => {
         throw new Error("Unexpected empty variantInfo. This is a bug.");
       }
 
-      if (variantInfo.parsedDataToOmitSelectors) {
-        dataToOmitSelectors.push(...variantInfo.parsedDataToOmitSelectors);
-      }
+      dataToOmitSelectors.push(...variantInfo.parsedDataToOmitSelectors);
     });
 
     const listRelevantPropertyVariants: ListRelevantPropertyVariants = (
@@ -324,9 +322,12 @@ const script = async () => {
   for (const outputFeature of outputFeatures) {
     const address = outputFeature.properties.address;
     if (address) {
-      outputFeature.properties.derivedBeautifiedAddress =
-        beautifyAddress(address);
-      outputFeature.properties = sortKeys(outputFeature.properties);
+      const derivedBeautifiedAddress = beautifyAddress(address);
+      if (derivedBeautifiedAddress) {
+        outputFeature.properties.derivedBeautifiedAddress =
+          derivedBeautifiedAddress;
+        outputFeature.properties = sortKeys(outputFeature.properties);
+      }
     }
   }
 

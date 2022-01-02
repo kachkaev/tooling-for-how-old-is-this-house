@@ -23,7 +23,7 @@ export const combineRosreestrTiles = async ({
   output,
 }: {
   objectType: RosreestrObjectType;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): Promise<{
   objectCenterFeatures: ObjectCenterFeature[];
   objectExtentFeatures: ObjectExtentFeature[];
@@ -80,10 +80,9 @@ export const combineRosreestrTiles = async ({
         const plainExtent = turf.toWgs84(
           turf.bboxPolygon(responseFeature.extent),
         );
-        const extent: ObjectExtentFeature = turf.feature(
-          plainExtent.geometry!,
-          { cn },
-        );
+        const extent: ObjectExtentFeature = turf.feature(plainExtent.geometry, {
+          cn,
+        });
 
         // Creating two separate features because QGIS cannot render GeometryCollection
         // https://github.com/qgis/QGIS/issues/32747#issuecomment-770267561
@@ -97,12 +96,12 @@ export const combineRosreestrTiles = async ({
 
   const objectCenterFeatures = _.uniqBy(
     rawObjectCenterFeatures,
-    (feature) => feature.properties?.cn,
+    (feature) => feature.properties.cn,
   );
 
   const objectExtentFeatures = _.uniqBy(
     rawObjectExtentFeatures,
-    (feature) => feature.properties?.cn,
+    (feature) => feature.properties.cn,
   );
 
   output?.write(

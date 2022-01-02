@@ -18,7 +18,7 @@ export const geocodeAddress = (
   );
 
   for (const normalizedAddress of normalizedAddresses) {
-    const addressRecord = combinedGeocodeDictionary[normalizedAddress ?? ""];
+    const addressRecord = combinedGeocodeDictionary[normalizedAddress];
     if (!addressRecord) {
       return undefined;
     }

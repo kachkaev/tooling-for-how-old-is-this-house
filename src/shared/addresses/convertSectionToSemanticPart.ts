@@ -29,7 +29,7 @@ export const convertSectionToSemanticPart = (
           commonUnclassifiedWordConfig.ignored === true ||
           (designationConfig &&
             commonUnclassifiedWordConfig.ignored?.includes(
-              designationConfig?.designation,
+              designationConfig.designation,
             ))
         ) {
           return false;

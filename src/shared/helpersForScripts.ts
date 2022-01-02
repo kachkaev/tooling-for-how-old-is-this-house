@@ -88,7 +88,7 @@ export const generateExtractOutputLayer =
     canUseCollectedGeocodes?: boolean;
   }) =>
   async () => {
-    output?.write(chalk.bold(`sources/${source}: Extracting output layer\n`));
+    output.write(chalk.bold(`sources/${source}: Extracting output layer\n`));
 
     let configuredGeocodeAddress: ConfiguredGeocodeAddress | undefined =
       undefined;
@@ -128,10 +128,8 @@ export const generateExtractOutputLayer =
             feature.properties.completionTime ?? undefined,
           ).derivedCompletionYear;
         } catch (error) {
-          output?.write(
-            `${chalk.yellow(
-              error instanceof Error ? error.message : `${error}`,
-            )}\n`,
+          output.write(
+            `${chalk.yellow(error instanceof Error ? error.message : error)}\n`,
           );
         }
 
@@ -171,8 +169,8 @@ export const generateExtractOutputLayer =
   };
 
 export const eraseLastLineInOutput = (output: WriteStream) => {
-  output.moveCursor?.(0, -1);
-  output.clearScreenDown?.();
+  output.moveCursor(0, -1);
+  output.clearScreenDown();
 };
 
 export const ensureTerritoryGitignoreContainsPreview =

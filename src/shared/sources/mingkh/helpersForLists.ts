@@ -35,6 +35,7 @@ export const loopThroughHouseLists = async (
     try {
       await callback({ regionUrl, cityUrl, houseListFilePath });
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       output.write(chalk.red(` Error: ${error}\n`));
     }
   }
@@ -58,7 +59,7 @@ export const loopThroughRowsInHouseList = async (
   callback: (payload: { houseId: number; houseUrl: string }) => Promise<void>,
   output: WriteStream,
 ) => {
-  const houseList: HouseListFile = await fs.readJson(houseListFilePath);
+  const houseList = (await fs.readJson(houseListFilePath)) as HouseListFile;
 
   const rows = houseList.response.rows;
   const numberOfRows = rows.length;
@@ -76,6 +77,7 @@ export const loopThroughRowsInHouseList = async (
       const houseId = extractHouseIdFromUrl(row.url);
       await callback({ houseId, houseUrl: row.url });
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       output.write(chalk.red(` Error: ${error}\n`));
     }
   }

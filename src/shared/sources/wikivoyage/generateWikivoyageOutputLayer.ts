@@ -114,9 +114,9 @@ const extractCompletionTime = (
 const extractId = (
   templateJson: MonumentTemplate,
 ): Partial<OutputLayerProperties> => {
-  return {
-    id: templateJson["knid-new"] ?? templateJson.knid,
-  };
+  const id = templateJson["knid-new"] ?? templateJson.knid;
+
+  return id ? { id } : {};
 };
 
 const extractName = (
@@ -164,6 +164,10 @@ const extractStyle = (
 const extractUrl = (
   templateJson: MonumentTemplate,
 ): Partial<OutputLayerProperties> => {
+  if (!templateJson.link) {
+    return {};
+  }
+
   return {
     url: templateJson.link,
   };
@@ -223,7 +227,7 @@ export const generateWikivoyageOutputLayer: GenerateOutputLayer = async ({
       parsedDoc.templates().forEach((template) => {
         const templateJson = template.json() as WikitextTemplate;
         if (
-          templateJson?.template !== "monument" ||
+          templateJson.template !== "monument" ||
           templateJson.type !== "architecture" ||
           templateJson.status === "destroyed"
         ) {

@@ -29,7 +29,7 @@ export const addressIsGoodEnough = (
   );
   if (
     !autoencodedAddress ||
-    autoencodedAddress?.toLowerCase() !== autoencodedAddress
+    autoencodedAddress.toLowerCase() !== autoencodedAddress
   ) {
     return false;
   }

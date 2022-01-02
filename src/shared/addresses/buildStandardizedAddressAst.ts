@@ -37,7 +37,7 @@ export const buildStandardizedAddressAst = (
     // Ignore post code
     if (
       section.words.length === 1 &&
-      section.words?.[0]?.wordType === "postCode"
+      section.words[0]?.wordType === "postCode"
     ) {
       continue;
     }
@@ -66,7 +66,7 @@ export const buildStandardizedAddressAst = (
 
     // Ignore insignificant house parts
     if (section.designation === "housePart") {
-      const designationWordValue = section.words?.find(
+      const designationWordValue = section.words.find(
         (word) => word.wordType === "designation",
       )?.value;
 
@@ -103,10 +103,10 @@ export const buildStandardizedAddressAst = (
 
     // Stop if the only word in the section is designation (does not make sense)
     if (section.words.length === 1 && section.designation) {
-      const word = section.words[0];
-      if (word?.wordType !== "designation") {
+      const word = section.words[0]!;
+      if (word.wordType !== "designation") {
         throw new Error(
-          `Unexpected word of type ${word?.wordType} in a section with a single designation word`,
+          `Unexpected word of type ${word.wordType} in a section with a single designation word`,
         );
       }
 
@@ -116,7 +116,7 @@ export const buildStandardizedAddressAst = (
       }
 
       throw new AddressInterpretationError(
-        `Unexpected section only with designation: ${section.words[0]?.value}`,
+        `Unexpected section only with designation: ${word.value}`,
       );
     }
 
@@ -206,10 +206,12 @@ export const buildStandardizedAddressAst = (
       const nextWord = wordsToAdd[1];
       if (
         nextWord?.nodeType !== "word" ||
-        nextWord?.wordType !== "cardinalNumber"
+        nextWord.wordType !== "cardinalNumber"
       ) {
         throw new AddressInterpretationError(
-          `Expected cardinal number after ${firstWordInSection?.value}, got ${nextWord?.value}`,
+          `Expected cardinal number after "${firstWordInSection.value}", got ${
+            nextWord ? `"${nextWord.value}"` : "end of section"
+          }`,
         );
       }
       wordsToAdd = wordsToAdd.slice(1);

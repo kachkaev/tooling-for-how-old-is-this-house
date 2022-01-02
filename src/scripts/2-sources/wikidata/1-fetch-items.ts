@@ -71,8 +71,8 @@ const script = async () => {
 
   output.write(chalk.green("Calling Wikidata API..."));
 
-  const rawJsonData: WikidataApiResponse = (
-    await axios.get("https://query.wikidata.org/sparql", {
+  const rawJsonData = (
+    await axios.get<WikidataApiResponse>("https://query.wikidata.org/sparql", {
       responseType: "json",
       params: { query },
     })
@@ -88,7 +88,7 @@ const script = async () => {
       rawJsonData.results.bindings.filter((item) =>
         turf.booleanPointInPolygon(extractGeometry(item), territoryExtent),
       ),
-      (item) => item.item?.value,
+      (item) => item.item.value,
     ).map((item) => sortKeys(item)),
   };
 

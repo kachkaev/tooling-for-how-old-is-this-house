@@ -113,7 +113,9 @@ const script = async () => {
 
       let needToWriteFile = true;
       try {
-        const existingHouseInfoFileJson = await fs.readJson(houseInfoFilePath);
+        const existingHouseInfoFileJson = (await fs.readJson(
+          houseInfoFilePath,
+        )) as HouseInfoFile;
         if (
           _.isEqual(
             _.omit(existingHouseInfoFileJson, "parsedAt"),

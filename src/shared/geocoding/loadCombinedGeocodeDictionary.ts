@@ -8,5 +8,8 @@ export const loadCombinedGeocodeDictionary = async (
 ): Promise<GeocodeDictionary> => {
   const geocodeDictionaryLookup = await loadGeocodeDictionaryLookup(output);
 
-  return Object.assign({}, ...Object.values(geocodeDictionaryLookup));
+  return Object.assign(
+    {},
+    ...Object.values(geocodeDictionaryLookup),
+  ) as GeocodeDictionary;
 };

@@ -3,6 +3,8 @@ import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
 import path from "path";
+import stream from "stream";
+import { promisify } from "util";
 
 import { cleanEnv } from "../../../../shared/cleanEnv";
 import {
@@ -12,23 +14,20 @@ import {
 import { getTerritoryExtent } from "../../../../shared/territory";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 
+const pipeline = promisify(stream.pipeline);
+
 const output = process.stdout;
 
-// Inspired by https://www.kindacode.com/article/using-axios-to-download-images-and-videos-in-node-js/
 const downloadFile = async (
   axiosInstance: AxiosInstance,
   fileUrl: string,
   downloadFilePath: string,
 ) => {
-  try {
-    const response = await axiosInstance.get(fileUrl, {
-      responseType: "stream",
-    });
+  const response = await axiosInstance.get<stream.Readable>(fileUrl, {
+    responseType: "stream",
+  });
 
-    await response.data.pipe(fs.createWriteStream(downloadFilePath));
-  } catch (err) {
-    throw new Error(`${err}`);
-  }
+  await pipeline(response.data, fs.createWriteStream(downloadFilePath));
 };
 
 const getOsmTileVersion = (): string => {
