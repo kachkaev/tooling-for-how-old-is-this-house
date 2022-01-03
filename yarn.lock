@@ -563,10 +563,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@kachkaev/eslint-config-base@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@kachkaev/eslint-config-base/-/eslint-config-base-0.3.0.tgz#ce46aa432496bd3a41eea10654be134de2730230"
-  integrity sha512-kAR3sA0DfJAhdxoKfc+6OxmfhZQT9K9Ie5Q8Ddl609Rs9flliKKFCnae4dgM2uCuPndiGRqklyhAFh+n+czKNw==
+"@kachkaev/eslint-config-base@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@kachkaev/eslint-config-base/-/eslint-config-base-0.4.2.tgz#91f1d6668a108a101974c45b36f5fe683c38b71e"
+  integrity sha512-ju1zyMWg2ZFwjQwux/hj+u44S6LMVKIRd4KVid2A9qYYrqmRUF/bvWTL8ZAlFKzg3rhUw0z5VSGdL9YoXLQCRg==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.8.1"
     "@typescript-eslint/parser" "^5.8.1"
@@ -577,12 +577,12 @@
     eslint-plugin-simple-import-sort "^7.0.0"
     eslint-plugin-unicorn "^40.0.0"
 
-"@kachkaev/eslint-config-react@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@kachkaev/eslint-config-react/-/eslint-config-react-0.3.0.tgz#23bf4fe23244b17673a578b12f18f0b79844929e"
-  integrity sha512-8i8a3tDiJyaWie8zV4RAB5GEx9kyJA4PdD5KQUc5SR4AkEPW4f76noF6dIT4+zTiWrq1tOsgAx9+LJBgxhippA==
+"@kachkaev/eslint-config-react@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@kachkaev/eslint-config-react/-/eslint-config-react-0.4.2.tgz#fa51cdf1c71068a4e1e950e683fb74de836560af"
+  integrity sha512-1yGHQ6k3lDjtDRcftUzIinTF9VvHv7uSnoV+e1bClQSFU7FWwZL7Rwl4KPCiBMUaH+oDdbae+ySqSmDAFg1v3Q==
   dependencies:
-    "@kachkaev/eslint-config-base" "^0.3.0"
+    "@kachkaev/eslint-config-base" "^0.4.2"
     eslint-plugin-react "^7.28.0"
     eslint-plugin-react-hooks "^4.3.0"
     eslint-plugin-testing-library "^5.0.1"
@@ -592,10 +592,10 @@
   resolved "https://registry.yarnpkg.com/@kachkaev/markdownlint-config/-/markdownlint-config-0.3.0.tgz#5207232e65f18c16747bdb5e543054e1e01c9fe1"
   integrity sha512-3+PtVFKPOojBlqdWOTf2GYC3y3+IP+FylBRYlErmnC6cm2uacr88pOuStGFfLPFXJIdqkAhdcUuo9XKruxil5A==
 
-"@kachkaev/prettier-config@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@kachkaev/prettier-config/-/prettier-config-1.3.0.tgz#296f2a4adc10b50680a6d8070c3522772e8a44e7"
-  integrity sha512-tVJXt7qqfvicAjB9pqHovqLFrg6F8ZWD2CG22D3/6v1rUMkhE2oR+5NVdpdW5PGf8sMBS/ClQ1CltfQkUgjoOg==
+"@kachkaev/prettier-config@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@kachkaev/prettier-config/-/prettier-config-1.3.1.tgz#5e30925968a5610e2464580078da3f9dc04cc239"
+  integrity sha512-nTfzlLauj0goyZOcbML0z8oW2BAysrmMnqIIo0jbEBE9W8qxbgTjwxrgraUo6DtPHJhtE53NPBbWRH+b32iadg==
   dependencies:
     prettier-plugin-packagejson "^2.2.15"
     prettier-plugin-sh "^0.8.1"
@@ -3080,7 +3080,7 @@ d3-array@1:
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-1.2.4.tgz#635ce4d5eea759f6f605863dbcfc30edc737f71f"
   integrity sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==
 
-"d3-array@2 - 3", "d3-array@2.10.0 - 3", d3-array@^3.1.1:
+"d3-array@2 - 3", "d3-array@2.10.0 - 3", "d3-array@2.5.0 - 3", d3-array@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-3.1.1.tgz#7797eb53ead6b9083c75a45a681e93fc41bc468c"
   integrity sha512-33qQ+ZoZlli19IFiQx4QEpf2CBEayMRzhlisJHSCsSUbDXv6ZishqS1x7uFVClKG4Wr7rZVHvaAttoLow6GqdQ==
@@ -3104,12 +3104,19 @@ d3-geo@1.7.1:
   dependencies:
     d3-array "1"
 
-d3-geo@^1.11.3, d3-geo@^1.12.1:
+d3-geo@^1.11.3:
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-1.12.1.tgz#7fc2ab7414b72e59fbcbd603e80d9adc029b035f"
   integrity sha512-XG4d1c/UJSEX9NfU02KwBL6BYPj8YKHxgBEw5om2ZnTRSbIcego6dhHwcxuSR3clxh0EpE38os1DVPOmnYtTPg==
   dependencies:
     d3-array "1"
+
+d3-geo@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-3.0.1.tgz#4f92362fd8685d93e3b1fae0fd97dc8980b1ed7e"
+  integrity sha512-Wt23xBych5tSy9IYAM1FR2rWIBFWa52B/oF/GYe5zbdHrg08FU8+BuI6X4PvTwPDdqdAdq04fuWJpELtsaEjeA==
+  dependencies:
+    d3-array "2.5.0 - 3"
 
 "d3-interpolate@1 - 3", "d3-interpolate@1.2.0 - 3", d3-interpolate@^3.0.1:
   version "3.0.1"
@@ -5297,10 +5304,10 @@ linkify-it@^3.0.1:
   dependencies:
     uc.micro "^1.0.1"
 
-lint-staged@^12.1.4:
-  version "12.1.4"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-12.1.4.tgz#a92ec8509f13018caaafade61d515c2d5873316e"
-  integrity sha512-RgDz9nsFsE0/5eL9Vat0AvCuk0+j5mEuzBIVfrRH5FRtt5wibYe8zTjZs2nuqLFrLAGQGYnj8+HJxolcj08i/A==
+lint-staged@^12.1.5:
+  version "12.1.5"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-12.1.5.tgz#e05582fc39aed5cb13b9dd1dfb8330407246d809"
+  integrity sha512-WyKb+0sNKDTd1LwwAfTBPp0XmdaKkAOEbg4oHE4Kq2+oQVchg/VAcjVQtSqZih1izNsTURjc2EkhG/syRQUXdA==
   dependencies:
     cli-truncate "^3.1.0"
     colorette "^2.0.16"
@@ -5425,10 +5432,10 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-luxon@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/luxon/-/luxon-2.2.0.tgz#f5c4a234ba4016f792488b11aaed2d5bc14c888e"
-  integrity sha512-LwmknessH4jVIseCsizUgveIHwlLv/RQZWC2uDSMfGJs7w8faPUi2JFxfyfMcTPrpNbChTem3Uz6IKRtn+LcIA==
+luxon@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-2.3.0.tgz#bf16a7e642513c2a20a6230a6a41b0ab446d0045"
+  integrity sha512-gv6jZCV+gGIrVKhO90yrsn8qXPKD8HYZJtrUDSfEbow8Tkw84T9OnCyJhWvnJIaIF/tBuiAjZuQHUt1LddX2mg==
 
 make-dir@^3.0.0:
   version "3.1.0"
