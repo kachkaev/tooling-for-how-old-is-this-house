@@ -58,7 +58,7 @@ export const ensureLaunchedWebApp = async ({
   // https://github.com/vercel/next.js/issues/4808
   // https://github.com/vercel/next.js/pull/22587
   const originalConsole = global.console;
-  global.console = { ...originalConsole, log: () => {} };
+  global.console = { ...originalConsole, log: () => {}, warn: () => {} };
 
   const app = next({ dev: true, quiet: true });
   await app.prepare();
