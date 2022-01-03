@@ -577,10 +577,10 @@
     eslint-plugin-simple-import-sort "^7.0.0"
     eslint-plugin-unicorn "^40.0.0"
 
-"@kachkaev/eslint-config-react@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@kachkaev/eslint-config-react/-/eslint-config-react-0.4.2.tgz#fa51cdf1c71068a4e1e950e683fb74de836560af"
-  integrity sha512-1yGHQ6k3lDjtDRcftUzIinTF9VvHv7uSnoV+e1bClQSFU7FWwZL7Rwl4KPCiBMUaH+oDdbae+ySqSmDAFg1v3Q==
+"@kachkaev/eslint-config-react@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@kachkaev/eslint-config-react/-/eslint-config-react-0.4.3.tgz#9e5d0c2e23849ea082076b9f90b63fdee16691c8"
+  integrity sha512-RAAVRgHaSMfDJeEELRWk+KkXlGgLYgV/mumntReez5e9fM4SFW5Q4E5JlcpLAp2c6SVciGpxB7qBoFH98O0B1Q==
   dependencies:
     "@kachkaev/eslint-config-base" "^0.4.2"
     eslint-plugin-react "^7.28.0"
