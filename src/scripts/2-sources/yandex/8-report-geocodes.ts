@@ -29,18 +29,21 @@ const script = async () => {
       let coordinates: Point2dCoordinates | undefined;
 
       const geoObject =
-        entry.data.response.GeoObjectCollection.featureMember[0].GeoObject;
-      const rawCoordinates: string | undefined = geoObject.Point.pos;
+        entry.data.response?.GeoObjectCollection?.featureMember?.[0]?.GeoObject;
 
-      const [lon, lat] = rawCoordinates
-        .split(" ")
-        .map((coordinate) => Number.parseFloat(coordinate));
+      const rawCoordinates: string | undefined = geoObject?.Point?.pos;
+
+      const [lon, lat] =
+        rawCoordinates
+          ?.split(" ")
+          .map((coordinate) => Number.parseFloat(coordinate)) ?? [];
 
       if (lon && lat) {
         coordinates = [lon, lat];
       }
 
-      const precision = geoObject.metaDataProperty?.GeocoderMetaData?.precision;
+      const precision =
+        geoObject?.metaDataProperty?.GeocoderMetaData?.precision;
 
       if (!coordinates || precision !== "exact") {
         reportedGeocodes.push({
