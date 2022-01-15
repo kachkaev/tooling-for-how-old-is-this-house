@@ -1,3 +1,4 @@
+import booleanIntersects from "@turf/boolean-intersects"; // https://github.com/Turfjs/turf/pull/2157
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
@@ -202,10 +203,15 @@ const generateGetIntersectedBoundaryName = ({
   >;
 }): IntersectorFunction => {
   const filteredBoundaryFeatures = boundaryFeatures.filter((feature) => {
-    return (
-      feature.properties["name"] &&
-      !turf.booleanDisjoint(expectedBoundaryOfAllCheckedFeatures, feature)
+    if (!feature.properties["name"]) {
+      return false;
+    }
+    const intersection = turf.intersect(
+      expectedBoundaryOfAllCheckedFeatures,
+      feature,
     );
+
+    return intersection && turf.area(intersection);
   });
 
   if (filteredBoundaryFeatures.length === 1) {
@@ -238,8 +244,8 @@ const generateGetIntersectedBoundaryName = ({
   ]);
 
   return (feature: turf.Feature) =>
-    orderedBoundaryFeatures.find(
-      (boundaryFeature) => !turf.booleanDisjoint(boundaryFeature, feature),
+    orderedBoundaryFeatures.find((boundaryFeature) =>
+      booleanIntersects(boundaryFeature, feature),
     )?.properties["name"];
 };
 
@@ -325,7 +331,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
   };
 
   const outputFeatures: OutputLayer["features"] =
-    buildingCollection.features.map((building) => {
+    buildingCollection.features.flatMap((building) => {
       const buildingTagValue = building.properties["abandoned"]
         ? "abandoned"
         : building.properties["building"];
