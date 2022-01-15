@@ -27,6 +27,7 @@
   },
   "resolutions": {
     "@mapbox/geojson-rewind": "^0.5.1",
+    "markdownlint": "^0.25.1",
     "xmldom": "^0.6.0"
   },
   "dependencies": {
