@@ -98,7 +98,7 @@ const normalizeWording = (completionTime: string): string => {
       .replace(/\s?(г|гг|год|года|годы)\.?$/g, "")
       .replace(/\s?(г|гг|год|года|годы)\.?([^\p{L}])/gu, "$2")
       .replace(
-        /([ivxх]+) /g,
+        /([ivxх]{2,}) /g,
         (match) =>
           `${deromanize(
             match.replace(/х/g, "x").trim(), // Russian ‘х’ → Latin ‘X’,
@@ -200,12 +200,26 @@ const parseSingleCompletionTime = (
   // "конец 1920-х"
   {
     const [, prefixmatch, decadeMatch] =
-      result.match(/^(начало|середина|конец) (\d{3}0)-х?$/) ?? [];
+      result.match(/^(начало|середина|конец) (\d{3}0)-?х$/) ?? [];
 
     const decadeYearAndRange = decadeYearAndRangeLookup[prefixmatch ?? ""];
     if (decadeYearAndRange && decadeMatch) {
       const decadeStartYear = Number.parseInt(decadeMatch);
       const year = decadeStartYear + decadeYearAndRange[0];
+      result = `около ${year}`;
+    }
+  }
+
+  // "конец 20-х гг. XX века"
+  {
+    const [, prefixmatch, decadeMatch, centuryMatch] =
+      result.match(/^(начало|середина|конец) (\d0)-?х (\d{2}) века$/) ?? [];
+
+    const decadeYearAndRange = decadeYearAndRangeLookup[prefixmatch ?? ""];
+    if (decadeYearAndRange && decadeMatch && centuryMatch) {
+      const decadeStartYear = Number.parseInt(decadeMatch);
+      const centuryStartYear = (Number.parseInt(centuryMatch) - 1) * 100;
+      const year = centuryStartYear + decadeStartYear + decadeYearAndRange[0];
       result = `около ${year}`;
     }
   }
@@ -423,7 +437,7 @@ export const parseCompletionTime = (
     // It is safe to comment this line out if it blocks you
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Unexpected completion year mismatch for string "${completionTime}". Local parser: ${result.derivedCompletionYear}, Geosemantica ${derivedCompletionYearUsingGeosemanticaRegexp}. This is a bug, please report it.`,
+      `Unexpected completion year mismatch for string "${completionTime}". Local parser: ${result.derivedCompletionYear}, Geosemantica ${derivedCompletionYearUsingGeosemanticaRegexp}. If you think it’s a bug, please report it.`,
     );
   }
 
