@@ -3,7 +3,7 @@ export const isValidObjectCn = (cn?: unknown): cn is string => {
     return false;
   }
 
-  if (!cn.match(/^(0:0:0|\d{2}:\d{2}:\d{6,7}):\d{1,6}$/)) {
+  if (!/^(0:0:0|\d{2}:\d{2}:\d{6,7}):\d{1,6}$/.test(cn)) {
     return false;
   }
 
@@ -33,7 +33,7 @@ export const getCnChunk = (
 export const convertCnToId = (cn: string): string => {
   return cn
     .split(":")
-    .map((part) => `${parseInt(part)}`)
+    .map((part) => `${Number.parseInt(part)}`)
     .join(":");
 };
 

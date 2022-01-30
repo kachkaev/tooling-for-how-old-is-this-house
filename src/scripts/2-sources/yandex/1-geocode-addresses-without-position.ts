@@ -4,8 +4,8 @@ import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import * as envalid from "envalid";
 import fs from "fs-extra";
-import http from "http";
-import https from "https";
+import http from "node:http";
+import https from "node:https";
 
 import { cleanEnv } from "../../../shared/cleanEnv";
 import {
@@ -24,6 +24,7 @@ import {
   addressIsWorthGeocodingWithYandex,
   getYandexGeocoderCacheEntryFilePath,
   YandexGeocoderCacheEntry,
+  YandexGeocoderSuccessfulApiData,
 } from "../../../shared/sources/yandex";
 import {
   getTerritoryAddressHandlingConfig,
@@ -110,10 +111,11 @@ const script = async () => {
     }
 
     try {
-      const apiResponse = await axiosInstance.get(
-        "https://geocode-maps.yandex.ru/1.x",
-        { params: { ...sharedRequestParams, geocode: normalizedAddress } },
-      );
+      const apiResponse =
+        await axiosInstance.get<YandexGeocoderSuccessfulApiData>(
+          "https://geocode-maps.yandex.ru/1.x",
+          { params: { ...sharedRequestParams, geocode: normalizedAddress } },
+        );
 
       const cacheEntry: YandexGeocoderCacheEntry = {
         normalizedAddress,
@@ -125,15 +127,15 @@ const script = async () => {
       output.write(
         `${chalk.magenta(cacheEntryFilePath)} ${normalizedAddress}\n`,
       );
-    } catch (error: unknown) {
-      if ((error as AxiosError)?.response?.status === 403) {
+    } catch (error) {
+      if ((error as AxiosError).response?.status === 403) {
         output.write(
           chalk.red(
             "Looks like you’ve reached your API key limits. Try again tomorrow!\n",
           ),
         );
       } else {
-        output.write(`${error}\n`);
+        output.write(`${String(error)}\n`);
       }
       break;
     }

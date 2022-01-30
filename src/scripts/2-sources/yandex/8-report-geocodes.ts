@@ -26,15 +26,17 @@ const script = async () => {
     processFile: async (filePath) => {
       const entry = (await fs.readJson(filePath)) as YandexGeocoderCacheEntry;
 
-      let coordinates: Point2dCoordinates | undefined = undefined;
+      let coordinates: Point2dCoordinates | undefined;
 
       const geoObject =
-        entry.data?.response?.GeoObjectCollection?.featureMember?.[0]
-          ?.GeoObject;
+        entry.data.response?.GeoObjectCollection?.featureMember?.[0]?.GeoObject;
+
       const rawCoordinates: string | undefined = geoObject?.Point?.pos;
 
       const [lon, lat] =
-        rawCoordinates?.split(" ").map((n) => parseFloat(n)) ?? [];
+        rawCoordinates
+          ?.split(" ")
+          .map((coordinate) => Number.parseFloat(coordinate)) ?? [];
 
       if (lon && lat) {
         coordinates = [lon, lat];

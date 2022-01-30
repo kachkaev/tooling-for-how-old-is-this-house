@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
 
 const script = async () => {
   const output = process.stdout;

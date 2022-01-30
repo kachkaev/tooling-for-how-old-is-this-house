@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { globby } from "globby";
 import _ from "lodash";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 export const listFilePaths = async ({
   fileSearchDirPath,
@@ -12,9 +12,9 @@ export const listFilePaths = async ({
   fileSearchDirPath: string;
   fileSearchPattern: string | string[];
   filesNicknameToLog?: string;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): Promise<string[]> => {
-  output?.write(chalk.green(`Listing ${filesNicknameToLog}...`));
+  output?.write(chalk.green(`Listing ${filesNicknameToLog ?? "files"}...`));
 
   const rawGlobbyResults = await globby(fileSearchPattern, {
     cwd: fileSearchDirPath,

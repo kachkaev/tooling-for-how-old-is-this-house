@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 
 import { getTerritoryDirPath } from "../../territory";
 import { Tile } from "../../tiles";
@@ -38,7 +38,7 @@ export const deriveWikimapiaObjectFilePath = (
 
   return path.resolve(
     getWikimapiaObjectsDirPath(),
-    `${normalisedWikimapiaId.substring(0, 3)}xxxxxx`,
+    `${normalisedWikimapiaId.slice(0, 3)}xxxxxx`,
     `${normalisedWikimapiaId}--${fileNameSuffix}`,
   );
 };

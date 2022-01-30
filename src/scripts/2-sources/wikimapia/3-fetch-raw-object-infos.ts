@@ -2,7 +2,7 @@ import axios from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
 import sleep from "sleep-promise";
 
 import { prependCommentWithTimeToHtml } from "../../../shared/helpersForHtml";
@@ -27,7 +27,7 @@ const script = async () => {
   for (let index = 0; index < objectExtentFeatures.length; index += 1) {
     const objectExtentFeature = objectExtentFeatures[index]!;
 
-    const wikimapiaId = objectExtentFeature.properties?.wikimapiaId;
+    const wikimapiaId = objectExtentFeature.properties.wikimapiaId;
     if (!wikimapiaId) {
       throw new Error(`Unexpected empty wikimapia at index ${index}`);
     }
@@ -50,7 +50,7 @@ const script = async () => {
     const response = await axios.get<string>(
       `https://wikimapia.org/${wikimapiaId}/${desiredPageLanguage}/`,
       {
-        timeout: 10000,
+        timeout: 10_000,
         "axios-retry": {
           retries: 30,
           retryDelay: (retryCount) => retryCount * 5000,

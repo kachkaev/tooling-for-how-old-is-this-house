@@ -34,14 +34,16 @@ export const printCleanedAddressAst = (
       continue;
     }
 
-    if (node.separatorType === "comma") {
-      chunks.push(", ");
-    } else if (node.separatorType === "slash") {
-      chunks.push("/");
-    } else if (node.separatorType === "dash") {
-      chunks.push("-");
-    } else {
-      throw new Error(`Unprintable separator type ${node.separatorType}`);
+    switch (node.separatorType) {
+      case "comma":
+        chunks.push(", ");
+        break;
+      case "slash":
+        chunks.push("/");
+        break;
+      case "dash":
+        chunks.push("-");
+        break;
     }
   }
 

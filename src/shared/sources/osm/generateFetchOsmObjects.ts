@@ -1,7 +1,7 @@
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import dedent from "dedent";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { writeFormattedJson } from "../../helpersForJson";
 import { getTerritoryExtent } from "../../territory";

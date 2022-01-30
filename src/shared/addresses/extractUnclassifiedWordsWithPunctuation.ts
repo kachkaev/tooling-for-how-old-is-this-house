@@ -103,12 +103,7 @@ export const extractUnclassifiedWordsWithPunctuation = (
     }
 
     const node3 = nodes[index + 2];
-    if (
-      !node3 ||
-      node3.nodeType !== "word" ||
-      node3.wordType !== "unclassified" ||
-      node3.value.match(/\d/)
-    ) {
+    if (!node3 || node3.nodeType !== "word" || /\d/.test(node3.value)) {
       continue;
     }
 

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import _ from "lodash";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import {
   ListRelevantPropertyVariants,
@@ -27,14 +27,14 @@ const calculatePercentageDifference = (a: number, b: number): number => {
 const alreadyLoggedWarningsSet = new Set<string>();
 
 export const prioritizeRelevantPropertyVariants = ({
-  callingFilePath,
+  callingModuleUrl,
   listRelevantPropertyVariants,
   output,
   prioritizedSources,
   propertySelectors,
   targetBuildArea,
 }: {
-  callingFilePath: string;
+  callingModuleUrl: string;
   listRelevantPropertyVariants: ListRelevantPropertyVariants;
   output: WriteStream;
   prioritizedSources: string[];
@@ -83,6 +83,7 @@ export const prioritizeRelevantPropertyVariants = ({
     const warningHash = JSON.stringify([unrecognizedSource, propertySelectors]);
     if (!alreadyLoggedWarningsSet.has(warningHash)) {
       alreadyLoggedWarningsSet.add(warningHash);
+      const callingFilePath = new URL(callingModuleUrl).pathname;
       output.write(
         chalk.yellow(
           `Unexpected to find source "${unrecognizedSource}" when picking "${propertySelectors.join(

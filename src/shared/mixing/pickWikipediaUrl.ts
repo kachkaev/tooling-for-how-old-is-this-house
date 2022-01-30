@@ -5,7 +5,7 @@ export const pickWikipediaUrl: PickFromPropertyVariants<
   "wikipediaUrl" | "wikipediaUrlSource"
 > = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: ["manual", "wikidata", "wikivoyage", "osm"],
@@ -22,5 +22,5 @@ export const pickWikipediaUrl: PickFromPropertyVariants<
     }
   }
 
-  return undefined;
+  return;
 };

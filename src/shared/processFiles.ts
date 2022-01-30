@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { generateProgress } from "./helpersForScripts";
 import { listFilePaths } from "./listFilePaths";
@@ -15,7 +15,7 @@ export const processFiles = async ({
   fileSearchPattern: string | string[];
   fileSearchDirPath: string;
   filesNicknameToLog?: string;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
   processFile: (
     filePath: string,
     prefixLength: number,

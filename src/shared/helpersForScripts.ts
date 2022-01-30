@@ -1,7 +1,7 @@
 import chalk from "chalk";
-import path from "path";
+import path from "node:path";
+import { WriteStream } from "node:tty";
 import sortKeys from "sort-keys";
-import { WriteStream } from "tty";
 
 import { deepClean } from "./deepClean";
 import { geocodeAddress, loadCombinedGeocodeDictionary } from "./geocoding";
@@ -52,6 +52,7 @@ export const generateReportGeocodes =
 // Placeholder properties are added to the first feature of the resulting feature collection.
 // This ensures property list completeness and order in apps like QGIS.
 const placeholderProperties: Record<keyof OutputLayerProperties, null> = {
+  /* eslint-disable unicorn/no-null */
   address: null,
   architect: null,
   buildingType: null,
@@ -73,6 +74,7 @@ const placeholderProperties: Record<keyof OutputLayerProperties, null> = {
   url: null,
   wikidataUrl: null,
   wikipediaUrl: null,
+  /* eslint-enable unicorn/no-null */
 };
 
 export const generateExtractOutputLayer =
@@ -88,10 +90,9 @@ export const generateExtractOutputLayer =
     canUseCollectedGeocodes?: boolean;
   }) =>
   async () => {
-    output?.write(chalk.bold(`sources/${source}: Extracting output layer\n`));
+    output.write(chalk.bold(`sources/${source}: Extracting output layer\n`));
 
-    let configuredGeocodeAddress: ConfiguredGeocodeAddress | undefined =
-      undefined;
+    let configuredGeocodeAddress: ConfiguredGeocodeAddress | undefined;
 
     if (canUseCollectedGeocodes) {
       const addressHandlingConfig = await getTerritoryAddressHandlingConfig(
@@ -121,17 +122,15 @@ export const generateExtractOutputLayer =
     const outputLayerWithDerivedProperties: OutputLayer = {
       ...outputLayer,
       features: outputLayer.features.map((feature, index) => {
-        let derivedCompletionYear: number | undefined = undefined;
+        let derivedCompletionYear: number | undefined;
 
         try {
           derivedCompletionYear = parseCompletionTime(
             feature.properties.completionTime ?? undefined,
           ).derivedCompletionYear;
         } catch (error) {
-          output?.write(
-            `${chalk.yellow(
-              error instanceof Error ? error.message : `${error}`,
-            )}\n`,
+          output.write(
+            `${chalk.yellow(error instanceof Error ? error.message : error)}\n`,
           );
         }
 
@@ -171,8 +170,8 @@ export const generateExtractOutputLayer =
   };
 
 export const eraseLastLineInOutput = (output: WriteStream) => {
-  output.moveCursor?.(0, -1);
-  output.clearScreenDown?.();
+  output.moveCursor(0, -1);
+  output.clearScreenDown();
 };
 
 export const ensureTerritoryGitignoreContainsPreview =

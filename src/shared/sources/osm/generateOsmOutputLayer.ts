@@ -1,3 +1,4 @@
+import booleanIntersects from "@turf/boolean-intersects"; // https://github.com/Turfjs/turf/pull/2157
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
@@ -50,7 +51,7 @@ const extractPhoto = (
 
     return {
       photoUrl: parsedImageUrl.toString(),
-      photoAuthorUrl: host.match(/\.*.userapi.com$/) ? "ВК" : host,
+      photoAuthorUrl: /\.*.userapi.com$/.test(host) ? "ВК" : host,
     };
   } catch {
     // noop
@@ -100,9 +101,10 @@ const deriveFloorCountAboveGroundFromBuildingTag = (
     case "stable":
     case "sty":
       return 1;
-  }
 
-  return undefined;
+    default:
+      return undefined;
+  }
 };
 
 // https://wiki.openstreetmap.org/wiki/Key:start_date
@@ -113,7 +115,7 @@ const processStartDate = (startDate: string | undefined) => {
     .replace(/^~(\d{4})$/, "около $1");
 
   if (!result) {
-    return undefined;
+    return;
   }
 
   return result;
@@ -201,10 +203,15 @@ const generateGetIntersectedBoundaryName = ({
   >;
 }): IntersectorFunction => {
   const filteredBoundaryFeatures = boundaryFeatures.filter((feature) => {
-    return (
-      feature.properties.name &&
-      !turf.booleanDisjoint(expectedBoundaryOfAllCheckedFeatures, feature)
+    if (!feature.properties["name"]) {
+      return false;
+    }
+    const intersection = turf.intersect(
+      expectedBoundaryOfAllCheckedFeatures,
+      feature,
     );
+
+    return intersection && turf.area(intersection);
   });
 
   if (filteredBoundaryFeatures.length === 1) {
@@ -221,7 +228,7 @@ const generateGetIntersectedBoundaryName = ({
           expectedBoundaryOfAllCheckedFeatures,
         )
       ) {
-        return () => filteredBoundaryFeatures[0]?.properties.name;
+        return () => filteredBoundaryFeatures[0]?.properties["name"];
       }
     }
   }
@@ -237,9 +244,9 @@ const generateGetIntersectedBoundaryName = ({
   ]);
 
   return (feature: turf.Feature) =>
-    orderedBoundaryFeatures.find(
-      (boundaryFeature) => !turf.booleanDisjoint(boundaryFeature, feature), // https://github.com/Turfjs/turf/issues/2034
-    )?.properties?.name;
+    orderedBoundaryFeatures.find((boundaryFeature) =>
+      booleanIntersects(boundaryFeature, feature),
+    )?.properties["name"];
 };
 
 export const generateOsmOutputLayer: GenerateOutputLayer = async ({
@@ -306,14 +313,14 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
       building.properties["addr2:street"] ??
       building.properties["addr:street2"];
     const fullStreetOrPlace = streetOrPlace2
-      ? `${streetOrPlace.split("/")[0]} / ${streetOrPlace2}`
+      ? `${streetOrPlace.split("/")[0]!} / ${streetOrPlace2}`
       : streetOrPlace;
 
     const houseNumber2 =
       building.properties["addr2:housenumber"] ??
       building.properties["addr:housenumber2"];
     const fullHouseNumber = houseNumber2
-      ? `${houseNumber.split("/")[0]}/${houseNumber2}`
+      ? `${houseNumber.split("/")[0]!}/${houseNumber2}`
       : houseNumber;
 
     return {
@@ -324,7 +331,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
   };
 
   const outputFeatures: OutputLayer["features"] =
-    buildingCollection.features.map((building) => {
+    buildingCollection.features.flatMap((building) => {
       const buildingTagValue = building.properties["abandoned"]
         ? "abandoned"
         : building.properties["building"];
@@ -334,14 +341,15 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
           : undefined;
 
       const floorCountAboveGround =
-        parseInt(building.properties["building:levels"] ?? "") ||
+        Number.parseInt(building.properties["building:levels"] ?? "") ||
         deriveFloorCountAboveGroundFromBuildingTag(
           building.properties["building"],
         ) ||
         undefined;
       const floorCountBelowGround =
-        parseInt(building.properties["building:levels:underground"] ?? "") ||
-        undefined;
+        Number.parseInt(
+          building.properties["building:levels:underground"] ?? "",
+        ) || undefined;
 
       const url =
         building.properties["contact:website"] ??
@@ -352,7 +360,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         building.properties["wikipedia"] ?? building.properties["wikipedia:ru"],
       );
 
-      const outputLayerProperties: OutputLayerProperties = {
+      const outputLayerProperties: OutputLayerProperties = deepClean({
         ...extractAddress(building),
         // TODO: Move more properties to ...extract*() patterns for better code readability and composability
         buildingType,
@@ -368,15 +376,25 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         wikidataUrl,
         ...extractPhoto(building),
         wikipediaUrl,
-      };
+      });
 
       // Simplify geometry to avoid redundant nodes from building parts and entrances
-      const geometry = turf.truncate(
-        turf.simplify(building.geometry, { tolerance: 0.000001 }),
-        { precision: 6 },
-      );
+      try {
+        const geometry = turf.truncate(
+          turf.simplify(building.geometry, { tolerance: 0.000_001 }),
+          { precision: 6 },
+        );
 
-      return turf.feature(geometry, deepClean(outputLayerProperties));
+        return [turf.feature(geometry, outputLayerProperties)];
+      } catch {
+        output?.write(
+          chalk.yellow(
+            `Unable to simplify geometry for https://www.openstreetmap.org/${building.properties.id}. Building is skipped.\n`,
+          ),
+        );
+
+        return [];
+      }
     });
 
   return {

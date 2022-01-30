@@ -2,8 +2,8 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
+import { WriteStream } from "node:tty";
 import sortKeys from "sort-keys";
-import { WriteStream } from "tty";
 
 import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
@@ -23,7 +23,7 @@ export const combineRosreestrTiles = async ({
   output,
 }: {
   objectType: RosreestrObjectType;
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): Promise<{
   objectCenterFeatures: ObjectCenterFeature[];
   objectExtentFeatures: ObjectExtentFeature[];
@@ -56,13 +56,13 @@ export const combineRosreestrTiles = async ({
         return;
       }
 
-      tileData.response.features.forEach((responseFeature) => {
+      for (const responseFeature of tileData.response.features) {
         const { cn, id } = responseFeature.attrs;
         const derivedId = convertCnToId(cn);
         if (derivedId !== id) {
           output?.write(
             chalk.red(
-              `Id mismatch detected for object with cn ${responseFeature.attrs.cn}: Derived id is ${derivedId}, while real id is ${id}. Downstream scripts may fail.\n`,
+              `Id mismatch detected for object with cn ${cn}: Derived id is ${derivedId}, while real id is ${id}. Downstream scripts may fail.\n`,
             ),
           );
         }
@@ -80,16 +80,15 @@ export const combineRosreestrTiles = async ({
         const plainExtent = turf.toWgs84(
           turf.bboxPolygon(responseFeature.extent),
         );
-        const extent: ObjectExtentFeature = turf.feature(
-          plainExtent.geometry!,
-          { cn },
-        );
+        const extent: ObjectExtentFeature = turf.feature(plainExtent.geometry, {
+          cn,
+        });
 
         // Creating two separate features because QGIS cannot render GeometryCollection
         // https://github.com/qgis/QGIS/issues/32747#issuecomment-770267561
         rawObjectCenterFeatures.push(center);
         rawObjectExtentFeatures.push(extent);
-      });
+      }
     },
   });
 
@@ -97,12 +96,12 @@ export const combineRosreestrTiles = async ({
 
   const objectCenterFeatures = _.uniqBy(
     rawObjectCenterFeatures,
-    (feature) => feature.properties?.cn,
+    (feature) => feature.properties.cn,
   );
 
   const objectExtentFeatures = _.uniqBy(
     rawObjectExtentFeatures,
-    (feature) => feature.properties?.cn,
+    (feature) => feature.properties.cn,
   );
 
   output?.write(

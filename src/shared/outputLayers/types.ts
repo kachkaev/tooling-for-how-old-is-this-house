@@ -1,5 +1,5 @@
 import * as turf from "@turf/turf";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { GeocodeAddressResult } from "../geocoding";
 
@@ -39,7 +39,7 @@ export type OutputLayerFeatureWithGeometry = turf.Feature<
   OutputLayerProperties
 >;
 export type OutputLayerFeatureWithoutGeometry = turf.Feature<
-  null,
+  undefined,
   OutputLayerProperties
 >;
 export type OutputLayerFeature =
@@ -47,7 +47,7 @@ export type OutputLayerFeature =
   | OutputLayerFeatureWithoutGeometry;
 
 export type OutputLayer = turf.FeatureCollection<
-  OutputLayerGeometry | null,
+  OutputLayerGeometry | undefined,
   OutputLayerProperties
 > & {
   knownAt?: string;
@@ -59,8 +59,8 @@ export type ConfiguredGeocodeAddress = (
 ) => GeocodeAddressResult;
 
 export type GenerateOutputLayer = (payload: {
-  geocodeAddress?: ConfiguredGeocodeAddress;
-  output?: WriteStream;
+  geocodeAddress?: ConfiguredGeocodeAddress | undefined;
+  output?: WriteStream | undefined;
 }) => Promise<OutputLayer>;
 
 export type OutputGeometry = turf.Polygon | turf.MultiPolygon;

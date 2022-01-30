@@ -2,7 +2,7 @@ import rewind from "@mapbox/geojson-rewind";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 export type Point2dCoordinates = [lon: number, lat: number];
 
@@ -87,7 +87,10 @@ export const multiUnion = (
 };
 
 export const filterFeaturesByGeometryType = <
-  T extends turf.Feature<turf.GeometryObject, any>,
+  T extends turf.Feature<
+    turf.GeometryObject | undefined,
+    Record<string, unknown>
+  >,
 >({
   features,
   acceptedGeometryTypes,
@@ -95,22 +98,32 @@ export const filterFeaturesByGeometryType = <
 }: {
   features: T[];
   acceptedGeometryTypes: turf.GeometryTypes[];
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): T[] => {
   return features.filter((feature) => {
-    if (acceptedGeometryTypes.includes(feature.geometry?.type)) {
+    if (
+      feature.geometry &&
+      acceptedGeometryTypes.includes(feature.geometry.type)
+    ) {
       return true;
     }
 
-    const featureId = feature.properties?.id;
+    const featureIdToDisplay =
+      typeof feature.properties["id"] === "string" ||
+      typeof feature.properties["id"] === "number"
+        ? feature.properties["id"]
+        : "<no id>";
+
     if (!feature.geometry) {
       output?.write(
-        chalk.yellow(`Ignoring feature ${featureId} without geometry\n`),
+        chalk.yellow(
+          `Ignoring feature ${featureIdToDisplay} without geometry\n`,
+        ),
       );
     } else {
       output?.write(
         chalk.yellow(
-          `Ignoring feature ${featureId} due to unexpected geometry type: ${feature.geometry.type}\n`,
+          `Ignoring feature ${featureIdToDisplay} due to unexpected geometry type: ${feature.geometry.type}\n`,
         ),
       );
     }
@@ -127,11 +140,12 @@ type MaybeFeature<T extends turf.Geometry> = T | turf.Feature<T>;
  */
 export const calculatePointDistanceToPolygonInMeters = (
   point: MaybeFeature<turf.Point>,
-  polygon: MaybeFeature<turf.Polygon | turf.MultiPolygon>,
+  polygonFeatureOrGeometry: MaybeFeature<turf.Polygon | turf.MultiPolygon>,
 ) => {
-  if (polygon.type === "Feature") {
-    polygon = polygon.geometry;
-  }
+  const polygon =
+    polygonFeatureOrGeometry.type === "Feature"
+      ? polygonFeatureOrGeometry.geometry
+      : polygonFeatureOrGeometry;
 
   let distance: number;
   if (polygon.type === "MultiPolygon") {
@@ -142,6 +156,7 @@ export const calculatePointDistanceToPolygonInMeters = (
           turf.polygon(coords).geometry,
         ),
       )
+      // eslint-disable-next-line unicorn/no-array-reduce
       .reduce((smallest, current) => (current < smallest ? current : smallest));
   } else {
     if (polygon.coordinates.length > 1) {
@@ -155,6 +170,7 @@ export const calculatePointDistanceToPolygonInMeters = (
       ) as [number, ...number[]];
       if (typeof exteriorDistance === "number" && exteriorDistance < 0) {
         // point is inside the exterior polygon shape
+        // eslint-disable-next-line unicorn/no-array-reduce
         const smallestInteriorDistance = interiorDistances.reduce(
           (smallest, current) => (current < smallest ? current : smallest),
         );

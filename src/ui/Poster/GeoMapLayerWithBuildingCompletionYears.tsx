@@ -13,20 +13,20 @@ import { MapCompletionYearToColor, ProjectionConfig } from "./types";
  * 1.2345 → 54321
  */
 const extractNumberDigitsInReverse = (fractionalNumber: number): number => {
-  const digits = `${fractionalNumber}`
-    .split("")
-    .filter((char) => char >= "0" && char <= "9");
-  const result = parseInt(digits.reverse().join(""));
+  const digits = [...`${fractionalNumber}`].filter(
+    (char) => char >= "0" && char <= "9",
+  );
+  const result = Number.parseInt(digits.reverse().join(""));
 
-  return isFinite(result) ? result : 0;
+  return Number.isFinite(result) ? result : 0;
 };
 
 export interface GeoMapLayerWithBuildingCompletionYearsProps {
   width: number;
   height: number;
   data: MixedPropertyVariantsFeatureCollection;
-  sampleSize?: number;
-  bufferInMeters?: number;
+  sampleSize?: number | undefined;
+  bufferInMeters?: number | undefined;
   projectionConfig: ProjectionConfig;
   mapCompletionYearToColor: MapCompletionYearToColor;
 }
@@ -58,10 +58,10 @@ export const GeoMapLayerWithBuildingCompletionYears: React.VoidFunctionComponent
 
   const sampledBuildings = React.useMemo(
     () =>
-      typeof sampleSize === "number" && isFinite(sampleSize)
+      typeof sampleSize === "number" && Number.isFinite(sampleSize)
         ? _.orderBy(data.features, (feature) => {
             const [lon = 0, lat = 0] =
-              turf.pointOnFeature(feature).geometry.coordinates ?? [];
+              turf.pointOnFeature(feature).geometry.coordinates;
             const pseudoRandomIndex =
               extractNumberDigitsInReverse(lon) +
               extractNumberDigitsInReverse(lat);

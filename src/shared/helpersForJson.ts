@@ -1,18 +1,18 @@
 import fs from "fs-extra";
 import _ from "lodash";
 import { DateTime } from "luxon";
-import path from "path";
+import path from "node:path";
 
 export const serializeTime = (time?: string): string => {
-  let t: DateTime | undefined = undefined;
+  let dateTime: DateTime | undefined;
   if (time) {
-    t = DateTime.fromRFC2822(time).setZone("utc");
-    if (!t.isValid) {
-      t = DateTime.fromISO(time).setZone("utc");
+    dateTime = DateTime.fromRFC2822(time).setZone("utc");
+    if (!dateTime.isValid) {
+      dateTime = DateTime.fromISO(time).setZone("utc");
     }
   }
 
-  return (t ?? DateTime.utc())
+  return (dateTime ?? DateTime.utc())
     .set({ millisecond: 0 })
     .toISO({ suppressMilliseconds: true });
 };
@@ -26,9 +26,9 @@ export type FormattingStyle = "deprecated-on-2020-02-05" | "modern";
 
 export const getJsonFormattingStyle = (filePath: string): FormattingStyle => {
   if (
-    filePath.match(/\/penza\/sources\/mingkh\/house-lists?/) ||
-    filePath.match(/\/penza\/sources\/rosreestr\/.*\/by-tiles\//) ||
-    filePath.match(/\/penza\/sources\/wikimapia\/tiles\//)
+    /\/penza\/sources\/mingkh\/house-lists?/.test(filePath) ||
+    /\/penza\/sources\/rosreestr\/.*\/by-tiles\//.test(filePath) ||
+    /\/penza\/sources\/wikimapia\/tiles\//.test(filePath)
   ) {
     return "deprecated-on-2020-02-05";
   }
@@ -51,7 +51,7 @@ export const formatJson = (
   options?: FormatJsonOptions,
 ): string => {
   const formattingStyle = options?.formattingStyle ?? "modern";
-  let result = `${JSON.stringify(object, null, "\t")}\n`;
+  let result = `${JSON.stringify(object, undefined, "\t")}\n`;
 
   /*
     == before ==
@@ -83,9 +83,10 @@ export const formatJson = (
             `\\[\\n${whitespace}\t\\{(\\n(${whitespace}[\\}\\{\\t][^\\n]+\\n)+)${whitespace}\t\\}\\n\t*\\]`,
             "g",
           ),
-          (match, p1) => `[{${p1.replace(/\n\t/g, "\n")}${whitespace}}]`,
+          (match, p1: string) =>
+            `[{${p1.replace(/\n\t/g, "\n")}${whitespace}}]`,
         );
-      } catch (e) {
+      } catch {
         // The following error has been noticed in a GeoJSON with ≈ 1M rows:
         //
         //    "RangeError: Maximum call stack size exceeded"
@@ -145,13 +146,13 @@ export const formatJson = (
         `\\[((\\n${whitespace}\\t[^\\]\\t][^\\n]+)+)\\n${whitespace}]`,
         "g",
       ),
-      (match, p1) =>
+      (match, p1: string) =>
         `[${p1.replace(new RegExp(`\\n${whitespace}\\t`, "g"), " ").trim()}]`,
     );
   }
 
   result = result.replace(
-    /\[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+\]/g,
+    /\[\n\t+(-?\d+\.?\d*),\n\t+(-?\d+\.?\d*)\n\t+]/g,
     "[$1, $2]",
   );
 
@@ -194,7 +195,7 @@ export const formatJson = (
         `\\[\\n${whitespace}\t\\[(\\n(${whitespace}\t[^\\n]+\\n)+)${whitespace}\t\\]\\n\t+\\]`,
         "g",
       ),
-      (match, p1) => `[[${p1.replace(/\n\t/g, "\n")}${whitespace}]]`,
+      (match, p1: string) => `[[${p1.replace(/\n\t/g, "\n")}${whitespace}]]`,
     );
   }
 
@@ -218,12 +219,10 @@ export const formatJson = (
     ]
     ...
    */
-  result = result.replace(/\n(\t+)\],\n\t+\[\n/g, "\n$1], [\n");
+  result = result.replace(/\n(\t+)],\n\t+\[\n/g, "\n$1], [\n");
 
-  if (options?.checkIntegrity) {
-    if (!_.isEqual(object, JSON.parse(result))) {
-      throw new Error(`Integrity check failed`);
-    }
+  if (options?.checkIntegrity && !_.isEqual(object, JSON.parse(result))) {
+    throw new Error(`Integrity check failed`);
   }
 
   return result;
@@ -238,7 +237,7 @@ export const writeFormattedJson = async (
     options?.formattingStyle ?? getJsonFormattingStyle(filePath);
 
   const processedOptions = {
-    ...(options ?? {}),
+    ...options,
     formattingStyle,
   };
 

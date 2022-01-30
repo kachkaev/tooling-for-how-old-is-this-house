@@ -1,7 +1,7 @@
 import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
 
 import { prependCommentWithJsonToHtml } from "../../../shared/helpersForHtml";
 import { serializeTime } from "../../../shared/helpersForJson";
@@ -40,11 +40,12 @@ interface ApiResponseData {
 const script = async () => {
   output.write(chalk.bold("sources/wikivoyage: Fetching pages\n"));
 
-  const pagesToFetch = (await getTerritoryConfig())?.sources?.wikivoyage
+  const territoryConfig = await getTerritoryConfig();
+  const pagesToFetch = territoryConfig.sources?.wikivoyage
     ?.pagesToFetch as unknown;
-  if (!(pagesToFetch instanceof Array)) {
+  if (!Array.isArray(pagesToFetch)) {
     throw new ScriptError(
-      `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to be an array, got ${pagesToFetch}`,
+      `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to be an array, got ${typeof pagesToFetch}`,
     );
   }
 
@@ -53,7 +54,9 @@ const script = async () => {
     if (typeof pageToFetch !== "string" || !pageToFetch.startsWith(urlPrefix)) {
       output.write(
         chalk.yellow(
-          `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to contain URLs starting with ${urlPrefix}. Skipping ${pageToFetch}.\n`,
+          `Expected ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch to contain URLs starting with ${urlPrefix}. Skipping ${JSON.stringify(
+            pageToFetch,
+          )}.\n`,
         ),
       );
       continue;
@@ -61,7 +64,7 @@ const script = async () => {
     urls.push(pageToFetch);
   }
 
-  if (!urls.length) {
+  if (urls.length === 0) {
     throw new ScriptError(
       `Could not find any pages to fetch. Please check ${getTerritoryConfigFilePath()} → sources → wikivoyage → pagesToFetch.`,
     );
@@ -70,13 +73,13 @@ const script = async () => {
   output.write(chalk.green("Fetching...\n"));
 
   for (const url of urls) {
-    const pageName = url.substr(urlPrefix.length);
+    const pageName = url.slice(urlPrefix.length);
     const apiUrl = `https://ru.wikivoyage.org/w/rest.php/v1/page/${encodeURIComponent(
       pageName,
     )}`;
-    const apiResponseData = (
-      await axios.get<ApiResponseData>(apiUrl, { responseType: "json" })
-    ).data;
+    const { data: apiResponseData } = await axios.get<ApiResponseData>(apiUrl, {
+      responseType: "json",
+    });
     const filePath = `${getWikivoyagePagesDir()}/${pageName}${getWikivoyagePageFileSuffix()}`;
 
     const {

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import rmUp from "rm-up";
+import { rmUp } from "rm-up";
 import sleep from "sleep-promise";
 
 import { loadCombinedGeocodeDictionary } from "../../../shared/geocoding";
@@ -65,7 +65,7 @@ const script = async () => {
     },
   });
 
-  if (!filePathsToDelete.length) {
+  if (filePathsToDelete.length === 0) {
     output.write(chalk.gray("No files to delete.\n"));
 
     return;

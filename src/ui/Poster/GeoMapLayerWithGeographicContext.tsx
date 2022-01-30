@@ -56,15 +56,16 @@ export const GeoMapLayerWithGeographicContext: React.VoidFunctionComponent<
           fill: geographicContextStyling.waterColor,
           stroke: "none",
         };
-    }
 
-    return {
-      stroke: extractWayStroke(properties),
-      fill: "none",
-      strokeWidth: extractWayStrokeWidth(properties),
-      strokeLinejoin: "round",
-      strokeLinecap: "round",
-    };
+      default:
+        return {
+          stroke: extractWayStroke(properties),
+          fill: "none",
+          strokeWidth: extractWayStrokeWidth(properties),
+          strokeLinejoin: "round",
+          strokeLinecap: "round",
+        };
+    }
   }, []);
 
   return (

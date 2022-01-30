@@ -50,8 +50,8 @@ const generateRosreestrTileComment = (
   tileDataFilePath: string,
   tileData: RosreestrTileData,
 ): string => {
-  const numberOfFeatures = tileData?.response?.features?.length;
-  const numberOfFeaturesAsString = `${numberOfFeatures ?? "?"}`;
+  const numberOfFeatures = tileData.response.features.length;
+  const numberOfFeaturesAsString = `${numberOfFeatures}`;
 
   return `${tileDataFilePath} ${numberOfFeaturesAsString.padStart(2)}`;
 };
@@ -100,11 +100,7 @@ GenerateProcessTile = (objectType) => async (tile) => {
     ),
   ).geometry;
 
-  if (!tileExtentGeometry) {
-    throw new Error("Unexpected empty geometry");
-  }
-
-  const rawTileResponse = (
+  const { data: rawTileResponse } =
     await fetchJsonFromRosreestr<RawRosreestrTileResponse>(
       `https://pkk.rosreestr.ru/api/features/${featureNumericIdLookup[objectType]}`,
       {
@@ -112,8 +108,7 @@ GenerateProcessTile = (objectType) => async (tile) => {
         tolerance: 2, // Needs to be a power of two. The smaller the number, the fewer features outside the polygon are returned.
         limit: maxSupportedFeaturesPerTileRequest,
       },
-    )
-  ).data;
+    );
 
   await pauseBetweenPkkApiRequestsToAvoid403();
 

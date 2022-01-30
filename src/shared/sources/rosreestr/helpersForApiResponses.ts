@@ -24,7 +24,7 @@ export const extractCompletionTimeFromFirResponse = (
   const result =
     firResponse.parcelData.oksYearBuilt ?? firResponse.parcelData.oksYearUsed;
 
-  if (!result || result?.length < 4) {
+  if (!result || result.length < 4) {
     return undefined;
   }
 

@@ -82,7 +82,7 @@ export const ColorLegendSvg: React.VoidFunctionComponent<LegendSvgProps> = ({
                     width={tickWidth}
                     fill={color}
                   />
-                  {`${completionYear}`.split("").map((digit, digitIndex) => (
+                  {[...`${completionYear}`].map((digit, digitIndex) => (
                     <PtSansDigit
                       key={digitIndex}
                       digit={digit}
@@ -93,7 +93,7 @@ export const ColorLegendSvg: React.VoidFunctionComponent<LegendSvgProps> = ({
                     />
                   ))}
                 </>
-              ) : null}
+              ) : undefined}
             </g>
           );
         })}

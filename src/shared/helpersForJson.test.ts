@@ -2,17 +2,15 @@ import { serializeTime } from "./helpersForJson";
 
 describe("serializeTime", () => {
   it("parses RFC2822", () => {
-    expect(serializeTime("Fri, 26 Feb 2021 08:20:27 GMT")).toEqual(
+    expect(serializeTime("Fri, 26 Feb 2021 08:20:27 GMT")).toBe(
       "2021-02-26T08:20:27Z",
     );
   });
 
   it("parses ISO", () => {
-    expect(serializeTime("2021-02-26T08:20:27Z")).toEqual(
-      "2021-02-26T08:20:27Z",
-    );
+    expect(serializeTime("2021-02-26T08:20:27Z")).toBe("2021-02-26T08:20:27Z");
 
-    expect(serializeTime("2021-02-26T08:20:27.420Z")).toEqual(
+    expect(serializeTime("2021-02-26T08:20:27.420Z")).toBe(
       "2021-02-26T08:20:27Z",
     );
   });

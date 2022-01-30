@@ -11,7 +11,7 @@ export const generateGeographicContextExtent = (
   properties: { category: "geographicContextExtent" };
 } => ({
   type: "Feature",
-  geometry: turf.truncate(createBboxFeature(territoryExtent, 20000).geometry, {
+  geometry: turf.truncate(createBboxFeature(territoryExtent, 20_000).geometry, {
     precision: 3,
   }),
   properties: { category: "geographicContextExtent" },

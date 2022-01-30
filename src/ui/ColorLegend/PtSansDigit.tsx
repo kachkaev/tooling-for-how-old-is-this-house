@@ -85,5 +85,5 @@ export const PtSansDigit: React.VoidFunctionComponent<PtSansDigitProps> = ({
       );
   }
 
-  return null;
+  return <></>;
 };

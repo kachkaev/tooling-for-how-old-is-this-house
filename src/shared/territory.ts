@@ -4,8 +4,8 @@ import * as envalid from "envalid";
 import fs from "fs-extra";
 import { load } from "js-yaml";
 import _ from "lodash";
-import path from "path";
-import { WriteStream } from "tty";
+import path from "node:path";
+import { WriteStream } from "node:tty";
 
 import {
   AddressHandlingConfig,
@@ -14,6 +14,7 @@ import {
   WordReplacementConfig,
 } from "./addresses";
 import { cleanEnv } from "./cleanEnv";
+import { deepClean } from "./deepClean";
 import { ReportIssue } from "./issues";
 
 export type TerritoryExtent = turf.Feature<turf.Polygon>;
@@ -66,6 +67,7 @@ export interface TerritoryConfig {
     };
   };
   addressHandling?: RawAddressHandlingConfig;
+  poster?: unknown;
   [rest: string]: unknown;
 }
 
@@ -73,7 +75,9 @@ export const getTerritoryConfigFilePath = (): string =>
   path.resolve(getTerritoryDirPath(), `territory-config.yml`);
 
 export const getTerritoryConfig = async (): Promise<TerritoryConfig> => {
-  return load(await fs.readFile(getTerritoryConfigFilePath(), "utf8")) as any;
+  return (await load(
+    await fs.readFile(getTerritoryConfigFilePath(), "utf8"),
+  )) as TerritoryConfig;
 };
 
 export const getTerritoryExtentFilePath = (): string =>
@@ -81,16 +85,16 @@ export const getTerritoryExtentFilePath = (): string =>
 
 export const getTerritoryExtent = async (): Promise<TerritoryExtent> => {
   const filePath = getTerritoryExtentFilePath();
-  const territoryExtent = (await fs.readJson(filePath)) as turf.Feature;
-  if (territoryExtent?.type !== "Feature") {
+  const territoryExtent = (await fs.readJson(filePath)) as turf.AllGeoJSON;
+  if (territoryExtent.type !== "Feature" || !("geometry" in territoryExtent)) {
     throw new Error(
-      `Expected ${filePath} to contain a geojson Feature, got: ${territoryExtent?.type}`,
+      `Expected ${filePath} to contain a geojson Feature, got: ${territoryExtent.type}`,
     );
   }
 
-  if (territoryExtent?.geometry?.type !== "Polygon") {
+  if (territoryExtent.geometry.type !== "Polygon") {
     throw new Error(
-      `Expected ${filePath} to contain a geojson Feature with Polygon, got: ${territoryExtent?.geometry?.type}`,
+      `Expected ${filePath} to contain a geojson Feature with Polygon, got: ${territoryExtent.geometry.type}`,
     );
   }
 
@@ -176,12 +180,14 @@ const sanitizeWordReplacements = (
       continue;
     }
 
-    result.push({
-      detached,
-      from: sanitizedFrom,
-      silenceNormalizationWarning,
-      to,
-    });
+    result.push(
+      deepClean({
+        detached,
+        from: sanitizedFrom,
+        silenceNormalizationWarning,
+        to,
+      }),
+    );
   }
 
   return result;
@@ -203,20 +209,20 @@ const sanitizeRawAddressHandlingConfig = (
     userInput as Record<string, unknown>;
 
   const sanitizedCanonicalSpellings: string[] = [];
-  let sanitizedDefaultRegion: string | undefined = undefined;
+  let sanitizedDefaultRegion: string | undefined;
 
   if (Array.isArray(canonicalSpellings)) {
-    canonicalSpellings.forEach((canonicalSpelling, index) => {
+    for (const [index, canonicalSpelling] of canonicalSpellings.entries()) {
       if (typeof canonicalSpelling !== "string") {
         reportIssue?.(
           `Ignoring canonicalSpelling[${index}] (expected string got ${typeof canonicalSpelling})`,
         );
 
-        return;
+        continue;
       }
 
       sanitizedCanonicalSpellings.push(canonicalSpelling);
-    });
+    }
   } else if (canonicalSpellings !== undefined && canonicalSpellings !== null) {
     reportIssue?.(
       `Ignoring canonicalSpellings (expected array, got ${typeof defaultRegion})`,
@@ -233,11 +239,11 @@ const sanitizeRawAddressHandlingConfig = (
     }
   }
 
-  return {
+  return deepClean({
     canonicalSpellings: sanitizedCanonicalSpellings,
     defaultRegion: sanitizedDefaultRegion,
     wordReplacements: sanitizeWordReplacements(wordReplacements),
-  };
+  });
 };
 
 export const getTerritoryAddressHandlingConfig = async (

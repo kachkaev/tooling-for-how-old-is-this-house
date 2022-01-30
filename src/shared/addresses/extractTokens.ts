@@ -18,9 +18,6 @@ export const extractTokens = (rawAddress: string): AddressToken[] => {
     if (openWord) {
       const [openWordType, openWordValue] = openWord;
 
-      const nextToken = atomicTokens[index + 1];
-      const [nextTokenType, nextTokenValue] = nextToken ?? [];
-
       // что-то.
       if (tokenType === "period") {
         openWord[0] = "protoWord";
@@ -29,50 +26,55 @@ export const extractTokens = (rawAddress: string): AddressToken[] => {
         continue;
       }
 
-      // с/т
-      if (
-        openWordType === "letterSequence" &&
-        openWordValue.length < 3 &&
-        tokenType === "slash" &&
-        nextTokenType === "letterSequence" &&
-        nextTokenValue &&
-        nextTokenValue.length < 3
-      ) {
-        openWord[0] = "protoWord";
-        openWord[1] += `/${nextTokenValue}`;
-        index += 1;
-        continue;
-      }
+      const nextToken = atomicTokens[index + 1];
+      if (nextToken) {
+        const [nextTokenType, nextTokenValue] = nextToken;
 
-      // такой-то
-      if (
-        openWordType === "letterSequence" &&
-        tokenType === "dash" &&
-        nextTokenType === "letterSequence"
-      ) {
-        openWord[0] = "protoWord";
-        openWord[1] += `-${nextTokenValue}`;
-        index += 1;
-        continue;
-      }
+        // с/т
+        if (
+          openWordType === "letterSequence" &&
+          openWordValue.length < 3 &&
+          tokenType === "slash" &&
+          nextTokenType === "letterSequence" &&
+          nextTokenValue &&
+          nextTokenValue.length < 3
+        ) {
+          openWord[0] = "protoWord";
+          openWord[1] += `/${nextTokenValue}`;
+          index += 1;
+          continue;
+        }
 
-      // 42-й
-      if (
-        openWordType === "numberSequence" &&
-        tokenType === "dash" &&
-        nextTokenType === "letterSequence"
-      ) {
-        openWord[0] = "protoWord";
-        openWord[1] += `-${nextTokenValue}`;
-        index += 1;
-        continue;
+        // такой-то
+        if (
+          openWordType === "letterSequence" &&
+          tokenType === "dash" &&
+          nextTokenType === "letterSequence"
+        ) {
+          openWord[0] = "protoWord";
+          openWord[1] += `-${nextTokenValue}`;
+          index += 1;
+          continue;
+        }
+
+        // 42-й
+        if (
+          openWordType === "numberSequence" &&
+          tokenType === "dash" &&
+          nextTokenType === "letterSequence"
+        ) {
+          openWord[0] = "protoWord";
+          openWord[1] += `-${nextTokenValue}`;
+          index += 1;
+          continue;
+        }
       }
 
       // 41А или 1ый (но не 10к10)
       if (
         openWordType === "numberSequence" &&
         tokenType === "letterSequence" &&
-        nextTokenType !== "numberSequence"
+        nextToken?.[0] !== "numberSequence"
       ) {
         openWord[0] = "protoWord";
         openWord[1] += tokenValue;

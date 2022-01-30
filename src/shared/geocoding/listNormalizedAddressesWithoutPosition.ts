@@ -9,23 +9,23 @@ export const listNormalizedAddressesWithoutPosition = ({
 }): string[] => {
   const result: string[] = [];
 
-  Object.entries(combinedGeocodeDictionary).forEach(
-    ([normalizedAddress, recordForAddress]) => {
-      const recordEntries = Object.entries(recordForAddress);
-      const recordEntriesWithoutIgnoredSources = recordEntries.filter(
-        ([source]) => !sourcesToIgnore || !sourcesToIgnore.includes(source),
-      );
-      if (
-        recordEntriesWithoutIgnoredSources.length &&
-        !recordEntriesWithoutIgnoredSources.find(
-          ([source, recordForSource]) =>
-            !sourcesToIgnore?.includes(source) && recordForSource.length > 0,
-        )
-      ) {
-        result.push(normalizedAddress);
-      }
-    },
-  );
+  for (const [normalizedAddress, recordForAddress] of Object.entries(
+    combinedGeocodeDictionary,
+  )) {
+    const recordEntries = Object.entries(recordForAddress);
+    const recordEntriesWithoutIgnoredSources = recordEntries.filter(
+      ([source]) => !sourcesToIgnore || !sourcesToIgnore.includes(source),
+    );
+    if (
+      recordEntriesWithoutIgnoredSources.length > 0 &&
+      !recordEntriesWithoutIgnoredSources.some(
+        ([source, recordForSource]) =>
+          !sourcesToIgnore?.includes(source) && recordForSource.length > 0,
+      )
+    ) {
+      result.push(normalizedAddress);
+    }
+  }
 
   return result;
 };

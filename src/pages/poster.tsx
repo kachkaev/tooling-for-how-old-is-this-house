@@ -14,7 +14,7 @@ import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
 import { usePosterConfig } from "../ui/shared/usePosterConfig";
 
 const Poster = dynamic<PosterProps>(
-  import("../ui/Poster").then((m) => m.Poster),
+  import("../ui/Poster").then((module) => module.Poster),
   { ssr: false },
 );
 
@@ -28,7 +28,7 @@ const PosterPage: NextPage<PosterPageProps> = ({
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
 
   if (!posterConfig) {
-    return null;
+    return <></>;
   }
 
   return (

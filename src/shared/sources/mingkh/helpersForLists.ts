@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { getTerritoryConfig } from "../../territory";
 import { getHouseListFilePath } from "./helpersForPaths";
@@ -34,8 +34,9 @@ export const loopThroughHouseLists = async (
 
     try {
       await callback({ regionUrl, cityUrl, houseListFilePath });
-    } catch (e) {
-      output.write(chalk.red(` Error: ${e}\n`));
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      output.write(chalk.red(` Error: ${error}\n`));
     }
   }
 };
@@ -50,7 +51,7 @@ const extractHouseIdFromUrl = (houseUrl: string): number => {
     throw new Error(`Cannot extract house id from url ${houseUrl}`);
   }
 
-  return parseInt(result);
+  return Number.parseInt(result);
 };
 
 export const loopThroughRowsInHouseList = async (
@@ -58,7 +59,7 @@ export const loopThroughRowsInHouseList = async (
   callback: (payload: { houseId: number; houseUrl: string }) => Promise<void>,
   output: WriteStream,
 ) => {
-  const houseList: HouseListFile = await fs.readJson(houseListFilePath);
+  const houseList = (await fs.readJson(houseListFilePath)) as HouseListFile;
 
   const rows = houseList.response.rows;
   const numberOfRows = rows.length;
@@ -75,8 +76,9 @@ export const loopThroughRowsInHouseList = async (
     try {
       const houseId = extractHouseIdFromUrl(row.url);
       await callback({ houseId, houseUrl: row.url });
-    } catch (e) {
-      output.write(chalk.red(` Error: ${e}\n`));
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      output.write(chalk.red(` Error: ${error}\n`));
     }
   }
 };

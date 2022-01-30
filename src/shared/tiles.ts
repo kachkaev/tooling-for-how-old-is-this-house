@@ -2,7 +2,7 @@ import * as tilebelt from "@mapbox/tilebelt";
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { eraseLastLineInOutput } from "./helpersForScripts";
 
@@ -12,7 +12,11 @@ export const stringifyTile = (tile: Tile): string =>
   `${tile[2]}/${tile[0]}/${tile[1]}`;
 
 export const parseTile = (stringifiedTile: string): Tile => {
-  const result = stringifiedTile.split("/").map((v) => parseInt(v) ?? 0);
+  const result = stringifiedTile
+    .split("/")
+    .map(
+      (stringifiedTileSection) => Number.parseInt(stringifiedTileSection) || 0,
+    );
   if (result.length !== 3) {
     throw new Error(
       `Expected 3 parts in stringified tile, got ${result.length}`,
@@ -25,11 +29,15 @@ export const parseTile = (stringifiedTile: string): Tile => {
 export type TileStatus = "complete" | "needsSplitting";
 export type CacheStatus = "used" | "notUsed";
 
-export type ProcessTile = (tile: Tile) => Promise<{
+export interface ProcessTileResult {
   cacheStatus: CacheStatus;
   tileStatus: TileStatus;
   comment?: string;
-}>;
+}
+
+export type ProcessTile = (
+  tile: Tile,
+) => ProcessTileResult | Promise<ProcessTileResult>;
 
 export const processTiles = async ({
   initialZoom,
@@ -115,12 +123,12 @@ export const processTiles = async ({
     }
 
     tiles = nextZoomTiles;
-    if (!tiles.length) {
+    if (tiles.length === 0) {
       break;
     }
   }
 
-  if (tiles.length) {
+  if (tiles.length > 0) {
     throw new Error(
       `Max zoom ${maxAllowedZoom} reached, number of tiles on zoom ${
         maxAllowedZoom + 1

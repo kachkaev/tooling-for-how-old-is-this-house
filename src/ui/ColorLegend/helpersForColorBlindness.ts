@@ -29,13 +29,13 @@ export const getColorTransformMatrix = (
       return [
         [0.292, 0.7054, -0.0003, 0, 0],
         [0.2934, 0.7089, 0, 0, 0],
-        [-0.02098, 0.02559, 1.0019, 0, 0],
+        [-0.020_98, 0.025_59, 1.0019, 0, 0],
         [0, 0, 0, 1, 0],
       ];
     case "tritanopia":
       return [
-        [1.01595, 0.1351, -0.1488, 0, 0],
-        [-0.01542, 0.8683, 0.1448, 0, 0],
+        [1.015_95, 0.1351, -0.1488, 0, 0],
+        [-0.015_42, 0.8683, 0.1448, 0, 0],
         [0.1002, 0.8168, 0.1169, 0, 0],
         [0, 0, 0, 1, 0],
       ];
@@ -51,7 +51,10 @@ export const getColorTransformMatrix = (
 
 const stringifyColorTransformMatrix = (matrixRows: number[][]) => {
   return matrixRows
-    .map((numbersInRow) => `${numbersInRow.map((n) => `${n}`).join(" ")}`)
+    .map(
+      (numbersInRow) =>
+        `${numbersInRow.map((number) => `${number}`).join(" ")}`,
+    )
     .join("\n ");
 };
 

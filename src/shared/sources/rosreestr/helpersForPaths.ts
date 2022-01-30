@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 
 import { getTerritoryDirPath } from "../../territory";
 import { Tile } from "../../tiles";

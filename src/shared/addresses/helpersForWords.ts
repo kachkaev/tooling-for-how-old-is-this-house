@@ -47,7 +47,7 @@ export const generateWordConfigLookup = <C extends Partial<WordConfig>>({
     wordConfigsTitleByAlias[alias] = wordConfigsTitle;
   };
 
-  wordConfigs.forEach((wordConfig) => {
+  for (const wordConfig of wordConfigs) {
     const allAliases: string[] = [];
     if (wordConfig.aliases) {
       allAliases.push(...wordConfig.aliases);
@@ -59,10 +59,10 @@ export const generateWordConfigLookup = <C extends Partial<WordConfig>>({
       allAliases.push(...getCustomAliases(wordConfig));
     }
 
-    autoExtendAliases(allAliases).forEach((alias) => {
+    for (const alias of autoExtendAliases(allAliases)) {
       addToLookup(alias, wordConfig);
-    });
-  });
+    }
+  }
 
   return wordLookup;
 };

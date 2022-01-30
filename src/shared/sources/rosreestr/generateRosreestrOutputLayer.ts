@@ -39,14 +39,14 @@ export const calculateFloorCounts = (
   floorCountBelowGround?: number | undefined;
 } => {
   const floorCountsTotal = rawFloorCountTotal?.split("-") ?? []; // Needed to support "1-2"
-  const floorCountTotal = parseInt(
+  const floorCountTotal = Number.parseInt(
     floorCountsTotal[floorCountsTotal.length - 1] ?? "",
   );
-  const floorCountBelowGround = parseInt(
+  const floorCountBelowGround = Number.parseInt(
     (rawFloorCountBelowGround === "-" ? "0" : rawFloorCountBelowGround) ?? "",
   );
 
-  if (!isFinite(floorCountTotal)) {
+  if (!Number.isFinite(floorCountTotal)) {
     return {};
   }
 
@@ -62,7 +62,7 @@ const processCompletionTime = (completionTime: string | undefined) => {
     .replace(/^1917$/, "до 1917");
 
   if (!result) {
-    return undefined;
+    return;
   }
 
   return result;
@@ -94,9 +94,10 @@ const pickMostPromisingAddress = (
     return true;
   });
 
-  const addressesToPickFrom = standardizableAddresses.length
-    ? standardizableAddresses
-    : definedAddresses;
+  const addressesToPickFrom =
+    standardizableAddresses.length > 0
+      ? standardizableAddresses
+      : definedAddresses;
 
   return _.maxBy(addressesToPickFrom, (rawAddress) => rawAddress.length);
 };
@@ -114,7 +115,7 @@ const extractPropertiesFromFirResponse = (
     return "notBuilding";
   }
 
-  return {
+  return deepClean({
     id: cn,
     knownAt: firFetchedAt,
     completionTime: processCompletionTime(
@@ -132,7 +133,7 @@ const extractPropertiesFromFirResponse = (
       firResponse.parcelData.oksFloors,
       firResponse.parcelData.oksUFloors,
     ),
-  };
+  });
 };
 
 const extractPropertiesFromPkkResponse = (
@@ -162,14 +163,14 @@ const extractPropertiesFromPkkResponse = (
       ? attrs.area_value
       : undefined;
 
-  return {
+  return deepClean({
     id: cn,
     knownAt: pkkFetchedAt,
     documentedBuildArea,
     address: attrs.address,
     completionTime,
     ...calculateFloorCounts(attrs.floors, attrs.underground_floors),
-  };
+  });
 };
 
 export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
@@ -201,7 +202,7 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
     fileSearchPattern: "**/page-*.json",
     filesNicknameToLog: "rosreestr info pages",
     processFile: async (filePath) => {
-      const infoPageData: InfoPageData = await fs.readJson(filePath);
+      const infoPageData = (await fs.readJson(filePath)) as InfoPageData;
       for (const infoPageEntry of infoPageData) {
         const propertyVariants = [
           extractPropertiesFromFirResponse(
@@ -211,21 +212,20 @@ export const generateRosreestrOutputLayer: GenerateOutputLayer = async ({
           extractPropertiesFromPkkResponse(infoPageEntry),
         ]
           .filter((variant) => typeof variant === "object")
-          .map((variant) => deepClean(variant))
           .reverse();
 
-        if (!propertyVariants.length) {
+        if (propertyVariants.length === 0) {
           continue;
         }
 
-        const outputLayerProperties: OutputLayerProperties = Object.assign(
+        const outputLayerProperties = Object.assign(
           {},
           ...propertyVariants,
-        );
+        ) as OutputLayerProperties;
 
         const cn = infoPageEntry.cn;
-        let geometry: turf.Point | null =
-          objectCenterFeatureByCn[cn]?.geometry ?? null;
+        let geometry: turf.Point | undefined =
+          objectCenterFeatureByCn[cn]?.geometry;
 
         if (!geometry && outputLayerProperties.address && geocodeAddress) {
           const geocodeResult = geocodeAddress(outputLayerProperties.address);

@@ -1,4 +1,4 @@
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { loadGeocodeDictionaryLookup } from "./loadGeocodeDictionaryLookup";
 import { GeocodeDictionary } from "./types";
@@ -8,5 +8,8 @@ export const loadCombinedGeocodeDictionary = async (
 ): Promise<GeocodeDictionary> => {
   const geocodeDictionaryLookup = await loadGeocodeDictionaryLookup(output);
 
-  return Object.assign({}, ...Object.values(geocodeDictionaryLookup));
+  return Object.assign(
+    {},
+    ...Object.values(geocodeDictionaryLookup),
+  ) as GeocodeDictionary;
 };

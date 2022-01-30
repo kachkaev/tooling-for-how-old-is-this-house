@@ -1,8 +1,8 @@
 import * as turf from "@turf/turf";
 import fs from "fs-extra";
 import _ from "lodash";
+import { WriteStream } from "node:tty";
 import sortKeys from "sort-keys";
-import { WriteStream } from "tty";
 
 import { processFiles } from "../../processFiles";
 import { getMingkhHousesDirPath } from "./helpersForPaths";
@@ -13,7 +13,7 @@ type FeatureProperties = Omit<HouseInfo, "centerPoint"> & { fetchedAt: string };
 export const generateMingkhHouseInfoCollection = async ({
   output,
 }: {
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): Promise<
   turf.FeatureCollection<turf.Point | undefined, FeatureProperties>
 > => {

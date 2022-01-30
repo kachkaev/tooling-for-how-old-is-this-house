@@ -192,7 +192,7 @@ export const createBeautifyAddress = (
     for (let index = 0; index < addressTokens.length; index += 1) {
       const token = addressTokens[index];
       const prevToken = addressTokens[index - 1];
-      if (token?.[0] !== "letterSequence" || token?.[1].length < 2) {
+      if (token?.[0] !== "letterSequence" || token[1].length < 2) {
         continue;
       }
       if (prevToken?.[1] === "-") {
@@ -211,7 +211,7 @@ export const createBeautifyAddress = (
       continue;
     }
 
-    letterSequences.forEach((letterSequence) => {
+    for (const letterSequence of letterSequences) {
       const simplifiedSpelling = simplifySpelling(letterSequence);
       if (simplifiedSpelling !== letterSequence) {
         const letterCasing = deriveLetterCasing(letterSequence);
@@ -233,7 +233,7 @@ export const createBeautifyAddress = (
           letterCasingLookup[simplifiedSpelling] = letterCasing;
         }
       }
-    });
+    }
   }
 
   for (const { normalizedValue, beautifiedValue } of designationConfigs) {
@@ -248,7 +248,7 @@ export const createBeautifyAddress = (
       beautifiedValue ?? normalizedValue;
   }
 
-  if (addressBeautificationConfig.canonicalSpellings instanceof Array) {
+  if (Array.isArray(addressBeautificationConfig.canonicalSpellings)) {
     for (const canonicalSpelling of addressBeautificationConfig.canonicalSpellings) {
       if (typeof canonicalSpelling === "string") {
         spellingLookup[simplifySpelling(canonicalSpelling)] = canonicalSpelling;

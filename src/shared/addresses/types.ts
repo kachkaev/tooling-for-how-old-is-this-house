@@ -148,9 +148,9 @@ export interface AddressCleaningConfig {
 
 export interface AddressSection {
   index: number;
-  designation?: Designation;
+  designation?: Designation | undefined;
   words: AddressNodeWithWord[];
-  separatorBefore?: AddressNodeWithSeparator;
+  separatorBefore?: AddressNodeWithSeparator | undefined;
 }
 
 export interface AddressNodeWithSemanticPart {

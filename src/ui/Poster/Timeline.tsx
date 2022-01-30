@@ -14,8 +14,8 @@ import { MapCompletionYearToColor } from "./types";
 
 const numberFormat = Intl.NumberFormat("ru");
 
-const formatNumber = (n: number) => {
-  return numberFormat.format(n).replace(/\u00A0/g, "\u202F");
+const formatNumber = (number: number) => {
+  return numberFormat.format(number).replace(/\u00A0/g, "\u202F");
 };
 
 const Wrapper = styled.div`
@@ -47,8 +47,8 @@ const paddingBottom = 28 * pointsInMm;
 const tickify = (value: number, tickSize: number): number[] => {
   const result: number[] = [];
 
-  for (let n = 0; n < value; n += tickSize) {
-    result.push(n);
+  for (let tick = 0; tick < value; tick += tickSize) {
+    result.push(tick);
   }
   result.push(value);
 
@@ -60,7 +60,7 @@ const Bar: React.VoidFunctionComponent<{
   abnormalYearBuildingCountCap: number;
   buildings: MixedPropertyVariantsFeature[];
   label: string;
-  labelOffsetX?: number;
+  labelOffsetX?: number | undefined;
   mapCompletionYearToColor: MapCompletionYearToColor;
   xScale: ScaleLinear<number, number>;
   year: number;
@@ -81,7 +81,7 @@ const Bar: React.VoidFunctionComponent<{
     buildings.length > 0 ? year : undefined,
   );
 
-  const yearIsAbnormal = abnormalYears?.includes(year);
+  const yearIsAbnormal = abnormalYears.includes(year);
   const total =
     yearIsAbnormal && abnormalYearBuildingCountCap > 0
       ? Math.min(buildings.length, abnormalYearBuildingCountCap)
@@ -92,7 +92,7 @@ const Bar: React.VoidFunctionComponent<{
     <g key={year} transform={`translate(${xScale(year)},0)`}>
       {tickifiedValues.map((tickifiedValue, index) => {
         if (index === 0 && total !== 0) {
-          return null;
+          return;
         }
 
         const gradientId = yearIsAbnormal ? `g-${year}-${index}` : undefined;
@@ -105,7 +105,7 @@ const Bar: React.VoidFunctionComponent<{
         );
 
         if (height < barMinHeight) {
-          return null;
+          return;
         }
 
         return (
@@ -118,7 +118,7 @@ const Bar: React.VoidFunctionComponent<{
                 to={barColor}
                 toOpacity={1 - prevTickifiedValue / total}
               />
-            ) : null}
+            ) : undefined}
             <rect
               x={-barWidth / 2}
               width={barWidth}
@@ -142,7 +142,7 @@ const Bar: React.VoidFunctionComponent<{
             {label}
           </text>
         </g>
-      ) : null}
+      ) : undefined}
     </g>
   );
 };
@@ -223,7 +223,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
 
   return (
     <Wrapper {...rest} ref={ref}>
-      {!height || !width ? null : (
+      {!height || !width ? undefined : (
         <svg
           width={svgWidth}
           height={svgHeight}
@@ -262,7 +262,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
           >
             {yAxisTicks.map((value, index) => {
               if (index === 0) {
-                return null;
+                return;
               }
 
               return (
@@ -275,7 +275,7 @@ const Timeline: React.VoidFunctionComponent<TimelineProps> = ({
                       yScale(value - barTick) - yScale(value) - barTickGap
                     }
                   />
-                  {(value / barTickLabelFrequency) % barTick ? null : (
+                  {(value / barTickLabelFrequency) % barTick ? undefined : (
                     <text
                       fontSize="0.8em"
                       fill="#fff"

@@ -27,8 +27,9 @@ const minNumberOfObjectsPerBlock = 5;
 const minPercentageOutsideTerritoryExtent = 25;
 
 const getHandpickedCnsForPageInfos = async (): Promise<string[]> => {
-  const handpickedCnsForPageInfos = (await getTerritoryConfig()).sources
-    ?.rosreestr?.handpickedCnsForPageInfos;
+  const territoryConfig = await getTerritoryConfig();
+  const handpickedCnsForPageInfos =
+    territoryConfig.sources?.rosreestr?.handpickedCnsForPageInfos;
 
   if (!handpickedCnsForPageInfos) {
     return [];
@@ -37,7 +38,7 @@ const getHandpickedCnsForPageInfos = async (): Promise<string[]> => {
   try {
     return handpickedCnsForPageInfos.map((cn) => {
       if (!isValidObjectCn(cn)) {
-        throw new Error();
+        throw new Error("Invalid cn");
       }
 
       return cn;
@@ -76,7 +77,7 @@ const script = async () => {
 
   // Index CCOs in tiles
   for (const ccoFeature of ccoFeatures) {
-    const cn = ccoFeature.properties?.cn;
+    const cn = ccoFeature.properties.cn;
     if (!isValidObjectCn(cn)) {
       throw new ScriptError(
         `Found CCO without a valid cn property (cadastral number): ${JSON.stringify(
@@ -96,7 +97,7 @@ const script = async () => {
 
   // Index lots in tiles
   for (const lotFeature of lotFeatures) {
-    const objectCn = lotFeature.properties?.cn;
+    const objectCn = lotFeature.properties.cn;
     if (!isValidObjectCn(objectCn)) {
       throw new ScriptError(
         `Found lot without cn property (cadastral number): ${JSON.stringify(
@@ -166,7 +167,7 @@ const script = async () => {
   const orderedBlockCns = _.orderBy(Object.keys(knownObjectCnsByBlockCn));
 
   output.write(
-    `Found ${knownObjectCns.length} objects (${ccoFeatures.length} CCOs and ${lotFeatureByCn.length} lots) in ${orderedBlockCns.length} blocks.\n`,
+    `Found ${knownObjectCns.length} objects (${ccoFeatures.length} CCOs and ${lotFeatures.length} lots) in ${orderedBlockCns.length} blocks.\n`,
   );
 
   const territoryExtent = await getTerritoryExtent();
@@ -188,7 +189,7 @@ const script = async () => {
 
     const maxFoundId = Math.max(
       ...knownObjectCnsInBlock.map((objectCn) =>
-        parseInt(getCnChunk(objectCn, 3)),
+        Number.parseInt(getCnChunk(objectCn, 3)),
       ),
     );
 
@@ -203,7 +204,7 @@ const script = async () => {
     );
 
     if (knownObjectCnsInBlock.length < minNumberOfObjectsPerBlock) {
-      if (handpickedObjectsCnsInBlock.length) {
+      if (handpickedObjectsCnsInBlock.length > 0) {
         output.write(
           chalk.cyan(
             "  Feature count is too low, but block is still picked because of territory config → sources → rosreestr → handpickedCnsForPageInfos\n",
@@ -238,7 +239,7 @@ const script = async () => {
     if (
       percentageOutsideTerritoryExtent > minPercentageOutsideTerritoryExtent
     ) {
-      if (handpickedObjectsCnsInBlock.length) {
+      if (handpickedObjectsCnsInBlock.length > 0) {
         output.write(
           chalk.cyan(
             "  Too many objects are outside territory extent, but block is still picked because of territory config → sources → rosreestr → handpickedCnsForPageInfos\n",
@@ -276,7 +277,7 @@ const script = async () => {
         CreationReasonForObjectInInfoPage
       > = {};
 
-      knownObjectCnsInBlock.forEach((objectCn) => {
+      for (const objectCn of knownObjectCnsInBlock) {
         const creationReason: CreationReasonForObjectInInfoPage | undefined =
           ccoFeatureByCn[objectCn]
             ? "ccoInTile"
@@ -289,7 +290,7 @@ const script = async () => {
         if (creationReason) {
           creationReasonByObjectCn[objectCn] = creationReason;
         }
-      });
+      }
 
       const pageWasWritten = await ensureRosreestrInfoPage({
         blockCn,
@@ -313,13 +314,13 @@ const script = async () => {
   }
   output.write(
     `${dedent`
-    Done.
-      Known object CNs (cadastral numbers): ${knownObjectCns.length} 
-      Known blocks: ${orderedBlockCns.length}
-      Picked blocks: ${totalBlockCount}
-      Predicted number of API requests: ${totalEstimatedRequestCount}
-      Number of info pages: ${totalPageCount} (${totalWrittenPageCount} written to disk)
-  `}\n`,
+      Done.
+        Known object CNs (cadastral numbers): ${knownObjectCns.length}
+        Known blocks: ${orderedBlockCns.length}
+        Picked blocks: ${totalBlockCount}
+        Predicted number of API requests: ${totalEstimatedRequestCount}
+        Number of info pages: ${totalPageCount} (${totalWrittenPageCount} written to disk)
+    `}\n`,
   );
 };
 

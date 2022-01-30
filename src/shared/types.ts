@@ -1,3 +1,3 @@
-export type OmitNulls<T> = {
-  [P in keyof T]: Exclude<T[P], null>;
+export type OmitNullable<T> = {
+  [P in keyof T]: Exclude<T[P], null | undefined>;
 };

@@ -1,6 +1,9 @@
 import fs from "fs-extra";
 
-export default {
+/**
+ * @type import("next").NextConfig
+ */
+const nextConfig = {
   styledComponents: true,
   i18n: {
     defaultLocale: "ru",
@@ -20,3 +23,5 @@ export default {
     return defaultConfig;
   },
 };
+
+export default nextConfig;

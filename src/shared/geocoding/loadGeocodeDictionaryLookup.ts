@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
-import { WriteStream } from "tty";
+import path from "node:path";
+import { WriteStream } from "node:tty";
 
 import { processFiles } from "../processFiles";
 import {
@@ -23,7 +23,7 @@ export const loadGeocodeDictionaryLookup = async (
     fileSearchPattern: `**/${getGeocodeDictionaryFileName()}`,
     filesNicknameToLog: "geocode dictionaries",
     processFile: async (filePath) => {
-      const dictionary: GeocodeDictionary = await fs.readJson(filePath);
+      const dictionary = (await fs.readJson(filePath)) as GeocodeDictionary;
       const relativeFilePath = path.relative(
         geocodeDictionariesDirPath,
         filePath,

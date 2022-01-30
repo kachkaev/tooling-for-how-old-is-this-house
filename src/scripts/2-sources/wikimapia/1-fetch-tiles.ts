@@ -1,6 +1,5 @@
 import * as tilebelt from "@mapbox/tilebelt";
-// @ts-ignore https://github.com/tmcw/togeojson/issues/46
-import * as tj from "@tmcw/togeojson";
+import { kml } from "@tmcw/togeojson";
 import * as turf from "@turf/turf";
 import { DOMParser } from "@xmldom/xmldom";
 import axios from "axios";
@@ -27,7 +26,7 @@ const output = process.stdout;
 
 axiosRetry(axios);
 
-const featurePropertiesToExclude = [
+const featurePropertiesToExclude = new Set([
   "icon",
   "icon-scale",
   "label-scale",
@@ -37,18 +36,18 @@ const featurePropertiesToExclude = [
   "styleHash",
   "styleMapHash",
   "styleUrl",
-];
+]);
 
 const processWikimapiaTileResponse = (
   rawTileResponse: string,
 ): ProcessedWikimapiaTileResponse => {
   const tileResponseAsKml = new DOMParser().parseFromString(rawTileResponse);
-  const featureCollection = tj.kml(tileResponseAsKml, {
+  const featureCollection = kml(tileResponseAsKml, {
     styles: false,
   }) as turf.FeatureCollection<turf.GeometryCollection>;
 
   const cleanedFeatures = featureCollection.features.map((feature) => {
-    const cleanedGeometries = feature.geometry!.geometries.map<
+    const cleanedGeometries = feature.geometry.geometries.map<
       turf.LineString | turf.Point
     >((geometry) => {
       if (geometry.type === "Point") {
@@ -67,11 +66,11 @@ const processWikimapiaTileResponse = (
     });
 
     const cleanedProperties = Object.fromEntries(
-      Object.entries(feature.properties!)
-        .filter(([key]) => !featurePropertiesToExclude.includes(key))
+      Object.entries(feature.properties ?? {})
+        .filter(([key]) => !featurePropertiesToExclude.has(key))
         .map(([key, value]) => {
-          if (key === "description") {
-            return [key, `${value}`.trim()];
+          if (key === "description" && typeof value === "string") {
+            return [key, value.trim()];
           }
 
           return [key, value];
@@ -79,9 +78,9 @@ const processWikimapiaTileResponse = (
     );
 
     return turf.feature(
-      turf.geometryCollection(cleanedGeometries).geometry!,
+      turf.geometryCollection(cleanedGeometries).geometry,
       sortKeys(cleanedProperties),
-      { id: feature.id },
+      feature.id ? { id: feature.id } : {},
     );
   });
 
@@ -91,7 +90,7 @@ const processWikimapiaTileResponse = (
 const script = async () => {
   output.write(chalk.bold("sources/wikimapia: Fetching tiles"));
 
-  const recommendedTileZoom = await getRecommendedWikimapiaTileZoom();
+  const recommendedTileZoom = getRecommendedWikimapiaTileZoom();
   await processTiles({
     initialZoom: recommendedTileZoom,
     maxAllowedZoom: recommendedTileZoom,
@@ -118,12 +117,13 @@ const script = async () => {
 
       const tileBbox = tilebelt.tileToBBOX(tile) as turf.BBox;
 
-      const rawTileResponse = (
-        await axios.get<string>("https://wikimapia.org/d", {
+      const { data: rawTileResponse } = await axios.get<string>(
+        "https://wikimapia.org/d",
+        {
           params: {
             BBOX: tileBbox.join(","),
           },
-          timeout: 20000,
+          timeout: 20_000,
           headers: {
             "Accept-Encoding": "gzip, deflate",
           },
@@ -131,8 +131,8 @@ const script = async () => {
             retries: 3,
             shouldResetTimeout: true,
           },
-        })
-      ).data;
+        },
+      );
 
       const processedTileResponse =
         processWikimapiaTileResponse(rawTileResponse);

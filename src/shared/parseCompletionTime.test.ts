@@ -41,6 +41,9 @@ describe("parseCompletionTime", () => {
     ${"конец 1920-х"}                            | ${"около 1928"}                                              | ${1928}               | ${[1923, 1933]}
     ${"середина 1920 - х"}                       | ${"около 1925"}                                              | ${1925}               | ${[1920, 1930]}
     ${"начало  1920-х"}                          | ${"около 1922"}                                              | ${1922}               | ${[1917, 1927]}
+    ${"конец 50-х г. XX в."}                     | ${"около 1958"}                                              | ${1958}               | ${[1953, 1963]}
+    ${"сер. 40х г. XIX века"}                    | ${"около 1845"}                                              | ${1845}               | ${[1840, 1850]}
+    ${"начало 30-х гг. XX в."}                   | ${"около 1932"}                                              | ${1932}               | ${[1927, 1937]}
     ${"конец XIX - начало XX вв."}               | ${"конец 19 века - начало 20 века (применяется 1890)"}       | ${1890}               | ${[1870, 1899]}
     ${"конец XIX — начало XX вв." /* em dash */} | ${"конец 19 века - начало 20 века (применяется 1890)"}       | ${1890}               | ${[1870, 1899]}
     ${"конец XIX – начало XX вв." /* en dash */} | ${"конец 19 века - начало 20 века (применяется 1890)"}       | ${1890}               | ${[1870, 1899]}
@@ -74,6 +77,11 @@ describe("parseCompletionTime", () => {
       derivedCompletionTimeForGeosemantica,
       derivedCompletionYear,
       derivedCompletionYearRange,
+    }: {
+      input: string | undefined;
+      derivedCompletionTimeForGeosemantica: string | undefined;
+      derivedCompletionYear: string | undefined;
+      derivedCompletionYearRange: [number, number] | undefined;
     }) => {
       expect(parseCompletionTime(input)).toEqual({
         derivedCompletionTimeForGeosemantica,

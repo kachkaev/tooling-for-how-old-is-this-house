@@ -7,7 +7,7 @@ export const pickStyle: PickFromPropertyVariants<"style" | "styleSource"> = ({
   targetBuildArea,
 }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: ["manual", "wikidata", "wikivoyage"],
@@ -24,5 +24,5 @@ export const pickStyle: PickFromPropertyVariants<"style" | "styleSource"> = ({
     }
   }
 
-  return undefined;
+  return;
 };

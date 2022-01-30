@@ -12,7 +12,7 @@ export const splitGeographicContext = (
   const backgroundFeatures: GeographicContextFeature[] = [];
   const foregroundFeatures: GeographicContextFeature[] = [];
 
-  geographicContext.features.forEach((feature) => {
+  for (const feature of geographicContext.features) {
     if (
       "level" in feature.properties &&
       typeof feature.properties.level === "number" &&
@@ -21,7 +21,7 @@ export const splitGeographicContext = (
       foregroundFeatures.push(feature);
     }
     backgroundFeatures.push(feature);
-  });
+  }
 
   return {
     backgroundFeatureCollection: {

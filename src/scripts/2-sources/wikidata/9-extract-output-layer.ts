@@ -8,4 +8,3 @@ const script = generateExtractOutputLayer({
 });
 
 await script();
-await script();

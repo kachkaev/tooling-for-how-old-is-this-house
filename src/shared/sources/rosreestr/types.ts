@@ -182,7 +182,7 @@ export interface SuccessfulPkkFeatureResponse {
       year_used?: string | number; // string observed in early 2021, number observed in mid 2021
     };
     center?: RawRosreestrCenter;
-    extent_parent: RawRosreestrExtent;
+    extent_parent?: RawRosreestrExtent;
     extent?: RawRosreestrExtent;
     sort: number;
     type_parent: unknown;

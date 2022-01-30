@@ -1,9 +1,9 @@
 import * as turf from "@turf/turf";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { OutputLayerProperties } from "../outputLayers";
 import { OutputGeometry } from "../outputLayers/types";
-import { OmitNulls } from "../types";
+import { OmitNullable } from "../types";
 
 export interface PropertyVariantWithNulls extends OutputLayerProperties {
   id: string;
@@ -14,7 +14,7 @@ export interface PropertyVariantWithNulls extends OutputLayerProperties {
   distance: number;
 }
 
-export type PropertyVariant = OmitNulls<PropertyVariantWithNulls>;
+export type PropertyVariant = OmitNullable<PropertyVariantWithNulls>;
 
 /**
  * Used in data to omit field & when picking property variants

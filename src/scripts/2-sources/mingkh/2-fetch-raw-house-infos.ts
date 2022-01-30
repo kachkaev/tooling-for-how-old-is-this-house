@@ -1,7 +1,7 @@
 import axios from "axios";
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
 
 import { prependCommentWithTimeToHtml } from "../../../shared/helpersForHtml";
 import {
@@ -32,9 +32,9 @@ const script = async () => {
 
         output.write(` Fetching...`);
 
-        const responseBody = (
-          await axios.get<string>(`https://dom.mingkh.ru/${houseUrl}`)
-        ).data;
+        const { data: responseBody } = await axios.get<string>(
+          `https://dom.mingkh.ru/${houseUrl}`,
+        );
 
         await fs.ensureDir(path.dirname(rawHouseInfoFilePath));
         await fs.writeFile(

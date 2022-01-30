@@ -1,3 +1,4 @@
+import { AddressInterpretationError } from "../AddressInterpretationError";
 import { compileAddressHandlingConfig } from "../helpersForWordReplacements";
 import {
   AddressHandlingConfig,
@@ -13,7 +14,7 @@ export const testCases: Array<{
   expectedTokens?: AddressToken[];
   expectedCleanedAddressAst?: CleanedAddressAst;
   expectedCleanedAddress?: string;
-  expectedStandardizedAddress?: string | null;
+  expectedStandardizedAddress?: string | typeof AddressInterpretationError;
   expectedNormalizedAddress?: string;
   expectedNormalizedAtomicAddresses?: string[];
 }> = [
@@ -246,7 +247,7 @@ export const testCases: Array<{
         },
       ],
     },
-    expectedStandardizedAddress: null,
+    expectedStandardizedAddress: AddressInterpretationError,
     expectedNormalizedAddress:
       "ПЕНЗ ОБЛАСТЬ, 1-Я УЛИЦА А. С. ПУШКИНА-ТЕСТОВА ДОМ 4, КОРПУС 5000",
   },
@@ -488,7 +489,7 @@ export const testCases: Array<{
   {
     rawAddresses: ["ул. Максима Горького/ул. Володарского 38/45"],
     expectedCleanedAddress: "УЛИЦА МАКСИМА ГОРЬКОГО/УЛИЦА ВОЛОДАРСКОГО 38/45",
-    expectedStandardizedAddress: null,
+    expectedStandardizedAddress: AddressInterpretationError,
     expectedNormalizedAddress:
       "УЛИЦА МАКСИМА ГОРЬКОГО/УЛИЦА ВОЛОДАРСКОГО 38/45",
     expectedNormalizedAtomicAddresses: [
@@ -569,7 +570,7 @@ export const testCases: Array<{
   },
   {
     rawAddresses: ["область тестовая, город тестовск, проезд, 10"],
-    expectedStandardizedAddress: null,
+    expectedStandardizedAddress: AddressInterpretationError,
     expectedNormalizedAddress: "ОБЛАСТЬ ТЕСТОВАЯ, ГОРОД ТЕСТОВСК, ПРОЕЗД, 10",
   },
   {
@@ -664,17 +665,17 @@ export const testCases: Array<{
     ],
     expectedCleanedAddress:
       "ПЕНЗЕНСКАЯ ОБЛАСТЬ, ГОРОД ЗАРЕЧНЫЙ, ПРОСПЕКТ 30-ЛЕТИЯ ПОБЕДЫ, ДОМ 1, 3, 5, 7, 7А",
-    expectedStandardizedAddress: null,
+    expectedStandardizedAddress: AddressInterpretationError,
   },
   {
     rawAddresses: ["г Пенза, ул Гагарина, д. 11Г (248)"],
     expectedCleanedAddress: "ГОРОД ПЕНЗА, УЛИЦА ГАГАРИНА, ДОМ 11Г, 248",
-    expectedStandardizedAddress: null,
+    expectedStandardizedAddress: AddressInterpretationError,
   },
   {
     rawAddresses: ["г Пенза, ул Гагарина, д. 11Г (248)"],
     expectedCleanedAddress: "ГОРОД ПЕНЗА, УЛИЦА ГАГАРИНА, ДОМ 11Г, 248",
-    expectedStandardizedAddress: null,
+    expectedStandardizedAddress: AddressInterpretationError,
   },
   {
     rawAddresses: [
@@ -714,7 +715,7 @@ export const testCases: Array<{
     rawAddresses: ["г.Пенза, ст.Пенза-3, Заречный парк 263 км."],
     expectedCleanedAddress:
       "ГОРОД ПЕНЗА, СТ ПЕНЗА, 3, ЗАРЕЧНЫЙ ПАРК 263 КИЛОМЕТР", // TODO: ПЕНЗА-3
-    expectedStandardizedAddress: null,
+    expectedStandardizedAddress: AddressInterpretationError,
   },
   {
     rawAddresses: [
@@ -799,7 +800,7 @@ export const testCases: Array<{
     rawAddresses: [
       "Пензенская область, г. Пенза, ул. Рябова, д. 4Б, лит. Н,Н1",
     ],
-    expectedStandardizedAddress: null,
+    expectedStandardizedAddress: AddressInterpretationError,
   },
   {
     rawAddresses: ["Пензенская, г. Пенза, что-то НЕПОНЯТНОЕ, у. Рбова, д. 4Б"],

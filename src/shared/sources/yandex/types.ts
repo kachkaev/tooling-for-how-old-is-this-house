@@ -1,20 +1,18 @@
 export interface YandexGeocoderSuccessfulApiData {
-  response: {
-    GeoObjectCollection: {
-      featureMember: [
-        {
-          GeoObject: {
-            metaDataProperty?: {
-              GeocoderMetaData?: {
-                precision: string;
-              };
-            };
-            Point: {
-              pos: string;
+  response?: {
+    GeoObjectCollection?: {
+      featureMember?: Array<{
+        GeoObject: {
+          metaDataProperty?: {
+            GeocoderMetaData?: {
+              precision: string;
             };
           };
-        },
-      ];
+          Point?: {
+            pos?: string;
+          };
+        };
+      }>;
     };
   };
 }

@@ -14,7 +14,7 @@ export const fixQuotes = (input: string): string => {
   const result = input
     .replace(/''/g, "'")
     .replace(
-      /"|'|“|”|‘|’|„|“/g,
+      /["'‘’“”„]/g,
       (match: string, charIndex: number, partiallyProcessedInput: string) => {
         const prevChar = partiallyProcessedInput[charIndex - 1];
         const nextChar = partiallyProcessedInput[charIndex + 1];
@@ -27,7 +27,7 @@ export const fixQuotes = (input: string): string => {
         const nextCharIsLetter = isLetter(nextChar);
         const nextCharIsNumber = isNumber(nextChar);
 
-        let quoteType: "opening" | "closing" | undefined = undefined;
+        let quoteType: "opening" | "closing" | undefined;
 
         if (!prevCharIsLetter && (nextCharIsLetter || nextCharIsNumber)) {
           quoteType = "opening";

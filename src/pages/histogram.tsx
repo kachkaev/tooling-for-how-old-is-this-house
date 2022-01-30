@@ -3,14 +3,17 @@ import { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import { getMixedPropertyVariantsFilePath } from "../shared/mixing";
+import {
+  getMixedPropertyVariantsFilePath,
+  MixedPropertyVariantsFeatureCollection,
+} from "../shared/mixing";
 import { getTerritoryExtent, TerritoryExtent } from "../shared/territory";
 import { HistogramProps } from "../ui/Histogram";
 import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
 import { usePosterConfig } from "../ui/shared/usePosterConfig";
 
 const Histogram = dynamic<HistogramProps>(
-  import("../ui/Histogram").then((m) => m.Histogram),
+  import("../ui/Histogram").then((module) => module.Histogram),
   { ssr: false },
 );
 
@@ -26,7 +29,7 @@ const HistogramPage: NextPage<HistogramPageProps> = ({
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
 
   if (!posterConfig) {
-    return null;
+    return <></>;
   }
 
   return <Histogram posterConfig={posterConfig} {...props} />;
@@ -36,7 +39,9 @@ export const getStaticProps: GetStaticProps<HistogramPageProps> = async () => {
   return {
     props: {
       territoryExtent: await getTerritoryExtent(),
-      buildingCollection: await fs.readJson(getMixedPropertyVariantsFilePath()),
+      buildingCollection: (await fs.readJson(
+        getMixedPropertyVariantsFilePath(),
+      )) as MixedPropertyVariantsFeatureCollection,
     },
   };
 };

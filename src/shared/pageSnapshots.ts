@@ -1,17 +1,17 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
+import { WriteStream } from "node:tty";
 import puppeteer from "puppeteer";
-import { WriteStream } from "tty";
 
 const nextJsPageSelector = "#__next *";
 
 export const ensureImageSnapshot = async ({
   imageScaleFactor,
-  omitBackground,
+  omitBackground = false,
   output,
   page,
-  quality,
+  quality = 100,
   resultFilePath,
   selectorToWaitFor = nextJsPageSelector,
 }: {
@@ -19,7 +19,7 @@ export const ensureImageSnapshot = async ({
   omitBackground?: boolean;
   output: WriteStream;
   page: puppeteer.Page;
-  quality?: number;
+  quality?: number | undefined;
   resultFilePath: string;
   selectorToWaitFor?: string;
 }): Promise<void> => {

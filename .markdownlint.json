@@ -1,4 +1,3 @@
 {
-  "extends": "@kachkaev/markdownlint-config",
-  "hr-style": false
+  "extends": "@kachkaev/markdownlint-config"
 }

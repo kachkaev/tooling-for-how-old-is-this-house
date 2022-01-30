@@ -3,8 +3,8 @@
  * Using a separate error type helps keep distinguish expected behaviour from runtime errors.
  */
 export class AddressInterpretationError extends Error {
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(message: string) {
+    super(message);
     Object.setPrototypeOf(this, AddressInterpretationError.prototype);
   }
 }

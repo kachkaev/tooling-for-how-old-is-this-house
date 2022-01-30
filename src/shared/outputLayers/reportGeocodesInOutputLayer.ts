@@ -1,6 +1,6 @@
 import * as turf from "@turf/turf";
 import chalk from "chalk";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
 
 import { ReportedGeocode, reportGeocodes } from "../geocoding";
 import { OutputLayer, OutputLayerGeometry } from "./types";
@@ -38,7 +38,7 @@ export const reportGeocodesInOutputLayer = async ({
     }
   }
 
-  if (!reportedGeocodes.length) {
+  if (reportedGeocodes.length === 0) {
     output.write(
       chalk.blue(
         `There are no geocodes to report. This is because none of the ${source} features have ‘address’ property.\n`,

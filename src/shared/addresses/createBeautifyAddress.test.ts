@@ -199,7 +199,7 @@ const testCaseGroups: TestCaseGroup[] = [
 ];
 
 describe("createBeautifyAddress", () => {
-  testCaseGroups.forEach(({ testCases, title, rawAddressHandlingConfig }) => {
+  for (const { testCases, title, rawAddressHandlingConfig } of testCaseGroups) {
     const knownAddresses = testCases.map((testCase) => testCase.rawAddress);
 
     const addressHandlingConfig = compileAddressHandlingConfig(
@@ -212,13 +212,13 @@ describe("createBeautifyAddress", () => {
     );
 
     describe(`test case group: ${title}`, () => {
-      testCases.forEach(({ rawAddress, expectedBeautifiedAddress }) => {
+      for (const { rawAddress, expectedBeautifiedAddress } of testCases) {
         it(`works for "${rawAddress}"`, () => {
           expect(beautifyAddress(rawAddress)).toEqual(
             expectedBeautifiedAddress,
           );
         });
-      });
+      }
     });
-  });
+  }
 });

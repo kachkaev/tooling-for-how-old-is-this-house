@@ -58,9 +58,9 @@ const resolveCollectionNameToFilePath = (collectionName: string) => {
 export const readFetchedOsmFeatureCollection: // https://github.com/prettier/prettier/issues/11923
 ReadFetchedOsmFeatureCollection = async (collectionName: string) => {
   const filePath = resolveCollectionNameToFilePath(collectionName);
-  let result: OsmFeatureCollection<any> | undefined = undefined;
+  let result: OsmFeatureCollection<any> | undefined;
   try {
-    result = await fs.readJson(filePath);
+    result = (await fs.readJson(filePath)) as OsmFeatureCollection;
   } catch {
     // noop
   }
@@ -72,9 +72,10 @@ ReadFetchedOsmFeatureCollection = async (collectionName: string) => {
       collectionName === "boundaries-for-settlements")
   ) {
     throw new ScriptError(
-      `Please generate ${filePath} by running a corresponding command.`,
+      `Please generate ${filePath} by running a corresponding script.`,
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- tolerable due to type overloading
   return result as any;
 };

@@ -3,8 +3,8 @@ import * as turf from "@turf/turf";
 import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
+import { WriteStream } from "node:tty";
 import sortKeys from "sort-keys";
-import { WriteStream } from "tty";
 
 import { processFiles } from "../../processFiles";
 import { stringifyTile } from "../../tiles";
@@ -29,7 +29,7 @@ import {
 export const combineWikimapiaTiles = async ({
   output,
 }: {
-  output?: WriteStream;
+  output?: WriteStream | undefined;
 }): Promise<{
   objectPointFeatures: WikimapiaObjectPointFeature[];
   objectExtentFeatures: WikimapiaObjectExtentFeature[];
@@ -53,7 +53,7 @@ export const combineWikimapiaTiles = async ({
 
       const tileFeature = turf.feature(
         turf.bboxPolygon(tilebelt.tileToBBOX(tileData.tile) as turf.BBox)
-          .geometry!,
+          .geometry,
         {
           tileId,
           fetchedAt: tileData.fetchedAt,
@@ -63,28 +63,28 @@ export const combineWikimapiaTiles = async ({
       // const tileArea = turf.area(tileFeature);
       tileExtentFeatures.push(tileFeature);
 
-      tileData.response.forEach((responseFeature) => {
-        const responseFeatureIdMatch = `${responseFeature.id}`.match(
-          /^wm([0-9]+)$/,
+      for (const responseFeature of tileData.response) {
+        const responseFeatureIdMatch = `${responseFeature.id!}`.match(
+          /^wm(\d+)$/,
         );
-        const wikimapiaId = parseInt(responseFeatureIdMatch?.[1] ?? "0");
+        const wikimapiaId = Number.parseInt(responseFeatureIdMatch?.[1] ?? "0");
         if (!wikimapiaId) {
           throw new Error(
-            `Unexpected empty feature id ${wikimapiaId} as the result of an unexpected format: ${responseFeature.id}. Should be wm12345.`,
+            `Unexpected empty feature id ${wikimapiaId} as the result of an unexpected format: ${responseFeature.id!}. Should be wm12345.`,
           );
         }
 
-        const pointGeometry = responseFeature.geometry?.geometries.find(
+        const pointGeometry = responseFeature.geometry.geometries.find(
           (geometry): geometry is turf.Point => geometry.type === "Point",
         );
-        const lineStringGeometry = responseFeature.geometry?.geometries.find(
+        const lineStringGeometry = responseFeature.geometry.geometries.find(
           (geometry): geometry is turf.LineString =>
             geometry.type === "LineString",
         );
         if (
           !pointGeometry ||
           !lineStringGeometry ||
-          responseFeature.geometry?.geometries.length !== 2
+          responseFeature.geometry.geometries.length !== 2
         ) {
           throw new Error(
             `Unexpected contents of geometry fro feature ${wikimapiaId}. Expected on Point and one LineString`,
@@ -125,7 +125,7 @@ export const combineWikimapiaTiles = async ({
         //   responseFeatureId,
         //   currentTileZoom,
         // ]);
-      });
+      }
     },
   });
 
@@ -133,12 +133,12 @@ export const combineWikimapiaTiles = async ({
 
   const objectPointFeatures = _.uniqBy(
     rawObjectPointFeatures,
-    (feature) => feature.properties?.wikimapiaId,
+    (feature) => feature.properties.wikimapiaId,
   );
 
   const objectExtentFeatures = _.uniqBy(
     rawObjectExtentFeatures,
-    (feature) => feature.properties?.wikimapiaId,
+    (feature) => feature.properties.wikimapiaId,
   );
 
   output?.write(

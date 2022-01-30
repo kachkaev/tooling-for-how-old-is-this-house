@@ -113,19 +113,19 @@ Partial<Record<TrivialName, string[]>> = {
 
 const normalizedTrivialNameByLowerCaseVersion: Record<string, TrivialName> = {};
 
-normalizedTrivialNames.forEach((normalizedTrivialName) => {
+for (const normalizedTrivialName of normalizedTrivialNames) {
   normalizedTrivialNameByLowerCaseVersion[normalizedTrivialName.toLowerCase()] =
     normalizedTrivialName;
-});
+}
 
-Object.entries(synonymsByNormalizedTrivialName).forEach(
-  ([normalizedTrivialName, synonyms]) => {
-    synonyms.forEach((synonym) => {
-      normalizedTrivialNameByLowerCaseVersion[synonym.toLowerCase()] =
-        normalizedTrivialName as TrivialName;
-    });
-  },
-);
+for (const [normalizedTrivialName, synonyms] of Object.entries(
+  synonymsByNormalizedTrivialName,
+)) {
+  for (const synonym of synonyms) {
+    normalizedTrivialNameByLowerCaseVersion[synonym.toLowerCase()] =
+      normalizedTrivialName as TrivialName;
+  }
+}
 
 const extractNormalizedTrivialName = (
   name: string,

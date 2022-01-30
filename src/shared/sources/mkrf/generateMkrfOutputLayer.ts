@@ -31,7 +31,7 @@ const extractName = (name: string | undefined): string | undefined => {
   }
 
   // Remove trivial names like “дом № 1 по улице Такой-то”
-  if (lowerCaseName.match(/^дом (№ )?([^\s]+) по /)) {
+  if (/^дом (№ )?(\S+) по /.test(lowerCaseName)) {
     return undefined;
   }
 
@@ -54,15 +54,15 @@ const wordsToCheckInHistoricMonuments = [
   "усадьба",
   "флигель",
 ];
-const acceptedTypologies = [
+const acceptedTypologies = new Set([
   "памятник градостроительства и архитектуры",
   ...wordsToCheckInHistoricMonuments.map(
     (wordToCheck) => `памятник истории (+ слово «${wordToCheck}»)`,
   ),
-];
+]);
 
 const isTypologyExpected = (typologyValue: string) =>
-  acceptedTypologies.includes(typologyValue);
+  acceptedTypologies.has(typologyValue);
 
 const deriveTypologies = (objectFile: MkrfObjectFile): string[] => {
   const rawTypologies = (objectFile.data.general.typologies ?? []).map(
@@ -74,7 +74,7 @@ const deriveTypologies = (objectFile: MkrfObjectFile): string[] => {
       for (const wordToCheck of wordsToCheckInHistoricMonuments) {
         if (
           objectFile.nativeName.toLowerCase().includes(wordToCheck) ||
-          objectFile.data.general?.securityInfo
+          objectFile.data.general.securityInfo
             ?.toLowerCase()
             .includes(wordToCheck)
         ) {
@@ -108,12 +108,14 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       );
       const warningPrefix = chalk.yellow(`${" ".repeat(prefixLength - 1)}! `);
 
-      const objectFile: MkrfObjectFile = await fs.readJson(filePath);
+      const objectFile = (await fs.readJson(filePath)) as MkrfObjectFile;
       output?.write(`${prefix}${objectFile.nativeName}\n`);
 
       // Filter by typology
       const typologies = deriveTypologies(objectFile);
-      const hasRightTypology = typologies.some(isTypologyExpected);
+      const hasRightTypology = typologies.some((typology) =>
+        isTypologyExpected(typology),
+      );
       output?.write(
         `${hasRightTypology ? prefix : shouldNotProceedPrefix}${
           typologies
@@ -133,7 +135,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       }
 
       // Address
-      const address = objectFile.data?.general?.address?.fullAddress;
+      const address = objectFile.data.general.address?.fullAddress;
       if (address) {
         output?.write(`${prefix}${chalk.cyan(address)}\n`);
       } else {
@@ -144,9 +146,9 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       const id = objectFile.nativeId;
 
       // Coordinates
-      let point: turf.Point | null = null;
+      let point: turf.Point | undefined;
       let pointSource: string = "unknown";
-      let externalGeometrySource: string | undefined = undefined;
+      let externalGeometrySource: string | undefined;
 
       const fixedLonLat = territoryConfig.sources?.mkrf?.fixedLonLatById?.[id];
       if (
@@ -165,7 +167,7 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
       }
 
       const additionalCoordinates =
-        objectFile.data.general?.additionalCoordinates;
+        objectFile.data.general.additionalCoordinates;
       if (!point && additionalCoordinates) {
         try {
           point = turf.centerOfMass(additionalCoordinates).geometry;
@@ -225,12 +227,12 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         return;
       }
 
-      const completionTime = objectFile?.data.general.createDate;
+      const completionTime = objectFile.data.general.createDate;
 
-      const name = extractName(objectFile?.nativeName);
+      const name = extractName(objectFile.nativeName);
 
       // Combined properties
-      const outputLayerProperties: OutputLayerProperties = {
+      const outputLayerProperties: OutputLayerProperties = deepClean({
         id,
 
         address,
@@ -239,12 +241,10 @@ export const generateMkrfOutputLayer: GenerateOutputLayer = async ({
         knownAt: serializeTime(objectFile.modified),
         mkrfUrl: `https://opendata.mkrf.ru/opendata/7705851331-egrkn/50/${objectFile.nativeId}`,
         name,
-        photoUrl: objectFile.data?.general?.photo?.url,
-      };
+        photoUrl: objectFile.data.general.photo?.url,
+      });
 
-      outputFeatures.push(
-        turf.feature(point, deepClean(outputLayerProperties)),
-      );
+      outputFeatures.push(turf.feature(point, outputLayerProperties));
 
       if (!point && geocodeAddress) {
         output?.write(

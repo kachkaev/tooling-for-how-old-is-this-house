@@ -6,41 +6,39 @@ const defaultAddressHandlingConfig = compileAddressHandlingConfig({});
 
 describe("normalizeAddress", () => {
   it(`returns undefined for undefined`, () => {
-    expect(normalizeAddress(undefined, {})).toEqual(undefined);
+    expect(normalizeAddress(undefined, {})).toBeUndefined();
   });
 
   it(`returns undefined for punctuation only`, () => {
-    expect(normalizeAddress("-", {})).toEqual(undefined);
-    expect(normalizeAddress("  ", {})).toEqual(undefined);
-    expect(normalizeAddress("  - ", {})).toEqual(undefined);
-    expect(normalizeAddress("  / -. ", {})).toEqual(undefined);
+    expect(normalizeAddress("-", {})).toBeUndefined();
+    expect(normalizeAddress("  ", {})).toBeUndefined();
+    expect(normalizeAddress("  - ", {})).toBeUndefined();
+    expect(normalizeAddress("  / -. ", {})).toBeUndefined();
   });
 
-  testCases.forEach(
-    ({
-      rawAddresses,
-      expectedCleanedAddress,
-      expectedNormalizedAddress,
-      addressHandlingConfig = defaultAddressHandlingConfig,
-    }) => {
-      if (expectedNormalizedAddress) {
-        const rawAddressesToUse = expectedCleanedAddress
-          ? [rawAddresses[0]]
-          : rawAddresses;
-        for (const rawAddress of rawAddressesToUse) {
-          it(`works for "${rawAddress}"`, () => {
-            expect(normalizeAddress(rawAddress, addressHandlingConfig)).toEqual(
-              expectedNormalizedAddress,
-            );
-          });
+  for (const {
+    rawAddresses,
+    expectedCleanedAddress,
+    expectedNormalizedAddress,
+    addressHandlingConfig = defaultAddressHandlingConfig,
+  } of testCases) {
+    if (expectedNormalizedAddress) {
+      const rawAddressesToUse = expectedCleanedAddress
+        ? [rawAddresses[0]!]
+        : rawAddresses;
+      for (const rawAddress of rawAddressesToUse) {
+        it(`works for "${rawAddress}"`, () => {
+          expect(normalizeAddress(rawAddress, addressHandlingConfig)).toEqual(
+            expectedNormalizedAddress,
+          );
+        });
 
-          it(`autoencodes "${expectedNormalizedAddress}"`, () => {
-            expect(normalizeAddress(expectedNormalizedAddress, {})).toEqual(
-              expectedNormalizedAddress,
-            );
-          });
-        }
+        it(`autoencodes "${expectedNormalizedAddress}"`, () => {
+          expect(normalizeAddress(expectedNormalizedAddress, {})).toEqual(
+            expectedNormalizedAddress,
+          );
+        });
       }
-    },
-  );
+    }
+  }
 });

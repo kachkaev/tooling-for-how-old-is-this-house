@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import _ from "lodash";
-import rmUp from "rm-up";
-import { WriteStream } from "tty";
+import { WriteStream } from "node:tty";
+import { rmUp } from "rm-up";
 
 import { normalizeAddressAtomically } from "../addresses";
 import { getTerritoryAddressHandlingConfig } from "../territory";
@@ -39,7 +39,7 @@ import { writeGeocodeDictionary } from "./writeGeocodeDictionary";
  * it can still be leveraged to debug catalog changes.
  */
 const trailingCommaItemKey = "↳";
-const trailingCommaShouldBeAdded = false;
+const trailingCommaShouldBeAdded = false as boolean;
 
 const addOrRemoveTrailingCommaItem = (
   dictionary: GeocodeDictionary,
@@ -62,7 +62,7 @@ const addOrRemoveTrailingCommaItem = (
 const removeEmptyItems = (dictionary: GeocodeDictionary): GeocodeDictionary => {
   return Object.fromEntries(
     Object.entries(dictionary).filter(
-      ([, value]) => Object.keys(value).length !== 0,
+      ([, value]) => Object.keys(value).length > 0,
     ),
   );
 };
@@ -72,7 +72,7 @@ export const reportGeocodes = async ({
   reportedGeocodes,
   source,
 }: {
-  output?: WriteStream;
+  output?: WriteStream | undefined;
   reportedGeocodes: ReportedGeocode[];
   source: string;
 }): Promise<void> => {
@@ -89,7 +89,7 @@ export const reportGeocodes = async ({
       postProcessWordsInStandardizedAddressSection,
     );
 
-    if (!normalizedAddresses.length) {
+    if (normalizedAddresses.length === 0) {
       output?.write(
         chalk.yellow(
           `Skipping "${reportedGeocode.address}" (normalized address is empty)\n`,
@@ -117,9 +117,8 @@ export const reportGeocodes = async ({
       }
 
       const geocode: ResolvedGeocodeInDictionary | EmptyGeocodeInDictionary =
-        "coordinates" in reportedGeocode && reportedGeocode.coordinates
-          ? reportedGeocode.coordinates
-          : [];
+        "coordinates" in reportedGeocode ? reportedGeocode.coordinates : [];
+
       sourceDictionary[normalizedAddress] = { [source]: geocode };
       weightDictionary[normalizedAddress] = reportedWeight;
     }
@@ -145,7 +144,7 @@ export const reportGeocodes = async ({
 
   output?.write(chalk.green("Writing changes to dictionaries..."));
 
-  ensureTerritoryGitignoreContainsGeocoding();
+  await ensureTerritoryGitignoreContainsGeocoding();
 
   let numberOfDictionariesCreated = 0;
   let numberOfDictionariesUpdated = 0;
@@ -173,7 +172,7 @@ export const reportGeocodes = async ({
       {},
       dictionary,
       sourceDictionaryLookup[sliceId],
-    );
+    ) as GeocodeDictionary;
 
     // Clean
     dictionary = addOrRemoveTrailingCommaItem(dictionary);

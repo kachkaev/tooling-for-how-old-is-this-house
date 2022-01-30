@@ -14,7 +14,7 @@ export const pickName: PickFromPropertyVariants<
   "name" | "nameSource" | "derivedBeautifiedName"
 > = ({ listRelevantPropertyVariants, output, targetBuildArea }) => {
   const propertyVariants = prioritizeRelevantPropertyVariants({
-    callingFilePath: __filename,
+    callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
     prioritizedSources: [
@@ -29,8 +29,8 @@ export const pickName: PickFromPropertyVariants<
     targetBuildArea,
   });
 
-  let fallbackLongResult: Result | undefined = undefined;
-  let fallbackTrivialResult: Result | undefined = undefined;
+  let fallbackLongResult: Result | undefined;
+  let fallbackTrivialResult: Result | undefined;
 
   for (const propertyVariant of propertyVariants) {
     const derivedBeautifiedName = beautifyName(

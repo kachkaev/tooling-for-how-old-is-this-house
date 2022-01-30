@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import axiosRetry from "axios-retry";
-import http from "http";
-import https from "https";
+import http from "node:http";
+import https from "node:https";
 
 export const createAxiosInstanceForOsmTiles = (): AxiosInstance => {
   const axiosInstance = axios.create({

@@ -18,14 +18,14 @@ export const geocodeAddress = (
   );
 
   for (const normalizedAddress of normalizedAddresses) {
-    const addressRecord = combinedGeocodeDictionary[normalizedAddress ?? ""];
+    const addressRecord = combinedGeocodeDictionary[normalizedAddress];
     if (!addressRecord) {
       return undefined;
     }
 
     for (const source of sourcesInPriorityOrder) {
       const sourceRecord = addressRecord[source];
-      if (sourceRecord && sourceRecord.length) {
+      if (sourceRecord && sourceRecord.length === 2) {
         return {
           source,
           location: {

@@ -24,16 +24,15 @@ export const convertSectionToSemanticPart = (
       const commonUnclassifiedWordConfig =
         commonUnclassifiedWordConfigLookup[word.value];
 
-      if (commonUnclassifiedWordConfig) {
-        if (
-          commonUnclassifiedWordConfig.ignored === true ||
+      if (
+        commonUnclassifiedWordConfig &&
+        (commonUnclassifiedWordConfig.ignored === true ||
           (designationConfig &&
             commonUnclassifiedWordConfig.ignored?.includes(
-              designationConfig?.designation,
-            ))
-        ) {
-          return false;
-        }
+              designationConfig.designation,
+            )))
+      ) {
+        return false;
       }
     }
 
@@ -53,10 +52,11 @@ export const convertSectionToSemanticPart = (
 
   // Remove settlement designation (город пенза → пенза)
   const firstWord = orderedWords[0];
-  if (firstWord?.wordType === "designation") {
-    if (designationConfig?.designation === "settlement") {
-      orderedWords.shift();
-    }
+  if (
+    firstWord?.wordType === "designation" &&
+    designationConfig?.designation === "settlement"
+  ) {
+    orderedWords.shift();
   }
 
   return {

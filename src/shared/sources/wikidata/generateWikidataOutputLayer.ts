@@ -23,9 +23,9 @@ const extractArchitect = (
 };
 
 const extractId = (item: WikidataQueryItem): Partial<OutputLayerProperties> => {
-  const [, idMatch] = item.item?.value.match(/\/entity\/(.*)$/) ?? [];
+  const [, idMatch] = item.item.value.match(/\/entity\/(.*)$/) ?? [];
   if (!idMatch) {
-    throw new Error(`Unable to extract item id from ${item.item?.value}`);
+    throw new Error(`Unable to extract item id from ${item.item.value}`);
   }
 
   return { id: idMatch };
@@ -106,7 +106,7 @@ export const generateWikidataOutputLayer: GenerateOutputLayer = async () => {
 
   const features: OutputLayerFeature[] = [];
 
-  fetchedItemsFileContent.items.forEach((item) => {
+  for (const item of fetchedItemsFileContent.items) {
     const geometry = extractGeometry(item);
 
     const properties: OutputLayerProperties = {
@@ -125,7 +125,7 @@ export const generateWikidataOutputLayer: GenerateOutputLayer = async () => {
       geometry,
       properties: deepClean(properties),
     });
-  });
+  }
 
   return {
     type: "FeatureCollection",
