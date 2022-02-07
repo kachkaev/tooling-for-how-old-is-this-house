@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import chalk from "chalk";
-import * as envalid from "envalid";
+import envalid from "envalid";
 import sortKeys from "sort-keys";
 
 import { cleanEnv } from "../../../shared/cleanEnv";

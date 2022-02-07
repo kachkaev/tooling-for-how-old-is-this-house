@@ -1,6 +1,6 @@
 import * as turf from "@turf/turf";
 import chalk from "chalk";
-import * as envalid from "envalid";
+import envalid from "envalid";
 import fs from "fs-extra";
 import { load } from "js-yaml";
 import _ from "lodash";

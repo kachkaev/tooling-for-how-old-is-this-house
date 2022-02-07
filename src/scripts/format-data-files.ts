@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import * as envalid from "envalid";
+import envalid from "envalid";
 import fs from "fs-extra";
 import path from "node:path";
 

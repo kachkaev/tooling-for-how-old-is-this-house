@@ -1,5 +1,5 @@
 import { config } from "dotenv-flow";
-import * as envalid from "envalid";
+import envalid from "envalid";
 
 import { defaultReporter } from "./envalidDefaultReporter";
 

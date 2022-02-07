@@ -1,4 +1,4 @@
-import * as envalid from "envalid";
+import envalid from "envalid";
 
 import { cleanEnv } from "../cleanEnv";
 

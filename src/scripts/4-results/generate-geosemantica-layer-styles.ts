@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import clipboardy from "clipboardy";
 import { color as d3Color } from "d3-color";
-import * as envalid from "envalid";
+import envalid from "envalid";
 import fs from "fs-extra";
 import _ from "lodash";
 import path from "node:path";

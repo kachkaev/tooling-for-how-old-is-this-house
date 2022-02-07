@@ -1,4 +1,4 @@
-import * as envalid from "envalid";
+import envalid from "envalid";
 import path from "node:path";
 
 import { cleanEnv } from "../../cleanEnv";

@@ -1,4 +1,4 @@
-import * as envalid from "envalid";
+import envalid from "envalid";
 import _ from "lodash";
 import sleep from "sleep-promise";
 
