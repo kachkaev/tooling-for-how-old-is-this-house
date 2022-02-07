@@ -3400,9 +3400,10 @@ entities@~2.1.0:
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.1.0.tgz#992d3129cf7df6870b96c57858c249a120f8b8b5"
   integrity sha512-hCx1oky9PFrJ611mf0ifBLBRW8lUUVRlFolb5gWRfIELabBlbp9xZvrqZLZAs+NxFnbfQoeGd8wDkygjg7U85w==
 
-"envalid@github:af/envalid#fix-defaults":
-  version "7.2.2"
-  resolved "https://codeload.github.com/af/envalid/tar.gz/269c58865f29bab5968f73ef8e6d3c9c0bb258f5"
+envalid@7.3.0-beta.1:
+  version "7.3.0-beta.1"
+  resolved "https://registry.yarnpkg.com/envalid/-/envalid-7.3.0-beta.1.tgz#ecaec571bab91b613af4d7e4620b79b1f5fd613b"
+  integrity sha512-fvMuSe7fPj4aRCaZ/lZdE6bHap+i0s33SMcLuVg4KZMVUhfCajjue/XV1KKxJD2ZVuafB/INCpw6hUWRXvya2A==
   dependencies:
     tslib "2.3.1"
 
