@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import envalid from "envalid";
+import * as envalid from "envalid";
 import { WriteStream } from "node:tty";
 
 import { AddressNormalizationConfig, normalizeAddress } from "../addresses";

@@ -2,7 +2,7 @@ import * as turf from "@turf/turf";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import axiosRetry from "axios-retry";
 import chalk from "chalk";
-import envalid from "envalid";
+import * as envalid from "envalid";
 import fs from "fs-extra";
 import http from "node:http";
 import https from "node:https";

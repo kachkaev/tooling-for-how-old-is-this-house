@@ -1,6 +1,6 @@
 // Origin: https://github.com/af/envalid/blob/a694876d3fe5f8a8316d15ce4e26e895f41966f6/src/reporter.ts
 
-import envalid from "envalid";
+import { EnvMissingError, ReporterOptions } from "envalid";
 
 import { ScriptError } from "./helpersForScripts";
 
@@ -17,9 +17,7 @@ const colors = {
 
 const rule = colors.white("================================");
 
-export const defaultReporter = ({
-  errors = {},
-}: envalid.ReporterOptions<any>) => {
+export const defaultReporter = ({ errors = {} }: ReporterOptions<any>) => {
   if (Object.keys(errors).length === 0) {
     return;
   }
@@ -27,7 +25,7 @@ export const defaultReporter = ({
   const missingVarsOutput: string[] = [];
   const invalidVarsOutput: string[] = [];
   for (const [key, error] of Object.entries(errors)) {
-    if (error instanceof envalid.EnvMissingError) {
+    if (error instanceof EnvMissingError) {
       missingVarsOutput.push(
         `    ${colors.blue(key)}: ${error.message || "(required)"}`,
       );
