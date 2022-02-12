@@ -2,7 +2,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "yarn exe src/scripts/launch-next-js-dev-server",
+    "dev": "yarn exe src/scripts/launch-next-js-dev-server.ts",
     "exe": "node --require=./suppress-experimental.cjs --loader ts-node/esm/transpile-only --experimental-specifier-resolution=node",
     "fix": "npm-run-all --continue-on-error \"fix:*\"",
     "fix:eslint": "eslint --fix \"**/*\"",
