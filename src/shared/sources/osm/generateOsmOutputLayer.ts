@@ -25,6 +25,18 @@ const buildWikidataUrl = (
   return `http://www.wikidata.org/entity/${wikidataId}`;
 };
 
+// https://wiki.openstreetmap.org/wiki/RU:Key:architect
+const extractArchitect = (
+  building: OsmFeature,
+): Pick<OutputLayerProperties, "architect"> | undefined => {
+  const architect = normalizeSpacing(building.properties["architect"] ?? "");
+  if (!architect) {
+    return undefined;
+  }
+
+  return { architect };
+};
+
 const extractPhoto = (
   building: OsmFeature,
 ):
@@ -374,6 +386,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
           generateTrivialNameFromOsmTags(building.properties),
         url,
         wikidataUrl,
+        ...extractArchitect(building),
         ...extractPhoto(building),
         wikipediaUrl,
       });

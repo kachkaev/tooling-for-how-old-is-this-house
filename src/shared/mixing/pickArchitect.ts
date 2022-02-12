@@ -8,7 +8,7 @@ export const pickArchitect: PickFromPropertyVariants<
     callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
-    prioritizedSources: ["manual", "wikidata", "wikivoyage"],
+    prioritizedSources: ["manual", "osm", "wikidata", "wikivoyage"],
     propertySelectors: ["architect"],
     targetBuildArea,
   });

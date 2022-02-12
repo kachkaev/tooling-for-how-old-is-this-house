@@ -34,12 +34,12 @@ Although some of the data sources are country-specific, most parts of the repo c
 | | адрес | архитектор |геометрия |  год | название  | стиль | фото | этажность | 🔗 Викиданные | 🔗 Википедия | 🔗 Минкультуры | 🔗 сайт | 
 | :- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
 |<!-- mingkh     --> **[«МинЖКХ»](https://mingkh.ru)**           | 3️⃣ |    | ⏳ 📍 | 4️⃣ |    |   |   | 2️⃣ |    |
-|<!-- mkrf       --> **[Минкультуры](https://opendata.mkrf.ru)** | 2️⃣ |    | ⏳ 📍 | 1️⃣ | 3️⃣ |   | 4️⃣ |   |    |    | 1️⃣ |
+|<!-- mkrf       --> **[Минкультуры](https://opendata.mkrf.ru)** | 2️⃣ | 1️⃣ | ⏳ 📍 | 1️⃣ | 3️⃣ |   | 4️⃣ |   |    |    | 1️⃣ |
 |<!-- osm        --> **[ОСМ](https://www.openstreetmap.org)**    | 1️⃣ |    | 1️⃣ 🟥 | 3️⃣ | 2️⃣ |   | 3️⃣ | 1️⃣ | 3️⃣ | 3️⃣ |    | 2️⃣
-|<!-- rosreestr  --> **[Росреестр](https://rosreestr.gov.ru)**   | 4️⃣ |    | ⏳ 📍 | 5️⃣ | 🗑 |   |    | 3️⃣ |    
-|<!-- wikidata   --> **[Викиданные](https://www.wikidata.org)**  | 🗑 | 1️⃣ | ⏳ 📍 | 🗑 | 1️⃣ | 1️⃣ | 1️⃣ |   | 1️⃣ | 1️⃣ |
+|<!-- rosreestr  --> **[Росреестр](https://rosreestr.gov.ru)**   | 4️⃣ |    | ⏳ 📍 | 5️⃣ | 🗑 |   |    | 3️⃣ |
+|<!-- wikidata   --> **[Викиданные](https://www.wikidata.org)**  | 🗑 | 2️⃣ | ⏳ 📍 | 🗑 | 1️⃣ | 1️⃣ | 1️⃣ |   | 1️⃣ | 1️⃣ |
 |<!-- wikimapia  --> **[Викимапия](https://wikimapia.org)**      | 🗑 |    | ⏳ 🟥 | 6️⃣ | 5️⃣ |   | 5️⃣ |   |    | 🗑 |
-|<!-- wikivoyage --> **[Викигид](https://ru.wikivoyage.org)**    | 5️⃣ | 2️⃣ | ⏳ 📍 | 2️⃣ | 4️⃣ | 2️⃣ | 2️⃣ |   | 2️⃣ | 2️⃣ |    | 1️⃣
+|<!-- wikivoyage --> **[Викигид](https://ru.wikivoyage.org)**    | 5️⃣ | 3️⃣ | ⏳ 📍 | 2️⃣ | 4️⃣ | 2️⃣ | 2️⃣ |   | 2️⃣ | 2️⃣ |    | 1️⃣
 
 <!-- prettier-ignore-end -->
 
