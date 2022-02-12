@@ -1,6 +1,6 @@
 {
+  "comment": "First group is used for data processing and is mentioned in README; second group is for development",
   "recommendations": [
-    // For data processing (mentioned in README)
     "eamodio.gitlens",
     "mhutchie.git-graph",
     "mikestead.dotenv",
@@ -8,9 +8,8 @@
     "redhat.vscode-yaml",
     "rowewilsonfrederiskholme.wikitext",
 
-    // For development
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
     "davidanson.vscode-markdownlint",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
   ]
 }
