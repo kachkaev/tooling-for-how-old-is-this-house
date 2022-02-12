@@ -20,7 +20,7 @@ import { GeoMap } from "./geo-map";
 import { GeoMapLayerWithBuildingCompletionYears } from "./geo-map-layer-with-building-completion-years";
 import { GeoMapLayerWithGeographicContext } from "./geo-map-layer-with-geographic-context";
 import { GeoMapLayerWithTerritoryExtent } from "./geo-map-layer-with-territory-extent";
-import { Timeline } from "./timeline-tmp";
+import { Timeline } from "./timeline";
 import { ZoomMark } from "./zoom-mark";
 
 const Figure = styled.div`
