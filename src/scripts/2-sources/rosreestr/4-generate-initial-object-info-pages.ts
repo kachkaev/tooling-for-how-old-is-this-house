@@ -3,19 +3,17 @@ import chalk from "chalk";
 import dedent from "dedent";
 import _ from "lodash";
 
-import { ScriptError } from "../../../shared/helpersForScripts";
+import { ScriptError } from "../../../shared/helpers-for-scripts";
 import {
   combineRosreestrTiles,
   CreationReasonForObjectInInfoPage,
   ensureRosreestrInfoPage,
+  getCnChunk,
+  isValidObjectCn,
   ObjectCenterFeature,
   rosreestrObjectInfoPageSize,
   rosreestrObjectInfoPageTailLength,
 } from "../../../shared/sources/rosreestr";
-import {
-  getCnChunk,
-  isValidObjectCn,
-} from "../../../shared/sources/rosreestr/helpersForCn";
 import {
   getTerritoryConfig,
   getTerritoryExtent,

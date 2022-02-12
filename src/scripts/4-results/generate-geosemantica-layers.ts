@@ -5,22 +5,22 @@ import _ from "lodash";
 import path from "node:path";
 import sortKeys from "sort-keys";
 
-import { deepClean } from "../../shared/deepClean";
+import { deepClean } from "../../shared/deep-clean";
 import {
   GeographicContextFeature,
   GeographicContextFeatureGeometry,
   GeographicContextFeatureProperties,
   GeographicContextWaySize,
   splitGeographicContext,
-} from "../../shared/geographicContext";
-import { generateGeographicContext } from "../../shared/geographicContext/generateGeographicContext";
-import { writeFormattedJson } from "../../shared/helpersForJson";
+} from "../../shared/geographic-context";
+import { generateGeographicContext } from "../../shared/geographic-context/generate-geographic-context";
+import { writeFormattedJson } from "../../shared/helpers-for-json";
 import {
   getMixedPropertyVariantsFilePath,
   MixedPropertyVariants,
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/mixing";
-import { OutputGeometry } from "../../shared/outputLayers";
+import { OutputGeometry } from "../../shared/output-layers";
 import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,

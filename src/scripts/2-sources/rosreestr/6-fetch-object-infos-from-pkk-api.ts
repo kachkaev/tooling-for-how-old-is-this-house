@@ -3,9 +3,9 @@ import chalk from "chalk";
 import * as envalid from "envalid";
 import sortKeys from "sort-keys";
 
-import { cleanEnv } from "../../../shared/cleanEnv";
-import { deepClean } from "../../../shared/deepClean";
-import { serializeTime } from "../../../shared/helpersForJson";
+import { cleanEnv } from "../../../shared/clean-env";
+import { deepClean } from "../../../shared/deep-clean";
+import { serializeTime } from "../../../shared/helpers-for-json";
 import {
   checkIfFirResponseContainsExistingBuilding,
   compressRosreestrCenter,

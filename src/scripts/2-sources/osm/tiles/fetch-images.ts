@@ -6,7 +6,7 @@ import path from "node:path";
 import stream from "node:stream";
 import { promisify } from "node:util";
 
-import { cleanEnv } from "../../../../shared/cleanEnv";
+import { cleanEnv } from "../../../../shared/clean-env";
 import {
   createAxiosInstanceForOsmTiles,
   getOsmTileImageFilePath,

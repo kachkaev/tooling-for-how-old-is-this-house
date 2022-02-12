@@ -9,20 +9,6 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["src/shared/**"],
-      rules: {
-        "unicorn/filename-case": [
-          "error",
-          {
-            cases: {
-              camelCase: true,
-              pascalCase: true,
-            },
-          },
-        ],
-      },
-    },
-    {
       files: ["src/commands/**"],
       rules: {
         "unicorn/filename-case": "off",

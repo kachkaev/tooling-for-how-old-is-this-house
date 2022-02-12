@@ -5,7 +5,7 @@ import {
   GeographicContextFeatureCollection,
   geographicContextStyling,
   GeographicContextWayProperties,
-} from "../../shared/geographicContext";
+} from "../../shared/geographic-context";
 import { GenerateFeatureProps, GeoMapLayer } from "./shared/geo-map-layer";
 import { ProjectionConfig } from "./types";
 

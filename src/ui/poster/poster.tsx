@@ -6,7 +6,7 @@ import {
   GeographicContextFeatureCollection,
   geographicContextStyling,
   splitGeographicContext,
-} from "../../shared/geographicContext";
+} from "../../shared/geographic-context";
 import { MixedPropertyVariantsFeatureCollection } from "../../shared/mixing";
 import {
   extractPrinterBleedInMillimeters,

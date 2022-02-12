@@ -5,8 +5,8 @@ import fs from "fs-extra";
 import path from "node:path";
 import sleep from "sleep-promise";
 
-import { prependCommentWithTimeToHtml } from "../../../shared/helpersForHtml";
-import { generateProgress } from "../../../shared/helpersForScripts";
+import { prependCommentWithTimeToHtml } from "../../../shared/helpers-for-html";
+import { generateProgress } from "../../../shared/helpers-for-scripts";
 import {
   combineWikimapiaTiles,
   deriveWikimapiaObjectFilePath,

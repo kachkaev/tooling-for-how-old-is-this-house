@@ -3,7 +3,7 @@ import { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import { generateGeographicContext } from "../shared/geographicContext/generateGeographicContext";
+import { generateGeographicContext } from "../shared/geographic-context/generate-geographic-context";
 import {
   getMixedPropertyVariantsFilePath,
   MixedPropertyVariantsFeatureCollection,

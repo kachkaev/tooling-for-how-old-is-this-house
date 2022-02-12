@@ -3,7 +3,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "node:path";
 
-import { prependCommentWithTimeToHtml } from "../../../shared/helpersForHtml";
+import { prependCommentWithTimeToHtml } from "../../../shared/helpers-for-html";
 import {
   getHouseFilePath,
   loopThroughHouseLists,

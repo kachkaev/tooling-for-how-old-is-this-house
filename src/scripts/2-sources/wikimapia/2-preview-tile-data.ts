@@ -3,10 +3,10 @@ import chalk from "chalk";
 import _ from "lodash";
 import path from "node:path";
 
-import { writeFormattedJson } from "../../../shared/helpersForJson";
-import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpersForScripts";
+import { writeFormattedJson } from "../../../shared/helpers-for-json";
+import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpers-for-scripts";
 import { getWikimapiaDirPath } from "../../../shared/sources/wikimapia";
-import { combineWikimapiaTiles } from "../../../shared/sources/wikimapia/combineWikimapiaTiles";
+import { combineWikimapiaTiles } from "../../../shared/sources/wikimapia/combine-wikimapia-tiles";
 
 const output = process.stdout;
 
