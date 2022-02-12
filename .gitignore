@@ -1,25 +1,15 @@
-# dependencies
-node_modules
-.pnp
-.pnp.js
-
-# next.js
-/.next/
-/.vercel/
-/out/
-tsconfig.tsbuildinfo
-
-# production
-/build
-
-# misc
-.~lock.*
-.DS_Store
-.env
-.env.local
-*.log
-
-# debug
+## Dependencies
+/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+## Next.js
+/.next/
+tsconfig.tsbuildinfo
+
+## Misc
+.~lock.*
+.DS_Store
+.env*.local
+*.log
