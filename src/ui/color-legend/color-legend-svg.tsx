@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { LegendEntry } from "../../shared/poster";
-import { PtSansDigit } from "./PtSansDigit";
+import { PtSansDigit } from "./pt-sans-digit";
 
 const paddingTop = 13;
 const referencePaddingLeft = 10;

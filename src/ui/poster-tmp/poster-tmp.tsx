@@ -13,15 +13,15 @@ import {
   PosterConfig,
 } from "../../shared/poster";
 import { TerritoryExtent } from "../../shared/territory";
-import { GlobalStyle } from "../shared/GlobalStyle";
-import { CropMark } from "./CropMark";
-import { generateMapCompletionYearToColor } from "./generateMapCompletionYearToColor";
-import { GeoMap } from "./GeoMap";
-import { GeoMapLayerWithBuildingCompletionYears } from "./GeoMapLayerWithBuildingCompletionYears";
-import { GeoMapLayerWithGeographicContext } from "./GeoMapLayerWithGeographicContext";
-import { GeoMapLayerWithTerritoryExtent } from "./GeoMapLayerWithTerritoryExtent";
-import { Timeline } from "./Timeline";
-import { ZoomMark } from "./ZoomMark";
+import { GlobalStyle } from "../shared/global-style";
+import { CropMark } from "./crop-mark";
+import { generateMapCompletionYearToColor } from "./generate-map-completion-year-to-color";
+import { GeoMap } from "./geo-map";
+import { GeoMapLayerWithBuildingCompletionYears } from "./geo-map-layer-with-building-completion-years";
+import { GeoMapLayerWithGeographicContext } from "./geo-map-layer-with-geographic-context";
+import { GeoMapLayerWithTerritoryExtent } from "./geo-map-layer-with-territory-extent";
+import { Timeline } from "./timeline-tmp";
+import { ZoomMark } from "./zoom-mark";
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;

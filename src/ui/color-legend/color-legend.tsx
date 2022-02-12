@@ -3,13 +3,13 @@ import * as React from "react";
 import styled from "styled-components";
 
 import { extractLegendEntries, PosterConfig } from "../../shared/poster";
-import { GlobalStyle } from "../shared/GlobalStyle";
-import { ColorLegendSvg } from "./ColorLegendSvg";
+import { GlobalStyle } from "../shared/global-style";
+import { ColorLegendSvg } from "./color-legend-svg";
 import {
   ColorBlindnessCondition,
   colorBlindnessConditions,
   generateColorBlindnessFilterCssProperty,
-} from "./helpersForColorBlindness";
+} from "./helpers-for-color-blindness";
 
 const backgroundColor = "#1e2023";
 const width = 366;

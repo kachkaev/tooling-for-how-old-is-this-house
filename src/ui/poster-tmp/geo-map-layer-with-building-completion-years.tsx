@@ -6,7 +6,7 @@ import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/mixing";
-import { GeoMapLayer } from "./shared/GeoMapLayer";
+import { GeoMapLayer } from "./shared/geo-map-layer";
 import { MapCompletionYearToColor, ProjectionConfig } from "./types";
 
 /**

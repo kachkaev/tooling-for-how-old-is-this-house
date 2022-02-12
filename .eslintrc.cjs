@@ -9,7 +9,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["src/{shared,ui}/**"],
+      files: ["src/shared/**"],
       rules: {
         "unicorn/filename-case": [
           "error",

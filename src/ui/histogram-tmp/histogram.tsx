@@ -12,7 +12,7 @@ import {
   MixedPropertyVariantsFeatureCollection,
 } from "../../shared/mixing";
 import { PosterConfig } from "../../shared/poster";
-import { GlobalStyle } from "../shared/GlobalStyle";
+import { GlobalStyle } from "../shared/global-style";
 
 const backgroundColor = "#fff";
 

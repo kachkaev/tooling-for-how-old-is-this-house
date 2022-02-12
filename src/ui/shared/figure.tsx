@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 import { ExternalLink as OriginalExternalLink } from "./essentials";
-import { GlobalStyle } from "./GlobalStyle";
+import { GlobalStyle } from "./global-style";
 
 const Wrapper = styled.div`
   box-sizing: border-box;

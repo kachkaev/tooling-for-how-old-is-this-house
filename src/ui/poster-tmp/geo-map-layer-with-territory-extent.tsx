@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { TerritoryExtent } from "../../shared/territory";
 import { pointsInMm } from "../shared/printing";
-import { GeoMapLayer } from "./shared/GeoMapLayer";
+import { GeoMapLayer } from "./shared/geo-map-layer";
 import { ProjectionConfig } from "./types";
 
 export interface GeoMapLayerWithTerritoryExtentProps {

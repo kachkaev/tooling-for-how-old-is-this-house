@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 import { pointsInMm } from "../shared/printing";
-import { roundMeasure } from "./roundMeasure";
+import { roundMeasure } from "./round-measure";
 
 const Wrapper = styled.div`
   border-top: none;
