@@ -5,11 +5,11 @@ import dedent from "dedent";
 import _ from "lodash";
 import sortKeys from "sort-keys";
 
-import { roughenBbox } from "../../../shared/helpersForGeometry";
+import { roughenBbox } from "../../../shared/helpers-for-geometry";
 import {
   serializeTime,
   writeFormattedJson,
-} from "../../../shared/helpersForJson";
+} from "../../../shared/helpers-for-json";
 import {
   extractGeometry,
   getWikidataProcessedQueryResultFilePath,

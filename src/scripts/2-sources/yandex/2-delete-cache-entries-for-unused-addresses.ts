@@ -4,8 +4,8 @@ import { rmUp } from "rm-up";
 import sleep from "sleep-promise";
 
 import { loadCombinedGeocodeDictionary } from "../../../shared/geocoding";
-import { eraseLastLineInOutput } from "../../../shared/helpersForScripts";
-import { processFiles } from "../../../shared/processFiles";
+import { eraseLastLineInOutput } from "../../../shared/helpers-for-scripts";
+import { processFiles } from "../../../shared/process-files";
 import {
   addressIsWorthKeepingInYandexCache,
   getYandexGeocoderCacheDir,

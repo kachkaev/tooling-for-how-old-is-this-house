@@ -1,4 +1,4 @@
-import { generateReportGeocodes } from "../../../shared/helpersForScripts";
+import { generateReportGeocodes } from "../../../shared/helpers-for-scripts";
 import { generateWikidataOutputLayer } from "../../../shared/sources/wikidata";
 
 const script = generateReportGeocodes({

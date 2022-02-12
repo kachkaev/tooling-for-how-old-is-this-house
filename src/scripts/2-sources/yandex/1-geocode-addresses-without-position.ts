@@ -7,7 +7,7 @@ import fs from "fs-extra";
 import http from "node:http";
 import https from "node:https";
 
-import { cleanEnv } from "../../../shared/cleanEnv";
+import { cleanEnv } from "../../../shared/clean-env";
 import {
   listNormalizedAddressesWithoutPosition,
   loadCombinedGeocodeDictionary,
@@ -15,11 +15,11 @@ import {
 import {
   addBufferToBbox,
   roughenBbox,
-} from "../../../shared/helpersForGeometry";
+} from "../../../shared/helpers-for-geometry";
 import {
   serializeTime,
   writeFormattedJson,
-} from "../../../shared/helpersForJson";
+} from "../../../shared/helpers-for-json";
 import {
   addressIsWorthGeocodingWithYandex,
   getYandexGeocoderCacheEntryFilePath,

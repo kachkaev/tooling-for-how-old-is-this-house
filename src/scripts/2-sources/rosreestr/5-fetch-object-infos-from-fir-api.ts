@@ -2,8 +2,8 @@ import { AxiosResponse } from "axios";
 import chalk from "chalk";
 import sortKeys from "sort-keys";
 
-import { deepClean } from "../../../shared/deepClean";
-import { serializeTime } from "../../../shared/helpersForJson";
+import { deepClean } from "../../../shared/deep-clean";
+import { serializeTime } from "../../../shared/helpers-for-json";
 import {
   convertCnToId,
   fetchJsonFromRosreestr,

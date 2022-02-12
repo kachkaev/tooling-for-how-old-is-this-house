@@ -3,9 +3,9 @@ import chalk from "chalk";
 import dedent from "dedent";
 import sortKeys from "sort-keys";
 
-import { multiUnion } from "../shared/helpersForGeometry";
-import { serializeTime, writeFormattedJson } from "../shared/helpersForJson";
-import { ScriptError } from "../shared/helpersForScripts";
+import { multiUnion } from "../shared/helpers-for-geometry";
+import { serializeTime, writeFormattedJson } from "../shared/helpers-for-json";
+import { ScriptError } from "../shared/helpers-for-scripts";
 import { fetchGeojsonFromOverpassApi } from "../shared/sources/osm";
 import {
   getTerritoryConfig,

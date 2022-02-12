@@ -1,4 +1,4 @@
-import { generateReportGeocodes } from "../../../shared/helpersForScripts";
+import { generateReportGeocodes } from "../../../shared/helpers-for-scripts";
 import { generateMkrfOutputLayer } from "../../../shared/sources/mkrf";
 
 const script = generateReportGeocodes({

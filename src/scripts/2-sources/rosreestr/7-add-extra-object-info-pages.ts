@@ -2,7 +2,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import _ from "lodash";
 
-import { listFilePaths } from "../../../shared/listFilePaths";
+import { listFilePaths } from "../../../shared/list-file-paths";
 import {
   ensureRosreestrInfoPage,
   FirResponseInInfoPageResponse,

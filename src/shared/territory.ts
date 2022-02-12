@@ -13,8 +13,8 @@ import {
   RawAddressHandlingConfig,
   WordReplacementConfig,
 } from "./addresses";
-import { cleanEnv } from "./cleanEnv";
-import { deepClean } from "./deepClean";
+import { cleanEnv } from "./clean-env";
+import { deepClean } from "./deep-clean";
 import { ReportIssue } from "./issues";
 
 export type TerritoryExtent = turf.Feature<turf.Polygon>;

@@ -1,4 +1,4 @@
-import { generateExtractOutputLayer } from "../../../shared/helpersForScripts";
+import { generateExtractOutputLayer } from "../../../shared/helpers-for-scripts";
 import { generateRosreestrOutputLayer } from "../../../shared/sources/rosreestr";
 
 const script = generateExtractOutputLayer({
