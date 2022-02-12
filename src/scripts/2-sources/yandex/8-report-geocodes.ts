@@ -2,8 +2,8 @@ import chalk from "chalk";
 import fs from "fs-extra";
 
 import { ReportedGeocode, reportGeocodes } from "../../../shared/geocoding";
-import { Point2dCoordinates } from "../../../shared/helpersForGeometry";
-import { processFiles } from "../../../shared/processFiles";
+import { Point2dCoordinates } from "../../../shared/helpers-for-geometry";
+import { processFiles } from "../../../shared/process-files";
 import {
   getYandexGeocoderCacheDir,
   getYandexGeocoderCacheEntryFileSuffix,

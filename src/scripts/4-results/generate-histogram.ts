@@ -2,8 +2,8 @@ import chalk from "chalk";
 import path from "node:path";
 import puppeteer from "puppeteer";
 
-import { ensureLaunchedWebApp } from "../../shared/ensureLaunchedWebApp";
-import { ensureImageSnapshot } from "../../shared/pageSnapshots";
+import { ensureLaunchedWebApp } from "../../shared/ensure-launched-web-app";
+import { ensureImageSnapshot } from "../../shared/page-snapshots";
 import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,

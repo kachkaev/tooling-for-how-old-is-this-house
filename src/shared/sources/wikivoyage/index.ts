@@ -1,3 +1,3 @@
-export * from "./generateWikivoyageOutputLayer";
-export * from "./helpersForPaths";
+export * from "./generate-wikivoyage-output-layer";
+export * from "./helpers-for-paths";
 export * from "./types";

@@ -4,12 +4,12 @@ import _ from "lodash";
 import path from "node:path";
 import sortKeys from "sort-keys";
 
-import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpersForHtml";
+import { extractSerializedTimeFromPrependedHtmlComment } from "../../../shared/helpers-for-html";
 import {
   serializeTime,
   writeFormattedJson,
-} from "../../../shared/helpersForJson";
-import { processFiles } from "../../../shared/processFiles";
+} from "../../../shared/helpers-for-json";
+import { processFiles } from "../../../shared/process-files";
 import {
   getHouseFilePath,
   getMingkhHousesDirPath,

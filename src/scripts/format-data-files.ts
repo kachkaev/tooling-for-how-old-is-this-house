@@ -3,9 +3,9 @@ import * as envalid from "envalid";
 import fs from "fs-extra";
 import path from "node:path";
 
-import { cleanEnv } from "../shared/cleanEnv";
-import { formatJson, getJsonFormattingStyle } from "../shared/helpersForJson";
-import { processFiles } from "../shared/processFiles";
+import { cleanEnv } from "../shared/clean-env";
+import { formatJson, getJsonFormattingStyle } from "../shared/helpers-for-json";
+import { processFiles } from "../shared/process-files";
 import { getTerritoryDirPath } from "../shared/territory";
 
 const output = process.stdout;

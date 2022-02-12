@@ -1,6 +1,6 @@
 import * as turf from "@turf/turf";
 
-import { Point2dCoordinates } from "../helpersForGeometry";
+import { Point2dCoordinates } from "../helpers-for-geometry";
 
 export interface ReportedResolvedGeocode {
   address: string;

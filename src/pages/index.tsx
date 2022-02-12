@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import * as React from "react";
 
-import { GlobalStyle } from "../ui/shared/GlobalStyle";
+import { GlobalStyle } from "../ui/shared/global-style";
 
 const IndexPage: NextPage = () => {
   return (

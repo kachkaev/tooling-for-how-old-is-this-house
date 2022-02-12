@@ -1,4 +1,4 @@
-import { Point2dCoordinates } from "../../helpersForGeometry";
+import { Point2dCoordinates } from "../../helpers-for-geometry";
 
 export interface HouseListResponse {
   current: number;

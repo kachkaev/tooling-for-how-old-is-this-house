@@ -1,4 +1,4 @@
-export * from "./extractGeometry";
-export * from "./generateWikidataOutputLayer";
-export * from "./helpersForPaths";
+export * from "./extract-geometry";
+export * from "./generate-wikidata-output-layer";
+export * from "./helpers-for-paths";
 export * from "./types";

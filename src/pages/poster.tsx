@@ -3,18 +3,18 @@ import { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import { generateGeographicContext } from "../shared/geographicContext/generateGeographicContext";
+import { generateGeographicContext } from "../shared/geographic-context/generate-geographic-context";
 import {
   getMixedPropertyVariantsFilePath,
   MixedPropertyVariantsFeatureCollection,
 } from "../shared/mixing";
 import { getTerritoryExtent } from "../shared/territory";
-import { PosterProps } from "../ui/Poster";
-import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
-import { usePosterConfig } from "../ui/shared/usePosterConfig";
+import { PosterProps } from "../ui/poster";
+import { useLiveTerritoryConfig } from "../ui/shared/use-live-territory-config";
+import { usePosterConfig } from "../ui/shared/use-poster-config";
 
 const Poster = dynamic<PosterProps>(
-  import("../ui/Poster").then((module) => module.Poster),
+  import("../ui/poster").then((module) => module.Poster),
   { ssr: false },
 );
 

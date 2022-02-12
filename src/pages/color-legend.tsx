@@ -3,12 +3,12 @@ import dynamic from "next/dynamic";
 import * as React from "react";
 
 import { getTerritoryExtent, TerritoryExtent } from "../shared/territory";
-import { ColorLegendProps } from "../ui/ColorLegend";
-import { useLiveTerritoryConfig } from "../ui/shared/useLiveTerritoryConfig";
-import { usePosterConfig } from "../ui/shared/usePosterConfig";
+import { ColorLegendProps } from "../ui/color-legend";
+import { useLiveTerritoryConfig } from "../ui/shared/use-live-territory-config";
+import { usePosterConfig } from "../ui/shared/use-poster-config";
 
 const ColorLegend = dynamic<ColorLegendProps>(
-  import("../ui/ColorLegend").then((module) => module.ColorLegend),
+  import("../ui/color-legend").then((module) => module.ColorLegend),
   { ssr: false },
 );
 

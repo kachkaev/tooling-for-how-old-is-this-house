@@ -5,7 +5,7 @@ import qs from "qs";
 import {
   serializeTime,
   writeFormattedJson,
-} from "../../../shared/helpersForJson";
+} from "../../../shared/helpers-for-json";
 import {
   HouseListFile,
   HouseListResponse,

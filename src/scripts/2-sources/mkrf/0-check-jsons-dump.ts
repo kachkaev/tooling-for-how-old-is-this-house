@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import fs from "fs-extra";
 
-import { ScriptError } from "../../../shared/helpersForScripts";
+import { ScriptError } from "../../../shared/helpers-for-scripts";
 import { getMkrfJsonsDumpFilePath } from "../../../shared/sources/mkrf";
 
 const output = process.stdout;

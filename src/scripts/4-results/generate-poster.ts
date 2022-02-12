@@ -3,12 +3,12 @@ import * as envalid from "envalid";
 import path from "node:path";
 import puppeteer from "puppeteer";
 
-import { cleanEnv } from "../../shared/cleanEnv";
-import { ensureLaunchedWebApp } from "../../shared/ensureLaunchedWebApp";
+import { cleanEnv } from "../../shared/clean-env";
+import { ensureLaunchedWebApp } from "../../shared/ensure-launched-web-app";
 import {
   ensureImageSnapshot,
   ensurePdfSnapshot,
-} from "../../shared/pageSnapshots";
+} from "../../shared/page-snapshots";
 import {
   extractPosterConfig,
   extractPrinterBleedInMillimeters,

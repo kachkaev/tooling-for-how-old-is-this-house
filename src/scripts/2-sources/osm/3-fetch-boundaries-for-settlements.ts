@@ -1,6 +1,6 @@
-import { createBboxFeature } from "../../../shared/helpersForGeometry";
+import { createBboxFeature } from "../../../shared/helpers-for-geometry";
 import { getFetchedOsmBoundariesForSettlementsFilePath } from "../../../shared/sources/osm";
-import { generateFetchOsmObjects } from "../../../shared/sources/osm/generateFetchOsmObjects";
+import { generateFetchOsmObjects } from "../../../shared/sources/osm/generate-fetch-osm-objects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
 const script = generateFetchOsmObjects({

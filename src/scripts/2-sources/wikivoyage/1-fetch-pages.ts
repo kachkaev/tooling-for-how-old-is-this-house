@@ -3,9 +3,9 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "node:path";
 
-import { prependCommentWithJsonToHtml } from "../../../shared/helpersForHtml";
-import { serializeTime } from "../../../shared/helpersForJson";
-import { ScriptError } from "../../../shared/helpersForScripts";
+import { prependCommentWithJsonToHtml } from "../../../shared/helpers-for-html";
+import { serializeTime } from "../../../shared/helpers-for-json";
+import { ScriptError } from "../../../shared/helpers-for-scripts";
 import {
   getWikivoyagePageFileSuffix,
   getWikivoyagePagesDir,

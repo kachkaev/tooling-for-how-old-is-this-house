@@ -5,17 +5,17 @@ import fs from "fs-extra";
 import path from "node:path";
 import sortKeys from "sort-keys";
 
-import { deepClean } from "../../shared/deepClean";
+import { deepClean } from "../../shared/deep-clean";
 import {
   addBufferToBbox,
   calculatePointDistanceToPolygonInMeters,
   deriveBboxCenter,
   isPointInBbox,
   unionBboxes,
-} from "../../shared/helpersForGeometry";
-import { writeFormattedJson } from "../../shared/helpersForJson";
-import { getSourcesDirPath } from "../../shared/helpersForPaths";
-import { ScriptError } from "../../shared/helpersForScripts";
+} from "../../shared/helpers-for-geometry";
+import { writeFormattedJson } from "../../shared/helpers-for-json";
+import { getSourcesDirPath } from "../../shared/helpers-for-paths";
+import { ScriptError } from "../../shared/helpers-for-scripts";
 import {
   ensureTerritoryGitignoreContainsMixing,
   getMixedOutputLayersFilePath,
@@ -27,8 +27,8 @@ import {
   getOutputLayerFileName,
   OutputLayer,
   OutputLayerProperties,
-} from "../../shared/outputLayers";
-import { processFiles } from "../../shared/processFiles";
+} from "../../shared/output-layers";
+import { processFiles } from "../../shared/process-files";
 import {
   getTerritoryDirPath,
   getTerritoryExtent,

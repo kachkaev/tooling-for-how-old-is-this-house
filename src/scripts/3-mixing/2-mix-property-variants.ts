@@ -5,8 +5,8 @@ import _ from "lodash";
 import sortKeys from "sort-keys";
 
 import { createBeautifyAddress } from "../../shared/addresses";
-import { deepClean } from "../../shared/deepClean";
-import { writeFormattedJson } from "../../shared/helpersForJson";
+import { deepClean } from "../../shared/deep-clean";
+import { writeFormattedJson } from "../../shared/helpers-for-json";
 import {
   buildGlobalFeatureOrVariantId,
   DataToOmitSelector,

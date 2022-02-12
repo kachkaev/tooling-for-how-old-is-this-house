@@ -1,4 +1,4 @@
-import { generateReportGeocodes } from "../../../shared/helpersForScripts";
+import { generateReportGeocodes } from "../../../shared/helpers-for-scripts";
 import { generateOsmOutputLayer } from "../../../shared/sources/osm";
 
 const script = generateReportGeocodes({

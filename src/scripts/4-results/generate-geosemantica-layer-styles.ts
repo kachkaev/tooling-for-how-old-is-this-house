@@ -7,8 +7,8 @@ import _ from "lodash";
 import path from "node:path";
 import html from "tagged-template-noop"; // Usage of html`` enables Prettier within strings
 
-import { cleanEnv } from "../../shared/cleanEnv";
-import { geographicContextStyling } from "../../shared/geographicContext";
+import { cleanEnv } from "../../shared/clean-env";
+import { geographicContextStyling } from "../../shared/geographic-context";
 import { extractLegendEntries, extractPosterConfig } from "../../shared/poster";
 import {
   ensureTerritoryGitignoreContainsResults,
