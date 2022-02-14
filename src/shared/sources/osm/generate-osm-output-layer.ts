@@ -95,9 +95,7 @@ const extractStyle = (
         `Unable to normalize value of "building:architecture" tag for https://www.openstreetmap.org/${building.properties.id}. Please fix and re-download the data or report a bug.\n`,
       ),
     );
-  }
 
-  if (!style) {
     return undefined;
   }
 
