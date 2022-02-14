@@ -41,7 +41,7 @@ const extractArchitect = (
 // https://wiki.openstreetmap.org/wiki/RU:Key:building:architecture
 // Note that ‘-’ is replaced with ‘_’ in some values for normalization
 const styleByBuildingArchitectureTagValue: Record<string, string> = {
-  /* eslint-disable @typescript-eslint/naming-convention -- third-party data */
+  /* eslint-disable @typescript-eslint/naming-convention -- keys are based on third-party data */
   art_deco: "ар-деко",
   art_nouveau: "модерн",
   baroque: "барокко",
@@ -70,6 +70,7 @@ const styleByBuildingArchitectureTagValue: Record<string, string> = {
   rococo: "рококо",
   russian_gothic: "русская псевдоготика",
   stalinist_neoclassicism: "сталинский неоклассицизм",
+  /* eslint-enable @typescript-eslint/naming-convention */
 };
 
 const extractStyle = (
