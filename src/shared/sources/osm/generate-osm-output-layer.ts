@@ -2,6 +2,7 @@ import booleanIntersects from "@turf/boolean-intersects"; // https://github.com/
 import * as turf from "@turf/turf";
 import chalk from "chalk";
 import _ from "lodash";
+import { WriteStream } from "node:tty";
 
 import { deepClean } from "../../deep-clean";
 import { TrivialName } from "../../helpers-for-names";
@@ -35,6 +36,72 @@ const extractArchitect = (
   }
 
   return { architect };
+};
+
+// https://wiki.openstreetmap.org/wiki/RU:Key:building:architecture
+// Note that ‘-’ is replaced with ‘_’ in some values for normalization
+const styleByBuildingArchitectureTagValue: Record<string, string> = {
+  /* eslint-disable @typescript-eslint/naming-convention -- third-party data */
+  art_deco: "ар-деко",
+  art_nouveau: "модерн",
+  baroque: "барокко",
+  brutalist: "брутализм",
+  constructivism: "конструктивизм",
+  contemporary: "современная архитектура",
+  cubism: "кубизм",
+  eclectic: "эклектика",
+  empire: "ампир",
+  functionalism: "функционализм",
+  gothic: "готика",
+  historicism: "историзм",
+  international_style: "интернациональный стиль",
+  mannerism: "маньеризм",
+  modern: "модернизм",
+  neo_baroque: "необарокко",
+  neo_byzantine: "неовизантийский",
+  neo_gothic: "неоготика",
+  neo_renaissance: "неоренессанс",
+  neo_romanesque: "неороманский",
+  neoclassicism: "классицизм",
+  postmodern: "постмодернизм",
+  pseudo_gothic: "русская псевдоготика",
+  pseudo_russian: "псевдорусский стиль",
+  renaissance: "ренессанс",
+  rococo: "рококо",
+  russian_gothic: "русская псевдоготика",
+  stalinist_neoclassicism: "сталинский неоклассицизм",
+};
+
+const extractStyle = (
+  building: OsmFeature,
+  output: WriteStream | undefined,
+): Pick<OutputLayerProperties, "style"> | undefined => {
+  const normalizedBuildingArchitectureTagValue =
+    building.properties["building:architecture"]
+      ?.trim()
+      .toLowerCase()
+      .replaceAll("-", "_") ?? "";
+
+  if (!normalizedBuildingArchitectureTagValue) {
+    return undefined;
+  }
+
+  const style =
+    styleByBuildingArchitectureTagValue[normalizedBuildingArchitectureTagValue];
+
+  if (!style) {
+    output?.write(
+      chalk.yellow(
+        `Unable to normalize value of "building:architecture" tag for https://www.openstreetmap.org/${building.properties.id}. Please fix and re-download the data or report a bug.\n`,
+      ),
+    );
+  }
+
+  if (!style) {
+    return undefined;
+  }
+
+  return { style };
 };
 
 const extractPhoto = (
@@ -388,6 +455,7 @@ export const generateOsmOutputLayer: GenerateOutputLayer = async ({
         wikidataUrl,
         ...extractArchitect(building),
         ...extractPhoto(building),
+        ...extractStyle(building, output),
         wikipediaUrl,
       });
 

@@ -10,7 +10,7 @@ export const pickStyle: PickFromPropertyVariants<"style" | "styleSource"> = ({
     callingModuleUrl: import.meta.url,
     listRelevantPropertyVariants,
     output,
-    prioritizedSources: ["manual", "wikidata", "wikivoyage"],
+    prioritizedSources: ["manual", "osm", "wikidata", "wikivoyage"],
     propertySelectors: ["style"],
     targetBuildArea,
   });
