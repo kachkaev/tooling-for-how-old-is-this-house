@@ -73,7 +73,14 @@ const script = async () => {
 
   const { data: rawJsonData } = await axios.get<WikidataApiResponse>(
     "https://query.wikidata.org/sparql",
-    { responseType: "json", params: { query } },
+    {
+      responseType: "json",
+      transitional: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention -- external API
+        silentJSONParsing: false, // Disables Object to string conversion if parsing fails
+      },
+      params: { query },
+    },
   );
 
   output.write(" Done.\n");
