@@ -1,4 +1,4 @@
-import { beautifyName, isBeautifiedTrivialName } from "../helpers-for-names";
+import { beautifyName, isBeautifiedTrivialName } from "../language";
 import { prioritizeRelevantPropertyVariants } from "./prioritize-relevant-property-variants";
 import { PickFromPropertyVariants } from "./types";
 

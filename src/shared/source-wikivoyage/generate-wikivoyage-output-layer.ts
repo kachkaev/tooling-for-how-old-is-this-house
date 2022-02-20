@@ -5,7 +5,7 @@ import wtf from "wtf_wikipedia";
 import { deepClean } from "../deep-clean";
 import { extractJsonFromPrependedHtmlComment } from "../helpers-for-html";
 import { serializeTime } from "../helpers-for-json";
-import { normalizeSpacing } from "../normalize-spacing";
+import { normalizeSpacing } from "../language";
 import { processFiles } from "../process-files";
 import {
   GenerateOutputLayer,

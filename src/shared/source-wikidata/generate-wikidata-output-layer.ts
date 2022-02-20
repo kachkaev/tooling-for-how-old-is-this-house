@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 
 import { deepClean } from "../deep-clean";
-import { normalizeSpacing } from "../normalize-spacing";
+import { normalizeSpacing } from "../language";
 import {
   GenerateOutputLayer,
   OutputLayerFeature,

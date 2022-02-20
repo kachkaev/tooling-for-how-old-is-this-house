@@ -5,8 +5,7 @@ import _ from "lodash";
 import { WriteStream } from "node:tty";
 
 import { deepClean } from "../deep-clean";
-import { TrivialName } from "../helpers-for-names";
-import { normalizeSpacing } from "../normalize-spacing";
+import { normalizeSpacing, TrivialName } from "../language";
 import {
   GenerateOutputLayer,
   OutputLayer,

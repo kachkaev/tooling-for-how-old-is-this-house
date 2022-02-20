@@ -9,7 +9,7 @@ import {
   buildStandardizedAddressAst,
 } from "../addresses";
 import { deepClean } from "../deep-clean";
-import { normalizeSpacing } from "../normalize-spacing";
+import { normalizeSpacing } from "../language";
 import { processFiles } from "../process-files";
 import {
   GenerateOutputLayer,

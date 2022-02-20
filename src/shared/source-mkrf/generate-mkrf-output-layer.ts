@@ -4,7 +4,7 @@ import fs from "fs-extra";
 
 import { deepClean } from "../deep-clean";
 import { serializeTime } from "../helpers-for-json";
-import { normalizeSpacing } from "../normalize-spacing";
+import { normalizeSpacing } from "../language";
 import { processFiles } from "../process-files";
 import {
   GenerateOutputLayer,
