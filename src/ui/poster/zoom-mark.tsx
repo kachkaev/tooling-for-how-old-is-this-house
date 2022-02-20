@@ -1,8 +1,8 @@
+import _ from "lodash";
 import * as React from "react";
 import styled from "styled-components";
 
 import { pointsInMm } from "../shared/printing";
-import { roundMeasure } from "./round-measure";
 
 const Wrapper = styled.div`
   border-top: none;
@@ -29,6 +29,8 @@ const Text = styled.div`
   text-align: center;
   white-space: nowrap;
 `;
+
+const roundMeasure = (measure: number): number => _.round(measure, 2);
 
 export interface ZoomMarkProps extends React.HTMLAttributes<HTMLDivElement> {
   zoomInMillimetersPerKilometer: number;

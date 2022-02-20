@@ -6,22 +6,22 @@ import {
   GeographicContextFeatureCollection,
   geographicContextStyling,
   splitGeographicContext,
-} from "../../shared/geographic-context";
-import { MixedPropertyVariantsFeatureCollection } from "../../shared/mixing";
+} from "../shared/geographic-context";
+import { MixedPropertyVariantsFeatureCollection } from "../shared/mixing";
 import {
   extractPrinterBleedInMillimeters,
   PosterConfig,
-} from "../../shared/poster";
-import { TerritoryExtent } from "../../shared/territory";
-import { GlobalStyle } from "../shared/global-style";
-import { CropMark } from "./crop-mark";
-import { generateMapCompletionYearToColor } from "./generate-map-completion-year-to-color";
-import { GeoMap } from "./geo-map";
-import { GeoMapLayerWithBuildingCompletionYears } from "./geo-map-layer-with-building-completion-years";
-import { GeoMapLayerWithGeographicContext } from "./geo-map-layer-with-geographic-context";
-import { GeoMapLayerWithTerritoryExtent } from "./geo-map-layer-with-territory-extent";
-import { Timeline } from "./timeline";
-import { ZoomMark } from "./zoom-mark";
+} from "../shared/poster";
+import { TerritoryExtent } from "../shared/territory";
+import { CropMark } from "./poster/crop-mark";
+import { generateMapCompletionYearToColor } from "./poster/generate-map-completion-year-to-color";
+import { GeoMap } from "./poster/geo-map";
+import { GeoMapLayerWithBuildingCompletionYears } from "./poster/geo-map-layer-with-building-completion-years";
+import { GeoMapLayerWithGeographicContext } from "./poster/geo-map-layer-with-geographic-context";
+import { GeoMapLayerWithTerritoryExtent } from "./poster/geo-map-layer-with-territory-extent";
+import { Timeline } from "./poster/timeline";
+import { ZoomMark } from "./poster/zoom-mark";
+import { GlobalStyle } from "./shared/global-style";
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;

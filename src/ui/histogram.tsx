@@ -10,9 +10,9 @@ import styled from "styled-components";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../../shared/mixing";
-import { PosterConfig } from "../../shared/poster";
-import { GlobalStyle } from "../shared/global-style";
+} from "../shared/mixing";
+import { PosterConfig } from "../shared/poster";
+import { GlobalStyle } from "./shared/global-style";
 
 const backgroundColor = "#fff";
 
