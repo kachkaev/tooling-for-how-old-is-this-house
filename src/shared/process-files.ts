@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { WriteStream } from "node:tty";
 
-import { generateProgress } from "./helpers-for-scripts";
 import { listFilePaths } from "./list-file-paths";
+import { generateProgress } from "./scripts";
 
 export const processFiles = async ({
   fileSearchPattern,

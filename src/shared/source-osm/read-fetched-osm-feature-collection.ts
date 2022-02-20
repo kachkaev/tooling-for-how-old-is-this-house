@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 
-import { ScriptError } from "../helpers-for-scripts";
+import { ScriptError } from "../scripts";
 import {
   getFetchedOsmBoundariesForRegionsFilePath,
   getFetchedOsmBoundariesForSettlementsFilePath,

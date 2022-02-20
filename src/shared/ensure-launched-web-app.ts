@@ -7,7 +7,7 @@ import { createServer } from "node:http";
 import { WriteStream } from "node:tty";
 import { parse } from "node:url"; // https://github.com/vercel/next.js/discussions/21283
 
-import { ScriptError } from "./helpers-for-scripts";
+import { ScriptError } from "./scripts";
 import { getTerritoryConfig, TerritoryConfig } from "./territory";
 
 const defaultPort = 3000;

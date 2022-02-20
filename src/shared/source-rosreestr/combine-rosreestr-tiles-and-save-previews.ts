@@ -5,7 +5,7 @@ import path from "node:path";
 import { WriteStream } from "node:tty";
 
 import { writeFormattedJson } from "../helpers-for-json";
-import { ensureTerritoryGitignoreContainsPreview } from "../helpers-for-scripts";
+import { ensureTerritoryGitignoreContainsPreview } from "../scripts";
 import { combineRosreestrTiles } from "./combine-rosreestr-tiles";
 import { getObjectDirPath } from "./helpers-for-paths";
 import { RosreestrObjectType } from "./types";

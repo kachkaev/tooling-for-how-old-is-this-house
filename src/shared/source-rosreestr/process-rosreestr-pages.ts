@@ -5,8 +5,8 @@ import { DateTime } from "luxon";
 import { WriteStream } from "node:tty";
 
 import { writeFormattedJson } from "../helpers-for-json";
-import { ScriptError } from "../helpers-for-scripts";
 import { processFiles } from "../process-files";
+import { ScriptError } from "../scripts";
 import { getObjectInfoPagesDirPath } from "./helpers-for-paths";
 import { InfoPageData, InfoPageObject } from "./types";
 /**

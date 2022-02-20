@@ -5,7 +5,7 @@ import path from "node:path";
 
 import { prependCommentWithJsonToHtml } from "../../../shared/helpers-for-html";
 import { serializeTime } from "../../../shared/helpers-for-json";
-import { ScriptError } from "../../../shared/helpers-for-scripts";
+import { ScriptError } from "../../../shared/scripts";
 import {
   getWikivoyagePageFileSuffix,
   getWikivoyagePagesDir,

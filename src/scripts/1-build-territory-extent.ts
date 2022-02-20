@@ -5,7 +5,7 @@ import sortKeys from "sort-keys";
 
 import { multiUnion } from "../shared/helpers-for-geometry";
 import { serializeTime, writeFormattedJson } from "../shared/helpers-for-json";
-import { ScriptError } from "../shared/helpers-for-scripts";
+import { ScriptError } from "../shared/scripts";
 import { fetchGeojsonFromOverpassApi } from "../shared/source-osm";
 import {
   getTerritoryConfig,

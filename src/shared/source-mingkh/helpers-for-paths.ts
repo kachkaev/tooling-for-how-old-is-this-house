@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { getSourceDirPath } from "../helpers-for-paths";
+import { getSourceDirPath } from "../sources";
 
 export const getMingkhDirPath = () => {
   return getSourceDirPath("mingkh");

@@ -2,7 +2,7 @@ import chalk from "chalk";
 import path from "node:path";
 
 import { writeFormattedJson } from "../../../shared/helpers-for-json";
-import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpers-for-scripts";
+import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/scripts";
 import {
   generateMingkhHouseInfoCollection,
   getMingkhDirPath,

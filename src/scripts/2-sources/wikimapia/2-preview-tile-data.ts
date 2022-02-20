@@ -4,7 +4,7 @@ import _ from "lodash";
 import path from "node:path";
 
 import { writeFormattedJson } from "../../../shared/helpers-for-json";
-import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpers-for-scripts";
+import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/scripts";
 import { getWikimapiaDirPath } from "../../../shared/source-wikimapia";
 import { combineWikimapiaTiles } from "../../../shared/source-wikimapia/combine-wikimapia-tiles";
 

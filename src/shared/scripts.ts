@@ -6,8 +6,8 @@ import sortKeys from "sort-keys";
 import { deepClean } from "./deep-clean";
 import { geocodeAddress, loadCombinedGeocodeDictionary } from "./geocoding";
 import { writeFormattedJson } from "./helpers-for-json";
-import { getSourceDirPath } from "./helpers-for-paths";
 import { parseCompletionTime } from "./parse-completion-time";
+import { getSourceDirPath } from "./sources";
 import {
   ConfiguredGeocodeAddress,
   GenerateOutputLayer,

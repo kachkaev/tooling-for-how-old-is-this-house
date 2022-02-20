@@ -1,4 +1,4 @@
-import { generateExtractOutputLayer } from "../../../shared/helpers-for-scripts";
+import { generateExtractOutputLayer } from "../../../shared/scripts";
 import { generateWikidataOutputLayer } from "../../../shared/source-wikidata";
 
 const script = generateExtractOutputLayer({

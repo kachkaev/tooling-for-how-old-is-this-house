@@ -4,7 +4,7 @@ import chalk from "chalk";
 import _ from "lodash";
 import { WriteStream } from "node:tty";
 
-import { eraseLastLineInOutput } from "./helpers-for-scripts";
+import { eraseLastLineInOutput } from "./scripts";
 
 export type Tile = [x: number, y: number, zoom: number];
 

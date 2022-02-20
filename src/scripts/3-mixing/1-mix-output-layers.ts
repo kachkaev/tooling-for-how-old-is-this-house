@@ -14,9 +14,9 @@ import {
   unionBboxes,
 } from "../../shared/helpers-for-geometry";
 import { writeFormattedJson } from "../../shared/helpers-for-json";
-import { getSourcesDirPath } from "../../shared/helpers-for-paths";
-import { ScriptError } from "../../shared/helpers-for-scripts";
 import { processFiles } from "../../shared/process-files";
+import { ScriptError } from "../../shared/scripts";
+import { getSourcesDirPath } from "../../shared/sources";
 import {
   ensureTerritoryGitignoreContainsMixing,
   getMixedOutputLayersFilePath,

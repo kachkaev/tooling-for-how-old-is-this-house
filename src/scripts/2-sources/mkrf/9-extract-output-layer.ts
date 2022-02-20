@@ -1,4 +1,4 @@
-import { generateExtractOutputLayer } from "../../../shared/helpers-for-scripts";
+import { generateExtractOutputLayer } from "../../../shared/scripts";
 import { generateMkrfOutputLayer } from "../../../shared/source-mkrf";
 
 const script = generateExtractOutputLayer({

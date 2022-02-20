@@ -1,4 +1,4 @@
-import { generateReportGeocodes } from "../../../shared/helpers-for-scripts";
+import { generateReportGeocodes } from "../../../shared/scripts";
 import { generateMingkhOutputLayer } from "../../../shared/source-mingkh";
 
 const script = generateReportGeocodes({
