@@ -15,7 +15,7 @@ import {
   getWikidataProcessedQueryResultFilePath,
   ProcessedQueryResult,
   WikidataApiResponse,
-} from "../../../shared/sources/wikidata";
+} from "../../../shared/source-wikidata";
 import { getTerritoryExtent } from "../../../shared/territory";
 
 const output = process.stdout;

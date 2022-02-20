@@ -11,7 +11,7 @@ import {
   getYandexGeocoderCacheDir,
   getYandexGeocoderCacheEntryFileSuffix,
   YandexGeocoderCacheEntry,
-} from "../../../shared/sources/yandex";
+} from "../../../shared/source-yandex";
 import { getTerritoryAddressHandlingConfig } from "../../../shared/territory";
 
 const output = process.stdout;

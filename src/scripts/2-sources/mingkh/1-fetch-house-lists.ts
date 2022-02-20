@@ -10,7 +10,7 @@ import {
   HouseListFile,
   HouseListResponse,
   loopThroughHouseLists,
-} from "../../../shared/sources/mingkh";
+} from "../../../shared/source-mingkh";
 
 const output = process.stdout;
 

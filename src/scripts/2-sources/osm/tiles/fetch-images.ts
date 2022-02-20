@@ -10,7 +10,7 @@ import { cleanEnv } from "../../../../shared/clean-env";
 import {
   createAxiosInstanceForOsmTiles,
   getOsmTileImageFilePath,
-} from "../../../../shared/sources/osm";
+} from "../../../../shared/source-osm";
 import { getTerritoryExtent } from "../../../../shared/territory";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 

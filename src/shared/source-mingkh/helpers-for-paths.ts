@@ -1,0 +1,32 @@
+import path from "node:path";
+
+import { getSourceDirPath } from "../helpers-for-paths";
+
+export const getMingkhDirPath = () => {
+  return getSourceDirPath("mingkh");
+};
+
+export const getMingkhHousesDirPath = () => {
+  return path.resolve(getMingkhDirPath(), "houses");
+};
+
+export const getHouseListFilePath = (
+  mingkhRegionUrl: string,
+  mingkhCityUrl: string,
+) => {
+  return path.resolve(
+    getMingkhDirPath(),
+    "house-lists",
+    `${mingkhRegionUrl}--${mingkhCityUrl}.json`,
+  );
+};
+
+export const getHouseFilePath = (houseId: number, fileNameSuffix: string) => {
+  const normalisedHouseId = `${houseId}`.padStart(7, "0");
+
+  return path.resolve(
+    getMingkhHousesDirPath(),
+    `${normalisedHouseId.slice(0, 4)}xxx`,
+    `${normalisedHouseId}--${fileNameSuffix}`,
+  );
+};

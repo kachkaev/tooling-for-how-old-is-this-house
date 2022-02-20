@@ -1,7 +1,7 @@
 import { execa } from "execa";
 
 import { getMixedPropertyVariantsFilePath } from "../shared/mixing";
-import { getOsmDirPath } from "../shared/sources/osm";
+import { getOsmDirPath } from "../shared/source-osm";
 import { getTerritoryExtentFilePath } from "../shared/territory";
 
 const script = async () => {

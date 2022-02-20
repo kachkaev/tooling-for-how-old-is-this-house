@@ -6,7 +6,7 @@ import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpers
 import {
   generateMingkhHouseInfoCollection,
   getMingkhDirPath,
-} from "../../../shared/sources/mingkh";
+} from "../../../shared/source-mingkh";
 
 const output = process.stdout;
 

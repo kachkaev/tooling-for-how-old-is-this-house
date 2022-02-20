@@ -11,7 +11,7 @@ import {
   combineWikimapiaTiles,
   deriveWikimapiaObjectFilePath,
   getWikimapiaRawObjectInfoFileSuffix,
-} from "../../../shared/sources/wikimapia";
+} from "../../../shared/source-wikimapia";
 
 const output = process.stdout;
 

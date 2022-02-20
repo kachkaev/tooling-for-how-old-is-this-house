@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import { generateProcessTile } from "../../../shared/sources/rosreestr";
+import { generateProcessTile } from "../../../shared/source-rosreestr";
 import { getTerritoryExtent } from "../../../shared/territory";
 import { processTiles } from "../../../shared/tiles";
 

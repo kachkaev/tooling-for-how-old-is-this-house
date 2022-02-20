@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import { createAxiosInstanceForOsmTiles } from "../../../../shared/sources/osm";
+import { createAxiosInstanceForOsmTiles } from "../../../../shared/source-osm";
 import { getTerritoryExtent } from "../../../../shared/territory";
 import { processTiles, TileStatus } from "../../../../shared/tiles";
 

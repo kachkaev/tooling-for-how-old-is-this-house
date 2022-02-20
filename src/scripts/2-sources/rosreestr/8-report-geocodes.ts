@@ -1,5 +1,5 @@
 import { generateReportGeocodes } from "../../../shared/helpers-for-scripts";
-import { generateRosreestrOutputLayer } from "../../../shared/sources/rosreestr";
+import { generateRosreestrOutputLayer } from "../../../shared/source-rosreestr";
 
 const script = generateReportGeocodes({
   output: process.stdout,

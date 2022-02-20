@@ -11,7 +11,7 @@ import {
   processRosreestrPages,
   SuccessfulFirObjectResponse,
   SuccessfulFirObjectResponseInInfoPage,
-} from "../../../shared/sources/rosreestr";
+} from "../../../shared/source-rosreestr";
 
 const output = process.stdout;
 

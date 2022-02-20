@@ -5,8 +5,8 @@ import path from "node:path";
 
 import { writeFormattedJson } from "../../../shared/helpers-for-json";
 import { ensureTerritoryGitignoreContainsPreview } from "../../../shared/helpers-for-scripts";
-import { getWikimapiaDirPath } from "../../../shared/sources/wikimapia";
-import { combineWikimapiaTiles } from "../../../shared/sources/wikimapia/combine-wikimapia-tiles";
+import { getWikimapiaDirPath } from "../../../shared/source-wikimapia";
+import { combineWikimapiaTiles } from "../../../shared/source-wikimapia/combine-wikimapia-tiles";
 
 const output = process.stdout;
 

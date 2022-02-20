@@ -1,5 +1,5 @@
 import { generateReportGeocodes } from "../../../shared/helpers-for-scripts";
-import { generateWikimapiaOutputLayer } from "../../../shared/sources/wikimapia";
+import { generateWikimapiaOutputLayer } from "../../../shared/source-wikimapia";
 
 const script = generateReportGeocodes({
   output: process.stdout,

@@ -2,8 +2,8 @@ import * as turf from "@turf/turf";
 import _ from "lodash";
 
 import { deepClean } from "../deep-clean";
-import { readFetchedOsmFeatureCollection } from "../sources/osm";
-import { OsmFeatureProperties } from "../sources/osm/types";
+import { readFetchedOsmFeatureCollection } from "../source-osm";
+import { OsmFeatureProperties } from "../source-osm/types";
 import { TerritoryExtent } from "../territory";
 import { generateGeographicContextExtent } from "./generate-geographic-context-extent";
 import {

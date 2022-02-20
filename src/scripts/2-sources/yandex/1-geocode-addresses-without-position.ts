@@ -25,7 +25,7 @@ import {
   getYandexGeocoderCacheEntryFilePath,
   YandexGeocoderCacheEntry,
   YandexGeocoderSuccessfulApiData,
-} from "../../../shared/sources/yandex";
+} from "../../../shared/source-yandex";
 import {
   getTerritoryAddressHandlingConfig,
   getTerritoryExtent,

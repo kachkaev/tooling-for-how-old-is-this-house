@@ -18,7 +18,7 @@ import {
   getWikimapiaTileDataFilePath,
   ProcessedWikimapiaTileResponse,
   WikimapiaTileData,
-} from "../../../shared/sources/wikimapia";
+} from "../../../shared/source-wikimapia";
 import { getTerritoryExtent } from "../../../shared/territory";
 import { processTiles } from "../../../shared/tiles";
 

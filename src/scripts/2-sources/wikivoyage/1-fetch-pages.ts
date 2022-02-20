@@ -10,7 +10,7 @@ import {
   getWikivoyagePageFileSuffix,
   getWikivoyagePagesDir,
   WikivoyagePageMetadata,
-} from "../../../shared/sources/wikivoyage";
+} from "../../../shared/source-wikivoyage";
 import {
   getTerritoryConfig,
   getTerritoryConfigFilePath,

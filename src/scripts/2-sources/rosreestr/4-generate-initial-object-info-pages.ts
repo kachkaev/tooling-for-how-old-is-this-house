@@ -13,7 +13,7 @@ import {
   ObjectCenterFeature,
   rosreestrObjectInfoPageSize,
   rosreestrObjectInfoPageTailLength,
-} from "../../../shared/sources/rosreestr";
+} from "../../../shared/source-rosreestr";
 import {
   getTerritoryConfig,
   getTerritoryExtent,
