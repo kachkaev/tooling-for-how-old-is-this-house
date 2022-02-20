@@ -8,7 +8,7 @@ import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,
   getResultsDirPath,
-} from "../../shared/results";
+} from "../../shared/stage-results";
 import { getTerritoryId } from "../../shared/territory";
 
 const output = process.stdout;

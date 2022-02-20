@@ -7,11 +7,11 @@ import {
   geographicContextStyling,
   splitGeographicContext,
 } from "../shared/geographic-context";
-import { MixedPropertyVariantsFeatureCollection } from "../shared/mixing";
 import {
   extractPrinterBleedInMillimeters,
   PosterConfig,
 } from "../shared/poster";
+import { MixedPropertyVariantsFeatureCollection } from "../shared/stage-mixing";
 import { TerritoryExtent } from "../shared/territory";
 import { CropMark } from "./poster/crop-mark";
 import { generateMapCompletionYearToColor } from "./poster/generate-map-completion-year-to-color";

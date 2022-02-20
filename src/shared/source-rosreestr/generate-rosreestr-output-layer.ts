@@ -10,12 +10,12 @@ import {
 } from "../addresses";
 import { deepClean } from "../deep-clean";
 import { normalizeSpacing } from "../normalize-spacing";
+import { processFiles } from "../process-files";
 import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-} from "../output-layers";
-import { processFiles } from "../process-files";
+} from "../stage-output-layers";
 import {
   getTerritoryAddressHandlingConfig,
   getTerritoryExtent,

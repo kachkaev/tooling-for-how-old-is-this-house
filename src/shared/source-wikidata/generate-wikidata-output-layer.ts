@@ -6,7 +6,7 @@ import {
   GenerateOutputLayer,
   OutputLayerFeature,
   OutputLayerProperties,
-} from "../output-layers";
+} from "../stage-output-layers";
 import { extractGeometry } from "./extract-geometry";
 import { getWikidataProcessedQueryResultFilePath } from "./helpers-for-paths";
 import { ProcessedQueryResult, WikidataQueryItem } from "./types";

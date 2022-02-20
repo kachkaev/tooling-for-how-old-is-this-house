@@ -16,19 +16,19 @@ import {
 import { writeFormattedJson } from "../../shared/helpers-for-json";
 import { getSourcesDirPath } from "../../shared/helpers-for-paths";
 import { ScriptError } from "../../shared/helpers-for-scripts";
+import { processFiles } from "../../shared/process-files";
 import {
   ensureTerritoryGitignoreContainsMixing,
   getMixedOutputLayersFilePath,
   MixedOutputLayersFeature,
   PropertyVariant,
   PropertyVariantWithNulls,
-} from "../../shared/mixing";
+} from "../../shared/stage-mixing";
 import {
   getOutputLayerFileName,
   OutputLayer,
   OutputLayerProperties,
-} from "../../shared/output-layers";
-import { processFiles } from "../../shared/process-files";
+} from "../../shared/stage-output-layers";
 import {
   getTerritoryDirPath,
   getTerritoryExtent,

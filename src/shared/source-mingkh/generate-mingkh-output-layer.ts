@@ -5,7 +5,7 @@ import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-} from "../output-layers";
+} from "../stage-output-layers";
 import { generateMingkhHouseInfoCollection } from "./generate-mingkh-house-info-collection";
 
 export const notFilledIn = ["Не заполнено", "Нет данных"];

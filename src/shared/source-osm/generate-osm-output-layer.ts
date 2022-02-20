@@ -11,7 +11,7 @@ import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-} from "../output-layers";
+} from "../stage-output-layers";
 import { getTerritoryExtent } from "../territory";
 import { readFetchedOsmFeatureCollection } from "./read-fetched-osm-feature-collection";
 import { OsmFeature, OsmFeatureProperties } from "./types";

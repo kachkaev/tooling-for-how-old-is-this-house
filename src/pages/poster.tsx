@@ -7,7 +7,7 @@ import { generateGeographicContext } from "../shared/geographic-context/generate
 import {
   getMixedPropertyVariantsFilePath,
   MixedPropertyVariantsFeatureCollection,
-} from "../shared/mixing";
+} from "../shared/stage-mixing";
 import { getTerritoryExtent } from "../shared/territory";
 import { PosterProps } from "../ui/poster";
 import { useLiveTerritoryConfig } from "../ui/shared/use-live-territory-config";

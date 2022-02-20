@@ -7,11 +7,11 @@ import { useRouter } from "next/dist/client/router";
 import * as React from "react";
 import styled from "styled-components";
 
+import { PosterConfig } from "../shared/poster";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../shared/mixing";
-import { PosterConfig } from "../shared/poster";
+} from "../shared/stage-mixing";
 import { GlobalStyle } from "./shared/global-style";
 
 const backgroundColor = "#fff";

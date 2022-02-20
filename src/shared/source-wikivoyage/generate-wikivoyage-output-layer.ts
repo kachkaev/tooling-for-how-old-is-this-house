@@ -6,12 +6,12 @@ import { deepClean } from "../deep-clean";
 import { extractJsonFromPrependedHtmlComment } from "../helpers-for-html";
 import { serializeTime } from "../helpers-for-json";
 import { normalizeSpacing } from "../normalize-spacing";
+import { processFiles } from "../process-files";
 import {
   GenerateOutputLayer,
   OutputLayerFeature,
   OutputLayerProperties,
-} from "../output-layers";
-import { processFiles } from "../process-files";
+} from "../stage-output-layers";
 import { getTerritoryExtent } from "../territory";
 import {
   getWikivoyagePageFileSuffix,

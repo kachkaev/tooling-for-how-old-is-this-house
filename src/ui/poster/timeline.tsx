@@ -8,7 +8,7 @@ import styled from "styled-components";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../../shared/mixing";
+} from "../../shared/stage-mixing";
 import { pointsInMm } from "../shared/printing";
 import { MapCompletionYearToColor } from "./types";
 

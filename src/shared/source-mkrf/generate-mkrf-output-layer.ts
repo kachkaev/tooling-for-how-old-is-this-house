@@ -5,12 +5,12 @@ import fs from "fs-extra";
 import { deepClean } from "../deep-clean";
 import { serializeTime } from "../helpers-for-json";
 import { normalizeSpacing } from "../normalize-spacing";
+import { processFiles } from "../process-files";
 import {
   GenerateOutputLayer,
   OutputLayer,
   OutputLayerProperties,
-} from "../output-layers";
-import { processFiles } from "../process-files";
+} from "../stage-output-layers";
 import { getTerritoryConfig, getTerritoryExtent } from "../territory";
 import { getMkrfObjectDirPath } from "./helpers-for-paths";
 import { MkrfObjectFile } from "./types";

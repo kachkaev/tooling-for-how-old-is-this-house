@@ -1,8 +1,7 @@
 import * as turf from "@turf/turf";
 import { WriteStream } from "node:tty";
 
-import { OutputLayerProperties } from "../output-layers";
-import { OutputGeometry } from "../output-layers/types";
+import { OutputGeometry, OutputLayerProperties } from "../stage-output-layers";
 import { OmitNullable } from "../types";
 
 export interface PropertyVariantWithNulls extends OutputLayerProperties {

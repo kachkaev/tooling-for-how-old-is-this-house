@@ -32,7 +32,7 @@ import {
   pickWikidataUrl,
   pickWikipediaUrl,
   PropertyVariant,
-} from "../../shared/mixing";
+} from "../../shared/stage-mixing";
 import { getTerritoryAddressHandlingConfig } from "../../shared/territory";
 
 const output = process.stdout;
