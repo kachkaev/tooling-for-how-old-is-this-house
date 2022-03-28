@@ -19,13 +19,13 @@ import {
   getMixedPropertyVariantsFilePath,
   MixedPropertyVariants,
   MixedPropertyVariantsFeatureCollection,
-} from "../../shared/mixing";
-import { OutputGeometry } from "../../shared/output-layers";
+} from "../../shared/stage-mixing";
+import { OutputGeometry } from "../../shared/stage-output-layers";
 import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,
   getResultsDirPath,
-} from "../../shared/results";
+} from "../../shared/stage-results";
 import {
   getTerritoryAddressHandlingConfig,
   getTerritoryExtent,

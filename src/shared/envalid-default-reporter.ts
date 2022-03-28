@@ -2,7 +2,7 @@
 
 import { EnvMissingError, ReporterOptions } from "envalid";
 
-import { ScriptError } from "./helpers-for-scripts";
+import { ScriptError } from "./scripts";
 
 // Apply ANSI colors to the reporter output only if we detect that we're running in Node
 const isNode = !!(typeof process === "object" && process.versions.node);

@@ -15,7 +15,7 @@ import {
   getMkrfObjectFilePath,
   MkrfObjectData,
   MkrfObjectFile,
-} from "../../../shared/sources/mkrf";
+} from "../../../shared/source-mkrf";
 import {
   getTerritoryConfig,
   getTerritoryExtent,

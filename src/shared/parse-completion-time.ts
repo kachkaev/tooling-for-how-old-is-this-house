@@ -1,6 +1,6 @@
 import deromanize from "deromanize";
 
-import { normalizeSpacing } from "./normalize-spacing";
+import { normalizeSpacing } from "./language";
 
 export type ResultOfParseCompletionTime =
   | {

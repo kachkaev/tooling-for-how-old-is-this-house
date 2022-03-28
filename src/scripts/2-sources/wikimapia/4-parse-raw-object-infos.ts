@@ -20,7 +20,7 @@ import {
   WikimapiaObjectInfo,
   WikimapiaObjectInfoFile,
   WikimapiaObjectPhotoInfo,
-} from "../../../shared/sources/wikimapia";
+} from "../../../shared/source-wikimapia";
 import { getTerritoryAddressHandlingConfig } from "../../../shared/territory";
 
 const cleanCompletionTimeMatch = (match?: string): string | undefined => {

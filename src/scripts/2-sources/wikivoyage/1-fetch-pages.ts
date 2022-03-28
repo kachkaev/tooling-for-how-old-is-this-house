@@ -5,12 +5,12 @@ import path from "node:path";
 
 import { prependCommentWithJsonToHtml } from "../../../shared/helpers-for-html";
 import { serializeTime } from "../../../shared/helpers-for-json";
-import { ScriptError } from "../../../shared/helpers-for-scripts";
+import { ScriptError } from "../../../shared/scripts";
 import {
   getWikivoyagePageFileSuffix,
   getWikivoyagePagesDir,
   WikivoyagePageMetadata,
-} from "../../../shared/sources/wikivoyage";
+} from "../../../shared/source-wikivoyage";
 import {
   getTerritoryConfig,
   getTerritoryConfigFilePath,
@@ -79,6 +79,10 @@ const script = async () => {
     )}`;
     const { data: apiResponseData } = await axios.get<ApiResponseData>(apiUrl, {
       responseType: "json",
+      transitional: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention -- external API
+        silentJSONParsing: false, // Disables Object to string conversion if parsing fails
+      },
     });
     const filePath = `${getWikivoyagePagesDir()}/${pageName}${getWikivoyagePageFileSuffix()}`;
 

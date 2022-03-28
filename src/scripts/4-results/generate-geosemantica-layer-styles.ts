@@ -14,7 +14,7 @@ import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,
   getResultsDirPath,
-} from "../../shared/results";
+} from "../../shared/stage-results";
 import {
   getTerritoryConfig,
   getTerritoryExtent,

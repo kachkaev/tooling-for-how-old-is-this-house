@@ -1,5 +1,5 @@
-import { generateExtractOutputLayer } from "../../../shared/helpers-for-scripts";
-import { generateRosreestrOutputLayer } from "../../../shared/sources/rosreestr";
+import { generateExtractOutputLayer } from "../../../shared/scripts";
+import { generateRosreestrOutputLayer } from "../../../shared/source-rosreestr";
 
 const script = generateExtractOutputLayer({
   canUseCollectedGeocodes: true,

@@ -10,7 +10,7 @@ import {
   HouseListFile,
   HouseListResponse,
   loopThroughHouseLists,
-} from "../../../shared/sources/mingkh";
+} from "../../../shared/source-mingkh";
 
 const output = process.stdout;
 
@@ -28,7 +28,13 @@ const script = async () => {
           ["region_url"]: regionUrl,
           ["city_url"]: cityUrl,
         }),
-        { responseType: "json" },
+        {
+          responseType: "json",
+          transitional: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention -- external API
+            silentJSONParsing: false, // Disables Object to string conversion if parsing fails
+          },
+        },
       );
 
       const json: HouseListFile = {

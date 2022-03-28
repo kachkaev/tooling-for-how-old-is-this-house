@@ -1,5 +1,5 @@
-import { generateReportGeocodes } from "../../../shared/helpers-for-scripts";
-import { generateMkrfOutputLayer } from "../../../shared/sources/mkrf";
+import { generateReportGeocodes } from "../../../shared/scripts";
+import { generateMkrfOutputLayer } from "../../../shared/source-mkrf";
 
 const script = generateReportGeocodes({
   output: process.stdout,
