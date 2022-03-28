@@ -3430,10 +3430,10 @@ entities@~2.1.0:
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.1.0.tgz#992d3129cf7df6870b96c57858c249a120f8b8b5"
   integrity sha512-hCx1oky9PFrJ611mf0ifBLBRW8lUUVRlFolb5gWRfIELabBlbp9xZvrqZLZAs+NxFnbfQoeGd8wDkygjg7U85w==
 
-envalid@7.3.0-beta.2:
-  version "7.3.0-beta.2"
-  resolved "https://registry.yarnpkg.com/envalid/-/envalid-7.3.0-beta.2.tgz#5e4425dad1410630d203590cbbd676bb6245df97"
-  integrity sha512-N0s1U19SMYxGG0rbJ6qNCH/1iyDufb/1cW/Bk7JD908qi2ia3MVFa3++eLaTfUjurftpZbcvKZwekC6iGpNMag==
+envalid@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/envalid/-/envalid-7.3.0.tgz#9d5eda789216cfdd8c55ff0d6fe30ddff38e52d5"
+  integrity sha512-RWAAXLU+s884YwbVQ+D8OYRIspo7hvF9zPTvjToVzqZknHwycAuGiiHG/XiI1UDY/PeYSlMwQvMUGb25n06iwA==
   dependencies:
     tslib "2.3.1"
 
