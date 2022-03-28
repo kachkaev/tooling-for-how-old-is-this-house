@@ -7,10 +7,10 @@ export type Locale = "en" | "ru";
 export const getLocaleFromEnv = (): Locale => {
   const env = cleanEnv({
     LOCALE: envalid.str({
+      choices: ["ru", "en"] as const,
       default: "ru",
-      choices: ["ru", "en"],
     }),
   });
 
-  return env.LOCALE as Locale;
+  return env.LOCALE;
 };
