@@ -18,12 +18,9 @@ const Poster = dynamic<PosterProps>(
   { ssr: false },
 );
 
-type PosterPageProps = Omit<PosterProps, "posterConfig">;
+type PageProps = Omit<PosterProps, "posterConfig">;
 
-const PosterPage: NextPage<PosterPageProps> = ({
-  territoryExtent,
-  ...rest
-}) => {
+const Page: NextPage<PageProps> = ({ territoryExtent, ...rest }) => {
   const territoryConfig = useLiveTerritoryConfig();
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
 
@@ -40,7 +37,7 @@ const PosterPage: NextPage<PosterPageProps> = ({
   );
 };
 
-export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
+export const getStaticProps: GetStaticProps<PageProps> = async () => {
   const territoryExtent = await getTerritoryExtent();
 
   const buildingCollection = (await fs.readJson(
@@ -54,4 +51,4 @@ export const getStaticProps: GetStaticProps<PosterPageProps> = async () => {
   };
 };
 
-export default PosterPage;
+export default Page;

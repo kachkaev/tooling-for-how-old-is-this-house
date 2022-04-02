@@ -6,6 +6,8 @@ const nextConfig = {
     styledComponents: true,
   },
 
+  pageExtensions: ["page.tsx", "handler.ts"],
+
   i18n: {
     defaultLocale: "ru",
     localeDetection: false,

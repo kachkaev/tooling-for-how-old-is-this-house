@@ -17,14 +17,11 @@ const Histogram = dynamic<HistogramProps>(
   { ssr: false },
 );
 
-type HistogramPageProps = Omit<HistogramProps, "posterConfig"> & {
+type PageProps = Omit<HistogramProps, "posterConfig"> & {
   territoryExtent: TerritoryExtent;
 };
 
-const HistogramPage: NextPage<HistogramPageProps> = ({
-  territoryExtent,
-  ...props
-}) => {
+const Page: NextPage<PageProps> = ({ territoryExtent, ...props }) => {
   const territoryConfig = useLiveTerritoryConfig();
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
 
@@ -35,7 +32,7 @@ const HistogramPage: NextPage<HistogramPageProps> = ({
   return <Histogram posterConfig={posterConfig} {...props} />;
 };
 
-export const getStaticProps: GetStaticProps<HistogramPageProps> = async () => {
+export const getStaticProps: GetStaticProps<PageProps> = async () => {
   return {
     props: {
       territoryExtent: await getTerritoryExtent(),
@@ -46,4 +43,4 @@ export const getStaticProps: GetStaticProps<HistogramPageProps> = async () => {
   };
 };
 
-export default HistogramPage;
+export default Page;

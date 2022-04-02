@@ -12,11 +12,11 @@ const ColorLegend = dynamic<ColorLegendProps>(
   { ssr: false },
 );
 
-type LegendPageProps = Omit<ColorLegendProps, "posterConfig"> & {
+type PageProps = Omit<ColorLegendProps, "posterConfig"> & {
   territoryExtent: TerritoryExtent;
 };
 
-const LegendPage: NextPage<LegendPageProps> = ({ territoryExtent }) => {
+const Page: NextPage<PageProps> = ({ territoryExtent }) => {
   const territoryConfig = useLiveTerritoryConfig();
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
 
@@ -27,7 +27,7 @@ const LegendPage: NextPage<LegendPageProps> = ({ territoryExtent }) => {
   return <ColorLegend posterConfig={posterConfig} />;
 };
 
-export const getStaticProps: GetStaticProps<LegendPageProps> = async () => {
+export const getStaticProps: GetStaticProps<PageProps> = async () => {
   return {
     props: {
       territoryExtent: await getTerritoryExtent(),
@@ -35,4 +35,4 @@ export const getStaticProps: GetStaticProps<LegendPageProps> = async () => {
   };
 };
 
-export default LegendPage;
+export default Page;

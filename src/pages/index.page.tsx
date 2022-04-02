@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { GlobalStyle } from "../ui/shared/global-style";
 
-const IndexPage: NextPage = () => {
+const Page: NextPage = () => {
   return (
     <div style={{ margin: "0 20px" }}>
       <GlobalStyle />
@@ -34,4 +34,4 @@ const IndexPage: NextPage = () => {
   );
 };
 
-export default IndexPage;
+export default Page;
