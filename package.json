@@ -8,13 +8,13 @@
     "fix:eslint": "next lint --fix --report-unused-disable-directives=error",
     "fix:markdownlint": "markdownlint --fix \"**/*\"",
     "fix:prettier": "prettier --write \"**/*\"",
-    "fix:yarn-deduplicate": "yarn install; yarn-deduplicate --strategy=fewer; yarn install",
+    "fix:yarn-dedupe": "yarn dedupe",
     "lint": "npm-run-all --continue-on-error \"lint:*\"",
     "lint:eslint": "next lint --report-unused-disable-directives=error",
     "lint:markdownlint": "markdownlint \"**/*\"",
     "lint:prettier": "prettier --check \"**/*\"",
     "lint:tsc": "tsc --project .",
-    "lint:yarn-deduplicate": "yarn-deduplicate --fail --list --strategy=fewer",
+    "lint:yarn-dedupe": "yarn dedupe --check",
     "prepare": "husky install",
     "test": "jest"
   },
@@ -110,9 +110,9 @@
     "sort-keys": "^5.0.0",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.3",
-    "yarn-deduplicate": "^4.0.0"
+    "typescript": "^4.6.3"
   },
+  "packageManager": "yarn@3.2.0",
   "engines": {
     "node": ">=14.15.1",
     "yarn": ">=1.22.0"
