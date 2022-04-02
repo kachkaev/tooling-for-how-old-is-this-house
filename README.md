@@ -10,7 +10,9 @@ You can also supplement data from remote sources with manually created features.
 This helps mitigate potential data quality issues that cannot be resolved upstream.
 
 <!--markdownlint-disable no-inline-html -->
+
 <center><img width="846" src="docs/assets/tooling-diagram.en@2x.drawio.png" /></center>
+
 <!--markdownlint-enable no-inline-html -->
 
 Because [how-old-is-this.house](https://how-old-is-this.house/en) focuses on cities in Russia, the instructions below are in Russian.
