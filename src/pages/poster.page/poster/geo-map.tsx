@@ -5,7 +5,7 @@ import * as React from "react";
 import { useMeasure } from "react-use";
 import styled from "styled-components";
 
-import { pointsInMm } from "../shared/printing";
+import { pointsInMm } from "../../shared/printing";
 import { ProjectionConfig } from "./types";
 
 const clipExtentDistanceInPixels = 30;

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { LegendEntry } from "../../shared/poster";
+import { LegendEntry } from "../../../shared/poster";
 import { PtSansDigit } from "./pt-sans-digit";
 
 const paddingTop = 13;

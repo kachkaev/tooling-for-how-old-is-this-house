@@ -2,7 +2,7 @@ import _ from "lodash";
 import * as React from "react";
 import styled from "styled-components";
 
-import { pointsInMm } from "../shared/printing";
+import { pointsInMm } from "../../shared/printing";
 
 const Wrapper = styled.div`
   border-top: none;

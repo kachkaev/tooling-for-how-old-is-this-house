@@ -8,12 +8,12 @@ import {
   MixedPropertyVariantsFeatureCollection,
 } from "../shared/stage-mixing";
 import { getTerritoryExtent, TerritoryExtent } from "../shared/territory";
-import { HistogramProps } from "../ui/histogram";
-import { useLiveTerritoryConfig } from "../ui/shared/use-live-territory-config";
-import { usePosterConfig } from "../ui/shared/use-poster-config";
+import { HistogramProps } from "./historgram.page/histogram";
+import { useLiveTerritoryConfig } from "./shared/use-live-territory-config";
+import { usePosterConfig } from "./shared/use-poster-config";
 
 const Histogram = dynamic<HistogramProps>(
-  import("../ui/histogram").then((module) => module.Histogram),
+  import("./historgram.page/histogram").then((module) => module.Histogram),
   { ssr: false },
 );
 

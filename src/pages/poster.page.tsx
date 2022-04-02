@@ -9,12 +9,12 @@ import {
   MixedPropertyVariantsFeatureCollection,
 } from "../shared/stage-mixing";
 import { getTerritoryExtent } from "../shared/territory";
-import { PosterProps } from "../ui/poster";
-import { useLiveTerritoryConfig } from "../ui/shared/use-live-territory-config";
-import { usePosterConfig } from "../ui/shared/use-poster-config";
+import { PosterProps } from "./poster.page/poster";
+import { useLiveTerritoryConfig } from "./shared/use-live-territory-config";
+import { usePosterConfig } from "./shared/use-poster-config";
 
 const Poster = dynamic<PosterProps>(
-  import("../ui/poster").then((module) => module.Poster),
+  import("./poster.page/poster").then((module) => module.Poster),
   { ssr: false },
 );
 

@@ -2,14 +2,14 @@ import { useRouter } from "next/router";
 import * as React from "react";
 import styled from "styled-components";
 
-import { extractLegendEntries, PosterConfig } from "../shared/poster";
+import { extractLegendEntries, PosterConfig } from "../../shared/poster";
+import { GlobalStyle } from "../shared/global-style";
 import { ColorLegendSvg } from "./color-legend/color-legend-svg";
 import {
   ColorBlindnessCondition,
   colorBlindnessConditions,
   generateColorBlindnessFilterCssProperty,
 } from "./color-legend/helpers-for-color-blindness";
-import { GlobalStyle } from "./shared/global-style";
 
 const backgroundColor = "#1e2023";
 const width = 366;

@@ -6,13 +6,14 @@ import {
   GeographicContextFeatureCollection,
   geographicContextStyling,
   splitGeographicContext,
-} from "../shared/geographic-context";
+} from "../../shared/geographic-context";
 import {
   extractPrinterBleedInMillimeters,
   PosterConfig,
-} from "../shared/poster";
-import { MixedPropertyVariantsFeatureCollection } from "../shared/stage-mixing";
-import { TerritoryExtent } from "../shared/territory";
+} from "../../shared/poster";
+import { MixedPropertyVariantsFeatureCollection } from "../../shared/stage-mixing";
+import { TerritoryExtent } from "../../shared/territory";
+import { GlobalStyle } from "../shared/global-style";
 import { CropMark } from "./poster/crop-mark";
 import { generateMapCompletionYearToColor } from "./poster/generate-map-completion-year-to-color";
 import { GeoMap } from "./poster/geo-map";
@@ -21,7 +22,6 @@ import { GeoMapLayerWithGeographicContext } from "./poster/geo-map-layer-with-ge
 import { GeoMapLayerWithTerritoryExtent } from "./poster/geo-map-layer-with-territory-extent";
 import { Timeline } from "./poster/timeline";
 import { ZoomMark } from "./poster/zoom-mark";
-import { GlobalStyle } from "./shared/global-style";
 
 const Figure = styled.div`
   box-shadow: 5px 5px 10px #ddd;

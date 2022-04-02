@@ -1,8 +1,21 @@
 import * as React from "react";
 import styled from "styled-components";
 
-import { ExternalLink as OriginalExternalLink } from "./essentials";
 import { GlobalStyle } from "./global-style";
+
+const PlainExternalLink: React.VoidFunctionComponent<
+  React.HTMLProps<HTMLAnchorElement>
+> = ({ children, href, ...rest }) => {
+  return (
+    <a href={href} {...rest}>
+      {children ?? href?.replace(/^https?:\/\//i, "").replace(/^www\./i, "")}
+    </a>
+  );
+};
+
+const ExternalLink = styled(PlainExternalLink)`
+  color: inherit;
+`;
 
 const Wrapper = styled.div`
   box-sizing: border-box;
@@ -20,10 +33,6 @@ const Content = styled.div`
   display: block;
   position: relative;
   width: 100%;
-`;
-
-const ExternalLink = styled(OriginalExternalLink)`
-  color: inherit;
 `;
 
 const Title = styled.h1`

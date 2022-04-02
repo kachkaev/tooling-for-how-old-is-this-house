@@ -8,8 +8,8 @@ import styled from "styled-components";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../../shared/stage-mixing";
-import { pointsInMm } from "../shared/printing";
+} from "../../../shared/stage-mixing";
+import { pointsInMm } from "../../shared/printing";
 import { MapCompletionYearToColor } from "./types";
 
 const numberFormat = Intl.NumberFormat("ru");

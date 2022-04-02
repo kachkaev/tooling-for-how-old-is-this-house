@@ -5,7 +5,7 @@ import * as React from "react";
 import {
   MixedPropertyVariantsFeature,
   MixedPropertyVariantsFeatureCollection,
-} from "../../shared/stage-mixing";
+} from "../../../shared/stage-mixing";
 import { GeoMapLayer } from "./shared/geo-map-layer";
 import { MapCompletionYearToColor, ProjectionConfig } from "./types";
 
