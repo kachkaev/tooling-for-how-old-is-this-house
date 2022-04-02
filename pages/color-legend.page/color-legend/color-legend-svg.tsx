@@ -12,8 +12,7 @@ const labelOffsetTop = 4;
 
 const propsForStandaloneSvg = {
   xmlns: "http://www.w3.org/2000/svg",
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  "xmlns:xlink": "http://www.w3.org/1999/xlink",
+  xmlnsXlink: "http://www.w3.org/1999/xlink",
 };
 export interface LegendSvgProps extends React.SVGAttributes<SVGSVGElement> {
   legendEntries: LegendEntry[];
