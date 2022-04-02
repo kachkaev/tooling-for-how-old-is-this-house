@@ -51,6 +51,7 @@ const script = async () => {
       `https://wikimapia.org/${wikimapiaId}/${desiredPageLanguage}/`,
       {
         timeout: 10_000,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         "axios-retry": {
           retries: 30,
           retryDelay: (retryCount) => retryCount * 5000,
@@ -59,6 +60,7 @@ const script = async () => {
           shouldResetTimeout: true,
         },
         headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           "User-Agent":
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:85.0) Gecko/20100101 Firefox/85.0",
         },

@@ -26,6 +26,7 @@ interface MonumentTemplate {
   status?: string; // can be "destroyed"
 
   knid?: string;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   "knid-new"?: string;
 
   // location

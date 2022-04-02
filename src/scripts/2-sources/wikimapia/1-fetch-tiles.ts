@@ -125,8 +125,10 @@ const script = async () => {
           },
           timeout: 20_000,
           headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             "Accept-Encoding": "gzip, deflate",
           },
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           "axios-retry": {
             retries: 3,
             shouldResetTimeout: true,

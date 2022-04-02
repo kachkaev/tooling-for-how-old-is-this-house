@@ -109,6 +109,7 @@ const normalizeWording = (completionTime: string): string => {
 };
 
 const centuryYearAndRangeLookup: Record<string, [number, [number, number]]> = {
+  /* eslint-disable @typescript-eslint/naming-convention */
   начало: [10, [0, 30]],
   середина: [50, [30, 70]],
   конец: [90, [70, 99]],
@@ -121,6 +122,7 @@ const centuryYearAndRangeLookup: Record<string, [number, [number, number]]> = {
   "2-я четверть": [35, [20, 55]],
   "3-я четверть": [65, [45, 80]],
   "4-я четверть": [85, [70, 99]],
+  /* eslint-enable @typescript-eslint/naming-convention */
 };
 
 const decadeYearAndRangeLookup: Record<string, [number, [number, number]]> = {

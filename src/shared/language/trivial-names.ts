@@ -89,6 +89,7 @@ export type TrivialName = typeof normalizedTrivialNames[number];
 
 const synonymsByNormalizedTrivialName: // https://github.com/prettier/prettier/issues/11923
 Partial<Record<TrivialName, string[]>> = {
+  /* eslint-disable @typescript-eslint/naming-convention */
   АЗС: ["заправка"],
   бассейн: ["плавательный бассейн"],
   гараж: ["гаражное строение"],
@@ -109,6 +110,7 @@ Partial<Record<TrivialName, string[]>> = {
     "трансформаторная будка",
     "трансформаторная",
   ],
+  /* eslint-enable @typescript-eslint/naming-convention */
 };
 
 const normalizedTrivialNameByLowerCaseVersion: Record<string, TrivialName> = {};

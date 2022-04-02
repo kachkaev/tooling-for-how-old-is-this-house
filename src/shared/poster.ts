@@ -41,6 +41,7 @@ export interface PosterConfig {
 }
 
 const defaultColorByCompletionYear = {
+  /* eslint-disable @typescript-eslint/naming-convention */
   0: "hsl(105,100%, 12%)",
   1700: "hsl(105, 99%, 15%)",
   1800: "hsl( 95, 73%, 21%)",
@@ -57,6 +58,7 @@ const defaultColorByCompletionYear = {
   2000: "hsl(210, 70%, 42%)",
   2010: "hsl(211, 80%, 34%)",
   2020: "hsl(212, 90%, 28%)",
+  /* eslint-enable @typescript-eslint/naming-convention */
 };
 
 const defaultPosterConfig: PosterConfig = {

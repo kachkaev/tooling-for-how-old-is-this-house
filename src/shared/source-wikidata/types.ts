@@ -1,11 +1,13 @@
 export interface WikidataQueryItem {
   architectLabel?: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     "xml:lang": string;
     type: "literal";
     value: string;
   };
 
   architecturalStyleLabel?: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     "xml:lang": string;
     type: "literal";
     value: string;
@@ -39,6 +41,7 @@ export interface WikidataQueryItem {
   };
 
   itemLabel?: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     "xml:lang": string;
     type: "literal";
     value: string;
