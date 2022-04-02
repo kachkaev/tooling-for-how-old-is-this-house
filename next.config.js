@@ -17,6 +17,7 @@ const nextConfig = {
   },
 
   pageExtensions: ["page.tsx", "handler.ts"],
+  reactStrictMode: true,
 };
 
 export default nextConfig;
