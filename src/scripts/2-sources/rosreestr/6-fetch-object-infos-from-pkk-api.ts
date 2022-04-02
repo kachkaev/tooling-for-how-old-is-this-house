@@ -18,7 +18,7 @@ import {
   PkkFeatureResponse,
   PkkResponseInInfoPageResponse,
   processRosreestrPages,
-} from "../../../shared/sources/rosreestr";
+} from "../../../shared/source-rosreestr";
 
 const output = process.stdout;
 

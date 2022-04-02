@@ -1,5 +1,5 @@
-import { generateExtractOutputLayer } from "../../../shared/helpers-for-scripts";
-import { generateWikivoyageOutputLayer } from "../../../shared/sources/wikivoyage";
+import { generateExtractOutputLayer } from "../../../shared/scripts";
+import { generateWikivoyageOutputLayer } from "../../../shared/source-wikivoyage";
 
 const script = generateExtractOutputLayer({
   canUseCollectedGeocodes: true,

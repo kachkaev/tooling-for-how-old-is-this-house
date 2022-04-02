@@ -6,12 +6,12 @@ import path from "node:path";
 import sleep from "sleep-promise";
 
 import { prependCommentWithTimeToHtml } from "../../../shared/helpers-for-html";
-import { generateProgress } from "../../../shared/helpers-for-scripts";
+import { generateProgress } from "../../../shared/scripts";
 import {
   combineWikimapiaTiles,
   deriveWikimapiaObjectFilePath,
   getWikimapiaRawObjectInfoFileSuffix,
-} from "../../../shared/sources/wikimapia";
+} from "../../../shared/source-wikimapia";
 
 const output = process.stdout;
 

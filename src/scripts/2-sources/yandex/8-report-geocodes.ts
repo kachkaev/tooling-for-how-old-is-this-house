@@ -8,7 +8,7 @@ import {
   getYandexGeocoderCacheDir,
   getYandexGeocoderCacheEntryFileSuffix,
   YandexGeocoderCacheEntry,
-} from "../../../shared/sources/yandex";
+} from "../../../shared/source-yandex";
 
 const output = process.stdout;
 

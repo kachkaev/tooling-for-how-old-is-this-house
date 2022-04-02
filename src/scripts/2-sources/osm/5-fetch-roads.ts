@@ -1,6 +1,6 @@
 import { generateGeographicContextExtent } from "../../../shared/geographic-context";
-import { getFetchedOsmRoadsFilePath } from "../../../shared/sources/osm";
-import { generateFetchOsmObjects } from "../../../shared/sources/osm/generate-fetch-osm-objects";
+import { getFetchedOsmRoadsFilePath } from "../../../shared/source-osm";
+import { generateFetchOsmObjects } from "../../../shared/source-osm/generate-fetch-osm-objects";
 import { getTerritoryExtent } from "../../../shared/territory";
 
 const script = generateFetchOsmObjects({

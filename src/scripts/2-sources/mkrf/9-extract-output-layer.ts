@@ -1,5 +1,5 @@
-import { generateExtractOutputLayer } from "../../../shared/helpers-for-scripts";
-import { generateMkrfOutputLayer } from "../../../shared/sources/mkrf";
+import { generateExtractOutputLayer } from "../../../shared/scripts";
+import { generateMkrfOutputLayer } from "../../../shared/source-mkrf";
 
 const script = generateExtractOutputLayer({
   canUseCollectedGeocodes: true,

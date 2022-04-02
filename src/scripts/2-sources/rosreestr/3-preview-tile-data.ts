@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import { combineRosreestrTilesAndSavePreviews } from "../../../shared/sources/rosreestr";
+import { combineRosreestrTilesAndSavePreviews } from "../../../shared/source-rosreestr";
 
 const output = process.stdout;
 

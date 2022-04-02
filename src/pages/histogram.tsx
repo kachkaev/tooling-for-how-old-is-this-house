@@ -6,7 +6,7 @@ import * as React from "react";
 import {
   getMixedPropertyVariantsFilePath,
   MixedPropertyVariantsFeatureCollection,
-} from "../shared/mixing";
+} from "../shared/stage-mixing";
 import { getTerritoryExtent, TerritoryExtent } from "../shared/territory";
 import { HistogramProps } from "../ui/histogram";
 import { useLiveTerritoryConfig } from "../ui/shared/use-live-territory-config";

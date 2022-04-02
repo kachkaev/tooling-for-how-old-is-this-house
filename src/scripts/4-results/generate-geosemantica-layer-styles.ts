@@ -14,7 +14,7 @@ import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,
   getResultsDirPath,
-} from "../../shared/results";
+} from "../../shared/stage-results";
 import {
   getTerritoryConfig,
   getTerritoryExtent,
@@ -432,10 +432,8 @@ const script = async () => {
   output.write(` Done.\n`);
 
   const { COPY_TO_CLIPBOARD: layerStyleToCopy } = cleanEnv({
-    COPY_TO_CLIPBOARD: envalid.str<
-      "background" | "buildings" | "foreground" | ""
-    >({
-      choices: ["background", "buildings", "foreground", ""],
+    COPY_TO_CLIPBOARD: envalid.str({
+      choices: ["background", "buildings", "foreground", ""] as const,
       default: "",
     }),
   });

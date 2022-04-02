@@ -3,7 +3,7 @@ import chalk from "chalk";
 import dedent from "dedent";
 import _ from "lodash";
 
-import { ScriptError } from "../../../shared/helpers-for-scripts";
+import { ScriptError } from "../../../shared/scripts";
 import {
   combineRosreestrTiles,
   CreationReasonForObjectInInfoPage,
@@ -13,7 +13,7 @@ import {
   ObjectCenterFeature,
   rosreestrObjectInfoPageSize,
   rosreestrObjectInfoPageTailLength,
-} from "../../../shared/sources/rosreestr";
+} from "../../../shared/source-rosreestr";
 import {
   getTerritoryConfig,
   getTerritoryExtent,

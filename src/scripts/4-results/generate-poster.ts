@@ -17,7 +17,7 @@ import {
   ensureTerritoryGitignoreContainsResults,
   generateVersionSuffix,
   getResultsDirPath,
-} from "../../shared/results";
+} from "../../shared/stage-results";
 import {
   getTerritoryConfig,
   getTerritoryExtent,
@@ -33,8 +33,8 @@ const script = async () => {
   );
 
   const { EXTENSION: extension } = cleanEnv({
-    EXTENSION: envalid.str<"pdf" | "jpg" | "png">({
-      choices: ["pdf", "jpg", "png"],
+    EXTENSION: envalid.str({
+      choices: ["pdf", "jpg", "png"] as const,
       default: "pdf",
     }),
   });
