@@ -21,17 +21,6 @@ type PageProps = Omit<HistogramProps, "posterConfig"> & {
   territoryExtent: TerritoryExtent;
 };
 
-const Page: NextPage<PageProps> = ({ territoryExtent, ...props }) => {
-  const territoryConfig = useLiveTerritoryConfig();
-  const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
-
-  if (!posterConfig) {
-    return <></>;
-  }
-
-  return <Histogram posterConfig={posterConfig} {...props} />;
-};
-
 export const getStaticProps: GetStaticProps<PageProps> = async () => {
   return {
     props: {
@@ -41,6 +30,17 @@ export const getStaticProps: GetStaticProps<PageProps> = async () => {
       )) as MixedPropertyVariantsFeatureCollection,
     },
   };
+};
+
+const Page: NextPage<PageProps> = ({ territoryExtent, ...props }) => {
+  const territoryConfig = useLiveTerritoryConfig();
+  const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
+
+  if (!posterConfig) {
+    return <></>;
+  }
+
+  return <Histogram posterConfig={posterConfig} {...props} />;
 };
 
 export default Page;

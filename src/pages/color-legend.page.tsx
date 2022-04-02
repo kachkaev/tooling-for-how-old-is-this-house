@@ -16,6 +16,14 @@ type PageProps = Omit<ColorLegendProps, "posterConfig"> & {
   territoryExtent: TerritoryExtent;
 };
 
+export const getStaticProps: GetStaticProps<PageProps> = async () => {
+  return {
+    props: {
+      territoryExtent: await getTerritoryExtent(),
+    },
+  };
+};
+
 const Page: NextPage<PageProps> = ({ territoryExtent }) => {
   const territoryConfig = useLiveTerritoryConfig();
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
@@ -25,14 +33,6 @@ const Page: NextPage<PageProps> = ({ territoryExtent }) => {
   }
 
   return <ColorLegend posterConfig={posterConfig} />;
-};
-
-export const getStaticProps: GetStaticProps<PageProps> = async () => {
-  return {
-    props: {
-      territoryExtent: await getTerritoryExtent(),
-    },
-  };
 };
 
 export default Page;

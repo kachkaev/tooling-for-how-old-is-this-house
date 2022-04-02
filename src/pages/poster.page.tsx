@@ -20,6 +20,20 @@ const Poster = dynamic<PosterProps>(
 
 type PageProps = Omit<PosterProps, "posterConfig">;
 
+export const getStaticProps: GetStaticProps<PageProps> = async () => {
+  const territoryExtent = await getTerritoryExtent();
+
+  const buildingCollection = (await fs.readJson(
+    getMixedPropertyVariantsFilePath(),
+  )) as MixedPropertyVariantsFeatureCollection;
+
+  const geographicContext = await generateGeographicContext(territoryExtent);
+
+  return {
+    props: { buildingCollection, geographicContext, territoryExtent },
+  };
+};
+
 const Page: NextPage<PageProps> = ({ territoryExtent, ...rest }) => {
   const territoryConfig = useLiveTerritoryConfig();
   const posterConfig = usePosterConfig(territoryConfig, territoryExtent);
@@ -35,20 +49,6 @@ const Page: NextPage<PageProps> = ({ territoryExtent, ...rest }) => {
       {...rest}
     />
   );
-};
-
-export const getStaticProps: GetStaticProps<PageProps> = async () => {
-  const territoryExtent = await getTerritoryExtent();
-
-  const buildingCollection = (await fs.readJson(
-    getMixedPropertyVariantsFilePath(),
-  )) as MixedPropertyVariantsFeatureCollection;
-
-  const geographicContext = await generateGeographicContext(territoryExtent);
-
-  return {
-    props: { buildingCollection, geographicContext, territoryExtent },
-  };
 };
 
 export default Page;
