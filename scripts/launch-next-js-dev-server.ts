@@ -8,7 +8,7 @@ const script = async () => {
   await execa(
     "next-remote-watch",
     [
-      // Justified by src/pages/poster.tsx
+      // Justified by pages/poster.tsx
       getOsmDirPath(),
       getMixedPropertyVariantsFilePath(),
       getTerritoryExtentFilePath(),

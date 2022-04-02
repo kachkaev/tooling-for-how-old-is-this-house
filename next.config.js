@@ -6,13 +6,17 @@ const nextConfig = {
     styledComponents: true,
   },
 
-  pageExtensions: ["page.tsx", "handler.ts"],
+  eslint: {
+    dirs: ["pages", "scripts", "shared"],
+  },
 
   i18n: {
     defaultLocale: "ru",
     localeDetection: false,
     locales: ["ru", "en"],
   },
+
+  pageExtensions: ["page.tsx", "handler.ts"],
 };
 
 export default nextConfig;
