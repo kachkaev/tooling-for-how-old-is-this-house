@@ -169,9 +169,14 @@ export const generateExtractOutputLayer =
     output.write(` Result saved to ${chalk.magenta(outputLayerFilePath)}\n`);
   };
 
-export const eraseLastLineInOutput = (output: WriteStream) => {
-  output.moveCursor(0, -1);
-  output.clearScreenDown();
+/**
+ *
+ * @todo Replace `Partial<WriteStream>` with better typings
+ * @see https://github.com/kachkaev/tooling-for-how-old-is-this-house/issues/30
+ */
+export const eraseLastLineInOutput = (output: Partial<WriteStream>) => {
+  output.moveCursor?.(0, -1);
+  output.clearScreenDown?.();
 };
 
 export const ensureTerritoryGitignoreContainsPreview =
