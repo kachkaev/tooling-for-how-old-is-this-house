@@ -170,7 +170,6 @@ export const generateExtractOutputLayer =
   };
 
 /**
- *
  * @todo Replace `Partial<WriteStream>` with better typings
  * @see https://github.com/kachkaev/tooling-for-how-old-is-this-house/issues/30
  */
