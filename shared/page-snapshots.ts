@@ -2,7 +2,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "node:path";
 import { WriteStream } from "node:tty";
-import puppeteer from "puppeteer";
+import puppeteer, { ScreenshotOptions } from "puppeteer";
 
 const nextJsPageSelector = "#__next *";
 
@@ -11,7 +11,7 @@ export const ensureImageSnapshot = async ({
   omitBackground = false,
   output,
   page,
-  quality = 100,
+  quality,
   resultFilePath,
   selectorToWaitFor = nextJsPageSelector,
 }: {
@@ -46,12 +46,17 @@ export const ensureImageSnapshot = async ({
     });
   }
 
-  await page.screenshot({
-    path: resultFilePath,
-    quality,
+  const screenshotOptions: ScreenshotOptions = {
     fullPage: true,
     omitBackground,
-  });
+    path: resultFilePath,
+  };
+
+  if (!resultFilePath.toLowerCase().endsWith(".png")) {
+    screenshotOptions.quality = quality ?? 100;
+  }
+
+  await page.screenshot(screenshotOptions);
 
   output.write(`${chalk.magenta(resultFilePath)}\n`);
 };
