@@ -44,7 +44,7 @@ const script = async () => {
       await fs.ensureDir(getResultsDirPath());
       await fs.writeFile(resultFilePath, svgHtml, "utf8");
 
-      output.write(chalk.magenta(resultFilePath));
+      output.write(`${chalk.magenta(resultFilePath)}\n`);
 
       await browser.close();
     },
