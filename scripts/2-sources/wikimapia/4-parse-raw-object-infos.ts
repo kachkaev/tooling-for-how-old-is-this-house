@@ -23,6 +23,8 @@ import {
 } from "../../../shared/source-wikimapia";
 import { getTerritoryAddressHandlingConfig } from "../../../shared/territory";
 
+const output = process.stdout;
+
 const cleanCompletionTimeMatch = (match?: string): string | undefined => {
   const result = (match ?? "")
     .toLowerCase()
@@ -103,7 +105,6 @@ const extractCompletionTimeFromDescription = (
 };
 
 const script = async () => {
-  const output = process.stdout;
   output.write(chalk.bold("sources/wikimapia: Parsing raw object infos\n"));
 
   const logOutputFileName = (
