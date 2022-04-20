@@ -31,7 +31,7 @@ export const generateFetchOsmObjects =
     output.write(chalk.bold(`sources/osm: Fetching ${title}\n`));
 
     const query = dedent`
-      [out:json][timeout:60];
+      [out:json][timeout:250];
       (${selectors
         .map((selector) => `\n      ${selector}({{extent}});`)
         .join("")}
