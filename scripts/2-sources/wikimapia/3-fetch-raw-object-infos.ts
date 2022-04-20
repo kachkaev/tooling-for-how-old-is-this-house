@@ -20,7 +20,7 @@ axiosRetry(axios);
 const desiredPageLanguage = "ru";
 
 const script = async () => {
-  output.write(chalk.bold("sources/wikimapia: Fetching raw object infos"));
+  output.write(chalk.bold("sources/wikimapia: Fetching raw object infos\n"));
 
   const { objectExtentFeatures } = await combineWikimapiaTiles({ output });
 

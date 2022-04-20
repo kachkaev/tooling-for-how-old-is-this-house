@@ -88,7 +88,7 @@ const processWikimapiaTileResponse = (
 };
 
 const script = async () => {
-  output.write(chalk.bold("sources/wikimapia: Fetching tiles"));
+  output.write(chalk.bold("sources/wikimapia: Fetching tiles\n"));
 
   const recommendedTileZoom = getRecommendedWikimapiaTileZoom();
   await processTiles({
