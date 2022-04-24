@@ -21,7 +21,8 @@ const StyledSvg = styled.svg`
   overflow: hidden;
 `;
 
-export interface GeoMapProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface GeoMapProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   centerLonLat: [number, number];
   zoomInMillimetersPerKilometer: number;
   offsetXInMillimeters: number;
