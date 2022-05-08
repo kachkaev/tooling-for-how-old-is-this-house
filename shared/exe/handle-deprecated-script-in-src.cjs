@@ -1,6 +1,6 @@
 const path = require("node:path");
 
-const scriptPath = (process.argv[1] ?? "").replace(/\\/, "/");
+const scriptPath = (process.argv[1] ?? "").replace(/\\/g, "/");
 
 if (scriptPath.includes("/src/")) {
   const newScriptPath = scriptPath.replace("/src/", "/");
