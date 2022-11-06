@@ -2488,17 +2488,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/geojson@npm:*, @types/geojson@npm:7946.0.8":
-  version: 7946.0.8
-  resolution: "@types/geojson@npm:7946.0.8"
-  checksum: 6049a39b025cfe323d5cf87333d87c133ec963cdbd349c49295bee779827ee4b46a3041fd8bd2e7a4b02d6d1e26f3002968875928941bbed08477bfd5f6f9284
+"@types/geojson@npm:*, @types/geojson@npm:^7946.0":
+  version: 7946.0.10
+  resolution: "@types/geojson@npm:7946.0.10"
+  checksum: 12c407c2dc93ecb26c08af533ee732f1506a9b29456616ba7ba1d525df96206c28ddf44a528f6a5415d7d22893e9d967420940a9c095ee5e539c1eba5fefc1f4
   languageName: node
   linkType: hard
 
-"@types/geojson@npm:^1.0.2":
-  version: 1.0.6
-  resolution: "@types/geojson@npm:1.0.6"
-  checksum: 8d993275ca1bafae1e0b8db3146713eee60fd5cbc39efffaa9e7681b5b09576251c8f44b679ca8ab0042e5e6b14b81036193a2b80484c1f3d4db996e060a8716
+"@types/geojson@npm:7946.0.8":
+  version: 7946.0.8
+  resolution: "@types/geojson@npm:7946.0.8"
+  checksum: 6049a39b025cfe323d5cf87333d87c133ec963cdbd349c49295bee779827ee4b46a3041fd8bd2e7a4b02d6d1e26f3002968875928941bbed08477bfd5f6f9284
   languageName: node
   linkType: hard
 
@@ -2911,10 +2911,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmldom/xmldom@npm:^0.8.2":
-  version: 0.8.2
-  resolution: "@xmldom/xmldom@npm:0.8.2"
-  checksum: aeea8f670bfa52b3a1b2d355dab3bf4d58ef4969b1fd146a1ab91bf8acbb9d02953022e66e85279015a4e4027205620dfc001ed5d169b1711a09a0a079951e08
+"@xmldom/xmldom@npm:^0.8.6":
+  version: 0.8.6
+  resolution: "@xmldom/xmldom@npm:0.8.6"
+  checksum: f17ac6d99a971a6aeb831fcfc5cfa86f367664e45815046548814b2deb17ccc421fef4e0d5ba29e66179d112b552f6caa5680064f8e7bd8a389b788a60404c8e
   languageName: node
   linkType: hard
 
@@ -8139,12 +8139,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"osmtogeojson@npm:^3.0.0-beta.4":
-  version: 3.0.0-beta.4
-  resolution: "osmtogeojson@npm:3.0.0-beta.4"
+"osmtogeojson@npm:^3.0.0-beta.5":
+  version: 3.0.0-beta.5
+  resolution: "osmtogeojson@npm:3.0.0-beta.5"
   dependencies:
-    "@mapbox/geojson-rewind": 0.4.0
-    "@types/geojson": ^1.0.2
+    "@mapbox/geojson-rewind": 0.5.2
+    "@types/geojson": ^7946.0
+    "@xmldom/xmldom": 0.8.3
     JSONStream: 0.8.0
     concat-stream: 2.0.0
     geojson-numeric: 0.2.1
@@ -8152,13 +8153,12 @@ __metadata:
     optimist: ~0.3.5
     osm-polygon-features: ^0.9.1
     tiny-osmpbf: ^0.1.0
-    xmldom: ~0.1.16
   dependenciesMeta:
     "@types/geojson":
       optional: true
   bin:
     osmtogeojson: osmtogeojson
-  checksum: ce2199680ef26a52a9b28add0de84e72f147fdce217b410a3b0b8338a13d25f67e765b5261ed427479749a33444fff26e73c93c9ed56666e6c7530fe826ed4ac
+  checksum: 237a3f930ba10257d424677ab65f37f54b8512f167e8fa04701eba509e317e054ddfca22d974ee3275da54a41940c5b0b616444e69cfbc2c05218cf566f91915
   languageName: node
   linkType: hard
 
@@ -9145,7 +9145,7 @@ __metadata:
     "@types/styled-components": ^5.1.25
     "@visx/geo": ^2.1.2
     "@visx/gradient": ^2.1.0
-    "@xmldom/xmldom": ^0.8.2
+    "@xmldom/xmldom": ^0.8.6
     axios: ^0.26.1
     axios-retry: ^3.2.4
     chalk: ^5.0.1
@@ -9179,7 +9179,7 @@ __metadata:
     next-remote-watch: ^1.0.0
     npm-run-all: ^4.1.5
     object-hash: ^3.0.0
-    osmtogeojson: ^3.0.0-beta.4
+    osmtogeojson: ^3.0.0-beta.5
     prettier: ^2.6.2
     puppeteer: ^13.6.0
     qs: ^6.10.3
@@ -10895,13 +10895,6 @@ __metadata:
   version: 2.2.0
   resolution: "xmlchars@npm:2.2.0"
   checksum: 8c70ac94070ccca03f47a81fcce3b271bd1f37a591bf5424e787ae313fcb9c212f5f6786e1fa82076a2c632c0141552babcd85698c437506dfa6ae2d58723062
-  languageName: node
-  linkType: hard
-
-"xmldom@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "xmldom@npm:0.6.0"
-  checksum: 710f64f5b2ba8ac1cbcf62c2e35b095a2f9ccbd596062efe037a5ca85d3ee077b691c4d74952ff476e4bab0dd82727604262899f25dddbb02f89ddeea4cca7f9
   languageName: node
   linkType: hard
 
