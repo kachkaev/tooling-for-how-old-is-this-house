@@ -794,15 +794,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mapbox/geojson-rewind@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "@mapbox/geojson-rewind@npm:0.5.1"
+"@mapbox/geojson-rewind@npm:0.5.2, @mapbox/geojson-rewind@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "@mapbox/geojson-rewind@npm:0.5.2"
   dependencies:
     get-stream: ^6.0.1
-    minimist: ^1.2.5
+    minimist: ^1.2.6
   bin:
     geojson-rewind: geojson-rewind
-  checksum: 9bdd428e4420ea818bbd7a0ac14ada05eb09e506a64a84d85246c41f82d0249d747069dc9cf27d0f080d41e6fe7525bd31ae099b04e4bfc5e86680a499fb04b6
+  checksum: 721470ab5e8912d69aef06fa4db891bade8b028d6708a35a982b1dfec0f40eb4ba05a749258867f5844cf4e776e53866813bf9c97e3289054b21cbf7840d3608
   languageName: node
   linkType: hard
 
@@ -9120,7 +9120,7 @@ __metadata:
     "@kachkaev/eslint-config-react": ^0.4.5
     "@kachkaev/markdownlint-config": ^0.3.0
     "@kachkaev/prettier-config": ^1.3.1
-    "@mapbox/geojson-rewind": ^0.5.1
+    "@mapbox/geojson-rewind": ^0.5.2
     "@mapbox/tilebelt": ^1.0.2
     "@next/eslint-plugin-next": ^12.1.5
     "@tmcw/togeojson": ^4.7.0
