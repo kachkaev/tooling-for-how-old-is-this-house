@@ -85,7 +85,7 @@ const normalizedTrivialNames = [
   "школа",
 ] as const;
 
-export type TrivialName = typeof normalizedTrivialNames[number];
+export type TrivialName = (typeof normalizedTrivialNames)[number];
 
 const synonymsByNormalizedTrivialName: // https://github.com/prettier/prettier/issues/11923
 Partial<Record<TrivialName, string[]>> = {

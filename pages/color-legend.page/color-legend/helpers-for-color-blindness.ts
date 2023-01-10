@@ -12,7 +12,7 @@ export const colorBlindnessConditions = [
   "achromatopsia",
 ] as const;
 
-export type ColorBlindnessCondition = typeof colorBlindnessConditions[number];
+export type ColorBlindnessCondition = (typeof colorBlindnessConditions)[number];
 
 export const getColorTransformMatrix = (
   condition: ColorBlindnessCondition,
