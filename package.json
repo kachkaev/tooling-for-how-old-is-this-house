@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "yarn exe scripts/launch-next-js-dev-server.ts",
-    "exe": "node --loader ts-node/esm/transpile-only --es-module-specifier-resolution=node --require=./shared/exe.cjs",
+    "exe": "node --loader ts-node/esm/transpile-only --es-module-specifier-resolution=node --require=suppress-experimental-warnings",
     "fix": "npm-run-all --continue-on-error \"fix:*\"",
     "fix:eslint": "next lint --fix --report-unused-disable-directives=error",
     "fix:markdownlint": "markdownlint --fix \"**/*\"",
